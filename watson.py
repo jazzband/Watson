@@ -87,5 +87,18 @@ def stop(message):
     del watson['current']
     save_watson(watson)
 
+
+@cli.command()
+def cancel():
+    watson = get_watson()
+    current = watson.get('current')
+
+    if not current or not current.get('project'):
+        click.echo("No project started", err=True)
+        return
+
+    del watson['current']
+    save_watson(watson)
+
 if __name__ == '__main__':
     cli()
