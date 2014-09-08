@@ -110,5 +110,21 @@ def cancel():
     del watson['current']
     save_watson(watson)
 
+
+@cli.command()
+def status():
+    watson = get_watson()
+
+    current = watson.get('current')
+
+    if not current or not current.get('project'):
+        click.echo("No project started")
+        return
+
+    click.echo(
+        ("Project {} started {}"
+         .format(current['project'], arrow.get(current['start']).humanize()))
+    )
+
 if __name__ == '__main__':
     cli()
