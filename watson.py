@@ -53,7 +53,9 @@ def start(project):
 
 
 @cli.command()
-def stop():
+@click.option('-m', '--message', default=None,
+              help="Add a message to this frame")
+def stop(message):
     watson = get_watson()
     stop_time = datetime.datetime.now()
     current = watson.get('current')
@@ -73,13 +75,16 @@ def stop():
         project = {'frames': []}
         watson['projects'][current['project']] = project
 
-    project['frames'].append({
+    frame = {
         'start': current['start'],
         'stop': stop_time.isoformat()
-    })
+    }
 
+    if message:
+        frame['message'] = message
+
+    project['frames'].append(frame)
     del watson['current']
-
     save_watson(watson)
 
 if __name__ == '__main__':
