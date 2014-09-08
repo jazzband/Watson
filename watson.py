@@ -19,7 +19,7 @@ def get_watson():
 
 def save_watson(content):
     with open(WATSON_FILE, 'w+') as f:
-        return json.dump(content, f)
+        return json.dump(content, f, indent=2)
 
 
 @click.group()
