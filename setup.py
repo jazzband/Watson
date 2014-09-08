@@ -6,6 +6,7 @@ setup(
     py_modules=['watson'],
     install_requires=[
         'Click',
+        'arrow',
     ],
     entry_points='''
         [console_scripts]

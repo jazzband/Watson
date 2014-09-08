@@ -1,7 +1,7 @@
 import os
 import json
-import datetime
 
+import arrow
 import click
 
 WATSON_FILE = os.path.join(os.path.expanduser('~'), '.watson')
@@ -40,7 +40,7 @@ def cli():
 @click.argument('project')
 def start(project):
     watson = get_watson()
-    start_time = datetime.datetime.now()
+    start_time = arrow.utcnow()
 
     if watson.get('current') is not None:
         project = watson['current'].get('project', "?")
@@ -48,11 +48,13 @@ def start(project):
             "Project {} is already started".format(project)
         )
 
-    click.echo("Starting {} at {:%H:%M:%S}".format(project, start_time))
+    click.echo(
+        "Starting {} at {:HH:mm:ss}".format(project, start_time.to('local'))
+    )
 
     watson['current'] = {
         'project': project,
-        'start': start_time.isoformat()
+        'start': str(start_time)
     }
 
     save_watson(watson)
@@ -63,13 +65,17 @@ def start(project):
               help="Add a message to this frame")
 def stop(message):
     watson = get_watson()
-    stop_time = datetime.datetime.now()
+    stop_time = arrow.utcnow()
     current = watson.get('current')
 
     if not current or not current.get('project'):
         raise click.ClickException("No project started")
 
-    click.echo("Stopping {}.".format(current['project']))
+    start_time = arrow.get(current['start'])
+    click.echo(
+        ("Stopping project {}, started {}"
+         .format(current['project'], start_time.humanize()))
+    )
 
     if not watson.get('projects'):
         watson['projects'] = {}
@@ -82,7 +88,7 @@ def stop(message):
 
     frame = {
         'start': current['start'],
-        'stop': stop_time.isoformat()
+        'stop': str(stop_time)
     }
 
     if message:
