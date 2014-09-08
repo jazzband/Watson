@@ -31,6 +31,13 @@ def save_watson(content):
         )
 
 
+def project_name(project, subproject):
+    if subproject:
+        return "{}/{}".format(project, subproject)
+    else:
+        return project
+
+
 @click.group()
 def cli():
     pass
@@ -38,24 +45,31 @@ def cli():
 
 @cli.command()
 @click.argument('project')
-def start(project):
+@click.argument('subproject', required=False)
+def start(project, subproject):
     watson = get_watson()
     start_time = arrow.utcnow()
 
     if watson.get('current') is not None:
         project = watson['current'].get('project', "?")
         raise click.ClickException(
-            "Project {} is already started".format(project)
+            "Project {} is already started".format(
+                project_name(project, subproject)
+            )
         )
 
     click.echo(
-        "Starting {} at {:HH:mm:ss}".format(project, start_time.to('local'))
+        ("Starting {} at {:HH:mm:ss}"
+         .format(project_name(project, subproject), start_time.to('local')))
     )
 
     watson['current'] = {
         'project': project,
         'start': str(start_time)
     }
+
+    if subproject:
+        watson['current']['subproject'] = subproject
 
     save_watson(watson)
 
@@ -74,7 +88,10 @@ def stop(message):
     start_time = arrow.get(current['start'])
     click.echo(
         ("Stopping project {}, started {}"
-         .format(current['project'], start_time.humanize()))
+         .format(
+             project_name(current['project'], current.get('subproject')),
+             start_time.humanize()
+         ))
     )
 
     if not watson.get('projects'):
@@ -93,6 +110,9 @@ def stop(message):
 
     if message:
         frame['message'] = message
+
+    if current.get('subproject'):
+        frame['subproject'] = current['subproject']
 
     project['frames'].append(frame)
     del watson['current']
@@ -123,7 +143,10 @@ def status():
 
     click.echo(
         ("Project {} started {}"
-         .format(current['project'], arrow.get(current['start']).humanize()))
+         .format(
+             project_name(current['project'], current['subproject']),
+             arrow.get(current['start']).humanize()
+         ))
     )
 
 if __name__ == '__main__':
