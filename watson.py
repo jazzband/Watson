@@ -15,11 +15,20 @@ def get_watson():
         return {}
     except ValueError:
         return {}
+    else:
+        raise click.FileError(
+            "Impossible to open Watson file in {}".format(WATSON_FILE)
+        )
 
 
 def save_watson(content):
-    with open(WATSON_FILE, 'w+') as f:
-        return json.dump(content, f, indent=2)
+    try:
+        with open(WATSON_FILE, 'w+') as f:
+            return json.dump(content, f, indent=2)
+    except OSError:
+        raise click.FileError(
+            "Impossible to open Watson file in {}".format(WATSON_FILE)
+        )
 
 
 @click.group()
@@ -35,12 +44,9 @@ def start(project):
 
     if watson.get('current') is not None:
         project = watson['current'].get('project', "?")
-        click.echo(
-            ("Project {} is already started"
-             .format(project, start_time)),
-            err=True
+        raise click.ClickException(
+            "Project {} is already started".format(project)
         )
-        return
 
     click.echo("Starting {} at {:%H:%M:%S}".format(project, start_time))
 
@@ -61,8 +67,7 @@ def stop(message):
     current = watson.get('current')
 
     if not current or not current.get('project'):
-        click.echo("No project started", err=True)
-        return
+        raise click.ClickException("No project started")
 
     click.echo("Stopping {}.".format(current['project']))
 
@@ -94,8 +99,7 @@ def cancel():
     current = watson.get('current')
 
     if not current or not current.get('project'):
-        click.echo("No project started", err=True)
-        return
+        raise click.ClickException("No project started")
 
     del watson['current']
     save_watson(watson)
