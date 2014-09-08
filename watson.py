@@ -50,6 +50,9 @@ def start(project, subproject):
     watson = get_watson()
     start_time = arrow.utcnow()
 
+    if project.count('/') == 1:
+        project, subproject = project.split('/')
+
     if watson.get('current') is not None:
         project = watson['current'].get('project', "?")
         raise click.ClickException(
