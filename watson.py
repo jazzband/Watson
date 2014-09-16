@@ -149,7 +149,7 @@ def status():
     click.echo(
         ("Project {} started {}"
          .format(
-             project_name(current['project'], current['subproject']),
+             project_name(current['project'], current.get('subproject')),
              arrow.get(current['start']).humanize()
          ))
     )
