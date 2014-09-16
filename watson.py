@@ -50,7 +50,7 @@ def cli():
 @click.argument('subproject', required=False)
 def start(project, subproject):
     watson = get_watson()
-    start_time = arrow.utcnow()
+    start_time = arrow.now()
 
     if project.count('/') == 1:
         project, subproject = project.split('/')
@@ -84,7 +84,7 @@ def start(project, subproject):
               help="Add a message to this frame")
 def stop(message):
     watson = get_watson()
-    stop_time = arrow.utcnow()
+    stop_time = arrow.now()
     current = watson.get('current')
 
     if not current or not current.get('project'):
