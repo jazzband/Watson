@@ -11,7 +11,7 @@ def get_watson():
     try:
         with open(WATSON_FILE) as f:
             return json.load(f)
-    except FileNotFoundError:
+    except IOError:
         return {}
     except ValueError:
         return {}
