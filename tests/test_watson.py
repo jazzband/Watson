@@ -3,7 +3,8 @@ import json
 import tempfile
 
 import pytest
-from click.testing import CliRunner
+import click
+import click.testing
 
 import watson
 
@@ -27,7 +28,7 @@ def watson_file(request):
 
 @pytest.fixture
 def runner():
-    return CliRunner()
+    return click.testing.CliRunner()
 
 
 # get_watson
@@ -48,6 +49,16 @@ def test_get_watson_empty_file(watson_file):
 def test_get_watson_nonexistent_file(watson_file):
     os.unlink(watson_file)
     assert watson.get_watson() == {}
+
+
+def test_get_watson_non_valid_json(watson_file):
+    content = "{'foo': bar}"
+
+    with open(watson_file, 'w+') as f:
+        f.write(content)
+
+    with pytest.raises(click.ClickException):
+        watson.get_watson()
 
 
 # save_watson

@@ -19,10 +19,18 @@ def get_watson():
             return json.load(f)
     except IOError:
         return {}
-    except ValueError:
-        return {}
+    except ValueError as e:
+        # If we get an error because the file is empty, we ignore
+        # it and return an empty dict. Otherwise, we raise
+        # an exception in order to avoid corrupting the file.
+        if os.path.getsize(WATSON_FILE) == 0:
+            return {}
+        else:
+            raise click.ClickException(
+                "Invalid Watson file {}: {}".format(WATSON_FILE, e)
+            )
     else:
-        raise click.FileError(
+        raise click.ClickException(
             "Impossible to open Watson file in {}".format(WATSON_FILE)
         )
 
@@ -35,7 +43,7 @@ def save_watson(content):
         with open(WATSON_FILE, 'w+') as f:
             return json.dump(content, f, indent=2)
     except OSError:
-        raise click.FileError(
+        raise click.ClickException(
             "Impossible to open Watson file in {}".format(WATSON_FILE)
         )
 
