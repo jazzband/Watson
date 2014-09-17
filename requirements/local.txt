@@ -8,3 +8,4 @@ Sphinx
 
 # Tests
 flake8
+pytest
