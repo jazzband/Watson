@@ -130,7 +130,7 @@ def stop(message):
 
     project = watson
     for name in current['project']:
-        if not name in project:
+        if name not in project:
             project['projects'][name] = {'frames': [], 'projects': {}}
         project = project['projects'][name]
 
