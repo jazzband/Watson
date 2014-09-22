@@ -48,17 +48,6 @@ def save_watson(content):
         )
 
 
-def project_name(project, subproject):
-    """
-    Helper to get the right display name of a project,
-    regarding if were are in a subproject or not.
-    """
-    if subproject:
-        return "{}/{}".format(project, subproject)
-    else:
-        return project
-
-
 @click.group()
 def cli():
     """
@@ -69,7 +58,7 @@ def cli():
     when you're done with the `stop` command.
 
     Projects can be divided in sub-projects by giving the projet and
-    the name of the sub-project to the `start` command.
+    the name of the sub-projects to the `start` command.
     """
     # This is the main command group, needed by click in order
     # to handle the subcommands
@@ -77,46 +66,37 @@ def cli():
 
 
 @cli.command()
-@click.argument('project')
-@click.argument('subproject', required=False)
-def start(project, subproject):
+@click.argument('project', nargs=-1)
+def start(project):
     """
     Start monitoring the time for the given project.
 
-    You can specify a subproject by separating the project
-    and the subproject by either a space or a `/`.
+    You can specify sub-projects by separating each name by
+    slashes (/) or spaces.
 
     \b
     Example :
-    $ watson start apollo11/reactor
+    $ watson start apollo11 reactor
     Starting apollo11/reactor at 16:34
     """
     watson = get_watson()
     start_time = arrow.now()
 
-    if project.count('/') == 1:
-        project, subproject = project.split('/')
+    project = [p for e in project for p in e.split('/')]
 
     if watson.get('current') is not None:
-        project = watson['current'].get('project', "?")
-        raise click.ClickException(
-            "Project {} is already started".format(
-                project_name(project, subproject)
-            )
-        )
+        raise click.ClickException("Project {} is already started".format(
+            "/".join(watson['current']['project'])
+        ))
 
-    click.echo(
-        ("Starting {} at {:HH:mm}"
-         .format(project_name(project, subproject), start_time.to('local')))
-    )
+    click.echo("Starting {} at {:HH:mm}".format(
+        "/".join(project), start_time.to('local')
+    ))
 
     watson['current'] = {
         'project': project,
         'start': str(start_time)
     }
-
-    if subproject:
-        watson['current']['subproject'] = subproject
 
     save_watson(watson)
 
@@ -126,7 +106,7 @@ def start(project, subproject):
               help="Add a message to this frame")
 def stop(message):
     """
-    Stop monitoring time for the current project or subproject
+    Stop monitoring time for the current project
 
     \b
     Example:
@@ -141,22 +121,18 @@ def stop(message):
         raise click.ClickException("No project started")
 
     start_time = arrow.get(current['start'])
-    click.echo(
-        ("Stopping project {}, started {}"
-         .format(
-             project_name(current['project'], current.get('subproject')),
-             start_time.humanize()
-         ))
-    )
+    click.echo("Stopping project {}, started {}".format(
+        "/".join(current['project']), start_time.humanize()
+    ))
 
     if not watson.get('projects'):
         watson['projects'] = {}
 
-    project = watson['projects'].get(current['project'])
-
-    if not project:
-        project = {'frames': []}
-        watson['projects'][current['project']] = project
+    project = watson
+    for name in current['project']:
+        if not name in project:
+            project['projects'][name] = {'frames': [], 'projects': {}}
+        project = project['projects'][name]
 
     frame = {
         'start': current['start'],
@@ -165,9 +141,6 @@ def stop(message):
 
     if message:
         frame['message'] = message
-
-    if current.get('subproject'):
-        frame['subproject'] = current['subproject']
 
     project['frames'].append(frame)
     del watson['current']
@@ -208,13 +181,9 @@ def status():
         click.echo("No project started")
         return
 
-    click.echo(
-        ("Project {} started {}"
-         .format(
-             project_name(current['project'], current.get('subproject')),
-             arrow.get(current['start']).humanize()
-         ))
-    )
+    click.echo("Project {} started {}".format(
+        "/".join(current['project']), arrow.get(current['start']).humanize()
+    ))
 
 if __name__ == '__main__':
     cli()

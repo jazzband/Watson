@@ -8,7 +8,7 @@ project with the `start` command, and you can stop the timer
 when you're done with the `stop` command.
 
 Projects can be divided in sub-projects by giving the projet and
-the name of the sub-project to the `start` command.
+the name of the sub-projects to the `start` command.
 
 ## Commands
 
@@ -16,17 +16,18 @@ the name of the sub-project to the `start` command.
 
 Start monitoring the time for the given project.
 
-You can specify a subproject by separating the project
-and the subproject by either a space or a `/`.
+You can specify sub-projects by separating each name by
+slashes (`/`) or spaces.
 
 ```
-$ watson start apollo11/reactor
+Example :
+$ watson start apollo11 reactor
 Starting apollo11/reactor at 16:34
 ```
 
 ### stop
 
-Stop monitoring time for the current project or subproject
+Stop monitoring time for the current project
 
 ```
 $ watson stop
