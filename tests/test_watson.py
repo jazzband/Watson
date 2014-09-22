@@ -97,34 +97,30 @@ def test_start_new_project(watson_file, runner):
         content = json.load(f)
 
     assert 'current' in content
-    assert content['current'].get('project') == 'test'
+    assert content['current'].get('project') == ['test']
     assert 'start' in content['current']
 
 
-def test_start_new_subproject(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo', 'bar'))
+def test_start_new_subprojects(watson_file, runner):
+    r = runner.invoke(watson.start, ('foo', 'bar', 'lol'))
     assert r.exit_code == 0
 
     with open(watson_file) as f:
         content = json.load(f)
 
     assert 'current' in content
-    assert content['current'].get('project') == 'foo'
-    assert 'start' in content['current']
-    assert content['current'].get('subproject') == 'bar'
+    assert content['current'].get('project') == ['foo', 'bar', 'lol']
 
 
-def test_start_new_subproject_with_slash(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo/bar',))
+def test_start_new_subprojects_with_slash(watson_file, runner):
+    r = runner.invoke(watson.start, ('foo/bar', 'lol', 'x/y'))
     assert r.exit_code == 0
 
     with open(watson_file) as f:
         content = json.load(f)
 
     assert 'current' in content
-    assert content['current'].get('project') == 'foo'
-    assert 'start' in content['current']
-    assert content['current'].get('subproject') == 'bar'
+    assert content['current'].get('project') == ['foo', 'bar', 'lol', 'x', 'y']
 
 
 def test_start_two_projects(watson_file, runner):
@@ -157,7 +153,7 @@ def test_stop_started_project(watson_file, runner):
 
 
 def test_stop_started_subproject(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo/bar',))
+    r = runner.invoke(watson.start, ('foo', 'bar', 'lol'))
     assert r.exit_code == 0
 
     r = runner.invoke(watson.stop)
@@ -168,12 +164,17 @@ def test_stop_started_subproject(watson_file, runner):
 
     assert 'current' not in content
     assert 'projects' in content
-    assert 'foo' in content['projects']
-    frames = content['projects']['foo'].get('frames')
-    assert len(frames) == 1
-    assert 'start' in frames[0]
-    assert 'stop' in frames[0]
-    assert frames[0].get('subproject') == 'bar'
+    foo = content['projects'].get('foo')
+    assert foo
+    assert foo.get('frames') == []
+    bar = foo['projects'].get('bar')
+    assert bar
+    assert bar.get('frames') == []
+    lol = bar['projects'].get('lol')
+    assert lol
+    assert len(lol['frames']) == 1
+    assert 'start' in lol['frames'][0]
+    assert 'stop' in lol['frames'][0]
 
 
 def test_stop_no_project(watson_file, runner):
