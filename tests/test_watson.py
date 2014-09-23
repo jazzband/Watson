@@ -252,8 +252,9 @@ def test_status_no_project(runner):
 
 # push
 
-def test_push(watson_conf, watson_file, runner):
-    content = {
+@pytest.fixture
+def project_tree():
+    return {
         "projects": {
             "A": {
                 "projects": {
@@ -302,8 +303,10 @@ def test_push(watson_conf, watson_file, runner):
         }
     }
 
+
+def test_push(watson_conf, watson_file, project_tree, runner):
     with open(watson_file, 'w') as f:
-        json.dump(content, f)
+        json.dump(project_tree, f)
 
     frames = [
         {"start": "01", "stop": "01", "project": ["A", "X", "foo"]},
@@ -351,3 +354,46 @@ def test_push(watson_conf, watson_file, runner):
     assert p["A"]['projects']["Y"]['frames'][0]['id'] == 4
     assert p["A"]['frames'][0]['id'] == 5
     assert p["B"]['frames'][1]['id'] == 6
+
+
+def test_push_force(watson_conf, watson_file, project_tree, runner):
+    with open(watson_file, 'w') as f:
+        json.dump(project_tree, f)
+
+    frames = [
+        {"start": "03", "stop": "03", "project": ["A", "X"], "id": 42},
+        {"start": "08", "stop": "08", "project": ["B"], "id": 24},
+    ]
+
+    class PutResponse:
+        def __init__(self):
+            self.status_code = 200
+
+    class PostResponse:
+        def __init__(self):
+            self.status_code = 201
+
+        def json(self):
+            return list(range(len(frames)))
+
+    with mock.patch('requests.put') as mock_put:
+        with mock.patch('requests.post') as mock_post:
+            mock_put.return_value = PutResponse()
+            mock_post.return_value = PostResponse()
+
+            r = runner.invoke(watson.push, ('-f',))
+            assert r.exit_code == 0
+
+            args = (watson_conf['crick']['url'] + '/frames/', mock.ANY)
+            kwargs = {
+                'headers': {
+                    'content-type': 'application/json',
+                    'Authorization': "Token " + watson_conf['crick']['token']
+                }
+            }
+            requests.post.assert_called_once_with(*args, **kwargs)
+            requests.put.assert_called_once_with(*args, **kwargs)
+
+            frames_received = json.loads(mock_put.call_args[0][1])['frames']
+            sort = lambda f: sorted(f, key=lambda e: e['id'])
+            assert sort(frames_received) == sort(frames)
