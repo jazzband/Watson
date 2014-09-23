@@ -7,6 +7,7 @@ import arrow
 import click
 
 WATSON_FILE = os.path.join(os.path.expanduser('~'), '.watson')
+WATSON_CONF = os.path.join(os.path.expanduser('~'), '.watson.conf')
 
 
 def get_watson():
@@ -184,6 +185,86 @@ def status():
     click.echo("Project {} started {}".format(
         "/".join(current['project']), arrow.get(current['start']).humanize()
     ))
+
+
+@cli.command()
+def push():
+    """
+    Push all the new frames to a Crick server.
+
+    The URL of the server and the User Token must be defined in a
+    `.watson.conf` file placed inside your directory.
+
+    \b
+    Example of `.watson.conf` file:
+    [crick]
+    url = http://localhost:4242
+    token = 7e329263e329646be79d6cc3b3af7bf48b6b1779
+
+    See https://bitbucket.org/tailordev/django-crick for more information.
+    """
+    import requests
+
+    try:
+        from ConfigParser import SafeConfigParser
+    except ImportError:
+        from configparser import SafeConfigParser
+
+    config = SafeConfigParser()
+    config.read(WATSON_CONF)
+
+    if 'crick' not in config or 'url' not in config['crick']:
+        raise click.ClickException((
+            "You must specify a remote URL by putting it in Watson's config"
+            " file at '{}'").format(WATSON_CONF)
+        )
+
+    dest = config['crick']['url']
+    token = config['crick']['token']
+
+    watson = get_watson()
+
+    def get_frames(parent, ancestors=None):
+        frames = []
+        if not ancestors:
+            ancestors = []
+
+        for name, project in parent['projects'].items():
+            for frame in project['frames']:
+                if 'id' in frame:
+                    continue
+
+                frame['project'] = ancestors + [name]
+                frames.append(frame)
+
+            frames += get_frames(project, ancestors + [name])
+        return frames
+
+    frames = sorted(get_frames(watson), key=lambda e: e['start'])
+
+    headers = {
+        'content-type': 'application/json',
+        'Authorization': "Token {}".format(token)
+    }
+    data = json.dumps({'frames': frames})
+    response = requests.post(dest + '/frames/', data, headers=headers)
+
+    if response.status_code != 201:
+        raise click.ClickException(
+            "An error occured with the remote server: {}".format(
+                response.json()
+            )
+        )
+
+    ids = response.json()
+
+    for frame, _id in zip(frames, ids):
+        frame['id'] = _id
+        del frame['project']
+
+    save_watson(watson)
+
+    click.echo("{} frames pushed to the server.".format(len(frames)))
 
 if __name__ == '__main__':
     cli()

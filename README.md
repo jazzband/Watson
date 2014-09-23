@@ -47,3 +47,19 @@ Display the time spent since the current project was started.
 $ watson status
 Project apollo11/reactor started seconds ago
 ```
+
+### push
+
+Push all the new frames to a Crick server.
+
+The URL of the server and the User Token must be defined in a `.watson.conf` file
+placed inside your directory.
+
+Example of `.watson.conf` file:
+```
+[crick]
+url = http://localhost:4242
+token = 7e329263e329646be79d6cc3b3af7bf48b6b1779
+```
+
+See [django-crick](https://bitbucket.org/tailordev/django-crick) for more information.
