@@ -55,6 +55,9 @@ Push all the new frames to a Crick server.
 The URL of the server and the User Token must be defined in a `.watson.conf` file
 placed inside your directory.
 
+If you give the '-f' (or '--force') flag to the command, it will
+also update all the existing frames on the server.
+
 Example of `.watson.conf` file:
 ```
 [crick]
