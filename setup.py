@@ -7,6 +7,7 @@ setup(
     install_requires=[
         'Click',
         'arrow',
+        'requests'
     ],
     entry_points='''
         [console_scripts]

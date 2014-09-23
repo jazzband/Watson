@@ -3,8 +3,10 @@ import json
 import tempfile
 
 import pytest
+import mock
 import click
 import click.testing
+import requests
 
 import watson
 
@@ -24,6 +26,37 @@ def watson_file(request):
     request.addfinalizer(clean)
 
     return name
+
+
+@pytest.fixture
+def watson_conf(request):
+    fd, name = tempfile.mkstemp()
+    os.fdopen(fd).close()
+    watson.WATSON_CONF = name
+
+    try:
+        from ConfigParser import SafeConfigParser
+    except ImportError:
+        from configparser import SafeConfigParser
+
+    config = SafeConfigParser()
+    config['crick'] = {
+        'url': 'http://localhost:8000/api',
+        'token': '7e329263e329646be79d6cc3b3af7bf48b6b1779'
+    }
+
+    with open(name, 'w+') as f:
+        config.write(f)
+
+    def clean():
+        try:
+            os.unlink(name)
+        except IOError:
+            pass
+
+    request.addfinalizer(clean)
+
+    return config
 
 
 @pytest.fixture
@@ -215,3 +248,106 @@ def test_status_project_started(runner):
 def test_status_no_project(runner):
     r = runner.invoke(watson.status)
     assert r.exit_code == 0
+
+
+# push
+
+def test_push(watson_conf, watson_file, runner):
+    content = {
+        "projects": {
+            "A": {
+                "projects": {
+                    "X": {
+                        "projects": {
+                            "foo": {
+                                "projects": {},
+                                "frames": [
+                                    {"start": "01", "stop": "01"},
+                                ]
+                            }
+                        },
+                        "frames": [
+                            {"start": "02", "stop": "02"},
+                            {"start": "03", "stop": "03", "id": 42},
+
+
+                        ]
+                    },
+                    "Y": {
+                        "projects": {
+                            "toto": {
+                                "projects": {},
+                                "frames": [
+                                    {"start": "04", "stop": "04"},
+                                    {"start": "05", "stop": "05"},
+                                ]
+                            }
+                        },
+                        "frames": [
+                            {"start": "06", "stop": "06"},
+                        ]
+                    }
+                },
+                "frames": [
+                    {"start": "07", "stop": "07"},
+                ]
+            },
+            "B": {
+                "projects": {},
+                "frames": [
+                    {"start": "08", "stop": "08", "id": 24},
+                    {"start": "09", "stop": "09"}
+                ]
+            }
+        }
+    }
+
+    with open(watson_file, 'w') as f:
+        json.dump(content, f)
+
+    frames = [
+        {"start": "01", "stop": "01", "project": ["A", "X", "foo"]},
+        {"start": "02", "stop": "02", "project": ["A", "X"]},
+        {"start": "04", "stop": "04", "project": ["A", "Y", "toto"]},
+        {"start": "05", "stop": "05", "project": ["A", "Y", "toto"]},
+        {"start": "06", "stop": "06", "project": ["A", "Y"]},
+        {"start": "07", "stop": "07", "project": ["A"]},
+        {"start": "09", "stop": "09", "project": ["B"]},
+    ]
+
+    class Response:
+        def __init__(self):
+            self.status_code = 201
+
+        def json(self):
+            return list(range(len(frames)))
+
+    with mock.patch('requests.post') as mock_post:
+        mock_post.return_value = Response()
+
+        r = runner.invoke(watson.push)
+        assert r.exit_code == 0
+
+        requests.post.assert_called_once_with(
+            watson_conf['crick']['url'] + '/frames/',
+            mock.ANY,
+            headers={
+                'content-type': 'application/json',
+                'Authorization': "Token " + watson_conf['crick']['token']
+            }
+        )
+
+        frames_received = json.loads(mock_post.call_args[0][1])['frames']
+        assert frames_received == frames
+
+    with open(watson_file) as f:
+        p = json.load(f).get('projects')
+        assert p
+
+    assert p["A"]['projects']["X"]['projects']["foo"]['frames'][0]['id'] == 0
+    assert p["A"]['projects']["X"]['frames'][0]['id'] == 1
+    assert p["A"]['projects']["Y"]['projects']["toto"]['frames'][0]['id'] == 2
+    assert p["A"]['projects']["Y"]['projects']["toto"]['frames'][1]['id'] == 3
+    assert p["A"]['projects']["Y"]['frames'][0]['id'] == 4
+    assert p["A"]['frames'][0]['id'] == 5
+    assert p["B"]['frames'][1]['id'] == 6
