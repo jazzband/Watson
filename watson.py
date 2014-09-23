@@ -188,12 +188,17 @@ def status():
 
 
 @cli.command()
-def push():
+@click.option('-f', '--force', is_flag=True,
+              help="Update the existing frames on the server.")
+def push(force):
     """
     Push all the new frames to a Crick server.
 
     The URL of the server and the User Token must be defined in a
     `.watson.conf` file placed inside your directory.
+
+    If you give the '-f' (or '--force') flag to the command, it will
+    also update all the existing frames on the server.
 
     \b
     Example of `.watson.conf` file:
@@ -224,7 +229,7 @@ def push():
 
     watson = get_watson()
 
-    def get_frames(parent, ancestors=None):
+    def get_frames(parent, ancestors=None, existing=False):
         frames = []
         if not ancestors:
             ancestors = []
@@ -232,39 +237,61 @@ def push():
         for name, project in parent['projects'].items():
             for frame in project['frames']:
                 if 'id' in frame:
-                    continue
+                    if not existing:
+                        continue
+                else:
+                    if existing:
+                        continue
 
                 frame['project'] = ancestors + [name]
                 frames.append(frame)
 
-            frames += get_frames(project, ancestors + [name])
+            frames += get_frames(project, ancestors + [name], existing)
         return frames
 
-    frames = sorted(get_frames(watson), key=lambda e: e['start'])
+    new_frames = sorted(get_frames(watson), key=lambda e: e['start'])
+
+    if force:
+        existing_frames = get_frames(watson, existing=True)
+    else:
+        existing_frames = []
 
     headers = {
         'content-type': 'application/json',
         'Authorization': "Token {}".format(token)
     }
-    data = json.dumps({'frames': frames})
-    response = requests.post(dest + '/frames/', data, headers=headers)
 
-    if response.status_code != 201:
-        raise click.ClickException(
-            "An error occured with the remote server: {}".format(
-                response.json()
+    if new_frames:
+        data = json.dumps({'frames': new_frames})
+        response = requests.post(dest + '/frames/', data, headers=headers)
+
+        if response.status_code != 201:
+            raise click.ClickException(
+                "An error occured with the remote server: {}".format(
+                    response.json()
+                )
             )
-        )
 
-    ids = response.json()
+        ids = response.json()
 
-    for frame, _id in zip(frames, ids):
-        frame['id'] = _id
-        del frame['project']
+        for frame, _id in zip(new_frames, ids):
+            frame['id'] = _id
+            del frame['project']
 
-    save_watson(watson)
+        save_watson(watson)
 
-    click.echo("{} frames pushed to the server.".format(len(frames)))
+    if existing_frames:
+        data = json.dumps({'frames': existing_frames})
+        response = requests.put(dest + '/frames/', data, headers=headers)
+
+        if response.status_code != 200:
+            raise click.ClickException(
+                "An error occured with the remote server: {}".format(
+                    response.json()
+                )
+            )
+
+    click.echo("{} frames pushed to the server.".format(len(new_frames)))
 
 if __name__ == '__main__':
     cli()
