@@ -297,7 +297,10 @@ def push(force):
 
     if new_frames:
         data = json.dumps({'frames': new_frames})
-        response = requests.post(dest + '/frames/', data, headers=headers)
+        try:
+            response = requests.post(dest + '/frames/', data, headers=headers)
+        except requests.ConnectionError:
+            raise click.ClickException("Unable to reach the server.")
 
         if response.status_code != 201:
             raise click.ClickException(
@@ -316,7 +319,10 @@ def push(force):
 
     if existing_frames:
         data = json.dumps({'frames': existing_frames})
-        response = requests.put(dest + '/frames/', data, headers=headers)
+        try:
+            response = requests.put(dest + '/frames/', data, headers=headers)
+        except requests.ConnectionError:
+            raise click.ClickException("Unable to reach the server.")
 
         if response.status_code != 200:
             raise click.ClickException(
