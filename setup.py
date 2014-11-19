@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='watson',
     version='0.1',
-    py_modules=['watson'],
+    py_modules=['watson', 'gui'],
     install_requires=[
         'Click',
         'arrow',
