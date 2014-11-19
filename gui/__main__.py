@@ -3,10 +3,9 @@ import subprocess
 
 import arrow
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QState, QStateMachine
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (QApplication, QSystemTrayIcon, QMessageBox, QMenu,
-                             QAction, QInputDialog)
+from PySide.QtCore import Signal, Slot, QState, QStateMachine
+from PySide.QtGui import (QApplication, QSystemTrayIcon, QMessageBox, QMenu,
+                          QAction, QInputDialog, QIcon)
 
 from . import resources  # noqa
 
@@ -90,9 +89,9 @@ class Watson(object):
 
 
 class SysTray(QSystemTrayIcon):
-    clicked = pyqtSignal()
-    start = pyqtSignal()
-    stop = pyqtSignal()
+    clicked = Signal()
+    start = Signal()
+    stop = Signal()
 
     def __init__(self, *args, **kwargs):
         super(SysTray, self).__init__(*args, **kwargs)
@@ -149,7 +148,7 @@ class SysTray(QSystemTrayIcon):
         self.machine.start()
         self.show()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_activated(self, reason):
         if reason == self.Context:
             return
