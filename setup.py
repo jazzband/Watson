@@ -9,6 +9,9 @@ setup(
         'arrow',
         'requests'
     ],
+    extras_require={
+        'gui': ['PySide']
+    },
     entry_points={
         'console_scripts': [
             'watson = watson:cli',
