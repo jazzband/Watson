@@ -90,6 +90,9 @@ def start(project):
             "/".join(watson['current']['project'])
         ))
 
+    if not project:
+        raise click.ClickException("No project given.")
+
     click.echo("Starting {} at {:HH:mm}".format(
         "/".join(project), start_time.to('local')
     ))
@@ -131,7 +134,7 @@ def stop(message):
 
     project = watson
     for name in current['project']:
-        if name not in project:
+        if name not in project['projects']:
             project['projects'][name] = {'frames': [], 'projects': {}}
         project = project['projects'][name]
 
@@ -188,6 +191,37 @@ def status():
 
 
 @cli.command()
+def projects():
+    """
+    Display the list of all the existing projects.
+
+    \b
+    Example:
+    $ watson projects
+    apollo11
+    apollo11/reactor
+    apollo11/module
+    apollo11/lander
+    hubble
+    voyager1
+    voyager2
+    """
+    watson = get_watson()
+
+    def get_projects(project, ancestors):
+        result = []
+
+        for name, child in project.get('projects', {}).items():
+            result.append(ancestors + [name])
+            result += get_projects(child, ancestors + [name])
+
+        return result
+
+    for project in sorted(get_projects(watson, [])):
+        click.echo('/'.join(project))
+
+
+@cli.command()
 @click.option('-f', '--force', is_flag=True,
               help="Update the existing frames on the server.")
 def push(force):
@@ -195,7 +229,7 @@ def push(force):
     Push all the new frames to a Crick server.
 
     The URL of the server and the User Token must be defined in a
-    `.watson.conf` file placed inside your directory.
+    `.watson.conf` file placed inside your user directory.
 
     If you give the '-f' (or '--force') flag to the command, it will
     also update all the existing frames on the server.
@@ -263,7 +297,10 @@ def push(force):
 
     if new_frames:
         data = json.dumps({'frames': new_frames})
-        response = requests.post(dest + '/frames/', data, headers=headers)
+        try:
+            response = requests.post(dest + '/frames/', data, headers=headers)
+        except requests.ConnectionError:
+            raise click.ClickException("Unable to reach the server.")
 
         if response.status_code != 201:
             raise click.ClickException(
@@ -282,7 +319,10 @@ def push(force):
 
     if existing_frames:
         data = json.dumps({'frames': existing_frames})
-        response = requests.put(dest + '/frames/', data, headers=headers)
+        try:
+            response = requests.put(dest + '/frames/', data, headers=headers)
+        except requests.ConnectionError:
+            raise click.ClickException("Unable to reach the server.")
 
         if response.status_code != 200:
             raise click.ClickException(

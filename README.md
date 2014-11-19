@@ -48,12 +48,27 @@ $ watson status
 Project apollo11/reactor started seconds ago
 ```
 
+### projects
+
+Display the list of all the existing projects.
+
+```
+$ watson projects
+apollo11
+apollo11/reactor
+apollo11/module
+apollo11/lander
+hubble
+voyager1
+voyager2
+```
+
 ### push
 
 Push all the new frames to a Crick server.
 
 The URL of the server and the User Token must be defined in a `.watson.conf` file
-placed inside your directory.
+placed inside your user directory.
 
 If you give the '-f' (or '--force') flag to the command, it will
 also update all the existing frames on the server.
