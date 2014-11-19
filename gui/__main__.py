@@ -63,6 +63,12 @@ class Watson(object):
     def projects(self):
         return self._run('projects').split('\n')
 
+    def push(self):
+        if self._run('push') is not None:
+            self.systray.showMessage(
+                "Watson", "Watson has been synchronized."
+            )
+
     def get_project(self):
         projects = self.projects()
         current = 0
@@ -93,12 +99,16 @@ class SysTray(QSystemTrayIcon):
 
         self.watson = Watson(self)
 
-        self.start_action = QAction("&Start", self)
-        self.stop_action = QAction("&Stop", self)
+        self.start_action = QAction("St&art", self)
+        self.stop_action = QAction("St&op", self)
 
         self.menu = QMenu()
         self.menu.addAction(self.start_action)
         self.menu.addAction(self.stop_action)
+        self.menu.addSeparator()
+        self.menu.addAction(
+            QAction("&Synchronize", self, triggered=self.watson.push)
+        )
         self.menu.addSeparator()
         self.menu.addAction(
             QAction("&Quit", self, triggered=self.quit)
