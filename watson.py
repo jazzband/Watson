@@ -90,6 +90,9 @@ def start(project):
             "/".join(watson['current']['project'])
         ))
 
+    if not project:
+        raise click.ClickException("No project given.")
+
     click.echo("Starting {} at {:HH:mm}".format(
         "/".join(project), start_time.to('local')
     ))
