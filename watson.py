@@ -191,6 +191,37 @@ def status():
 
 
 @cli.command()
+def projects():
+    """
+    Display the list of all the existing projects.
+
+    \b
+    Example:
+    $ watson projects
+    apollo11
+    apollo11/reactor
+    apollo11/module
+    apollo11/lander
+    hubble
+    voyager1
+    voyager2
+    """
+    watson = get_watson()
+
+    def get_projects(project, ancestors):
+        result = []
+
+        for name, child in project.get('projects', {}).items():
+            result.append(ancestors + [name])
+            result += get_projects(child, ancestors + [name])
+
+        return result
+
+    for project in sorted(get_projects(watson, [])):
+        click.echo('/'.join(project))
+
+
+@cli.command()
 @click.option('-f', '--force', is_flag=True,
               help="Update the existing frames on the server.")
 def push(force):

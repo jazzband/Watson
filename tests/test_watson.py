@@ -397,3 +397,20 @@ def test_push_force(watson_conf, watson_file, project_tree, runner):
             frames_received = json.loads(mock_put.call_args[0][1])['frames']
             sort = lambda f: sorted(f, key=lambda e: e['id'])
             assert sort(frames_received) == sort(frames)
+
+
+# projects
+
+def test_projects(watson_file, project_tree, runner):
+    with open(watson_file, 'w') as f:
+        json.dump(project_tree, f)
+
+    r = runner.invoke(watson.projects)
+    assert r.output.split('\n')[:-1] == [
+        'A',
+        'A/X',
+        'A/X/foo',
+        'A/Y',
+        'A/Y/toto',
+        'B'
+    ]
