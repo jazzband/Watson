@@ -6,30 +6,11 @@ import arrow
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QState, QStateMachine
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QSystemTrayIcon, QMessageBox, QMenu,
-                             QAction, QInputDialog, QDialog, QLineEdit, QLabel)
+                             QAction, QInputDialog)
 
 from . import resources  # noqa
 
 app = None
-
-
-class ProjectSelector(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(ProjectSelector, self).__init__(*args, **kwargs)
-
-        self.input = QLineEdit(self)
-        self.label = QLabel("Project:", self)
-        self.label.setBuddy(self.input)
-
-    @classmethod
-    def get(cls, *args, **kwargs):
-        dialog = cls(*args, **kwargs)
-        code = dialog.exec_()
-
-        if code != cls.Accepted:
-            return
-
-        return dialog.input.value()
 
 
 class Watson(object):
