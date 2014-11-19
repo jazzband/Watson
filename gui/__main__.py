@@ -8,7 +8,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QSystemTrayIcon, QMessageBox, QMenu,
                              QAction, QInputDialog, QDialog, QLineEdit, QLabel)
 
-import resources  # noqa
+from . import resources  # noqa
 
 app = None
 

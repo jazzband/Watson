@@ -9,8 +9,12 @@ setup(
         'arrow',
         'requests'
     ],
-    entry_points='''
-        [console_scripts]
-        watson=watson:cli
-    ''',
+    entry_points={
+        'console_scripts': [
+            'watson = watson:cli',
+        ],
+        'gui_scripts': [
+            'watson-systray = gui.__main__:main',
+        ]
+    }
 )
