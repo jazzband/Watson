@@ -74,8 +74,8 @@ class Watson(object):
         config = ConfigParser()
         config.read(WATSON_CONF)
 
-        if ('crick' not in config or
-                not all(k in config['crick'] for k in ('url', 'token'))):
+        if not config.has_option('crick', 'url') \
+                or not config.has_option('crick', 'token'):
             raise WatsonError(
                 "You must specify a remote URL and a token by putting it in"
                 "Watson's config file at '{}'".format(WATSON_CONF)
@@ -237,8 +237,8 @@ class Watson(object):
 
         config = self.config
 
-        dest = config['crick']['url'] + '/frames/'
-        token = config['crick']['token']
+        dest = config.get('crick', 'url') + '/frames/'
+        token = config.get('crick', 'token')
 
         new_frames = self.frames(upstream=False)
 
