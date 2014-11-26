@@ -1,12 +1,28 @@
+import sys
 import json
 
-from unittest import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 import pytest
 import requests
 
 from watson import Watson, WatsonError
 from watson.watson import ConfigParser
+
+PY2 = sys.version_info[0] == 2
+
+if not PY2:
+    builtins = 'builtins'
+else:
+    builtins = '__builtin__'
 
 
 @pytest.fixture
@@ -21,7 +37,7 @@ def test_init():
         {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
     )
 
-    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         watson = Watson()
 
     assert watson.tree
@@ -33,7 +49,7 @@ def test_init():
 
 
 def test_init_with_empty_file():
-    with mock.patch('builtins.open', mock.mock_open(read_data="")):
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
         with mock.patch('os.path.getsize', return_value=0):
             watson = Watson()
 
@@ -44,7 +60,7 @@ def test_init_with_empty_file():
 
 
 def test_init_with_nonexistent_file():
-    with mock.patch('builtins.open', side_effect=IOError):
+    with mock.patch('%s.open' % builtins, side_effect=IOError):
         watson = Watson()
 
     assert watson.tree
@@ -56,7 +72,7 @@ def test_init_with_nonexistent_file():
 def test_init_watson_non_valid_json():
     content = "{'foo': bar}"
 
-    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         with pytest.raises(WatsonError):
             Watson()
 
@@ -66,7 +82,7 @@ def test_init_with_content():
         {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
     )
 
-    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         watson = Watson({'projects': {'bar': {}}})
 
     assert watson.current is None
@@ -79,7 +95,7 @@ def test_init_with_empty_content():
         {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
     )
 
-    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         watson = Watson({})
 
     assert watson.current is None
@@ -89,42 +105,42 @@ def test_init_with_empty_content():
 # config
 
 def test_config(watson):
-    content = """
+    content = u"""
 [crick]
 url = foo
 token = bar
     """
-    mocked_read = lambda self, name: self.read_string(content)
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
         config = watson.config
-        assert 'crick' in config
-        assert config['crick'] == {'url': 'foo', 'token': 'bar'}
+        assert config.get('crick', 'url') == 'foo'
+        assert config.get('crick', 'token') == 'bar'
 
 
 def test_config_without_url(watson):
-    content = """
+    content = u"""
 [crick]
 token = bar
     """
-    mocked_read = lambda self, name: self.read_string(content)
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
         with pytest.raises(WatsonError):
             watson.config
 
 
 def test_config_without_token(watson):
-    content = """
+    content = u"""
 [crick]
 token = bar
     """
-    mocked_read = lambda self, name: self.read_string(content)
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
         with pytest.raises(WatsonError):
             watson.config
 
 
 def test_no_config(watson):
-    with mock.patch('builtins.open', side_effect=IOError):
+    with mock.patch('%s.open' % builtins, side_effect=IOError):
         with pytest.raises(WatsonError):
             watson.config
 
@@ -295,7 +311,10 @@ def project_tree():
 def test_push(project_tree):
     watson = Watson(project_tree)
 
-    config = {'crick': {'url': 'http://foo.com', 'token': 'toto'}}
+    config = ConfigParser()
+    config.add_section('crick')
+    config.set('crick', 'url', 'http://foo.com')
+    config.set('crick', 'token', 'bar')
 
     frames = [
         {"start": "01", "stop": "01", "project": ["A", "X", "foo"]},
@@ -324,11 +343,11 @@ def test_push(project_tree):
             watson.push()
 
         requests.post.assert_called_once_with(
-            config['crick']['url'] + '/frames/',
+            config.get('crick', 'url') + '/frames/',
             mock.ANY,
             headers={
                 'content-type': 'application/json',
-                'Authorization': "Token " + config['crick']['token']
+                'Authorization': "Token " + config.get('crick', 'token')
             }
         )
 
@@ -349,7 +368,10 @@ def test_push(project_tree):
 def test_push_force(project_tree):
     watson = Watson(project_tree)
 
-    config = {'crick': {'url': 'http://foo.com/', 'token': 'toto'}}
+    config = ConfigParser()
+    config.add_section('crick')
+    config.set('crick', 'url', 'http://foo.com')
+    config.set('crick', 'token', 'bar')
 
     frames = [
         {"start": "03", "stop": "03", "project": ["A", "X"], "id": 42},
@@ -378,11 +400,11 @@ def test_push_force(project_tree):
                 mock_config.return_value = config
                 watson.push(force=True)
 
-            args = (config['crick']['url'] + '/frames/', mock.ANY)
+            args = (config.get('crick', 'url') + '/frames/', mock.ANY)
             kwargs = {
                 'headers': {
                     'content-type': 'application/json',
-                    'Authorization': "Token " + config['crick']['token']
+                    'Authorization': "Token " + config.get('crick', 'token')
                 }
             }
             requests.post.assert_called_once_with(*args, **kwargs)
