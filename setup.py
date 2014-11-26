@@ -14,7 +14,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'watson = watson:cli',
+            'watson = watson.__main__:cli',
         ],
         'gui_scripts': [
             'watson-systray = gui.__main__:main',

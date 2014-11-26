@@ -1,203 +1,211 @@
-import os
 import json
-import tempfile
+
+from unittest import mock
 
 import pytest
-import mock
-import click
-import click.testing
 import requests
 
-import watson
+from watson import Watson, WatsonError
+from watson.watson import ConfigParser
 
 
 @pytest.fixture
-def watson_file(request):
-    fd, name = tempfile.mkstemp()
-    os.fdopen(fd).close()
-    watson.WATSON_FILE = name
-
-    def clean():
-        try:
-            os.unlink(name)
-        except IOError:
-            pass
-
-    request.addfinalizer(clean)
-
-    return name
+def watson():
+    return Watson({})
 
 
-@pytest.fixture
-def watson_conf(request):
-    fd, name = tempfile.mkstemp()
-    os.fdopen(fd).close()
-    watson.WATSON_CONF = name
+# init
 
-    try:
-        from ConfigParser import SafeConfigParser
-    except ImportError:
-        from configparser import SafeConfigParser
+def test_init():
+    content = json.dumps(
+        {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
+    )
 
-    config = SafeConfigParser()
-    config['crick'] = {
-        'url': 'http://localhost:8000/api',
-        'token': '7e329263e329646be79d6cc3b3af7bf48b6b1779'
-    }
+    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+        watson = Watson()
 
-    with open(name, 'w+') as f:
-        config.write(f)
-
-    def clean():
-        try:
-            os.unlink(name)
-        except IOError:
-            pass
-
-    request.addfinalizer(clean)
-
-    return config
+    assert watson.tree
+    assert 'projects' in watson.tree
+    assert 'foo' in watson.tree['projects']
+    assert watson.current
+    assert watson.current['project'] == 'foo'
+    assert watson.current['start']
 
 
-@pytest.fixture
-def runner():
-    return click.testing.CliRunner()
+def test_init_with_empty_file():
+    with mock.patch('builtins.open', mock.mock_open(read_data="")):
+        with mock.patch('os.path.getsize', return_value=0):
+            watson = Watson()
+
+    assert watson.tree
+    assert 'projects' in watson.tree
+    assert watson.tree['projects'] == {}
+    assert not watson.current
 
 
-# get_watson
+def test_init_with_nonexistent_file():
+    with mock.patch('builtins.open', side_effect=IOError):
+        watson = Watson()
 
-def test_get_watson(watson_file):
-    content = {'foo': 'bar'}
-
-    with open(watson_file, 'w+') as f:
-        json.dump(content, f)
-
-    assert watson.get_watson() == content
-
-
-def test_get_watson_empty_file(watson_file):
-    assert watson.get_watson() == {}
+    assert watson.tree
+    assert 'projects' in watson.tree
+    assert watson.tree['projects'] == {}
+    assert not watson.current
 
 
-def test_get_watson_nonexistent_file(watson_file):
-    os.unlink(watson_file)
-    assert watson.get_watson() == {}
-
-
-def test_get_watson_non_valid_json(watson_file):
+def test_init_watson_non_valid_json():
     content = "{'foo': bar}"
 
-    with open(watson_file, 'w+') as f:
-        f.write(content)
-
-    with pytest.raises(click.ClickException):
-        watson.get_watson()
+    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+        with pytest.raises(WatsonError):
+            Watson()
 
 
-# save_watson
+def test_init_with_content():
+    content = json.dumps(
+        {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
+    )
 
-def test_save_watson(watson_file):
-    content = {'test': 1234}
+    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+        watson = Watson({'projects': {'bar': {}}})
 
-    watson.save_watson(content)
+    assert watson.current is None
+    assert 'bar' in watson.tree['projects']
+    assert 'foo' not in watson.tree['projects']
 
-    with open(watson_file) as f:
-        assert json.load(f) == content
+
+def test_init_with_empty_content():
+    content = json.dumps(
+        {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
+    )
+
+    with mock.patch('builtins.open', mock.mock_open(read_data=content)):
+        watson = Watson({})
+
+    assert watson.current is None
+    assert not watson.tree['projects']
 
 
-def test_save_watson_nonexistent_file(watson_file):
-    content = {'Obi-Wan': 'Kenobi'}
+# config
 
-    # We delete the tmp file and let save_watson
-    # create it again. This is a race-condition,
-    # as another process could have created
-    # a file with the same name in the
-    # meantime. However it is very unlikely.
-    os.unlink(watson_file)
-    watson.save_watson(content)
+def test_config(watson):
+    content = """
+[crick]
+url = foo
+token = bar
+    """
+    mocked_read = lambda self, name: self.read_string(content)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        config = watson.config
+        assert 'crick' in config
+        assert config['crick'] == {'url': 'foo', 'token': 'bar'}
 
-    with open(watson_file) as f:
-        assert json.load(f) == content
+
+def test_config_without_url(watson):
+    content = """
+[crick]
+token = bar
+    """
+    mocked_read = lambda self, name: self.read_string(content)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        with pytest.raises(WatsonError):
+            watson.config
+
+
+def test_config_without_token(watson):
+    content = """
+[crick]
+token = bar
+    """
+    mocked_read = lambda self, name: self.read_string(content)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        with pytest.raises(WatsonError):
+            watson.config
+
+
+def test_no_config(watson):
+    with mock.patch('builtins.open', side_effect=IOError):
+        with pytest.raises(WatsonError):
+            watson.config
+
+
+# dump
+
+def test_dump_when_not_started():
+    content = {'projects': {'foo': {}}}
+    watson = Watson(content)
+    dump = watson.dump()
+
+    assert id(dump) != id(content)
+    assert dump == content
+
+
+def test_dump_when_started():
+    content = {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
+    watson = Watson(content)
+    dump = watson.dump()
+
+    assert id(dump) != id(content)
+    assert 'projects' in dump
+    assert dump['projects'] == content['projects']
+    assert 'current' in dump
+    assert 'project' in dump['current']
+    assert dump['current']['project'] == 'foo'
+    assert 'start' in dump['current']
 
 
 # start
 
-def test_start_new_project(watson_file, runner):
-    r = runner.invoke(watson.start, ('test',))
-    assert r.exit_code == 0
+def test_start_new_project(watson):
+    watson.start('foo')
 
-    with open(watson_file) as f:
-        content = json.load(f)
-
-    assert 'current' in content
-    assert content['current'].get('project') == ['test']
-    assert 'start' in content['current']
+    assert watson.current
+    assert watson.is_started is True
+    assert watson.current.get('project') == 'foo'
+    assert watson.current.get('start')
 
 
-def test_start_new_subprojects(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo', 'bar', 'lol'))
-    assert r.exit_code == 0
+def test_start_new_subprojects(watson):
+    watson.start('foo/bar/lol')
 
-    with open(watson_file) as f:
-        content = json.load(f)
-
-    assert 'current' in content
-    assert content['current'].get('project') == ['foo', 'bar', 'lol']
+    assert watson.current
+    assert watson.is_started is True
+    assert watson.current.get('project') == 'foo/bar/lol'
 
 
-def test_start_new_subprojects_with_slash(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo/bar', 'lol', 'x/y'))
-    assert r.exit_code == 0
+def test_start_two_projects(watson):
+    watson.start('foo')
 
-    with open(watson_file) as f:
-        content = json.load(f)
+    with pytest.raises(WatsonError):
+        watson.start('bar')
 
-    assert 'current' in content
-    assert content['current'].get('project') == ['foo', 'bar', 'lol', 'x', 'y']
-
-
-def test_start_two_projects(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo',))
-    assert r.exit_code == 0
-
-    r = runner.invoke(watson.start, ('bar',))
-    assert r.exit_code != 0
+    assert watson.current
+    assert watson.current['project'] == 'foo'
+    assert watson.is_started is True
 
 
 # stop
 
-def test_stop_started_project(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo',))
-    assert r.exit_code == 0
+def test_stop_started_project(watson):
+    watson.start('foo')
+    watson.stop('foo')
 
-    r = runner.invoke(watson.stop)
-    assert r.exit_code == 0
-
-    with open(watson_file) as f:
-        content = json.load(f)
-
-    assert 'current' not in content
-    assert 'projects' in content
-    assert 'foo' in content['projects']
-    frames = content['projects']['foo'].get('frames')
+    assert watson.current is None
+    assert watson.is_started is False
+    assert 'foo' in watson.tree.get('projects')
+    frames = watson.tree['projects']['foo'].get('frames')
     assert len(frames) == 1
     assert 'start' in frames[0]
     assert 'stop' in frames[0]
 
 
-def test_stop_started_subproject(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo', 'bar', 'lol'))
-    assert r.exit_code == 0
+def test_stop_started_subproject(watson):
+    watson.start('foo/bar/lol')
+    watson.stop()
 
-    r = runner.invoke(watson.stop)
-    assert r.exit_code == 0
-
-    with open(watson_file) as f:
-        content = json.load(f)
-
-    assert 'current' not in content
-    assert 'projects' in content
-    foo = content['projects'].get('foo')
+    assert watson.current is None
+    assert watson.is_started is False
+    foo = watson.tree['projects'].get('foo')
     assert foo
     assert foo.get('frames') == []
     bar = foo['projects'].get('bar')
@@ -210,44 +218,24 @@ def test_stop_started_subproject(watson_file, runner):
     assert 'stop' in lol['frames'][0]
 
 
-def test_stop_no_project(watson_file, runner):
-    r = runner.invoke(watson.stop)
-    assert r.exit_code != 0
+def test_stop_no_project(watson):
+    with pytest.raises(WatsonError):
+        watson.stop()
 
 
 # cancel
 
-def test_cancel_started_project(watson_file, runner):
-    r = runner.invoke(watson.start, ('foo',))
-    assert r.exit_code == 0
+def test_cancel_started_project(watson):
+    watson.start('foo')
+    watson.cancel()
 
-    r = runner.invoke(watson.stop)
-    assert r.exit_code == 0
-
-    with open(watson_file) as f:
-        content = json.load(f)
-
-    assert 'current' not in content
+    assert watson.current is None
+    assert 'foo' not in watson.tree['projects']
 
 
-def test_cancel_no_project(watson_file, runner):
-    r = runner.invoke(watson.stop)
-    assert r.exit_code != 0
-
-
-# status
-
-def test_status_project_started(runner):
-    r = runner.invoke(watson.start, ('foo',))
-    assert r.exit_code == 0
-
-    r = runner.invoke(watson.status)
-    assert r.exit_code == 0
-
-
-def test_status_no_project(runner):
-    r = runner.invoke(watson.status)
-    assert r.exit_code == 0
+def test_cancel_no_project(watson):
+    with pytest.raises(WatsonError):
+        watson.cancel()
 
 
 # push
@@ -304,9 +292,10 @@ def project_tree():
     }
 
 
-def test_push(watson_conf, watson_file, project_tree, runner):
-    with open(watson_file, 'w') as f:
-        json.dump(project_tree, f)
+def test_push(project_tree):
+    watson = Watson(project_tree)
+
+    config = {'crick': {'url': 'http://foo.com', 'token': 'toto'}}
 
     frames = [
         {"start": "01", "stop": "01", "project": ["A", "X", "foo"]},
@@ -328,24 +317,25 @@ def test_push(watson_conf, watson_file, project_tree, runner):
     with mock.patch('requests.post') as mock_post:
         mock_post.return_value = Response()
 
-        r = runner.invoke(watson.push)
-        assert r.exit_code == 0
+        with mock.patch.object(
+                Watson, 'config', new_callable=mock.PropertyMock
+                ) as mock_config:
+            mock_config.return_value = config
+            watson.push()
 
         requests.post.assert_called_once_with(
-            watson_conf['crick']['url'] + '/frames/',
+            config['crick']['url'] + '/frames/',
             mock.ANY,
             headers={
                 'content-type': 'application/json',
-                'Authorization': "Token " + watson_conf['crick']['token']
+                'Authorization': "Token " + config['crick']['token']
             }
         )
 
         frames_received = json.loads(mock_post.call_args[0][1])['frames']
         assert frames_received == frames
 
-    with open(watson_file) as f:
-        p = json.load(f).get('projects')
-        assert p
+    p = watson.tree['projects']
 
     assert p["A"]['projects']["X"]['projects']["foo"]['frames'][0]['id'] == 0
     assert p["A"]['projects']["X"]['frames'][0]['id'] == 1
@@ -356,9 +346,10 @@ def test_push(watson_conf, watson_file, project_tree, runner):
     assert p["B"]['frames'][1]['id'] == 6
 
 
-def test_push_force(watson_conf, watson_file, project_tree, runner):
-    with open(watson_file, 'w') as f:
-        json.dump(project_tree, f)
+def test_push_force(project_tree):
+    watson = Watson(project_tree)
+
+    config = {'crick': {'url': 'http://foo.com/', 'token': 'toto'}}
 
     frames = [
         {"start": "03", "stop": "03", "project": ["A", "X"], "id": 42},
@@ -381,14 +372,17 @@ def test_push_force(watson_conf, watson_file, project_tree, runner):
             mock_put.return_value = PutResponse()
             mock_post.return_value = PostResponse()
 
-            r = runner.invoke(watson.push, ('-f',))
-            assert r.exit_code == 0
+            with mock.patch.object(
+                    Watson, 'config', new_callable=mock.PropertyMock
+                    ) as mock_config:
+                mock_config.return_value = config
+                watson.push(force=True)
 
-            args = (watson_conf['crick']['url'] + '/frames/', mock.ANY)
+            args = (config['crick']['url'] + '/frames/', mock.ANY)
             kwargs = {
                 'headers': {
                     'content-type': 'application/json',
-                    'Authorization': "Token " + watson_conf['crick']['token']
+                    'Authorization': "Token " + config['crick']['token']
                 }
             }
             requests.post.assert_called_once_with(*args, **kwargs)
@@ -401,12 +395,10 @@ def test_push_force(watson_conf, watson_file, project_tree, runner):
 
 # projects
 
-def test_projects(watson_file, project_tree, runner):
-    with open(watson_file, 'w') as f:
-        json.dump(project_tree, f)
+def test_projects(project_tree):
+    watson = Watson(project_tree)
 
-    r = runner.invoke(watson.projects)
-    assert r.output.split('\n')[:-1] == [
+    assert watson.projects() == [
         'A',
         'A/X',
         'A/X/foo',
@@ -414,3 +406,7 @@ def test_projects(watson_file, project_tree, runner):
         'A/Y/toto',
         'B'
     ]
+
+
+def test_projects_empty(watson, project_tree):
+    assert watson.projects() == []
