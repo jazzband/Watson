@@ -108,7 +108,10 @@ def cancel(watson):
     Cancel the last call to the start command. The time will
     not be recorded.
     """
-    watson.cancel()
+    old = watson.cancel()
+    click.echo("Canceling the timer for project {}".format(
+        style('project', old['project'])
+    ))
     watson.save()
 
 
