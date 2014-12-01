@@ -1,11 +1,39 @@
 # -*- coding: utf-8 -*-
 
+import itertools
+
 import click
 
 from . import watson
 
 
-watson.WatsonError = click.ClickException
+def style(type, string):
+    def _style_project(project):
+        colors = itertools.cycle(('magenta', 'blue', 'yellow'))
+        return '/'.join(
+            click.style(p, fg=c) for p, c in zip(project.split('/'), colors)
+        )
+
+    styles = {
+        'project': _style_project,
+        'time': {'fg': 'green'},
+        'error': {'fg': 'red'},
+    }
+
+    style = styles.get(type, {})
+
+    if isinstance(style, dict):
+        return click.style(string, **style)
+    else:
+        return style(string)
+
+
+class WatsonCliError(click.ClickException):
+    def format_message(self):
+        return style('error', self.message)
+
+
+watson.WatsonError = WatsonCliError
 
 
 @click.group()
@@ -45,8 +73,9 @@ def start(watson, project):
     project = '/'.join(project)
 
     current = watson.start(project)
-    click.echo("Starting {} at {:HH:mm}".format(
-        project, current['start'].to('local')
+    click.echo("Starting {} at {}".format(
+        style('project', project),
+        style('time', "{:HH:mm}".format(current['start'].to('local')))
     ))
     watson.save()
 
@@ -65,8 +94,9 @@ def stop(watson, message):
     Stopping project apollo11/reactor, started a minute ago
     """
     old = watson.stop(message)
-    click.echo("Stopping project {}, started {}".format(
-        old['project'], old['start'].humanize()
+    click.echo("Stopping project {}, started {}.".format(
+        style('project', old['project']),
+        style('time', old['start'].humanize())
     ))
     watson.save()
 
@@ -99,7 +129,8 @@ def status(watson):
 
     current = watson.current
     click.echo("Project {} started {}".format(
-        current['project'], current['start'].humanize()
+        style('project', current['project']),
+        style('time', current['start'].humanize())
     ))
 
 
@@ -121,7 +152,7 @@ def projects(watson):
     voyager2
     """
     for project in watson.projects():
-        click.echo(project)
+        click.echo(style('project', project))
 
 
 @cli.command()
