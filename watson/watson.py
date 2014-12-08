@@ -66,6 +66,15 @@ class Watson(object):
                 "Impossible to open Watson file in {}".format(self.filename)
             )
 
+    def _parse_date(self, date):
+        return arrow.Arrow.utcfromtimestamp(date)
+
+    def _format_date(self, date):
+        if not isinstance(date, arrow.Arrow):
+            date = arrow.get(date)
+
+        return date.timestamp
+
     @property
     def config(self):
         """
@@ -93,7 +102,7 @@ class Watson(object):
             current = self.current
             content['current'] = {
                 'project': current['project'],
-                'start': str(current['start'])
+                'start': self._format_date(current['start'])
             }
 
         return content
@@ -123,7 +132,10 @@ class Watson(object):
             self._current = None
             return
 
-        start = arrow.get(value.get('start', arrow.now()))
+        start = value.get('start', arrow.now())
+
+        if isinstance(start, str):
+            start = self._parse_date(start)
 
         self._current = {
             'project': value['project'],
@@ -203,8 +215,8 @@ class Watson(object):
         Add a new frame to the given project
         """
         frame = {
-            'start': str(start),
-            'stop': str(stop),
+            'start': self._format_date(start),
+            'stop': self._format_date(stop),
         }
 
         if message:
@@ -226,8 +238,8 @@ class Watson(object):
 
                         'id': raw_frame.get('id'),
 
-                        'start': arrow.get(raw_frame['start']),
-                        'stop': arrow.get(raw_frame['stop'])
+                        'start': self._parse_date(raw_frame['start']),
+                        'stop': self._parse_date(raw_frame['stop'])
                     })
 
                 frames += get_frames(project, ancestors + name + '/')
