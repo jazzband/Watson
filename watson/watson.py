@@ -9,9 +9,7 @@ except ImportError:
     from ConfigParser import SafeConfigParser as ConfigParser  # noqa
 
 import arrow
-
-WATSON_FILE = os.path.join(os.path.expanduser('~'), '.watson')
-WATSON_CONF = os.path.join(os.path.expanduser('~'), '.watson.conf')
+import click
 
 
 class WatsonError(RuntimeError):
@@ -19,51 +17,66 @@ class WatsonError(RuntimeError):
 
 
 class Watson(object):
-    def __init__(self, content=None, filename=WATSON_FILE):
-        self.filename = filename
+    def __init__(self, frames=None, current=None):
         self.tree = None
         self._current = None
 
-        self._load(content)
+        self._dir = click.get_app_dir('watson')
 
-    def _load(self, content=None):
+        self.config_file = os.path.join(self._dir, 'config')
+        self.projects_file = os.path.join(self._dir, 'projects')
+        self.state_file = os.path.join(self._dir, 'state')
+
+        self._load(frames, current)
+
+    def _load(self, projects=None, current=None):
         """
-        Initialize the class attributes from `content`.
+        Initialize the projects and the state.
 
-        :param content: If given, should be a dict obtained by parsing a
-                        Watson file. If not given, the content is extracted
-                        from the Watson file.
-        :type content: dict
+        :param projects: If given, should be a dict of projects.
+                         If not given, the value is extracted
+                         from the projects file.
+        :type projects: dict
+
+        :param current: If given, should be a dict representating the
+                        current frame.
+                        If not given, the value is extracted
+                        from the state file.
+        :type current: dict
         """
-        if content is None:
-            content = self._load_watson_file()
+        if projects is None:
+            projects = self._load_json_file(self.projects_file)
 
-        self.tree = {'projects': content.get('projects', {})}
-        self.current = content.get('current')
+        if current is None:
+            current = self._load_json_file(self.state_file)
 
-    def _load_watson_file(self):
+        self.tree = {'projects': projects}
+        self.current = current
+
+    def _load_json_file(self, filename, type=dict):
         """
-        Return the content of the current Watson file as a dict.
-        If the file doesn't exist, return an empty dict.
+        Return the content of the the given JSON file.
+        If the file doesn't exist, return an empty instance of the
+        given type.
         """
         try:
-            with open(self.filename) as f:
+            with open(filename) as f:
                 return json.load(f)
         except IOError:
-            return {}
+            return type()
         except ValueError as e:
             # If we get an error because the file is empty, we ignore
             # it and return an empty dict. Otherwise, we raise
             # an exception in order to avoid corrupting the file.
-            if os.path.getsize(self.filename) == 0:
-                return {}
+            if os.path.getsize(filename) == 0:
+                return type()
             else:
                 raise WatsonError(
-                    "Invalid Watson file {}: {}".format(self.filename, e)
+                    "Invalid JSON file {}: {}".format(filename, e)
                 )
         else:
             raise WatsonError(
-                "Impossible to open Watson file in {}".format(self.filename)
+                "Impossible to open JSON file in {}".format(filename)
             )
 
     def _parse_date(self, date):
@@ -81,42 +94,41 @@ class Watson(object):
         Return Watson's config as a dict-like object.
         """
         config = ConfigParser()
-        config.read(WATSON_CONF)
+        config.read(self.config_file)
 
         if not config.has_option('crick', 'url') \
                 or not config.has_option('crick', 'token'):
             raise WatsonError(
                 "You must specify a remote URL and a token by putting it in"
-                "Watson's config file at '{}'".format(WATSON_CONF)
+                "Watson's config file at '{}'".format(self.config_file)
             )
 
         return config
 
-    def dump(self):
-        """
-        Return a new dict which can be saved in the Watson file.
-        """
-        content = dict(self.tree)
-
-        if self.is_started:
-            current = self.current
-            content['current'] = {
-                'project': current['project'],
-                'start': self._format_date(current['start'])
-            }
-
-        return content
-
     def save(self):
         """
-        Save the given dict in the Watson file. Create the file in necessary.
+        Save the state in the appropriate files. Create them if necessary.
         """
         try:
-            with open(self.filename, 'w+') as f:
-                json.dump(self.dump(), f, indent=2)
-        except OSError:
+            if not os.path.isdir(self._dir):
+                os.mkdir(self._dir)
+
+            if self.is_started:
+                current = {
+                    'project': self.current['project'],
+                    'start': self._format_date(self.current['start'])
+                }
+            else:
+                current = None
+
+            with open(self.state_file, 'w+') as f:
+                json.dump(current, f, indent=1)
+
+            with open(self.projects_file, 'w+') as f:
+                json.dump(self.tree['projects'], f, indent=1)
+        except OSError as e:
             raise WatsonError(
-                "Impossible to open Watson file in {}".format(self.filename)
+                "Impossible to write {}: {}".format(e.filename, e)
             )
 
     @property
@@ -134,7 +146,7 @@ class Watson(object):
 
         start = value.get('start', arrow.now())
 
-        if isinstance(start, str):
+        if not isinstance(start, arrow.Arrow):
             start = self._parse_date(start)
 
         self._current = {
