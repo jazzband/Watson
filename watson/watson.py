@@ -212,34 +212,28 @@ class Watson(object):
 
         self.project(project)['frames'].append(frame)
 
-    def frames(self, upstream=False):
+    def frames(self):
         """
         Return a list of all the frames, sorted by start time.
-
-        :param upstream: If True, return only the frames that where pushed
-                         to the server. If False, returns only the new frames.
-                         Default to False.
-        :type upstream: bool
         """
-        def get_frames(parent, ancestors):
+        def get_frames(parent, ancestors=''):
             frames = []
 
             for name, project in parent['projects'].items():
-                for frame in project['frames']:
-                    if 'id' in frame:
-                        if not upstream:
-                            continue
-                    else:
-                        if upstream:
-                            continue
+                for raw_frame in project['frames']:
+                    frames.append({
+                        'project': ancestors + name,
 
-                    frame['project'] = ancestors + [name]
-                    frames.append(frame)
+                        'id': raw_frame.get('id'),
 
-                frames += get_frames(project, ancestors + [name])
+                        'start': arrow.get(raw_frame['start']),
+                        'stop': arrow.get(raw_frame['stop'])
+                    })
+
+                frames += get_frames(project, ancestors + name + '/')
             return frames
 
-        return sorted(get_frames(self.tree, []), key=lambda e: e['start'])
+        return sorted(get_frames(self.tree), key=lambda e: e['start'])
 
     def push(self, force=False):
         import requests
@@ -249,10 +243,20 @@ class Watson(object):
         dest = config.get('crick', 'url') + '/frames/'
         token = config.get('crick', 'token')
 
-        new_frames = self.frames(upstream=False)
+        frames = tuple(
+            {
+                'id': f.get('id'),
+                'start': str(f['start']),
+                'stop': str(f['stop']),
+                'project': f['project'].split('/')
+            }
+            for f in self.frames()
+        )
+
+        new_frames = tuple(f for f in frames if f['id'] is None)
 
         if force:
-            existing_frames = self.frames(upstream=True)
+            existing_frames = tuple(f for f in frames if f['id'] is not None)
         else:
             existing_frames = []
 
