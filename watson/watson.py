@@ -153,18 +153,11 @@ class Watson(object):
             raise WatsonError("No project started.")
 
         old = self.current
-        project = self.project(old['project'])
+        self.add_frame(
+            old['project'], old['start'], arrow.now(),
+            message=message
+        )
         self.current = None
-
-        frame = {
-            'start': str(old['start']),
-            'stop': str(arrow.now())
-        }
-
-        if message:
-            frame['message'] = message
-
-        project['frames'].append(frame)
 
         return old
 
@@ -204,6 +197,20 @@ class Watson(object):
             return result
 
         return sorted(get_projects(self.tree, ''))
+
+    def add_frame(self, project, start, stop, message=None):
+        """
+        Add a new frame to the given project
+        """
+        frame = {
+            'start': str(start),
+            'stop': str(stop),
+        }
+
+        if message:
+            frame['message'] = message
+
+        self.project(project)['frames'].append(frame)
 
     def frames(self, upstream=False):
         """
