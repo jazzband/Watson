@@ -30,6 +30,8 @@ class Frames(object):
         rows = [Frame(*frame) for frame in frames]
         self._rows = rows
 
+        self.changed = False
+
     def __len__(self):
         return len(self._rows)
 
@@ -40,10 +42,12 @@ class Frames(object):
             return self._rows[key]
 
     def __setitem__(self, key, value):
+        self.changed = True
         del self[key]
         self.add(*value)
 
     def __delitem__(self, key):
+        self.changed = True
         del self._rows[key]
 
     def _get_col(self, col):
@@ -57,6 +61,7 @@ class Frames(object):
             yield row
 
     def add(self, project, start, stop, id=None):
+        self.changed = True
         self._rows.append(Frame(start, stop, project, id))
 
     def dump(self):

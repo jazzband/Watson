@@ -130,8 +130,9 @@ class Watson(object):
             with open(self.state_file, 'w+') as f:
                 json.dump(current, f, indent=1)
 
-            with open(self.frames_file, 'w+') as f:
-                json.dump(self.frames.dump(), f, indent=1)
+            if self._frames and self._frames.changed:
+                with open(self.frames_file, 'w+') as f:
+                    json.dump(self.frames.dump(), f, indent=1)
         except OSError as e:
             raise WatsonError(
                 "Impossible to write {}: {}".format(e.filename, e)
