@@ -99,7 +99,7 @@ class Watson(object):
         if not config.has_option('crick', 'url') \
                 or not config.has_option('crick', 'token'):
             raise WatsonError(
-                "You must specify a remote URL and a token by putting it in"
+                "You must specify a remote URL and a token by putting it in "
                 "Watson's config file at '{}'".format(self.config_file)
             )
 
