@@ -82,6 +82,7 @@ def start(watson, project):
 
 @cli.command()
 @click.pass_obj
+def stop(watson):
     """
     Stop monitoring time for the current project
 
@@ -151,7 +152,7 @@ def projects(watson):
     voyager1
     voyager2
     """
-    for project in watson.projects():
+    for project in watson.projects:
         click.echo(style('project', project))
 
 

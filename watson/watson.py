@@ -11,6 +11,8 @@ except ImportError:
 import arrow
 import click
 
+from .frames import Frames
+
 
 class WatsonError(RuntimeError):
     pass
@@ -18,25 +20,20 @@ class WatsonError(RuntimeError):
 
 class Watson(object):
     def __init__(self, frames=None, current=None):
-        self.tree = None
         self._current = None
 
         self._dir = click.get_app_dir('watson')
 
         self.config_file = os.path.join(self._dir, 'config')
-        self.projects_file = os.path.join(self._dir, 'projects')
+        self.frames_file = os.path.join(self._dir, 'frames')
         self.state_file = os.path.join(self._dir, 'state')
 
-        self._load(frames, current)
+        self._load_frames(frames)
+        self._load_state(current)
 
-    def _load(self, projects=None, current=None):
+    def _load_state(self, current=None):
         """
-        Initialize the projects and the state.
-
-        :param projects: If given, should be a dict of projects.
-                         If not given, the value is extracted
-                         from the projects file.
-        :type projects: dict
+        Initialize the current state.
 
         :param current: If given, should be a dict representating the
                         current frame.
@@ -44,14 +41,25 @@ class Watson(object):
                         from the state file.
         :type current: dict
         """
-        if projects is None:
-            projects = self._load_json_file(self.projects_file)
-
         if current is None:
             current = self._load_json_file(self.state_file)
 
-        self.tree = {'projects': projects}
         self.current = current
+
+    def _load_frames(self, frames=None):
+        """
+        Initialize the frames dataset.
+
+        :param frames: If given, should be a list representating the
+                        frames.
+                        If not given, the value is extracted
+                        from the frames file.
+        :type frames: list
+        """
+        if frames is None:
+            frames = self._load_json_file(self.frames_file, type=list)
+
+        self.frames = Frames(frames)
 
     def _load_json_file(self, filename, type=dict):
         """
@@ -124,8 +132,8 @@ class Watson(object):
             with open(self.state_file, 'w+') as f:
                 json.dump(current, f, indent=1)
 
-            with open(self.projects_file, 'w+') as f:
-                json.dump(self.tree['projects'], f, indent=1)
+            with open(self.frames_file, 'w+') as f:
+                json.dump(self.frames.dump(), f, indent=1)
         except OSError as e:
             raise WatsonError(
                 "Impossible to write {}: {}".format(e.filename, e)
@@ -177,10 +185,7 @@ class Watson(object):
             raise WatsonError("No project started.")
 
         old = self.current
-        self.add_frame(
-            old['project'], old['start'], arrow.now(),
-            message=message
-        )
+        self.frames.add(old['project'], old['start'], arrow.now())
         self.current = None
 
         return old
@@ -193,71 +198,12 @@ class Watson(object):
         self.current = None
         return old_current
 
-    def project(self, name):
-        """
-        Return the project from the projects tree with the given name. The name
-        can be separated by '/' for sub-projects.
-        """
-        project = self.tree
-        for name in name.split('/'):
-            if name not in project['projects']:
-                project['projects'][name] = {'frames': [], 'projects': {}}
-            project = project['projects'][name]
-
-        return project
-
+    @property
     def projects(self):
         """
         Return the list of all the existing projects, sorted by name.
         """
-        def get_projects(project, parent):
-            result = []
-
-            for name, child in project.get('projects', {}).items():
-                name = parent + name
-                result.append(name)
-                result += get_projects(child, name + '/')
-
-            return result
-
-        return sorted(get_projects(self.tree, ''))
-
-    def add_frame(self, project, start, stop, message=None):
-        """
-        Add a new frame to the given project
-        """
-        frame = {
-            'start': self._format_date(start),
-            'stop': self._format_date(stop),
-        }
-
-        if message:
-            frame['message'] = message
-
-        self.project(project)['frames'].append(frame)
-
-    def frames(self):
-        """
-        Return a list of all the frames, sorted by start time.
-        """
-        def get_frames(parent, ancestors=''):
-            frames = []
-
-            for name, project in parent['projects'].items():
-                for raw_frame in project['frames']:
-                    frames.append({
-                        'project': ancestors + name,
-
-                        'id': raw_frame.get('id'),
-
-                        'start': self._parse_date(raw_frame['start']),
-                        'stop': self._parse_date(raw_frame['stop'])
-                    })
-
-                frames += get_frames(project, ancestors + name + '/')
-            return frames
-
-        return sorted(get_frames(self.tree), key=lambda e: e['start'])
+        return sorted(set(self.frames['project']))
 
     def push(self, force=False):
         import requests
@@ -269,12 +215,12 @@ class Watson(object):
 
         frames = tuple(
             {
-                'id': f.get('id'),
-                'start': str(f['start']),
-                'stop': str(f['stop']),
-                'project': f['project'].split('/')
+                'id': f.id,
+                'start': str(f.start),
+                'stop': str(f.stop),
+                'project': f.project.split('/')
             }
-            for f in self.frames()
+            for f in self.frames
         )
 
         new_frames = tuple(f for f in frames if f['id'] is None)
