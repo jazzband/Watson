@@ -21,6 +21,7 @@ class WatsonError(RuntimeError):
 class Watson(object):
     def __init__(self, frames=None, current=None):
         self._current = None
+        self._old_state = None
         self._frames = None
 
         self._dir = click.get_app_dir('watson')
@@ -43,6 +44,7 @@ class Watson(object):
             current = self._load_json_file(self.state_file)
 
         self.current = current
+        self._old_state = self.current
 
     def _load_frames(self, frames=None):
         """
@@ -119,16 +121,17 @@ class Watson(object):
             if not os.path.isdir(self._dir):
                 os.mkdir(self._dir)
 
-            if self.is_started:
-                current = {
-                    'project': self.current['project'],
-                    'start': self._format_date(self.current['start'])
-                }
-            else:
-                current = None
+            if self._current is not None and self._old_state != self.current:
+                if self.is_started:
+                    current = {
+                        'project': self.current['project'],
+                        'start': self._format_date(self.current['start'])
+                    }
+                else:
+                    current = {}
 
-            with open(self.state_file, 'w+') as f:
-                json.dump(current, f, indent=1)
+                with open(self.state_file, 'w+') as f:
+                    json.dump(current, f, indent=1)
 
             if self._frames and self._frames.changed:
                 with open(self.frames_file, 'w+') as f:
