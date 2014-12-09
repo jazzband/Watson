@@ -172,7 +172,7 @@ class Watson(object):
         self.current = {'project': project}
         return self.current
 
-    def stop(self, message=None):
+    def stop(self):
         if not self.is_started:
             raise WatsonError("No project started.")
 
