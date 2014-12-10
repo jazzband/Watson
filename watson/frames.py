@@ -43,8 +43,10 @@ class Frames(object):
 
     def __setitem__(self, key, value):
         self.changed = True
-        del self[key]
-        self.add(*value)
+        if isinstance(value, Frame):
+            self._rows[key] = value
+        else:
+            self._rows[key] = self.new_frame(*value)
 
     def __delitem__(self, key):
         self.changed = True
@@ -60,9 +62,16 @@ class Frames(object):
         for row in self._rows:
             yield row
 
-    def add(self, project, start, stop, id=None):
+    def add(self, *args, **kwargs):
         self.changed = True
-        self._rows.append(Frame(start, stop, project, id))
+        self._rows.append(self.new_frame(*args, **kwargs))
+
+    def new_frame(self, project, start, stop, id=None):
+        return Frame(start, stop, project, id)
+
+    def replace(self, index, **kwargs):
+        frame = self[index]
+        self[index] = frame._replace(**kwargs)
 
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)

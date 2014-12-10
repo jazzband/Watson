@@ -227,11 +227,12 @@ class Watson(object):
         frames = tuple(
             {
                 'id': f.id,
+                'index': i,
                 'start': str(f.start),
                 'stop': str(f.stop),
                 'project': f.project.split('/')
             }
-            for f in self.frames
+            for i, f in enumerate(self.frames)
         )
 
         new_frames = tuple(f for f in frames if f['id'] is None)
@@ -262,10 +263,9 @@ class Watson(object):
                 )
 
             ids = response.json()
-
-            for frame, _id in zip(new_frames, ids):
-                frame['id'] = _id
-                del frame['project']
+            for frame, id in zip(new_frames, ids):
+                index = frame['index']
+                self.frames.replace(index, id=id)
 
         if existing_frames:
             data = json.dumps({'frames': existing_frames})
