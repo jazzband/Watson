@@ -19,7 +19,20 @@ class WatsonError(RuntimeError):
 
 
 class Watson(object):
-    def __init__(self, frames=None, current=None):
+    def __init__(self, **kwargs):
+        """
+        :param frames: If given, should be a list representating the
+                        frames.
+                        If not given, the value is extracted
+                        from the frames file.
+        :type frames: list
+
+        :param current: If given, should be a dict representating the
+                        current frame.
+                        If not given, the value is extracted
+                        from the state file.
+        :type current: dict
+        """
         self._current = None
         self._old_state = None
         self._frames = None
@@ -30,36 +43,11 @@ class Watson(object):
         self.frames_file = os.path.join(self._dir, 'frames')
         self.state_file = os.path.join(self._dir, 'state')
 
-    def _load_state(self, current=None):
-        """
-        Initialize the current state.
+        if 'frames' in kwargs:
+            self.frames = kwargs['frames']
 
-        :param current: If given, should be a dict representating the
-                        current frame.
-                        If not given, the value is extracted
-                        from the state file.
-        :type current: dict
-        """
-        if current is None:
-            current = self._load_json_file(self.state_file)
-
-        self.current = current
-        self._old_state = self.current
-
-    def _load_frames(self, frames=None):
-        """
-        Initialize the frames dataset.
-
-        :param frames: If given, should be a list representating the
-                        frames.
-                        If not given, the value is extracted
-                        from the frames file.
-        :type frames: list
-        """
-        if frames is None:
-            frames = self._load_json_file(self.frames_file, type=list)
-
-        self._frames = Frames(frames)
+        if 'current' in kwargs:
+            self.current = kwargs['current']
 
     def _load_json_file(self, filename, type=dict):
         """
@@ -121,7 +109,7 @@ class Watson(object):
             if not os.path.isdir(self._dir):
                 os.mkdir(self._dir)
 
-            if self._current is not None and self._old_state != self.current:
+            if self._current is not None and self._old_state != self._current:
                 if self.is_started:
                     current = {
                         'project': self.current['project'],
@@ -143,15 +131,22 @@ class Watson(object):
 
     @property
     def frames(self):
-        if not self._frames:
-            self._load_frames()
+        if self._frames is None:
+            self.frames = self._load_json_file(self.frames_file, type=list)
 
         return self._frames
+
+    @frames.setter
+    def frames(self, frames):
+        self._frames = Frames(frames)
 
     @property
     def current(self):
         if self._current is None:
-            self._load_state()
+            self.current = self._load_json_file(self.state_file)
+
+        if self._old_state is None:
+            self._old_state = self._current
 
         return dict(self._current)
 
@@ -159,6 +154,10 @@ class Watson(object):
     def current(self, value):
         if not value or 'project' not in value:
             self._current = {}
+
+            if self._old_state is None:
+                self._old_state = {}
+
             return
 
         start = value.get('start', arrow.now())
@@ -170,6 +169,9 @@ class Watson(object):
             'project': value['project'],
             'start': start
         }
+
+        if self._old_state is None:
+            self._old_state = self._current
 
     @property
     def is_started(self):
