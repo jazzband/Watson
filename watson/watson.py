@@ -9,9 +9,9 @@ except ImportError:
     from ConfigParser import SafeConfigParser as ConfigParser  # noqa
 
 import arrow
+import click
 
-WATSON_FILE = os.path.join(os.path.expanduser('~'), '.watson')
-WATSON_CONF = os.path.join(os.path.expanduser('~'), '.watson.conf')
+from .frames import Frames
 
 
 class WatsonError(RuntimeError):
@@ -19,52 +19,70 @@ class WatsonError(RuntimeError):
 
 
 class Watson(object):
-    def __init__(self, content=None, filename=WATSON_FILE):
-        self.filename = filename
-        self.tree = None
+    def __init__(self, **kwargs):
+        """
+        :param frames: If given, should be a list representating the
+                        frames.
+                        If not given, the value is extracted
+                        from the frames file.
+        :type frames: list
+
+        :param current: If given, should be a dict representating the
+                        current frame.
+                        If not given, the value is extracted
+                        from the state file.
+        :type current: dict
+        """
         self._current = None
+        self._old_state = None
+        self._frames = None
 
-        self._load(content)
+        self._dir = click.get_app_dir('watson')
 
-    def _load(self, content=None):
+        self.config_file = os.path.join(self._dir, 'config')
+        self.frames_file = os.path.join(self._dir, 'frames')
+        self.state_file = os.path.join(self._dir, 'state')
+
+        if 'frames' in kwargs:
+            self.frames = kwargs['frames']
+
+        if 'current' in kwargs:
+            self.current = kwargs['current']
+
+    def _load_json_file(self, filename, type=dict):
         """
-        Initialize the class attributes from `content`.
-
-        :param content: If given, should be a dict obtained by parsing a
-                        Watson file. If not given, the content is extracted
-                        from the Watson file.
-        :type content: dict
-        """
-        if content is None:
-            content = self._load_watson_file()
-
-        self.tree = {'projects': content.get('projects', {})}
-        self.current = content.get('current')
-
-    def _load_watson_file(self):
-        """
-        Return the content of the current Watson file as a dict.
-        If the file doesn't exist, return an empty dict.
+        Return the content of the the given JSON file.
+        If the file doesn't exist, return an empty instance of the
+        given type.
         """
         try:
-            with open(self.filename) as f:
+            with open(filename) as f:
                 return json.load(f)
         except IOError:
-            return {}
+            return type()
         except ValueError as e:
             # If we get an error because the file is empty, we ignore
             # it and return an empty dict. Otherwise, we raise
             # an exception in order to avoid corrupting the file.
-            if os.path.getsize(self.filename) == 0:
-                return {}
+            if os.path.getsize(filename) == 0:
+                return type()
             else:
                 raise WatsonError(
-                    "Invalid Watson file {}: {}".format(self.filename, e)
+                    "Invalid JSON file {}: {}".format(filename, e)
                 )
         else:
             raise WatsonError(
-                "Impossible to open Watson file in {}".format(self.filename)
+                "Impossible to open JSON file in {}".format(filename)
             )
+
+    def _parse_date(self, date):
+        return arrow.Arrow.utcfromtimestamp(date)
+
+    def _format_date(self, date):
+        if not isinstance(date, arrow.Arrow):
+            date = arrow.get(date)
+
+        return date.timestamp
 
     @property
     def config(self):
@@ -72,67 +90,92 @@ class Watson(object):
         Return Watson's config as a dict-like object.
         """
         config = ConfigParser()
-        config.read(WATSON_CONF)
+        config.read(self.config_file)
 
         if not config.has_option('crick', 'url') \
                 or not config.has_option('crick', 'token'):
             raise WatsonError(
-                "You must specify a remote URL and a token by putting it in"
-                "Watson's config file at '{}'".format(WATSON_CONF)
+                "You must specify a remote URL and a token by putting it in "
+                "Watson's config file at '{}'".format(self.config_file)
             )
 
         return config
 
-    def dump(self):
-        """
-        Return a new dict which can be saved in the Watson file.
-        """
-        content = dict(self.tree)
-
-        if self.is_started:
-            current = self.current
-            content['current'] = {
-                'project': current['project'],
-                'start': str(current['start'])
-            }
-
-        return content
-
     def save(self):
         """
-        Save the given dict in the Watson file. Create the file in necessary.
+        Save the state in the appropriate files. Create them if necessary.
         """
         try:
-            with open(self.filename, 'w+') as f:
-                json.dump(self.dump(), f, indent=2)
-        except OSError:
+            if not os.path.isdir(self._dir):
+                os.mkdir(self._dir)
+
+            if self._current is not None and self._old_state != self._current:
+                if self.is_started:
+                    current = {
+                        'project': self.current['project'],
+                        'start': self._format_date(self.current['start'])
+                    }
+                else:
+                    current = {}
+
+                with open(self.state_file, 'w+') as f:
+                    json.dump(current, f, indent=1)
+
+            if self._frames and self._frames.changed:
+                with open(self.frames_file, 'w+') as f:
+                    json.dump(self.frames.dump(), f, indent=1)
+        except OSError as e:
             raise WatsonError(
-                "Impossible to open Watson file in {}".format(self.filename)
+                "Impossible to write {}: {}".format(e.filename, e)
             )
 
     @property
+    def frames(self):
+        if self._frames is None:
+            self.frames = self._load_json_file(self.frames_file, type=list)
+
+        return self._frames
+
+    @frames.setter
+    def frames(self, frames):
+        self._frames = Frames(frames)
+
+    @property
     def current(self):
-        if not self._current:
-            return None
+        if self._current is None:
+            self.current = self._load_json_file(self.state_file)
+
+        if self._old_state is None:
+            self._old_state = self._current
 
         return dict(self._current)
 
     @current.setter
     def current(self, value):
         if not value or 'project' not in value:
-            self._current = None
+            self._current = {}
+
+            if self._old_state is None:
+                self._old_state = {}
+
             return
 
-        start = arrow.get(value.get('start', arrow.now()))
+        start = value.get('start', arrow.now())
+
+        if not isinstance(start, arrow.Arrow):
+            start = self._parse_date(start)
 
         self._current = {
             'project': value['project'],
             'start': start
         }
 
+        if self._old_state is None:
+            self._old_state = self._current
+
     @property
     def is_started(self):
-        return self.current is not None
+        return bool(self.current)
 
     def start(self, project):
         if self.is_started:
@@ -148,23 +191,13 @@ class Watson(object):
         self.current = {'project': project}
         return self.current
 
-    def stop(self, message=None):
+    def stop(self):
         if not self.is_started:
             raise WatsonError("No project started.")
 
         old = self.current
-        project = self.project(old['project'])
+        self.frames.add(old['project'], old['start'], arrow.now())
         self.current = None
-
-        frame = {
-            'start': str(old['start']),
-            'stop': str(arrow.now())
-        }
-
-        if message:
-            frame['message'] = message
-
-        project['frames'].append(frame)
 
         return old
 
@@ -176,63 +209,12 @@ class Watson(object):
         self.current = None
         return old_current
 
-    def project(self, name):
-        """
-        Return the project from the projects tree with the given name. The name
-        can be separated by '/' for sub-projects.
-        """
-        project = self.tree
-        for name in name.split('/'):
-            if name not in project['projects']:
-                project['projects'][name] = {'frames': [], 'projects': {}}
-            project = project['projects'][name]
-
-        return project
-
+    @property
     def projects(self):
         """
         Return the list of all the existing projects, sorted by name.
         """
-        def get_projects(project, parent):
-            result = []
-
-            for name, child in project.get('projects', {}).items():
-                name = parent + name
-                result.append(name)
-                result += get_projects(child, name + '/')
-
-            return result
-
-        return sorted(get_projects(self.tree, ''))
-
-    def frames(self, upstream=False):
-        """
-        Return a list of all the frames, sorted by start time.
-
-        :param upstream: If True, return only the frames that where pushed
-                         to the server. If False, returns only the new frames.
-                         Default to False.
-        :type upstream: bool
-        """
-        def get_frames(parent, ancestors):
-            frames = []
-
-            for name, project in parent['projects'].items():
-                for frame in project['frames']:
-                    if 'id' in frame:
-                        if not upstream:
-                            continue
-                    else:
-                        if upstream:
-                            continue
-
-                    frame['project'] = ancestors + [name]
-                    frames.append(frame)
-
-                frames += get_frames(project, ancestors + [name])
-            return frames
-
-        return sorted(get_frames(self.tree, []), key=lambda e: e['start'])
+        return sorted(set(self.frames['project']))
 
     def push(self, force=False):
         import requests
@@ -242,10 +224,21 @@ class Watson(object):
         dest = config.get('crick', 'url') + '/frames/'
         token = config.get('crick', 'token')
 
-        new_frames = self.frames(upstream=False)
+        frames = tuple(
+            {
+                'id': f.id,
+                'index': i,
+                'start': str(f.start),
+                'stop': str(f.stop),
+                'project': f.project.split('/')
+            }
+            for i, f in enumerate(self.frames)
+        )
+
+        new_frames = tuple(f for f in frames if f['id'] is None)
 
         if force:
-            existing_frames = self.frames(upstream=True)
+            existing_frames = tuple(f for f in frames if f['id'] is not None)
         else:
             existing_frames = []
 
@@ -270,10 +263,9 @@ class Watson(object):
                 )
 
             ids = response.json()
-
-            for frame, _id in zip(new_frames, ids):
-                frame['id'] = _id
-                del frame['project']
+            for frame, id in zip(new_frames, ids):
+                index = frame['index']
+                self.frames.replace(index, id=id)
 
         if existing_frames:
             data = json.dumps({'frames': existing_frames})

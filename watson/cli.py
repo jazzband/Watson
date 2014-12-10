@@ -81,10 +81,8 @@ def start(watson, project):
 
 
 @cli.command()
-@click.option('-m', '--message', default=None,
-              help="Add a message to this frame")
 @click.pass_obj
-def stop(watson, message):
+def stop(watson):
     """
     Stop monitoring time for the current project
 
@@ -93,7 +91,7 @@ def stop(watson, message):
     $ watson stop
     Stopping project apollo11/reactor, started a minute ago
     """
-    old = watson.stop(message)
+    old = watson.stop()
     click.echo("Stopping project {}, started {}.".format(
         style('project', old['project']),
         style('time', old['start'].humanize())
@@ -154,7 +152,7 @@ def projects(watson):
     voyager1
     voyager2
     """
-    for project in watson.projects():
+    for project in watson.projects:
         click.echo(style('project', project))
 
 

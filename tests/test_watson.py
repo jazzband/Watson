@@ -13,6 +13,7 @@ except ImportError:
 
 import pytest
 import requests
+import arrow
 
 from watson import Watson, WatsonError
 from watson.watson import ConfigParser
@@ -27,79 +28,116 @@ else:
 
 @pytest.fixture
 def watson():
-    return Watson({})
+    return Watson(current={}, frames=[])
 
 
-# init
+# current
 
-def test_init():
-    content = json.dumps(
-        {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
-    )
+def test_current():
+    watson = Watson()
+
+    content = json.dumps({'project': 'foo', 'start': 0})
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
-        watson = Watson()
-
-    assert watson.tree
-    assert 'projects' in watson.tree
-    assert 'foo' in watson.tree['projects']
-    assert watson.current
-    assert watson.current['project'] == 'foo'
-    assert watson.current['start']
+        assert watson.current['project'] == 'foo'
+        assert watson.current['start'] == arrow.get(0)
 
 
-def test_init_with_empty_file():
+def test_current_with_empty_file():
+    watson = Watson()
+
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
         with mock.patch('os.path.getsize', return_value=0):
-            watson = Watson()
-
-    assert watson.tree
-    assert 'projects' in watson.tree
-    assert watson.tree['projects'] == {}
-    assert not watson.current
+            assert watson.current == {}
 
 
-def test_init_with_nonexistent_file():
+def test_current_with_nonexistent_file():
+    watson = Watson()
+
     with mock.patch('%s.open' % builtins, side_effect=IOError):
-        watson = Watson()
-
-    assert watson.tree
-    assert 'projects' in watson.tree
-    assert watson.tree['projects'] == {}
-    assert not watson.current
+        assert watson.current == {}
 
 
-def test_init_watson_non_valid_json():
+def test_current_watson_non_valid_json():
+    watson = Watson()
+
     content = "{'foo': bar}"
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         with pytest.raises(WatsonError):
-            Watson()
+            watson.current
 
 
-def test_init_with_content():
-    content = json.dumps(
-        {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
-    )
-
-    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
-        watson = Watson({'projects': {'bar': {}}})
-
-    assert watson.current is None
-    assert 'bar' in watson.tree['projects']
-    assert 'foo' not in watson.tree['projects']
-
-
-def test_init_with_empty_content():
-    content = json.dumps(
-        {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
-    )
+def test_current_with_given_state():
+    content = json.dumps({'project': 'foo', 'start': 0})
+    watson = Watson(current={'project': 'bar', 'start': 0})
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
-        watson = Watson({})
+        assert watson.current['project'] == 'bar'
 
-    assert watson.current is None
-    assert not watson.tree['projects']
+
+def test_current_with_empty_given_state():
+    content = json.dumps({'project': 'foo', 'start': 0})
+    watson = Watson(current={})
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert watson.current == {}
+
+
+# frames
+
+def test_frames():
+    watson = Watson()
+
+    content = json.dumps([[0, 10, 'foo', None]])
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert len(watson.frames) == 1
+        assert watson.frames[0].project == 'foo'
+        assert watson.frames[0].start == arrow.get(0)
+        assert watson.frames[0].stop == arrow.get(10)
+
+
+def test_frames_with_empty_file():
+    watson = Watson()
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
+        with mock.patch('os.path.getsize', return_value=0):
+            assert len(watson.frames) == 0
+
+
+def test_frames_with_nonexistent_file():
+    watson = Watson()
+
+    with mock.patch('%s.open' % builtins, side_effect=IOError):
+        assert len(watson.frames) == 0
+
+
+def test_frames_watson_non_valid_json():
+    watson = Watson()
+
+    content = "{'foo': bar}"
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        with pytest.raises(WatsonError):
+            watson.frames
+
+
+def test_given_frames():
+    content = json.dumps([[0, 10, 'foo', None]])
+    watson = Watson(frames=[[0, 10, 'bar', None]])
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert len(watson.frames) == 1
+        assert watson.frames[0].project == 'bar'
+
+
+def test_frames_with_empty_given_state():
+    content = json.dumps([[0, 10, 'foo', None]])
+    watson = Watson(frames=[])
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert len(watson.frames) == 0
 
 
 # config
@@ -145,46 +183,21 @@ def test_no_config(watson):
             watson.config
 
 
-# dump
-
-def test_dump_when_not_started():
-    content = {'projects': {'foo': {}}}
-    watson = Watson(content)
-    dump = watson.dump()
-
-    assert id(dump) != id(content)
-    assert dump == content
-
-
-def test_dump_when_started():
-    content = {'projects': {'foo': {}}, 'current': {'project': 'foo'}}
-    watson = Watson(content)
-    dump = watson.dump()
-
-    assert id(dump) != id(content)
-    assert 'projects' in dump
-    assert dump['projects'] == content['projects']
-    assert 'current' in dump
-    assert 'project' in dump['current']
-    assert dump['current']['project'] == 'foo'
-    assert 'start' in dump['current']
-
-
 # start
 
 def test_start_new_project(watson):
     watson.start('foo')
 
-    assert watson.current
+    assert watson.current != {}
     assert watson.is_started is True
     assert watson.current.get('project') == 'foo'
-    assert watson.current.get('start')
+    assert isinstance(watson.current.get('start'), arrow.Arrow)
 
 
 def test_start_new_subprojects(watson):
     watson.start('foo/bar/lol')
 
-    assert watson.current
+    assert watson.current != {}
     assert watson.is_started is True
     assert watson.current.get('project') == 'foo/bar/lol'
 
@@ -195,7 +208,7 @@ def test_start_two_projects(watson):
     with pytest.raises(WatsonError):
         watson.start('bar')
 
-    assert watson.current
+    assert watson.current != {}
     assert watson.current['project'] == 'foo'
     assert watson.is_started is True
 
@@ -204,34 +217,26 @@ def test_start_two_projects(watson):
 
 def test_stop_started_project(watson):
     watson.start('foo')
-    watson.stop('foo')
+    watson.stop()
 
-    assert watson.current is None
+    assert watson.current == {}
     assert watson.is_started is False
-    assert 'foo' in watson.tree.get('projects')
-    frames = watson.tree['projects']['foo'].get('frames')
-    assert len(frames) == 1
-    assert 'start' in frames[0]
-    assert 'stop' in frames[0]
+    assert len(watson.frames) == 1
+    assert watson.frames[0].project == 'foo'
+    assert isinstance(watson.frames[0].start, arrow.Arrow)
+    assert isinstance(watson.frames[0].stop, arrow.Arrow)
 
 
 def test_stop_started_subproject(watson):
     watson.start('foo/bar/lol')
     watson.stop()
 
-    assert watson.current is None
+    assert watson.current == {}
     assert watson.is_started is False
-    foo = watson.tree['projects'].get('foo')
-    assert foo
-    assert foo.get('frames') == []
-    bar = foo['projects'].get('bar')
-    assert bar
-    assert bar.get('frames') == []
-    lol = bar['projects'].get('lol')
-    assert lol
-    assert len(lol['frames']) == 1
-    assert 'start' in lol['frames'][0]
-    assert 'stop' in lol['frames'][0]
+    assert len(watson.frames) == 1
+    assert watson.frames[0].project == 'foo/bar/lol'
+    assert isinstance(watson.frames[0].start, arrow.Arrow)
+    assert isinstance(watson.frames[0].stop, arrow.Arrow)
 
 
 def test_stop_no_project(watson):
@@ -245,8 +250,8 @@ def test_cancel_started_project(watson):
     watson.start('foo')
     watson.cancel()
 
-    assert watson.current is None
-    assert 'foo' not in watson.tree['projects']
+    assert watson.current == {}
+    assert len(watson.frames) == 0
 
 
 def test_cancel_no_project(watson):
@@ -254,84 +259,112 @@ def test_cancel_no_project(watson):
         watson.cancel()
 
 
+# save
+
+def test_save_without_changes(watson):
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert not json_mock.called
+
+
+def test_save_current(watson):
+    watson.start('foo')
+
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert json_mock.call_count == 1
+            result = json_mock.call_args[0][0]
+            assert result['project'] == 'foo'
+            assert isinstance(result['start'], (int, float))
+
+
+def test_save_empty_current():
+    watson = Watson(current={'project': 'foo', 'start': 0})
+    watson.current = {}
+
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert json_mock.call_count == 1
+            result = json_mock.call_args[0][0]
+            assert result == {}
+
+
+def test_save_frames_no_change():
+    watson = Watson(frames=[[0, 10, 'foo', None]])
+
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert not json_mock.called
+
+
+def test_save_added_frame():
+    watson = Watson(frames=[[0, 10, 'foo', None]])
+    watson.frames.add('bar', 10, 20)
+
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert json_mock.call_count == 1
+            result = json_mock.call_args[0][0]
+            assert len(result) == 2
+            assert result[0][2] == 'foo'
+            assert result[1][2] == 'bar'
+
+
+def test_save_changed_frame():
+    watson = Watson(frames=[[0, 10, 'foo', None]])
+    watson.frames[0] = ('bar', 0, 10)
+
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert json_mock.call_count == 1
+            result = json_mock.call_args[0][0]
+            assert len(result) == 1
+            assert result[0][2] == 'bar'
+
+
 # push
 
 @pytest.fixture
-def project_tree():
-    return {
-        "projects": {
-            "A": {
-                "projects": {
-                    "X": {
-                        "projects": {
-                            "foo": {
-                                "projects": {},
-                                "frames": [
-                                    {"start": "01", "stop": "01"},
-                                ]
-                            }
-                        },
-                        "frames": [
-                            {"start": "02", "stop": "02"},
-                            {"start": "03", "stop": "03", "id": 42},
+def frames():
+    return [
+        [0, 0, 'foo', None],
+        [0, 0, 'foo', 42],
+        [0, 0, 'bar', None],
+        [0, 0, 'foo/x', None],
+        [0, 0, 'foo/x', 43],
+        [0, 0, 'foo/x/y', None],
+        [0, 0, 'foo/z', 44],
+        [0, 0, 'bar', None],
+        [0, 0, 'bar', 45],
+    ]
 
 
-                        ]
-                    },
-                    "Y": {
-                        "projects": {
-                            "toto": {
-                                "projects": {},
-                                "frames": [
-                                    {"start": "04", "stop": "04"},
-                                    {"start": "05", "stop": "05"},
-                                ]
-                            }
-                        },
-                        "frames": [
-                            {"start": "06", "stop": "06"},
-                        ]
-                    }
-                },
-                "frames": [
-                    {"start": "07", "stop": "07"},
-                ]
-            },
-            "B": {
-                "projects": {},
-                "frames": [
-                    {"start": "08", "stop": "08", "id": 24},
-                    {"start": "09", "stop": "09"}
-                ]
-            }
-        }
-    }
-
-
-def test_push(project_tree):
-    watson = Watson(project_tree)
+def test_push(frames):
+    watson = Watson(frames=frames)
 
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'url', 'http://foo.com')
     config.set('crick', 'token', 'bar')
 
-    frames = [
-        {"start": "01", "stop": "01", "project": ["A", "X", "foo"]},
-        {"start": "02", "stop": "02", "project": ["A", "X"]},
-        {"start": "04", "stop": "04", "project": ["A", "Y", "toto"]},
-        {"start": "05", "stop": "05", "project": ["A", "Y", "toto"]},
-        {"start": "06", "stop": "06", "project": ["A", "Y"]},
-        {"start": "07", "stop": "07", "project": ["A"]},
-        {"start": "09", "stop": "09", "project": ["B"]},
-    ]
-
     class Response:
         def __init__(self):
             self.status_code = 201
 
         def json(self):
-            return list(range(len(frames)))
+            return list(range(5))
 
     with mock.patch('requests.post') as mock_post:
         mock_post.return_value = Response()
@@ -352,31 +385,37 @@ def test_push(project_tree):
         )
 
         frames_received = json.loads(mock_post.call_args[0][1])['frames']
-        assert frames_received == frames
+        assert len(frames_received) == 5
 
-    p = watson.tree['projects']
+    assert all(frame.id is not None for frame in watson.frames)
 
-    assert p["A"]['projects']["X"]['projects']["foo"]['frames'][0]['id'] == 0
-    assert p["A"]['projects']["X"]['frames'][0]['id'] == 1
-    assert p["A"]['projects']["Y"]['projects']["toto"]['frames'][0]['id'] == 2
-    assert p["A"]['projects']["Y"]['projects']["toto"]['frames'][1]['id'] == 3
-    assert p["A"]['projects']["Y"]['frames'][0]['id'] == 4
-    assert p["A"]['frames'][0]['id'] == 5
-    assert p["B"]['frames'][1]['id'] == 6
+    assert watson.frames[0].id == 0
+    assert watson.frames[0].project == 'foo'
+    assert watson.frames[1].id == 42
+    assert watson.frames[1].project == 'foo'
+    assert watson.frames[2].id == 1
+    assert watson.frames[2].project == 'bar'
+    assert watson.frames[3].id == 2
+    assert watson.frames[3].project == 'foo/x'
+    assert watson.frames[4].id == 43
+    assert watson.frames[4].project == 'foo/x'
+    assert watson.frames[5].id == 3
+    assert watson.frames[5].project == 'foo/x/y'
+    assert watson.frames[6].id == 44
+    assert watson.frames[6].project == 'foo/z'
+    assert watson.frames[7].id == 4
+    assert watson.frames[7].project == 'bar'
+    assert watson.frames[8].id == 45
+    assert watson.frames[8].project == 'bar'
 
 
-def test_push_force(project_tree):
-    watson = Watson(project_tree)
+def test_push_force(frames):
+    watson = Watson(frames=frames)
 
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'url', 'http://foo.com')
     config.set('crick', 'token', 'bar')
-
-    frames = [
-        {"start": "03", "stop": "03", "project": ["A", "X"], "id": 42},
-        {"start": "08", "stop": "08", "project": ["B"], "id": 24},
-    ]
 
     class PutResponse:
         def __init__(self):
@@ -387,7 +426,7 @@ def test_push_force(project_tree):
             self.status_code = 201
 
         def json(self):
-            return list(range(len(frames)))
+            return list(range(4))
 
     with mock.patch('requests.put') as mock_put:
         with mock.patch('requests.post') as mock_post:
@@ -410,25 +449,24 @@ def test_push_force(project_tree):
             requests.post.assert_called_once_with(*args, **kwargs)
             requests.put.assert_called_once_with(*args, **kwargs)
 
-            frames_received = json.loads(mock_put.call_args[0][1])['frames']
-            sort = lambda f: sorted(f, key=lambda e: e['id'])
-            assert sort(frames_received) == sort(frames)
+            frames_sent = json.loads(mock_put.call_args[0][1])['frames']
+            assert len(frames_sent) == 4
+            assert [f['id'] for f in frames_sent] == [42, 43, 44, 45]
 
 
 # projects
 
-def test_projects(project_tree):
-    watson = Watson(project_tree)
+def test_projects(frames):
+    watson = Watson(frames=frames)
 
-    assert watson.projects() == [
-        'A',
-        'A/X',
-        'A/X/foo',
-        'A/Y',
-        'A/Y/toto',
-        'B'
+    assert watson.projects == [
+        'bar',
+        'foo',
+        'foo/x',
+        'foo/x/y',
+        'foo/z'
     ]
 
 
-def test_projects_empty(watson, project_tree):
-    assert watson.projects() == []
+def test_projects_no_frames(watson):
+    assert watson.projects == []
