@@ -155,10 +155,9 @@ token = bar
         assert config.get('crick', 'token') == 'bar'
 
 
-def test_config_without_url(watson):
+def test_wrong_config(watson):
     content = u"""
-[crick]
-token = bar
+toto
     """
     mocked_read = lambda self, name: self._read(StringIO(content), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
@@ -166,21 +165,19 @@ token = bar
             watson.config
 
 
-def test_config_without_token(watson):
-    content = u"""
-[crick]
-token = bar
-    """
-    mocked_read = lambda self, name: self._read(StringIO(content), name)
+def test_empty_config(watson):
+    mocked_read = lambda self, name: self._read(StringIO(''), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
-        with pytest.raises(WatsonError):
-            watson.config
+        assert watson.config == ConfigParser()
 
 
-def test_no_config(watson):
-    with mock.patch('%s.open' % builtins, side_effect=IOError):
-        with pytest.raises(WatsonError):
-            watson.config
+def test_set_config(watson):
+    config = ConfigParser()
+    config.add_section('foo')
+    config.set('foo', 'bar', 'lol')
+    watson.config = config
+
+    watson.config.get('foo', 'bar') == 'lol'
 
 
 # start
@@ -334,6 +331,23 @@ def test_save_changed_frame():
             assert result[0][2] == 'bar'
 
 
+def test_save_config_no_changes(watson):
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch.object(ConfigParser, 'write') as write_mock:
+            watson.save()
+
+            assert not write_mock.called
+
+
+def test_save_config(watson):
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch.object(ConfigParser, 'write') as write_mock:
+            watson.config = ConfigParser()
+            watson.save()
+
+            assert write_mock.call_count == 1
+
+
 # push
 
 @pytest.fixture
@@ -349,6 +363,40 @@ def frames():
         [0, 0, 'bar', None],
         [0, 0, 'bar', 45],
     ]
+
+
+def test_push_with_no_config(frames):
+    watson = Watson(frames=frames)
+
+    config = ConfigParser()
+    watson.config = config
+
+    with pytest.raises(WatsonError):
+        watson.push()
+
+
+def test_push_with_no_url(frames):
+    watson = Watson(frames=frames)
+
+    config = ConfigParser()
+    config.add_section('crick')
+    config.set('crick', 'token', 'bar')
+    watson.config = config
+
+    with pytest.raises(WatsonError):
+        watson.push()
+
+
+def test_push_with_no_token(frames):
+    watson = Watson(frames=frames)
+
+    config = ConfigParser()
+    config.add_section('crick')
+    config.set('crick', 'url', 'http://foo.com')
+    watson.config = config
+
+    with pytest.raises(WatsonError):
+        watson.push()
 
 
 def test_push(frames):

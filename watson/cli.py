@@ -157,6 +157,72 @@ def projects(watson):
 
 
 @cli.command()
+@click.argument('key', required=False, metavar='SECTION.OPTION')
+@click.argument('value', required=False)
+@click.option('-e', '--edit', is_flag=True,
+              help="Edit the configuration file with an editor.")
+@click.pass_context
+def config(context, key, value, edit):
+    """
+    Get and set configuration options.
+
+    If value is not provided, the content of the key is displayed. Else,
+    the given value is set.
+
+    You can edit the config file with an editor with the '--edit' option.
+
+    \b
+    Example:
+    $ watson config crick.token 7e329263e329
+    $ watson config crick.token
+    7e329263e329
+    """
+    watson = context.obj
+    config = watson.config
+
+    if edit:
+        click.edit(filename=watson.config_file, extension='.ini')
+
+        try:
+            watson.config = None
+            watson.config
+        except WatsonCliError:
+            watson.config = config
+            watson.save()
+            raise
+        return
+
+    if not key:
+        click.echo(context.get_help())
+        return
+
+    try:
+        section, option = key.split('.')
+    except ValueError:
+        raise click.ClickException(
+            "The key must have the format 'section.option'"
+        )
+
+    if value is None:
+        if not config.has_section(section):
+            raise click.ClickException("No such section {}".format(section))
+
+        if not config.has_option(section, option):
+            raise click.ClickException(
+                "No such option {} in {}".format(option, section)
+            )
+
+        click.echo(config.get(section, option))
+    else:
+        if not config.has_section(section):
+            config.add_section(section)
+
+        config.set(section, option, value)
+        watson.config = config
+        watson.save()
+
+
+@cli.command()
 @click.option('-f', '--force', is_flag=True,
               help="Update the existing frames on the server.")
 @click.pass_obj
@@ -164,17 +230,17 @@ def push(watson, force):
     """
     Push all the new frames to a Crick server.
 
-    The URL of the server and the User Token must be defined in a
-    `.watson.conf` file placed inside your user directory.
+    The URL of the server and the User Token must be defined via the
+    'watson config' command.
 
     If you give the '-f' (or '--force') flag to the command, it will
     also update all the existing frames on the server.
 
     \b
-    Example of `.watson.conf` file:
-    [crick]
-    url = http://localhost:4242
-    token = 7e329263e329646be79d6cc3b3af7bf48b6b1779
+    Example:
+    $ watson config crick.url http://localhost:4242
+    $ watson config crick.token 7e329263e329
+    $ watson push
 
     See https://bitbucket.org/tailordev/django-crick for more information.
     """

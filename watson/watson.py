@@ -4,8 +4,10 @@ import os
 import json
 
 try:
+    import configparser
     from configparser import ConfigParser
 except ImportError:
+    import ConfigParser as configparser  # noqa
     from ConfigParser import SafeConfigParser as ConfigParser  # noqa
 
 import arrow
@@ -36,6 +38,8 @@ class Watson(object):
         self._current = None
         self._old_state = None
         self._frames = None
+        self._config = None
+        self._config_changed = False
 
         self._dir = click.get_app_dir('watson')
 
@@ -87,19 +91,26 @@ class Watson(object):
     @property
     def config(self):
         """
-        Return Watson's config as a dict-like object.
+        Return Watson's config as a ConfigParser object.
         """
-        config = ConfigParser()
-        config.read(self.config_file)
+        if not self._config:
+            try:
+                config = ConfigParser()
+                config.read(self.config_file)
+            except configparser.Error as e:
+                raise WatsonError("Cannot parse config file: {}".format(e))
 
-        if not config.has_option('crick', 'url') \
-                or not config.has_option('crick', 'token'):
-            raise WatsonError(
-                "You must specify a remote URL and a token by putting it in "
-                "Watson's config file at '{}'".format(self.config_file)
-            )
+            self._config = config
 
-        return config
+        return self._config
+
+    @config.setter
+    def config(self, value):
+        """
+        Set a ConfigParser object as the current configuration
+        """
+        self._config = value
+        self._config_changed = True
 
     def save(self):
         """
@@ -124,6 +135,10 @@ class Watson(object):
             if self._frames and self._frames.changed:
                 with open(self.frames_file, 'w+') as f:
                     json.dump(self.frames.dump(), f, indent=1)
+
+            if self._config_changed:
+                with open(self.config_file, 'w+') as f:
+                    self.config.write(f)
         except OSError as e:
             raise WatsonError(
                 "Impossible to write {}: {}".format(e.filename, e)
@@ -221,8 +236,14 @@ class Watson(object):
 
         config = self.config
 
-        dest = config.get('crick', 'url') + '/frames/'
-        token = config.get('crick', 'token')
+        try:
+            dest = config.get('crick', 'url') + '/frames/'
+            token = config.get('crick', 'token')
+        except configparser.Error:
+            raise WatsonError(
+                "You must specify a remote URL (crick.url) and a token "
+                "(crick.token) using the config command."
+            )
 
         frames = tuple(
             {

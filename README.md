@@ -63,6 +63,20 @@ voyager1
 voyager2
 ```
 
+### config
+Get and set configuration options.
+
+If value is not provided, the content of the key is displayed. Else,
+the given value is set.
+
+You can edit the config file with an editor with the '--edit' option.
+
+```
+$ watson config crick.token 7e329263e329
+$ watson config crick.token
+7e329263e329
+```
+
 ### push
 
 Push all the new frames to a Crick server.
@@ -73,11 +87,10 @@ placed inside your user directory.
 If you give the '-f' (or '--force') flag to the command, it will
 also update all the existing frames on the server.
 
-Example of `.watson.conf` file:
 ```
-[crick]
-url = http://localhost:4242
-token = 7e329263e329646be79d6cc3b3af7bf48b6b1779
+$ watson config crick.url http://localhost:4242
+$ watson config crick.token 7e329263e329
+$ watson push
 ```
 
 See [django-crick](https://bitbucket.org/tailordev/django-crick) for more information.
