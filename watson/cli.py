@@ -157,16 +157,19 @@ def projects(watson):
 
 
 @cli.command()
-@click.argument('key')
+@click.argument('key', required=False, metavar='SECTION.OPTION')
 @click.argument('value', required=False)
-@click.pass_obj
-def config(watson, key, value):
+@click.option('-e', '--edit', is_flag=True,
+              help="Edit the configuration file with an editor.")
+@click.pass_context
+def config(context, key, value, edit):
     """
-    Get and set configuration options. The key must have the format
-    'section.option'.
+    Get and set configuration options.
 
     If value is not provided, the content of the key is displayed. Else,
     the given value is set.
+
+    You can edit the config file with an editor with the '--edit' option.
 
     \b
     Example:
@@ -174,7 +177,24 @@ def config(watson, key, value):
     $ watson config crick.token
     7e329263e329
     """
+    watson = context.obj
     config = watson.config
+
+    if edit:
+        click.edit(filename=watson.config_file, extension='.ini')
+
+        try:
+            watson.config = None
+            watson.config
+        except WatsonCliError:
+            watson.config = config
+            watson.save()
+            raise
+        return
+
+    if not key:
+        click.echo(context.get_help())
+        return
 
     try:
         section, option = key.split('.')
