@@ -155,6 +155,16 @@ token = bar
         assert config.get('crick', 'token') == 'bar'
 
 
+def test_wrong_config(watson):
+    content = u"""
+toto
+    """
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        with pytest.raises(WatsonError):
+            watson.config
+
+
 def test_empty_config(watson):
     mocked_read = lambda self, name: self._read(StringIO(''), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):

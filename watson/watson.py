@@ -94,8 +94,12 @@ class Watson(object):
         Return Watson's config as a ConfigParser object.
         """
         if not self._config:
-            config = ConfigParser()
-            config.read(self.config_file)
+            try:
+                config = ConfigParser()
+                config.read(self.config_file)
+            except configparser.Error as e:
+                raise WatsonError("Cannot parse config file: {}".format(e))
+
             self._config = config
 
         return self._config
