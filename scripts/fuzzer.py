@@ -3,7 +3,7 @@ from random import randint
 
 from watson import Watson
 
-watson = Watson({})
+watson = Watson(frames=None, current=None)
 
 projects = [
     "apollo11",
