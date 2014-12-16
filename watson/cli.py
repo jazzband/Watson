@@ -172,6 +172,9 @@ def log(watson, project, from_, to):
         projects = (p for p in watson.projects if '/' not in p)
         subprojects = True
 
+    if from_ > to:
+        raise click.ClickException("'from' must be anterior to 'to'")
+
     span = watson.frames.span(from_, to)
 
     total = datetime.timedelta()
