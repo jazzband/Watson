@@ -43,6 +43,17 @@ class WatsonCliError(click.ClickException):
 watson.WatsonError = WatsonCliError
 
 
+class DateParamType(click.ParamType):
+    name = 'date'
+
+    def convert(self, value, param, ctx):
+        if value:
+            return arrow.get(value)
+
+
+Date = DateParamType()
+
+
 @click.group()
 @click.pass_context
 def cli(ctx):
@@ -144,8 +155,11 @@ def status(watson):
 
 @cli.command()
 @click.argument('project', required=False)
+@click.option('-f', '--from', 'from_', type=Date,
+              default=arrow.now().replace(days=-7))
+@click.option('-t', '--to', type=Date, default=arrow.now())
 @click.pass_obj
-def log(watson, project):
+def log(watson, project, from_, to):
     if project:
         projects = (p for p in watson.projects
                     if p == project or p.startswith(project + '/'))
@@ -154,13 +168,13 @@ def log(watson, project):
         projects = (p for p in watson.projects if '/' not in p)
         subprojects = True
 
-    span = watson.frames.span(arrow.now().replace(days=-7), arrow.now())
+    span = watson.frames.span(from_, to)
 
     total = datetime.timedelta()
 
     click.echo("From {} to {}:\n".format(
-        style('date', '{:ddd DD MMMM}'.format(span.start)),
-        style('date', '{:ddd DD MMMM}'.format(span.stop))
+        style('date', '{:ddd DD MMMM YYYY}'.format(span.start)),
+        style('date', '{:ddd DD MMMM YYYY}'.format(span.stop))
     ))
 
     for name in projects:
