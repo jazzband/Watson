@@ -74,7 +74,9 @@ class Frames(object):
 
     def add(self, *args, **kwargs):
         self.changed = True
-        self._rows.append(self.new_frame(*args, **kwargs))
+        frame = self.new_frame(*args, **kwargs)
+        self._rows.append(frame)
+        return frame
 
     def new_frame(self, project, start, stop, id=None):
         return Frame(start, stop, project, id)

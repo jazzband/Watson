@@ -179,7 +179,7 @@ def log(watson, project, from_, to):
 
     total = datetime.timedelta()
 
-    click.echo("From {} to {}:\n".format(
+    click.echo("{} -> {}\n".format(
         style('date', '{:ddd DD MMMM YYYY}'.format(span.start)),
         style('date', '{:ddd DD MMMM YYYY}'.format(span.stop))
     ))
@@ -194,12 +194,14 @@ def log(watson, project, from_, to):
         )
         total += delta
 
-        click.echo("{} - {}".format(
-            style('time', format_timedelta(delta)),
+        click.echo("{} {}".format(
+            style('time', '{:>12}'.format(format_timedelta(delta))),
             style('project', name)
         ))
 
-    click.echo("{} - Total".format(style('time', format_timedelta(total))))
+    click.echo("\nTotal: {}".format(
+        style('time', '{}'.format(format_timedelta(total)))
+    ))
 
 
 @cli.command()
