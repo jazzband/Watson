@@ -156,8 +156,12 @@ def status(watson):
 @cli.command()
 @click.argument('project', required=False)
 @click.option('-f', '--from', 'from_', type=Date,
-              default=arrow.now().replace(days=-7))
-@click.option('-t', '--to', type=Date, default=arrow.now())
+              default=arrow.now().replace(days=-7),
+              help="The date from when the log should start. Defaults "
+              "to seven days ago.")
+@click.option('-t', '--to', type=Date, default=arrow.now(),
+              help="The date at which the log should stop (inclusive). "
+              "Defaults to tomorrow.")
 @click.pass_obj
 def log(watson, project, from_, to):
     if project:
