@@ -22,6 +22,16 @@ class Frame(namedtuple('Frame', HEADERS)):
         return (start, stop, self.project, self.id)
 
 
+class Span(object):
+    def __init__(self, start, stop, timeframe='day'):
+        self.timeframe = timeframe
+        self.start = start.floor(self.timeframe)
+        self.stop = stop.ceil(self.timeframe)
+
+    def __contains__(self, frame):
+        return frame.start >= self.start and frame.stop <= self.stop
+
+
 class Frames(object):
     def __init__(self, frames=None):
         if not frames:
@@ -64,7 +74,9 @@ class Frames(object):
 
     def add(self, *args, **kwargs):
         self.changed = True
-        self._rows.append(self.new_frame(*args, **kwargs))
+        frame = self.new_frame(*args, **kwargs)
+        self._rows.append(frame)
+        return frame
 
     def new_frame(self, project, start, stop, id=None):
         return Frame(start, stop, project, id)
@@ -75,3 +87,13 @@ class Frames(object):
 
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
+
+    def for_project(self, name, subprojects=True):
+        return (
+            frame for frame in self._rows
+            if frame.project == name or
+               (subprojects and frame.project.startswith(name + '/'))
+        )
+
+    def span(self, start, stop):
+        return Span(start, stop)

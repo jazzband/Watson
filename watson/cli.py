@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+import operator
 import itertools
 
+from functools import reduce
+
 import click
+import arrow
 
 from . import watson
+from .utils import format_timedelta
 
 
 def style(type, string):
@@ -18,6 +24,7 @@ def style(type, string):
         'project': _style_project,
         'time': {'fg': 'green'},
         'error': {'fg': 'red'},
+        'date': {'fg': 'cyan'}
     }
 
     style = styles.get(type, {})
@@ -34,6 +41,17 @@ class WatsonCliError(click.ClickException):
 
 
 watson.WatsonError = WatsonCliError
+
+
+class DateParamType(click.ParamType):
+    name = 'date'
+
+    def convert(self, value, param, ctx):
+        if value:
+            return arrow.get(value)
+
+
+Date = DateParamType()
 
 
 @click.group()
@@ -132,6 +150,57 @@ def status(watson):
     click.echo("Project {} started {}".format(
         style('project', current['project']),
         style('time', current['start'].humanize())
+    ))
+
+
+@cli.command()
+@click.argument('project', required=False)
+@click.option('-f', '--from', 'from_', type=Date,
+              default=arrow.now().replace(days=-7),
+              help="The date from when the log should start. Defaults "
+              "to seven days ago.")
+@click.option('-t', '--to', type=Date, default=arrow.now(),
+              help="The date at which the log should stop (inclusive). "
+              "Defaults to tomorrow.")
+@click.pass_obj
+def log(watson, project, from_, to):
+    if project:
+        projects = (p for p in watson.projects
+                    if p == project or p.startswith(project + '/'))
+        subprojects = False
+    else:
+        projects = (p for p in watson.projects if '/' not in p)
+        subprojects = True
+
+    if from_ > to:
+        raise click.ClickException("'from' must be anterior to 'to'")
+
+    span = watson.frames.span(from_, to)
+
+    total = datetime.timedelta()
+
+    click.echo("{} -> {}\n".format(
+        style('date', '{:ddd DD MMMM YYYY}'.format(span.start)),
+        style('date', '{:ddd DD MMMM YYYY}'.format(span.stop))
+    ))
+
+    for name in projects:
+        frames = (f for f in watson.frames.for_project(name, subprojects)
+                  if f in span)
+        delta = reduce(
+            operator.add,
+            (f.stop - f.start for f in frames),
+            datetime.timedelta()
+        )
+        total += delta
+
+        click.echo("{} {}".format(
+            style('time', '{:>12}'.format(format_timedelta(delta))),
+            style('project', name)
+        ))
+
+    click.echo("\nTotal: {}".format(
+        style('time', '{}'.format(format_timedelta(total)))
     ))
 
 
