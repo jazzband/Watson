@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+import operator
 import itertools
 
+from functools import reduce
+
 import click
+import arrow
 
 from . import watson
+from .utils import format_timedelta
 
 
 def style(type, string):
@@ -18,6 +24,7 @@ def style(type, string):
         'project': _style_project,
         'time': {'fg': 'green'},
         'error': {'fg': 'red'},
+        'date': {'fg': 'cyan'}
     }
 
     style = styles.get(type, {})
@@ -133,6 +140,45 @@ def status(watson):
         style('project', current['project']),
         style('time', current['start'].humanize())
     ))
+
+
+@cli.command()
+@click.argument('project', required=False)
+@click.pass_obj
+def log(watson, project):
+    if project:
+        projects = (p for p in watson.projects
+                    if p == project or p.startswith(project + '/'))
+        subprojects = False
+    else:
+        projects = (p for p in watson.projects if '/' not in p)
+        subprojects = True
+
+    span = watson.frames.span(arrow.now().replace(days=-7), arrow.now())
+
+    total = datetime.timedelta()
+
+    click.echo("From {} to {}:\n".format(
+        style('date', '{:ddd DD MMMM}'.format(span.start)),
+        style('date', '{:ddd DD MMMM}'.format(span.stop))
+    ))
+
+    for name in projects:
+        frames = (f for f in watson.frames.for_project(name, subprojects)
+                  if f in span)
+        delta = reduce(
+            operator.add,
+            (f.stop - f.start for f in frames),
+            datetime.timedelta()
+        )
+        total += delta
+
+        click.echo("{} - {}".format(
+            style('time', format_timedelta(delta)),
+            style('project', name)
+        ))
+
+    click.echo("{} - Total".format(style('time', format_timedelta(total))))
 
 
 @cli.command()
