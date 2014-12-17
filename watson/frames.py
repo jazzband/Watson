@@ -1,3 +1,6 @@
+import itertools
+import operator
+
 import arrow
 
 from collections import namedtuple
@@ -20,6 +23,10 @@ class Frame(namedtuple('Frame', HEADERS)):
         stop = self.stop.timestamp
 
         return (start, stop, self.project, self.id)
+
+    @property
+    def day(self):
+        return self.start.floor('day')
 
 
 class Span(object):
@@ -97,3 +104,7 @@ class Frames(object):
 
     def span(self, start, stop):
         return Span(start, stop)
+
+    def by_day(self, span):
+        frames = (f for f in self._rows if f in span)
+        return itertools.groupby(frames, operator.attrgetter('day'))
