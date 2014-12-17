@@ -247,6 +247,36 @@ def log(watson, project, from_, to):
 
 
 @cli.command()
+@click.option('-f', '--from', 'from_', type=Date,
+              default=arrow.now().replace(days=-7),
+              help="The date from when the report should start. Defaults "
+              "to seven days ago.")
+@click.option('-t', '--to', type=Date, default=arrow.now(),
+              help="The date at which the report should stop (inclusive). "
+              "Defaults to tomorrow.")
+@click.pass_obj
+def report(watson, from_, to):
+    if from_ > to:
+        raise click.ClickException("'from' must be anterior to 'to'")
+
+    span = watson.frames.span(from_, to)
+
+    for i, (day, frames) in enumerate(watson.frames.by_day(span)):
+        if i != 0:
+            click.echo()
+
+        click.echo(style('date', "{:dddd DD MMMM YYYY}".format(day)))
+
+        for frame in sorted(frames):
+            click.echo('\t{start} to {stop}  {project} {delta}'.format(
+                delta=format_timedelta(frame.stop - frame.start),
+                project=style('project', frame.project),
+                start=style('time', '{:HH:mm}'.format(frame.start)),
+                stop=style('time', '{:HH:mm}'.format(frame.stop))
+            ))
+
+
+@cli.command()
 @click.pass_obj
 def projects(watson):
     """
