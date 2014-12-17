@@ -247,6 +247,99 @@ def log(watson, project, from_, to):
 
 
 @cli.command()
+@click.option('-f', '--from', 'from_', type=Date,
+              default=arrow.now().replace(days=-7),
+              help="The date from when the report should start. Defaults "
+              "to seven days ago.")
+@click.option('-t', '--to', type=Date, default=arrow.now(),
+              help="The date at which the report should stop (inclusive). "
+              "Defaults to tomorrow.")
+@click.pass_obj
+def report(watson, from_, to):
+    """
+    Print a report of the time spent on projects during the given timespan.
+
+    By default, the time spent the last 7 days is printed. This timespan
+    can be controlled with the '--from' and '--to' arguments. The dates
+    must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
+
+    \b
+    Example:
+    $ watson report
+    Monday 05 May 2014
+            09:21 to 12:39  apollo11/reactor  3h 17m 58s
+            13:26 to 14:05  voyager2/probe/generators 39m 08s
+            14:37 to 17:11  hubble/transmission  2h 33m 12s
+
+    \b
+    Tuesday 06 May 2014
+            09:38 to 10:40  voyager1/launcher  1h 02m 37s
+            10:48 to 11:36  hubble/lens 48m 51s
+            12:17 to 12:35  voyager2/launcher 17m 43s
+            12:39 to 16:15  voyager1/launcher  3h 35m 35s
+            16:50 to 17:51  hubble/lens  1h 00m 29s
+
+    \b
+    Wednesday 07 May 2014
+            09:43 to 12:55  apollo11/lander  3h 11m 37s
+            13:34 to 15:07  apollo11  1h 32m 54s
+            15:43 to 18:17  apollo11/reactor  2h 33m 59s
+
+    \b
+    Thursday 08 May 2014
+            09:36 to 13:33  hubble  3h 56m 32s
+            14:05 to 15:37  voyager1/probe/generators  1h 31m 58s
+            16:33 to 20:14  voyager1/probe/sensors  3h 41m 07s
+
+    \b
+    Friday 09 May 2014
+            09:30 to 13:06  voyager2/probe  3h 36m 46s
+            13:37 to 15:31  voyager2/probe  1h 54m 01s
+
+    \b
+    $ watson report --from 2014-04-16 --to 2014-04-18
+    Wednesday 16 April 2014
+            09:52 to 13:21  apollo11/module  3h 28m 58s
+            14:01 to 14:42  apollo11/lander/brakes 41m 00s
+            14:46 to 17:27  voyager2/probe/antenna  2h 40m 59s
+
+    \b
+    Thursday 17 April 2014
+            09:18 to 10:12  voyager2 53m 54s
+            10:19 to 12:40  voyager1/probe  2h 20m 49s
+            12:51 to 14:31  hubble/camera  1h 39m 22s
+            15:11 to 15:40  voyager2/probe/antenna 29m 33s
+            15:42 to 16:25  voyager2/probe/antenna 42m 40s
+            16:46 to 18:26  apollo11/reactor  1h 39m 29s
+
+    \b
+    Friday 18 April 2014
+            09:55 to 13:39  voyager1/probe/sensors  3h 43m 51s
+            14:29 to 14:45  hubble/camera 15m 20s
+            14:55 to 16:32  voyager2  1h 36m 19s
+            17:18 to 20:04  hubble/lens  2h 45m 07s
+    """
+    if from_ > to:
+        raise click.ClickException("'from' must be anterior to 'to'")
+
+    span = watson.frames.span(from_, to)
+
+    for i, (day, frames) in enumerate(watson.frames.by_day(span)):
+        if i != 0:
+            click.echo()
+
+        click.echo(style('date', "{:dddd DD MMMM YYYY}".format(day)))
+
+        for frame in sorted(frames):
+            click.echo('\t{start} to {stop}  {project} {delta}'.format(
+                delta=format_timedelta(frame.stop - frame.start),
+                project=style('project', frame.project),
+                start=style('time', '{:HH:mm}'.format(frame.start)),
+                stop=style('time', '{:HH:mm}'.format(frame.stop))
+            ))
+
+
+@cli.command()
 @click.pass_obj
 def projects(watson):
     """
