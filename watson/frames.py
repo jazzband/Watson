@@ -28,6 +28,18 @@ class Frame(namedtuple('Frame', HEADERS)):
     def day(self):
         return self.start.floor('day')
 
+    def __lt__(self, other):
+        return self.start < other.start
+
+    def __lte__(self, other):
+        return self.start <= other.start
+
+    def __gt__(self, other):
+        return self.start > other.start
+
+    def __gte__(self, other):
+        return self.start >= other.start
+
 
 class Span(object):
     def __init__(self, start, stop, timeframe='day'):
