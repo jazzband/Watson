@@ -1,3 +1,4 @@
+import uuid
 import itertools
 import operator
 
@@ -98,6 +99,8 @@ class Frames(object):
         return frame
 
     def new_frame(self, project, start, stop, id=None):
+        if not id:
+            id = uuid.uuid1().hex
         return Frame(start, stop, project, id)
 
     def replace(self, index, **kwargs):
