@@ -6,24 +6,32 @@ import arrow
 
 from collections import namedtuple
 
-HEADERS = ('start', 'stop', 'project', 'id')
+HEADERS = ('start', 'stop', 'project', 'id', 'updated_at')
 
 
 class Frame(namedtuple('Frame', HEADERS)):
-    def __new__(cls, start, stop, project, id):
+    def __new__(cls, start, stop, project, id, updated_at=None):
         if not isinstance(start, arrow.Arrow):
             start = arrow.get(start)
 
         if not isinstance(stop, arrow.Arrow):
             stop = arrow.get(stop)
 
-        return super(Frame, cls).__new__(cls, start, stop, project, id)
+        if updated_at is None:
+            updated_at = arrow.utcnow()
+        elif not isinstance(updated_at, arrow.Arrow):
+            updated_at = arrow.get(updated_at)
+
+        return super(Frame, cls).__new__(
+            cls, start, stop, project, id, updated_at
+        )
 
     def dump(self):
         start = self.start.timestamp
         stop = self.stop.timestamp
+        updated_at = self.updated_at.timestamp
 
-        return (start, stop, self.project, self.id)
+        return (start, stop, self.project, self.id, updated_at)
 
     @property
     def day(self):
