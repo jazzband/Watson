@@ -64,8 +64,9 @@ def test_current_watson_non_valid_json():
     content = "{'foo': bar}"
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
-        with pytest.raises(WatsonError):
-            watson.current
+        with mock.patch('os.path.getsize', return_value=len(content)):
+            with pytest.raises(WatsonError):
+                watson.current
 
 
 def test_current_with_given_state():
@@ -82,6 +83,61 @@ def test_current_with_empty_given_state():
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert watson.current == {}
+
+
+# last_sync
+
+def test_last_sync():
+    watson = Watson()
+
+    now = arrow.get(123)
+    content = json.dumps(now.timestamp)
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert watson.last_sync == now
+
+
+def test_last_sync_with_empty_file():
+    watson = Watson()
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
+        with mock.patch('os.path.getsize', return_value=0):
+            assert watson.last_sync == arrow.get(0)
+
+
+def test_last_sync_with_nonexistent_file():
+    watson = Watson()
+
+    with mock.patch('%s.open' % builtins, side_effect=IOError):
+        assert watson.last_sync == arrow.get(0)
+
+
+def test_last_sync_watson_non_valid_json():
+    watson = Watson()
+
+    content = "{'foo': bar}"
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        with mock.patch('os.path.getsize', return_value=len(content)):
+            with pytest.raises(WatsonError):
+                watson.last_sync
+
+
+def test_last_sync_with_given_state():
+    content = json.dumps(123)
+    now = arrow.now()
+    watson = Watson(last_sync=now)
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert watson.last_sync == now
+
+
+def test_last_sync_with_empty_given_state():
+    content = json.dumps(123)
+    watson = Watson(last_sync=None)
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert watson.last_sync == arrow.get(0)
 
 
 # frames
@@ -348,83 +404,94 @@ def test_save_config(watson):
             assert write_mock.call_count == 1
 
 
+def test_save_last_sync(watson):
+    now = arrow.now()
+    watson.last_sync = now
+
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert json_mock.call_count == 1
+            assert json_mock.call_args[0][0] == now.timestamp
+
+
+def test_save_empty_last_sync():
+    watson = Watson(last_sync=arrow.now())
+    watson.last_sync = None
+
+    with mock.patch('%s.open' % builtins, mock.mock_open()):
+        with mock.patch('json.dump') as json_mock:
+            watson.save()
+
+            assert json_mock.call_count == 1
+            assert json_mock.call_args[0][0] == 0
+
+
 # push
 
-@pytest.fixture
-def frames():
-    return [
-        [0, 0, 'foo', None],
-        [0, 0, 'foo', 42],
-        [0, 0, 'bar', None],
-        [0, 0, 'foo/x', None],
-        [0, 0, 'foo/x', 43],
-        [0, 0, 'foo/x/y', None],
-        [0, 0, 'foo/z', 44],
-        [0, 0, 'bar', None],
-        [0, 0, 'bar', 45],
-    ]
-
-
-def test_push_with_no_config(frames):
-    watson = Watson(frames=frames)
-
+def test_push_with_no_config(watson):
     config = ConfigParser()
     watson.config = config
 
     with pytest.raises(WatsonError):
-        watson.push()
+        watson.push(arrow.now())
 
 
-def test_push_with_no_url(frames):
-    watson = Watson(frames=frames)
-
+def test_push_with_no_url(watson):
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'token', 'bar')
     watson.config = config
 
     with pytest.raises(WatsonError):
-        watson.push()
+        watson.push(arrow.now())
 
 
-def test_push_with_no_token(frames):
-    watson = Watson(frames=frames)
-
+def test_push_with_no_token(watson):
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'url', 'http://foo.com')
     watson.config = config
 
     with pytest.raises(WatsonError):
-        watson.push()
+        watson.push(arrow.now())
 
 
-def test_push(frames):
-    watson = Watson(frames=frames)
-
+def test_push(watson):
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'url', 'http://foo.com')
     config.set('crick', 'token', 'bar')
+
+    watson.frames.add('foo', 1, 2)
+    watson.frames.add('foo', 3, 4)
+
+    watson.last_sync = arrow.now()
+
+    watson.frames.add('bar', 1, 2)
+    watson.frames.add('lol', 1, 2)
+
+    last_pull = arrow.now()
+
+    watson.frames.add('foo', 1, 2)
+    watson.frames.add('bar', 3, 4)
 
     class Response:
         def __init__(self):
-            self.status_code = 201
+            self.status_code = 200
 
-        def json(self):
-            return list(range(5))
-
-    with mock.patch('requests.post') as mock_post:
-        mock_post.return_value = Response()
+    with mock.patch('requests.put') as mock_put:
+        mock_put.return_value = Response()
 
         with mock.patch.object(
                 Watson, 'config', new_callable=mock.PropertyMock
                 ) as mock_config:
             mock_config.return_value = config
-            watson.push()
+            watson.push(last_pull)
 
-        requests.post.assert_called_once_with(
-            config.get('crick', 'url') + '/frames/',
+        requests.put.assert_called_once_with(
+            mock.ANY,
             mock.ANY,
             headers={
                 'content-type': 'application/json',
@@ -432,80 +499,83 @@ def test_push(frames):
             }
         )
 
-        frames_received = json.loads(mock_post.call_args[0][1])['frames']
-        assert len(frames_received) == 5
-
-    assert all(frame.id is not None for frame in watson.frames)
-
-    assert watson.frames[0].id == 0
-    assert watson.frames[0].project == 'foo'
-    assert watson.frames[1].id == 42
-    assert watson.frames[1].project == 'foo'
-    assert watson.frames[2].id == 1
-    assert watson.frames[2].project == 'bar'
-    assert watson.frames[3].id == 2
-    assert watson.frames[3].project == 'foo/x'
-    assert watson.frames[4].id == 43
-    assert watson.frames[4].project == 'foo/x'
-    assert watson.frames[5].id == 3
-    assert watson.frames[5].project == 'foo/x/y'
-    assert watson.frames[6].id == 44
-    assert watson.frames[6].project == 'foo/z'
-    assert watson.frames[7].id == 4
-    assert watson.frames[7].project == 'bar'
-    assert watson.frames[8].id == 45
-    assert watson.frames[8].project == 'bar'
+        frames_sent = json.loads(mock_put.call_args[0][1])
+        assert len(frames_sent) == 2
 
 
-def test_push_force(frames):
-    watson = Watson(frames=frames)
+# pull
 
+def test_pull_with_no_config(watson):
+    config = ConfigParser()
+    watson.config = config
+
+    with pytest.raises(WatsonError):
+        watson.pull(arrow.now())
+
+
+def test_pull_with_no_url(watson):
+    config = ConfigParser()
+    config.add_section('crick')
+    config.set('crick', 'token', 'bar')
+    watson.config = config
+
+    with pytest.raises(WatsonError):
+        watson.pull(arrow.now())
+
+
+def test_pull_with_no_token(watson):
+    config = ConfigParser()
+    config.add_section('crick')
+    config.set('crick', 'url', 'http://foo.com')
+    watson.config = config
+
+    with pytest.raises(WatsonError):
+        watson.pull(arrow.now())
+
+
+def test_pull(watson):
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'url', 'http://foo.com')
     config.set('crick', 'token', 'bar')
 
-    class PutResponse:
+    watson.last_sync = arrow.now()
+
+    class Response:
         def __init__(self):
             self.status_code = 200
 
-    class PostResponse:
-        def __init__(self):
-            self.status_code = 201
-
         def json(self):
-            return list(range(4))
+            pass
 
     with mock.patch('requests.put') as mock_put:
-        with mock.patch('requests.post') as mock_post:
-            mock_put.return_value = PutResponse()
-            mock_post.return_value = PostResponse()
+        mock_put.return_value = Response()
 
-            with mock.patch.object(
-                    Watson, 'config', new_callable=mock.PropertyMock
-                    ) as mock_config:
-                mock_config.return_value = config
-                watson.push(force=True)
+        with mock.patch.object(
+                Watson, 'config', new_callable=mock.PropertyMock
+                ) as mock_config:
+            mock_config.return_value = config
+            watson.pull()
 
-            args = (config.get('crick', 'url') + '/frames/', mock.ANY)
-            kwargs = {
-                'headers': {
-                    'content-type': 'application/json',
-                    'Authorization': "Token " + config.get('crick', 'token')
-                }
+        requests.put.assert_called_once_with(
+            mock.ANY,
+            mock.ANY,
+            params={'last_sync': watson.last_sync},
+            headers={
+                'content-type': 'application/json',
+                'Authorization': "Token " + config.get('crick', 'token')
             }
-            requests.post.assert_called_once_with(*args, **kwargs)
-            requests.put.assert_called_once_with(*args, **kwargs)
+        )
 
-            frames_sent = json.loads(mock_put.call_args[0][1])['frames']
-            assert len(frames_sent) == 4
-            assert [f['id'] for f in frames_sent] == [42, 43, 44, 45]
+        frames_sent = json.loads(mock_put.call_args[0][1])
+        assert len(frames_sent) == 2
 
 
 # projects
 
-def test_projects(frames):
-    watson = Watson(frames=frames)
+def test_projects(watson):
+    for name in ('foo/x/y', 'foo', 'bar', 'bar', 'foo/x', 'bar', 'foo/z'):
+        watson.frames.add(name, 0, 0)
 
     assert watson.projects == [
         'bar',
