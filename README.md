@@ -171,20 +171,18 @@ $ watson config crick.token
 7e329263e329
 ```
 
-### push
-
-Push all the new frames to a Crick server.
+### sync
+Get the frames from the server and push the new ones.
 
 The URL of the server and the User Token must be defined in a `.watson.conf` file
 placed inside your user directory.
 
-If you give the '-f' (or '--force') flag to the command, it will
-also update all the existing frames on the server.
-
 ```
 $ watson config crick.url http://localhost:4242
 $ watson config crick.token 7e329263e329
-$ watson push
+$ watson sync
+Received 42 frames from the server
+Pushed 23 frames to the server
 ```
 
 See [django-crick](https://bitbucket.org/tailordev/django-crick) for more information.

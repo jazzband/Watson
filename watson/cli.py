@@ -427,27 +427,30 @@ def config(context, key, value, edit):
 
 
 @cli.command()
-@click.option('-f', '--force', is_flag=True,
-              help="Update the existing frames on the server.")
 @click.pass_obj
-def push(watson, force):
+def sync(watson):
     """
-    Push all the new frames to a Crick server.
+    Get the frames from the server and push the new ones.
 
     The URL of the server and the User Token must be defined via the
     'watson config' command.
-
-    If you give the '-f' (or '--force') flag to the command, it will
-    also update all the existing frames on the server.
 
     \b
     Example:
     $ watson config crick.url http://localhost:4242
     $ watson config crick.token 7e329263e329
-    $ watson push
+    $ watson sync
+    Received 42 frames from the server
+    Pushed 23 frames to the server
 
     See https://bitbucket.org/tailordev/django-crick for more information.
     """
-    frames = watson.push(force)
-    click.echo("{} frames pushed to the server.".format(len(frames)))
+    last_pull = arrow.utcnow()
+    pulled = watson.pull()
+    click.echo("Received {} frames from the server".format(len(pulled)))
+
+    pushed = watson.push(last_pull)
+    click.echo("Pushed {} frames to the server".format(len(pushed)))
+
+    watson.last_sync = arrow.utcnow()
     watson.save()

@@ -1,3 +1,4 @@
+import uuid
 import itertools
 import operator
 
@@ -5,24 +6,32 @@ import arrow
 
 from collections import namedtuple
 
-HEADERS = ('start', 'stop', 'project', 'id')
+HEADERS = ('start', 'stop', 'project', 'id', 'updated_at')
 
 
 class Frame(namedtuple('Frame', HEADERS)):
-    def __new__(cls, start, stop, project, id):
+    def __new__(cls, start, stop, project, id, updated_at=None):
         if not isinstance(start, arrow.Arrow):
             start = arrow.get(start)
 
         if not isinstance(stop, arrow.Arrow):
             stop = arrow.get(stop)
 
-        return super(Frame, cls).__new__(cls, start, stop, project, id)
+        if updated_at is None:
+            updated_at = arrow.utcnow()
+        elif not isinstance(updated_at, arrow.Arrow):
+            updated_at = arrow.get(updated_at)
+
+        return super(Frame, cls).__new__(
+            cls, start, stop, project, id, updated_at
+        )
 
     def dump(self):
         start = self.start.timestamp
         stop = self.stop.timestamp
+        updated_at = self.updated_at.timestamp
 
-        return (start, stop, self.project, self.id)
+        return (start, stop, self.project, self.id, updated_at)
 
     @property
     def day(self):
@@ -66,16 +75,31 @@ class Frames(object):
 
     def __getitem__(self, key):
         if key in HEADERS:
-            return self._get_col(key)
-        else:
+            return tuple(self._get_col(key))
+        elif isinstance(key, int):
             return self._rows[key]
+        else:
+            try:
+                return self._rows[self['id'].index(key)]
+            except ValueError:
+                raise KeyError("Frame with id {} not found".format(key))
 
     def __setitem__(self, key, value):
         self.changed = True
+
         if isinstance(value, Frame):
-            self._rows[key] = value
+            frame = value
         else:
-            self._rows[key] = self.new_frame(*value)
+            frame = self.new_frame(*value)
+
+        if isinstance(key, int):
+            self._rows[key] = frame
+        else:
+            try:
+                self._rows[self['id'].index(key)] = frame
+            except ValueError:
+                frame._replace(id=key)
+                self._rows.append(frame)
 
     def __delitem__(self, key):
         self.changed = True
@@ -86,11 +110,6 @@ class Frames(object):
         for row in self._rows:
             yield row[index]
 
-    @property
-    def rows(self):
-        for row in self._rows:
-            yield row
-
     def add(self, *args, **kwargs):
         self.changed = True
         frame = self.new_frame(*args, **kwargs)
@@ -98,11 +117,9 @@ class Frames(object):
         return frame
 
     def new_frame(self, project, start, stop, id=None):
+        if not id:
+            id = uuid.uuid1().hex
         return Frame(start, stop, project, id)
-
-    def replace(self, index, **kwargs):
-        frame = self[index]
-        self[index] = frame._replace(**kwargs)
 
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
