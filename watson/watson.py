@@ -12,6 +12,8 @@ except ImportError:
 
 import arrow
 import click
+import requests
+
 
 from .frames import Frames
 
@@ -260,13 +262,11 @@ class Watson(object):
         """
         return sorted(set(self.frames['project']))
 
-    def push(self, force=False):
-        import requests
-
+    def _get_request_info(self):
         config = self.config
 
         try:
-            dest = config.get('crick', 'url') + '/frames/'
+            dest = config.get('crick', 'url').rstrip('/') + '/frames/'
             token = config.get('crick', 'token')
         except configparser.Error:
             raise WatsonError(
@@ -274,62 +274,61 @@ class Watson(object):
                 "(crick.token) using the config command."
             )
 
-        frames = tuple(
-            {
-                'id': f.id,
-                'index': i,
-                'start': str(f.start),
-                'stop': str(f.stop),
-                'project': f.project.split('/')
-            }
-            for i, f in enumerate(self.frames)
-        )
-
-        new_frames = tuple(f for f in frames if f['id'] is None)
-
-        if force:
-            existing_frames = tuple(f for f in frames if f['id'] is not None)
-        else:
-            existing_frames = []
-
         headers = {
             'content-type': 'application/json',
             'Authorization': "Token {}".format(token)
         }
 
-        if new_frames:
-            data = json.dumps({'frames': new_frames})
-            try:
-                response = requests.post(
-                    dest, data, headers=headers
-                )
-            except requests.ConnectionError:
-                raise WatsonError("Unable to reach the server.")
+        return dest, headers
 
-            if response.status_code != 201:
-                raise WatsonError(
-                    "An error occured with the remote "
-                    "server: {}".format(response.json())
-                )
+    def pull(self):
+        dest, headers = self._get_request_info()
 
-            ids = response.json()
-            for frame, id in zip(new_frames, ids):
-                index = frame['index']
-                self.frames.replace(index, id=id)
+        try:
+            response = requests.get(
+                dest, params={'last_sync': self.last_sync}, headers=headers
+            )
+            assert response.status_code == 200
+        except requests.ConnectionError:
+            raise WatsonError("Unable to reach the server.")
+        except AssertionError:
+            raise WatsonError(
+                "An error occured with the remote "
+                "server: {}".format(response.json())
+            )
 
-        if existing_frames:
-            data = json.dumps({'frames': existing_frames})
-            try:
-                response = requests.put(
-                    dest, data, headers=headers
-                )
-            except requests.ConnectionError:
-                raise WatsonError("Unable to reach the server.")
+        frames = response.json() or ()
 
-            if response.status_code != 200:
-                raise WatsonError(
-                    "An error occured with the remote server: "
-                    "{}".format(response.json())
-                )
+        for frame in frames:
+            self.frames[frame['id']] = (frame['project']['name'],
+                                        frame['start'], frame['stop'])
 
-        return new_frames
+        return frames
+
+    def push(self, last_pull):
+        dest, headers = self._get_request_info()
+
+        frames = tuple(
+            {
+                'id': f.id,
+                'start': str(f.start),
+                'stop': str(f.stop),
+                'project': {'name': f.project}
+            }
+            for f in self.frames if last_pull > f.updated_at > self.last_sync
+        )
+
+        try:
+            response = requests.put(
+                dest, json.dumps(frames), headers=headers
+            )
+            assert response.status_code == 200
+        except requests.ConnectionError:
+            raise WatsonError("Unable to reach the server.")
+        except AssertionError:
+            raise WatsonError(
+                "An error occured with the remote "
+                "server: {}".format(response.json())
+            )
+
+        return frames
