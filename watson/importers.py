@@ -62,3 +62,21 @@ class ICSImporter(BaseImporter):
                 continue
 
             self.exporter(start, stop, project, uid=uid)
+
+
+IMPORTERS = (ICSImporter,)
+"""
+All the available importers
+"""
+
+
+def get_importer(ext, *args, **kwargs):
+    """
+    Return an instantiated importer able to parse the given extension, or
+    `None` if no such importer is available.
+    """
+    ext = ext.lstrip('.')
+
+    for importer in IMPORTERS:
+        if ext in importer.extensions:
+            return importer(*args, **kwargs)
