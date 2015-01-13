@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import datetime
 import operator
 import itertools
@@ -11,6 +12,7 @@ import arrow
 
 from . import watson
 from .utils import format_timedelta
+from .importers import get_importer
 
 
 def style(type, string):
@@ -453,4 +455,41 @@ def sync(watson):
     click.echo("Pushed {} frames to the server".format(len(pushed)))
 
     watson.last_sync = arrow.utcnow()
+    watson.save()
+
+
+@cli.command(name='import')
+@click.argument('path', type=click.Path(exists=True, dir_okay=False))
+@click.pass_obj
+def _import(watson, path):
+    """
+    Import a file containing frames. Currently only ICS (and Ical) files are
+    supported.
+
+    \b
+    Example:
+    $ watson import calendar.ics
+    Imported 42 frames.
+    """
+    ext = os.path.splitext(path)[1]
+
+    counter = []
+
+    def exporter(start, stop, project, **kwargs):
+        counter.append(True)
+        watson.frames.add(project, start, stop)
+
+    importer = get_importer(ext, exporter)
+
+    if not importer:
+        raise click.ClickException("No importer for format {}.".format(ext))
+
+    try:
+        with open(path) as f:
+            importer.parse(f)
+    except Exception as e:
+        raise click.ClickException("Error importing {}: {}".format(path, e))
+
+    click.echo("Imported {} frames.".format(len(counter)))
+
     watson.save()

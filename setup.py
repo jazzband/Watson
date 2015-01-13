@@ -7,7 +7,8 @@ setup(
     install_requires=[
         'Click',
         'arrow',
-        'requests'
+        'requests',
+        'icalendar'
     ],
     extras_require={
         'gui': ['PySide']
