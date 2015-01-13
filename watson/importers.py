@@ -1,5 +1,7 @@
 import abc
 
+from .watson import WatsonError
+
 
 class BaseImporter(object):
     """
@@ -30,3 +32,33 @@ class BaseImporter(object):
         Parse an IO stream and call `exporter` for each parsed frame.
         """
         pass
+
+
+class ICSImporter(BaseImporter):
+    """
+    Parse ICS (and ICal) calendar files. Requires the `icalendar` module.
+    """
+
+    extensions = ('ics', 'ical')
+
+    def parse(self, stream):
+        try:
+            from icalendar import Calendar, Event
+        except ImportError:
+            raise WatsonError(
+                "You need to have the 'icalendar' module installed to parse "
+                "ICS files."
+            )
+
+        cal = Calendar.from_ical(stream.read())
+
+        for event in (c for c in cal.subcomponents if isinstance(c, Event)):
+            try:
+                start = event['DTSTART'].dt
+                stop = event['DTEND'].dt
+                project = event['SUMMARY']
+                uid = event.get('UID')
+            except KeyError:
+                continue
+
+            self.exporter(start, stop, project, uid=uid)
