@@ -26,7 +26,8 @@ def style(type, string):
         'project': _style_project,
         'time': {'fg': 'green'},
         'error': {'fg': 'red'},
-        'date': {'fg': 'cyan'}
+        'date': {'fg': 'cyan'},
+        'id': {'fg': 'white'}
     }
 
     style = styles.get(type, {})
@@ -333,12 +334,13 @@ def report(watson, from_, to):
         click.echo(style('date', "{:dddd DD MMMM YYYY}".format(day)))
 
         for frame in sorted(frames):
-            click.echo('\t{start} to {stop}  {project} {delta}'.format(
+            click.echo('\t{id}  {start} to {stop}  {project} {delta}'.format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project', frame.project),
                 start=style('time',
                             '{:HH:mm}'.format(frame.start.to('local'))),
                 stop=style('time', '{:HH:mm}'.format(frame.stop.to('local'))),
+                id=style('id', frame.id[:7])
             ))
 
 
