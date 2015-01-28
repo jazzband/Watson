@@ -336,8 +336,9 @@ def report(watson, from_, to):
             click.echo('\t{start} to {stop}  {project} {delta}'.format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project', frame.project),
-                start=style('time', '{:HH:mm}'.format(frame.start)),
-                stop=style('time', '{:HH:mm}'.format(frame.stop))
+                start=style('time',
+                            '{:HH:mm}'.format(frame.start.to('local'))),
+                stop=style('time', '{:HH:mm}'.format(frame.stop.to('local'))),
             ))
 
 
