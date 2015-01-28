@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import os
+import json
 import datetime
 import operator
 import itertools
 
 from functools import reduce
+from dateutil import tz
 
 import click
 import arrow
@@ -363,6 +365,67 @@ def projects(watson):
     """
     for project in watson.projects:
         click.echo(style('project', project))
+
+
+@cli.command()
+@click.argument('id')
+@click.pass_obj
+def edit(watson, id):
+    """
+    Edit a frame. You can get the id of a frame with the `watson report`
+    command.
+
+    The `$EDITOR` environment variable is used to detect your editor.
+    """
+    try:
+        frame = watson.frames[id]
+    except KeyError:
+        raise click.ClickException("No frame found with id {}.".format(id))
+
+    format = 'YYYY-MM-DD HH:mm:ss'
+
+    text = json.dumps({
+        'start': frame.start.to('local').format(format),
+        'stop': frame.stop.to('local').format(format),
+        'project': frame.project
+    }, indent=4, sort_keys=True)
+
+    output = click.edit(text, extension='.json')
+
+    if not output:
+        click.echo("No change made.")
+        return
+
+    try:
+        data = json.loads(output)
+
+        project = data['project']
+        start = arrow.get(
+            data['start'], format).replace(tzinfo=tz.tzlocal()).to('utc')
+        stop = arrow.get(
+            data['stop'], format).replace(tzinfo=tz.tzlocal()).to('utc')
+
+    except (ValueError, RuntimeError) as e:
+        raise click.ClickException("Error saving edited frame: {}".format(e))
+    except KeyError:
+        raise click.ClickException(
+            "The edited frame must contain the project, start and stop keys."
+        )
+
+    watson.frames[id] = (project, start, stop)
+    frame = watson.frames[id]
+
+    watson.save()
+
+    click.echo(
+        'Edited frame for project {project}, from {start} to {stop} '
+        '({delta})'.format(
+            delta=format_timedelta(frame.stop - frame.start).strip(),
+            project=style('project', frame.project),
+            start=style('time', '{:HH:mm}'.format(frame.start.to('local'))),
+            stop=style('time', '{:HH:mm}'.format(frame.stop.to('local')))
+        )
+    )
 
 
 @cli.command()
