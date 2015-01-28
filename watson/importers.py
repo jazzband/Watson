@@ -14,22 +14,22 @@ class BaseImporter(object):
     All the file extensions (like 'json' or 'html') recognized by the importer
     """
 
-    def __init__(self, exporter):
+    def __init__(self, save):
         """
-        :param exporter: A function which will be called for each parsed frame.
-                         It should accept the arguments `start`, `stop`,
-                         `project` and some keyword arguments passed by
-                         the importer (there is no constraint about those
-                         keyword arguments)
-        :type exporter: function
+        :param save: A function which will be called for each parsed frame.
+                     It should accept the arguments `start`, `stop`,
+                     `project` and some keyword arguments passed by
+                     the importer (there is no constraint about those
+                     keyword arguments)
+        :type save: function
         """
-        assert callable(exporter)
-        self.exporter = exporter
+        assert callable(save)
+        self.save = save
 
     @abc.abstractmethod
     def parse(self, stream):
         """
-        Parse an IO stream and call `exporter` for each parsed frame.
+        Parse an IO stream and call `save` for each parsed frame.
         """
         pass
 
@@ -61,7 +61,7 @@ class ICSImporter(BaseImporter):
             except KeyError:
                 continue
 
-            self.exporter(start, stop, project, uid=uid)
+            self.save(start, stop, project, uid=uid)
 
 
 IMPORTERS = (ICSImporter,)

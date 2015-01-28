@@ -475,11 +475,11 @@ def _import(watson, path):
 
     counter = []
 
-    def exporter(start, stop, project, **kwargs):
+    def save_frame(start, stop, project, **kwargs):
         counter.append(True)
         watson.frames.add(project, start, stop)
 
-    importer = get_importer(ext, exporter)
+    importer = get_importer(ext, save_frame)
 
     if not importer:
         raise click.ClickException("No importer for format {}.".format(ext))
