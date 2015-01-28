@@ -45,7 +45,7 @@ class ICSImporter(BaseImporter):
     extensions = ('ics', 'ical')
 
     def __init__(self, *args, regex=DEFAULT_REGEX):
-        super(self, ICSImporter).__init__(*args)
+        super(ICSImporter, self).__init__(*args)
 
         self.regex = regex
 
@@ -70,8 +70,8 @@ class ICSImporter(BaseImporter):
 
                 start = event['DTSTART'].dt
                 stop = event['DTEND'].dt
-                message = event['SUMMARY']
-                project = groups.get('project')
+                message = event.get('SUMMARY')
+                project = groups['project']
                 tags = groups.get('tags')
                 uid = event.get('UID')
             except KeyError:
