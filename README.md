@@ -157,6 +157,17 @@ voyager1
 voyager2
 ```
 
+### edit
+
+Edit a frame. You can get the id of a frame with the `watson report`
+command.
+
+The `$EDITOR` environment variable is used to detect your editor.
+
+### remove
+
+Remove a frame.
+
 ### config
 Get and set configuration options.
 
