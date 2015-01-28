@@ -1,4 +1,5 @@
 import abc
+import re
 
 from .watson import WatsonError
 
@@ -39,7 +40,14 @@ class ICSImporter(BaseImporter):
     Parse ICS (and ICal) calendar files. Requires the `icalendar` module.
     """
 
+    DEFAULT_REGEX = r'^(?P<project>[\w ]+)(: (?P<tags>[\w,]+))?'
+
     extensions = ('ics', 'ical')
+
+    def __init__(self, *args, regex=DEFAULT_REGEX):
+        super(self, ICSImporter).__init__(*args)
+
+        self.regex = regex
 
     def parse(self, stream):
         try:
@@ -54,14 +62,24 @@ class ICSImporter(BaseImporter):
 
         for event in (c for c in cal.subcomponents if isinstance(c, Event)):
             try:
+                matches = re.match(self.regex, event['DESCRIPTION'])
+                if matches:
+                    groups = matches.groupdict()
+                else:
+                    groups = {}
+
                 start = event['DTSTART'].dt
                 stop = event['DTEND'].dt
-                project = event['SUMMARY']
+                message = event['SUMMARY']
+                project = groups.get('project')
+                tags = groups.get('tags')
                 uid = event.get('UID')
             except KeyError:
                 continue
 
-            self.save(start, stop, project, uid=uid)
+            self.save(
+                start, stop, project, uid=uid, message=message, tags=tags
+            )
 
 
 IMPORTERS = (ICSImporter,)
