@@ -11,11 +11,15 @@ HEADERS = ('start', 'stop', 'project', 'id', 'updated_at')
 
 class Frame(namedtuple('Frame', HEADERS)):
     def __new__(cls, start, stop, project, id, updated_at=None):
-        if not isinstance(start, arrow.Arrow):
-            start = arrow.get(start)
+        try:
+            if not isinstance(start, arrow.Arrow):
+                start = arrow.get(start)
 
-        if not isinstance(stop, arrow.Arrow):
-            stop = arrow.get(stop)
+            if not isinstance(stop, arrow.Arrow):
+                stop = arrow.get(stop)
+        except RuntimeError as e:
+            from .watson import WatsonError
+            raise WatsonError("Error converting date: {}".format(e))
 
         if updated_at is None:
             updated_at = arrow.utcnow()
