@@ -44,7 +44,7 @@ DTEND:20141103T113000Z
 DTSTAMP:20141127T082912Z
 DTSTART:20141103T073000Z
 SEQUENCE:0
-SUMMARY;LANGUAGE=fr:foo
+DESCRIPTION;LANGUAGE=fr:foo
 TRANSP:OPAQUE
 UID:Rd/IDEDZ40q+crttazpjtA==
 X-MICROSOFT-CDO-BUSYSTATUS:BUSY
@@ -54,7 +54,7 @@ DTEND:20141103T173000Z
 DTSTAMP:20141127T082912Z
 DTSTART:20141103T123000Z
 SEQUENCE:0
-SUMMARY;LANGUAGE=fr:bar
+DESCRIPTION;LANGUAGE=fr:bar
 TRANSP:OPAQUE
 UID:EtMj7XHZFUSHLtAqkQAmOg==
 X-MICROSOFT-CDO-BUSYSTATUS:BUSY
@@ -64,7 +64,7 @@ DTEND:20141104T113000Z
 DTSTAMP:20141127T082912Z
 DTSTART:20141104T070000Z
 SEQUENCE:0
-SUMMARY;LANGUAGE=fr:lol
+DESCRIPTION;LANGUAGE=fr:lol
 TRANSP:OPAQUE
 UID:nQ8CDhWzR0C+otwspfAUcQ==
 X-MICROSOFT-CDO-BUSYSTATUS:BUSY
@@ -97,7 +97,7 @@ def test_ics_importer():
             datetime(2014, 11, 3, 11, 30, tzinfo=UTC),
             'foo'
         ),
-        {'uid': 'Rd/IDEDZ40q+crttazpjtA=='}
+        {'uid': 'Rd/IDEDZ40q+crttazpjtA==', 'tags': None, 'message': None}
     )
     assert frames[1] == (
         (
@@ -105,7 +105,7 @@ def test_ics_importer():
             datetime(2014, 11, 3, 17, 30, tzinfo=UTC),
             'bar'
         ),
-        {'uid': 'EtMj7XHZFUSHLtAqkQAmOg=='}
+        {'uid': 'EtMj7XHZFUSHLtAqkQAmOg==', 'tags': None, 'message': None}
     )
     assert frames[2] == (
         (
@@ -113,5 +113,5 @@ def test_ics_importer():
             datetime(2014, 11, 4, 11, 30, tzinfo=UTC),
             'lol'
         ),
-        {'uid': 'nQ8CDhWzR0C+otwspfAUcQ=='}
+        {'uid': 'nQ8CDhWzR0C+otwspfAUcQ==', 'tags': None, 'message': None}
     )
