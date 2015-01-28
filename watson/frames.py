@@ -100,7 +100,12 @@ class Frames(object):
 
     def __delitem__(self, key):
         self.changed = True
-        del self._rows[key]
+
+        if isinstance(key, int):
+            del self._rows[key]
+        else:
+            del self._rows[self._get_index_by_id(key)]
+
     def _get_index_by_id(self, id):
         try:
             return next(
