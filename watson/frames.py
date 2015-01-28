@@ -11,11 +11,15 @@ HEADERS = ('start', 'stop', 'project', 'id', 'updated_at')
 
 class Frame(namedtuple('Frame', HEADERS)):
     def __new__(cls, start, stop, project, id, updated_at=None):
-        if not isinstance(start, arrow.Arrow):
-            start = arrow.get(start)
+        try:
+            if not isinstance(start, arrow.Arrow):
+                start = arrow.get(start)
 
-        if not isinstance(stop, arrow.Arrow):
-            stop = arrow.get(stop)
+            if not isinstance(stop, arrow.Arrow):
+                stop = arrow.get(stop)
+        except RuntimeError as e:
+            from .watson import WatsonError
+            raise WatsonError("Error converting date: {}".format(e))
 
         if updated_at is None:
             updated_at = arrow.utcnow()
@@ -79,10 +83,7 @@ class Frames(object):
         elif isinstance(key, int):
             return self._rows[key]
         else:
-            try:
-                return self._rows[self['id'].index(key)]
-            except ValueError:
-                raise KeyError("Frame with id {} not found".format(key))
+            return self._rows[self._get_index_by_id(key)]
 
     def __setitem__(self, key, value):
         self.changed = True
@@ -95,15 +96,27 @@ class Frames(object):
         if isinstance(key, int):
             self._rows[key] = frame
         else:
+            frame = frame._replace(id=key)
             try:
-                self._rows[self['id'].index(key)] = frame
-            except ValueError:
-                frame._replace(id=key)
+                self._rows[self._get_index_by_id(key)] = frame
+            except KeyError:
                 self._rows.append(frame)
 
     def __delitem__(self, key):
         self.changed = True
-        del self._rows[key]
+
+        if isinstance(key, int):
+            del self._rows[key]
+        else:
+            del self._rows[self._get_index_by_id(key)]
+
+    def _get_index_by_id(self, id):
+        try:
+            return next(
+                i for i, v in enumerate(self['id']) if v.startswith(id)
+            )
+        except StopIteration:
+            raise KeyError("Frame with id {} not found.".format(id))
 
     def _get_col(self, col):
         index = HEADERS.index(col)
@@ -118,7 +131,7 @@ class Frames(object):
 
     def new_frame(self, project, start, stop, id=None):
         if not id:
-            id = uuid.uuid1().hex
+            id = uuid.uuid4().hex
         return Frame(start, stop, project, id)
 
     def dump(self):
