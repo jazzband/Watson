@@ -131,7 +131,7 @@ class Frames(object):
 
     def new_frame(self, project, start, stop, id=None):
         if not id:
-            id = uuid.uuid1().hex
+            id = uuid.uuid4().hex
         return Frame(start, stop, project, id)
 
     def dump(self):
