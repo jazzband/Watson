@@ -429,6 +429,22 @@ def edit(watson, id):
 
 
 @cli.command()
+@click.argument('id')
+@click.pass_obj
+def remove(watson, id):
+    """
+    Remove a frame.
+    """
+    try:
+        del watson.frames[id]
+    except KeyError:
+        raise click.ClickException("No frame found with id {}.".format(id))
+
+    watson.save()
+    click.echo("Frame deleted.")
+
+
+@cli.command()
 @click.argument('key', required=False, metavar='SECTION.OPTION')
 @click.argument('value', required=False)
 @click.option('-e', '--edit', is_flag=True,
