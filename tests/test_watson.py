@@ -510,7 +510,7 @@ def test_pull_with_no_config(watson):
     watson.config = config
 
     with pytest.raises(WatsonError):
-        watson.pull(arrow.now())
+        watson.pull()
 
 
 def test_pull_with_no_url(watson):
@@ -520,7 +520,7 @@ def test_pull_with_no_url(watson):
     watson.config = config
 
     with pytest.raises(WatsonError):
-        watson.pull(arrow.now())
+        watson.pull()
 
 
 def test_pull_with_no_token(watson):
@@ -530,7 +530,7 @@ def test_pull_with_no_token(watson):
     watson.config = config
 
     with pytest.raises(WatsonError):
-        watson.pull(arrow.now())
+        watson.pull()
 
 
 def test_pull(watson):
@@ -548,8 +548,8 @@ def test_pull(watson):
         def json(self):
             pass
 
-    with mock.patch('requests.put') as mock_put:
-        mock_put.return_value = Response()
+    with mock.patch('requests.get') as mock_get:
+        mock_get.return_value = Response()
 
         with mock.patch.object(
                 Watson, 'config', new_callable=mock.PropertyMock
@@ -557,8 +557,7 @@ def test_pull(watson):
             mock_config.return_value = config
             watson.pull()
 
-        requests.put.assert_called_once_with(
-            mock.ANY,
+        requests.get.assert_called_once_with(
             mock.ANY,
             params={'last_sync': watson.last_sync},
             headers={
@@ -566,9 +565,6 @@ def test_pull(watson):
                 'Authorization': "Token " + config.get('crick', 'token')
             }
         )
-
-        frames_sent = json.loads(mock_put.call_args[0][1])
-        assert len(frames_sent) == 2
 
 
 # projects
