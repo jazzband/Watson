@@ -47,7 +47,7 @@ class ICSImporter(BaseImporter):
     Parse ICS (and ICal) calendar files. Requires the `icalendar` module.
     """
 
-    DEFAULT_REGEX = r'^(?P<project>[\w ]+)(: (?P<tags>[\w,]+))?'
+    DEFAULT_REGEX = r'^(?P<project>[\w ]+)(: ?(?P<tags>[\w,-_ ]+)?)?$'
 
     extensions = ('ics', 'ical')
 
