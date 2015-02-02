@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from datetime import datetime
 
 from pytz import UTC
@@ -82,16 +84,12 @@ def test_get_importer():
 
 
 def test_ics_importer():
-    frames = []
-
-    importer = ICSImporter(
-        lambda *args, **kwargs: frames.append((args, kwargs))
-    )
+    importer = ICSImporter()
 
     importer.parse(StringIO(CALENDAR))
 
-    assert len(frames) == 3
-    assert frames[0] == (
+    assert len(importer.frames) == 3
+    assert importer.frames[0] == (
         (
             datetime(2014, 11, 3, 7, 30, tzinfo=UTC),
             datetime(2014, 11, 3, 11, 30, tzinfo=UTC),
@@ -99,7 +97,7 @@ def test_ics_importer():
         ),
         {'uid': 'Rd/IDEDZ40q+crttazpjtA==', 'tags': None, 'message': None}
     )
-    assert frames[1] == (
+    assert importer.frames[1] == (
         (
             datetime(2014, 11, 3, 12, 30, tzinfo=UTC),
             datetime(2014, 11, 3, 17, 30, tzinfo=UTC),
@@ -107,7 +105,7 @@ def test_ics_importer():
         ),
         {'uid': 'EtMj7XHZFUSHLtAqkQAmOg==', 'tags': None, 'message': None}
     )
-    assert frames[2] == (
+    assert importer.frames[2] == (
         (
             datetime(2014, 11, 4, 7, 0, tzinfo=UTC),
             datetime(2014, 11, 4, 11, 30, tzinfo=UTC),
@@ -115,3 +113,70 @@ def test_ics_importer():
         ),
         {'uid': 'nQ8CDhWzR0C+otwspfAUcQ==', 'tags': None, 'message': None}
     )
+
+
+def test_default_ics_regex():
+    importer = ICSImporter(lambda *args, **kwargs: None)
+
+    # Valid projects
+    matches = importer.match('foo bar lol')
+    assert matches.get('project') == 'foo bar lol'
+    assert matches.get('tags') is None
+
+    matches = importer.match('Foo')
+    assert matches.get('project') == 'Foo'
+    assert matches.get('tags') is None
+
+    matches = importer.match('Foo:')
+    assert matches.get('project') == 'Foo'
+    assert matches.get('tags') is None
+
+    matches = importer.match('  Foo:  ')
+    assert matches.get('project') == 'Foo'
+    assert matches.get('tags') is None
+
+    # Valid tags
+    matches = importer.match('foo: titi,toto,tutu')
+    assert matches.get('project') == 'foo'
+    assert matches.get('tags') == 'titi,toto,tutu'
+
+    matches = importer.match('foo: titi,toto,')
+    assert matches.get('project') == 'foo'
+    assert matches.get('tags') == 'titi,toto,'
+
+    matches = importer.match('foo: titi, toto , tutu')
+    assert matches.get('project') == 'foo'
+    assert matches.get('tags') == 'titi, toto , tutu'
+
+    matches = importer.match('foo: toto  ')
+    assert matches.get('project') == 'foo'
+    assert matches.get('tags') == 'toto'
+
+    # Multiline
+    matches = importer.match(
+        """
+foo: toto,titi,tutu
+bar: lol
+toto
+        """
+    )
+    assert matches.get('project') == 'foo'
+    assert matches.get('tags') == 'toto,titi,tutu'
+
+    # Unicode
+    matches = importer.match(u'Projéct: fœœ,ßar')
+    assert matches.get('project') == 'Projéct'
+    assert matches.get('tags') == 'fœœ,ßar'
+
+    # Real world examples
+    matches = importer.match(
+        u'VIS: CIRINT, 02-09-260814, lecture de résultats'
+    )
+    assert matches.get('project') == 'VIS'
+    assert matches.get('tags') == 'CIRINT, 02-09-260814, lecture de résultats'
+
+    matches = importer.match(
+        u'When: April 4, 2013 8:30 AM-10:00 AM (GMT-08:00) Pacific Time'
+    )
+    assert matches.get('project') is None
+    assert matches.get('tags') is None
