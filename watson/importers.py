@@ -15,7 +15,7 @@ class BaseImporter(object):
     All the file extensions (like 'json' or 'html') recognized by the importer
     """
 
-    def __init__(self, save):
+    def __init__(self, save=None):
         """
         :param save: A function which will be called for each parsed frame.
                      It should accept the arguments `start`, `stop`,
@@ -24,8 +24,15 @@ class BaseImporter(object):
                      keyword arguments)
         :type save: function
         """
-        assert callable(save)
-        self.save = save
+        if save:
+            assert callable(save)
+            self.save = save
+        else:
+            self.save = self._default_save
+            self.frames = []
+
+    def _default_save(self, *args, **kwargs):
+        self.frames.append((args, kwargs))
 
     @abc.abstractmethod
     def parse(self, stream):
