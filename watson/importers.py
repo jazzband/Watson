@@ -69,17 +69,13 @@ class ICSImporter(BaseImporter):
 
         for event in (c for c in cal.subcomponents if isinstance(c, Event)):
             try:
-                matches = re.match(self.regex, event['DESCRIPTION'])
-                if matches:
-                    groups = matches.groupdict()
-                else:
-                    groups = {}
+                matches = self.match(event['DESCRIPTION'])
 
                 start = event['DTSTART'].dt
                 stop = event['DTEND'].dt
                 message = event.get('SUMMARY')
-                project = groups['project']
-                tags = groups.get('tags')
+                project = matches['project']
+                tags = matches.get('tags')
                 uid = event.get('UID')
             except KeyError:
                 continue
@@ -87,6 +83,17 @@ class ICSImporter(BaseImporter):
             self.save(
                 start, stop, project, uid=uid, message=message, tags=tags
             )
+
+    def match(self, string):
+        # take only the first non-empty line
+        line = string.strip().split('\n')[0].strip()
+
+        matches = re.match(self.regex, line, re.U)
+
+        if matches:
+            return matches.groupdict()
+
+        return {}
 
 
 IMPORTERS = (ICSImporter,)
