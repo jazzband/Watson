@@ -4,4 +4,3 @@
 click
 arrow
 requests
-icalendar

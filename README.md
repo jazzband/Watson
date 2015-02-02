@@ -197,13 +197,3 @@ Pushed 23 frames to the server
 ```
 
 See [django-crick](https://bitbucket.org/tailordev/django-crick) for more information.
-
-
-## import
-Import a file containing frames. Currently only ICS (and Ical) files are
-supported.
-
-```
-$ watson import calendar.ics
-Imported 42 frames.
-```

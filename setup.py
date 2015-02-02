@@ -8,7 +8,6 @@ setup(
         'Click',
         'arrow',
         'requests',
-        'icalendar'
     ],
     extras_require={
         'gui': ['PySide']
