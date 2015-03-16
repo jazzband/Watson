@@ -3,7 +3,6 @@
 import json
 import datetime
 import operator
-import itertools
 
 from functools import reduce
 from dateutil import tz
@@ -16,14 +15,8 @@ from .utils import format_timedelta
 
 
 def style(type, string):
-    def _style_project(project):
-        colors = itertools.cycle(('magenta', 'blue', 'yellow'))
-        return '/'.join(
-            click.style(p, fg=c) for p, c in zip(project.split('/'), colors)
-        )
-
     styles = {
-        'project': _style_project,
+        'project': {'fg': 'magenta'},
         'time': {'fg': 'green'},
         'error': {'fg': 'red'},
         'date': {'fg': 'cyan'},
@@ -35,6 +28,7 @@ def style(type, string):
     if isinstance(style, dict):
         return click.style(string, **style)
     else:
+        # The style might be a function if we need to do some computation
         return style(string)
 
 
@@ -91,7 +85,7 @@ def start(watson, project):
     $ watson start apollo11 reactor
     Starting apollo11/reactor at 16:34
     """
-    project = '/'.join(project)
+    project = ' '.join(project)
 
     current = watson.start(project)
     click.echo("Starting {} at {}".format(
@@ -210,12 +204,9 @@ def log(watson, project, from_, to):
     Total: 66h 14m 12s
     """
     if project:
-        projects = (p for p in watson.projects
-                    if p == project or p.startswith(project + '/'))
-        subprojects = False
+        projects = (project,)
     else:
-        projects = (p for p in watson.projects if '/' not in p)
-        subprojects = True
+        projects = watson.projects
 
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
@@ -230,7 +221,7 @@ def log(watson, project, from_, to):
     ))
 
     for name in projects:
-        frames = (f for f in watson.frames.for_project(name, subprojects)
+        frames = (f for f in watson.frames.for_project(name)
                   if f in span)
         delta = reduce(
             operator.add,
