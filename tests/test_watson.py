@@ -247,14 +247,6 @@ def test_start_new_project(watson):
     assert isinstance(watson.current.get('start'), arrow.Arrow)
 
 
-def test_start_new_subprojects(watson):
-    watson.start('foo/bar/lol')
-
-    assert watson.current != {}
-    assert watson.is_started is True
-    assert watson.current.get('project') == 'foo/bar/lol'
-
-
 def test_start_two_projects(watson):
     watson.start('foo')
 
@@ -276,18 +268,6 @@ def test_stop_started_project(watson):
     assert watson.is_started is False
     assert len(watson.frames) == 1
     assert watson.frames[0].project == 'foo'
-    assert isinstance(watson.frames[0].start, arrow.Arrow)
-    assert isinstance(watson.frames[0].stop, arrow.Arrow)
-
-
-def test_stop_started_subproject(watson):
-    watson.start('foo/bar/lol')
-    watson.stop()
-
-    assert watson.current == {}
-    assert watson.is_started is False
-    assert len(watson.frames) == 1
-    assert watson.frames[0].project == 'foo/bar/lol'
     assert isinstance(watson.frames[0].start, arrow.Arrow)
     assert isinstance(watson.frames[0].stop, arrow.Arrow)
 
@@ -570,15 +550,13 @@ def test_pull(watson):
 # projects
 
 def test_projects(watson):
-    for name in ('foo/x/y', 'foo', 'bar', 'bar', 'foo/x', 'bar', 'foo/z'):
+    for name in ('foo', 'bar', 'bar', 'bar', 'foo', 'lol'):
         watson.frames.add(name, 0, 0)
 
     assert watson.projects == [
         'bar',
         'foo',
-        'foo/x',
-        'foo/x/y',
-        'foo/z'
+        'lol'
     ]
 
 
