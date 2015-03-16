@@ -1,6 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource prefix="/">
-   <file>images/default.svg</file>
-   <file>images/running.svg</file>
-</qresource>
-</RCC>
