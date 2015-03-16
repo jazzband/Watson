@@ -137,12 +137,8 @@ class Frames(object):
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
 
-    def for_project(self, name, subprojects=True):
-        return (
-            frame for frame in self._rows
-            if frame.project == name or
-               (subprojects and frame.project.startswith(name + '/'))
-        )
+    def for_project(self, name):
+        return (frame for frame in self._rows if frame.project == name)
 
     def span(self, start, stop):
         return Span(start, stop)
