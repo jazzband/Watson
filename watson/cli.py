@@ -83,12 +83,13 @@ def cli(ctx):
 @click.pass_obj
 def start(watson, args):
     """
-    Start monitoring the time for the given project.
+    Start monitoring the time for the given project. You can add tags
+    indicating more specifically what you are working on with '+tag'.
 
     \b
     Example :
-    $ watson start apollo11
-    Starting apollo11 at 16:34
+    $ watson start apollo11 +module +brakes
+    Starting apollo11 [module, brakes] at 16:34
     """
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
@@ -200,23 +201,40 @@ def log(watson, project, from_, to):
     Mon 05 May 2014 -> Mon 12 May 2014
 
     \b
-     23h 53m 16s apollo11
-      7h 06m 08s hubble
-      1h 06m 53s voyager1
-     12h 19m 53s voyager2
+    14h 51m 35s apollo11
+            [14h 49m 46s brakes]
+            [ 8h 58m 20s module]
+            [10h 01m 20s reactor]
+            [12h 39m 40s steering]
+            [11h 34m 51s wheels]
+    11h 34m 36s hubble
+            [ 8h 07m 26s camera]
+            [ 7h 59m 32s lens]
+            [ 9h 20m 33s transmission]
+     7h 47m 41s voyager1
+            [ 1h 25m 32s antenna]
+            [ 1h 25m 32s generators]
+            [ 1h 25m 32s probe]
+     9h 28m 28s voyager2
+            [ 5h 31m 48s antenna]
+            [ 9h 08m 25s generators]
+            [ 2h 43m 03s probe]
+            [ 5h 51m 51s sensors]
 
     \b
-    Total: 44h 26m 10s
+    Total: 43h 42m 20s
 
     \b
     $ watson log --from 2014-04-01 --to 2014-04-30  apollo11
     Tue 01 April 2014 -> Wed 30 April 2014
 
     \b
-      1h 32m 54s apollo11
-
-    \b
-    Total: 1h 32m 54s
+    39h 44m 06s apollo11
+            [17h 49m 47s brakes]
+            [10h 12m 06s module]
+            [22h 44m 33s reactor]
+            [14h 08m 04s steering]
+            [11h 19m 01s wheels]
     """
     if project:
         projects = (project,)
@@ -288,47 +306,42 @@ def report(watson, from_, to):
     Example:
     $ watson report
     Monday 05 May 2014
-            09:21 to 12:39  apollo11  3h 17m 58s
-            13:26 to 14:05  voyager2 39m 08s
-            14:37 to 17:11  hubble  2h 33m 12s
+            a7f8157  09:57 to 12:05  apollo11  2h 08m 34s
+            44866f1  12:32 to 16:21  voyager2  3h 48m 59s
+            4864459  16:36 to 19:12  voyager2 [antenna]  2h 35m 07s
 
     \b
     Tuesday 06 May 2014
-            09:38 to 10:40  voyager1  1h 02m 37s
-            10:48 to 11:36  hubble 48m 51s
-            12:17 to 12:35  voyager2 17m 43s
+            3142104  09:49 to 12:49  voyager2 [sensors]  2h 59m 20s
+            8c99d9e  13:03 to 14:43  voyager2 [antenna, sensors]  1h 39m 45s
+            0469b72  15:41 to 18:40  voyager2 [antenna, probe]  2h 59m 03s
 
     \b
     Wednesday 07 May 2014
-            09:43 to 12:55  apollo11  3h 11m 37s
+            0d2be24  09:16 to 10:53  apollo11 [reactor, steering]  1h 36m 53s
+            0ae6308  11:41 to 14:21  apollo11 [wheels, brakes]  2h 39m 53s
+            a62ac93  14:35 to 18:27  hubble  3h 52m 12s
 
     \b
     Thursday 08 May 2014
-            09:36 to 13:33  hubble  3h 56m 32s
-            16:33 to 20:14  voyager1  3h 41m 07s
+            b4f3d47  09:34 to 11:29  voyager2 [generators, probe]  1h 55m 01s
+            ae68bf6  11:45 to 15:37  hubble [lens, transmission]  3h 52m 10s
+            501e43a  16:21 to 16:48  hubble [lens, camera] 27m 03s
+            7c31426  17:30 to 18:39  voyager2 [sensors, probe]  1h 08m 59s
+
 
     \b
-    Friday 09 May 2014
-            09:30 to 13:06  voyager2  3h 36m 46s
-
-    \b
-    $ watson report --from 2014-04-16 --to 2014-04-18
+    $ watson report --from 2014-04-16 --to 2014-04-17
     Wednesday 16 April 2014
-            14:01 to 14:42  apollo11 41m 00s
-            14:46 to 17:27  voyager2  2h 40m 59s
+            c983586  09:28 to 12:55  apollo11  3h 26m 12s
+            1a5dbe5  13:52 to 14:51  voyager2 [sensors, antenna] 58m 21s
+            478ad13  15:44 to 16:52  hubble [transmission]  1h 07m 43s
 
     \b
     Thursday 17 April 2014
-            09:18 to 10:12  voyager2 53m 54s
-            10:19 to 12:40  voyager1  2h 20m 49s
-            12:51 to 14:31  hubble  1h 39m 22s
-            16:46 to 18:26  apollo11  1h 39m 29s
-
-    \b
-    Friday 18 April 2014
-            09:55 to 13:39  voyager1  3h 43m 51s
-            14:29 to 14:45  hubble 15m 20s
-            14:55 to 16:32  voyager2  1h 36m 19s
+            a57e276  09:29 to 12:33  voyager1 [antenna, probe]  3h 04m 45s
+            8f25306  13:03 to 13:15  voyager1 11m 53s
+            975c6f6  13:46 to 17:34  apollo11 [reactor]  3h 47m 29s
     """
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
