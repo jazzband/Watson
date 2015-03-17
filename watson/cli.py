@@ -382,7 +382,8 @@ def edit(watson, id):
     text = json.dumps({
         'start': frame.start.to('local').format(format),
         'stop': frame.stop.to('local').format(format),
-        'project': frame.project
+        'project': frame.project,
+        'tags': frame.tags,
     }, indent=4, sort_keys=True)
 
     output = click.edit(text, extension='.json')
@@ -395,6 +396,7 @@ def edit(watson, id):
         data = json.loads(output)
 
         project = data['project']
+        tags = data['tags']
         start = arrow.get(
             data['start'], format).replace(tzinfo=tz.tzlocal()).to('utc')
         stop = arrow.get(
@@ -407,16 +409,17 @@ def edit(watson, id):
             "The edited frame must contain the project, start and stop keys."
         )
 
-    watson.frames[id] = (project, start, stop)
+    watson.frames[id] = (project, start, stop, tags)
     frame = watson.frames[id]
 
     watson.save()
 
     click.echo(
-        'Edited frame for project {project}, from {start} to {stop} '
+        'Edited frame for project {project}{tags}, from {start} to {stop} '
         '({delta})'.format(
             delta=format_timedelta(frame.stop - frame.start).strip(),
             project=style('project', frame.project),
+            tags=style('tags', frame.tags),
             start=style('time', '{:HH:mm}'.format(frame.start.to('local'))),
             stop=style('time', '{:HH:mm}'.format(frame.stop.to('local')))
         )
