@@ -6,10 +6,10 @@ from watson import Watson
 watson = Watson(frames=None, current=None)
 
 projects = [
-    "apollo11",
-    "hubble",
-    "voyager1",
-    "voyager2",
+    ("apollo11", ["reactor", "module", "wheels", "steering", "brakes"]),
+    ("hubble", ["lens", "camera", "transmission"]),
+    ("voyager1", ["probe", "generators", "sensors", "antenna"]),
+    ("voyager2", ["probe", "generators", "sensors", "antenna"]),
 ]
 
 now = arrow.now()
@@ -24,10 +24,12 @@ for date in arrow.Arrow.range('day', now.replace(months=-1), now):
     )
 
     while start.hour < random.randint(16, 19):
+        project, tags = random.choice(projects)
         frame = watson.frames.add(
-            random.choice(projects),
+            project,
             start,
-            start.replace(seconds=random.randint(60, 4 * 60 * 60))
+            start.replace(seconds=random.randint(60, 4 * 60 * 60)),
+            tags=random.sample(tags, random.randint(0, len(tags)))
         )
         start = frame.stop.replace(seconds=random.randint(0, 1 * 60 * 60))
 
