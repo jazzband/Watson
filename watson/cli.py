@@ -236,8 +236,7 @@ def log(watson, project, from_, to):
     ))
 
     for name in projects:
-        frames = (f for f in watson.frames.for_project(name)
-                  if f in span)
+        frames = tuple(f for f in watson.frames.for_project(name) if f in span)
         delta = reduce(
             operator.add,
             (f.stop - f.start for f in frames),
@@ -245,14 +244,27 @@ def log(watson, project, from_, to):
         )
         total += delta
 
-        click.echo("{} {}".format(
-            style('time', '{:>12}'.format(format_timedelta(delta))),
-            style('project', name)
+        click.echo("{time:>12} {project}".format(
+            time=style('time', format_timedelta(delta)),
+            project=style('project', name)
         ))
 
-    click.echo("\nTotal: {}".format(
-        style('time', '{}'.format(format_timedelta(total)))
-    ))
+        for tag in sorted(set(tag for frame in frames for tag in frame.tags)):
+            delta = reduce(
+                operator.add,
+                (f.stop - f.start for f in frames if tag in f.tags),
+                datetime.timedelta()
+            )
+
+            click.echo("\t[{time} {tag}]".format(
+                time=style('time', format_timedelta(delta)),
+                tag=style('tag', tag),
+            ))
+
+    if len(projects) > 1:
+        click.echo("\nTotal: {}".format(
+            style('time', '{}'.format(format_timedelta(total)))
+        ))
 
 
 @cli.command()
