@@ -3,6 +3,7 @@
 import json
 import datetime
 import operator
+import itertools
 
 from functools import reduce
 from dateutil import tz
@@ -14,22 +15,32 @@ from . import watson
 from .utils import format_timedelta
 
 
-def style(type, string):
-    styles = {
+def style(name, element):
+    def _style_tags(tags):
+        if not tags:
+            return ''
+
+        return ' [{}]'.format(', '.join(
+            style('tag', tag) for tag in tags
+        ))
+
+    formats = {
         'project': {'fg': 'magenta'},
+        'tags': _style_tags,
+        'tag': {'fg': 'blue'},
         'time': {'fg': 'green'},
         'error': {'fg': 'red'},
         'date': {'fg': 'cyan'},
         'id': {'fg': 'white'}
     }
 
-    style = styles.get(type, {})
+    fmt = formats.get(name, {})
 
-    if isinstance(style, dict):
-        return click.style(string, **style)
+    if isinstance(fmt, dict):
+        return click.style(element, **fmt)
     else:
-        # The style might be a function if we need to do some computation
-        return style(string)
+        # The fmt might be a function if we need to do some computation
+        return fmt(element)
 
 
 class WatsonCliError(click.ClickException):
@@ -68,9 +79,9 @@ def cli(ctx):
 
 
 @cli.command()
-@click.argument('project', nargs=-1)
+@click.argument('args', nargs=-1)
 @click.pass_obj
-def start(watson, project):
+def start(watson, args):
     """
     Start monitoring the time for the given project.
 
@@ -79,11 +90,25 @@ def start(watson, project):
     $ watson start apollo11
     Starting apollo11 at 16:34
     """
-    project = ' '.join(project)
+    project = ' '.join(
+        itertools.takewhile(lambda s: not s.startswith('+'), args)
+    )
 
-    current = watson.start(project)
-    click.echo("Starting {} at {}".format(
+    # Find all the tags starting by a '+', even if there are spaces in them,
+    # then strip each tag and filter out the empty ones
+    tags = list(filter(None, map(operator.methodcaller('strip'), (
+        # We concatenate the word with the '+' to the following words
+        # not starting with a '+'
+        w[1:] + ' ' + ' '.join(itertools.takewhile(
+            lambda s: not s.startswith('+'), args[i + 1:]
+        ))
+        for i, w in enumerate(args) if w.startswith('+')
+    ))))  # pile of pancakes !
+
+    current = watson.start(project, tags)
+    click.echo("Starting {}{} at {}".format(
         style('project', project),
+        style('tags', tags),
         style('time', "{:HH:mm}".format(current['start'].to('local')))
     ))
     watson.save()
@@ -101,8 +126,9 @@ def stop(watson):
     Stopping project apollo11, started a minute ago
     """
     old = watson.stop()
-    click.echo("Stopping project {}, started {}.".format(
+    click.echo("Stopping project {}{}, started {}.".format(
         style('project', old['project']),
+        style('tags', old['tags']),
         style('time', old['start'].humanize())
     ))
     watson.save()
@@ -116,8 +142,9 @@ def cancel(watson):
     not be recorded.
     """
     old = watson.cancel()
-    click.echo("Canceling the timer for project {}".format(
-        style('project', old['project'])
+    click.echo("Canceling the timer for project {}{}".format(
+        style('project', old['project']),
+        style('tags', old['tags'])
     ))
     watson.save()
 
@@ -138,8 +165,9 @@ def status(watson):
         return
 
     current = watson.current
-    click.echo("Project {} started {}".format(
+    click.echo("Project {}{} started {}".format(
         style('project', current['project']),
+        style('tags', current['tags']),
         style('time', current['start'].humanize())
     ))
 
@@ -208,8 +236,7 @@ def log(watson, project, from_, to):
     ))
 
     for name in projects:
-        frames = (f for f in watson.frames.for_project(name)
-                  if f in span)
+        frames = tuple(f for f in watson.frames.for_project(name) if f in span)
         delta = reduce(
             operator.add,
             (f.stop - f.start for f in frames),
@@ -217,14 +244,27 @@ def log(watson, project, from_, to):
         )
         total += delta
 
-        click.echo("{} {}".format(
-            style('time', '{:>12}'.format(format_timedelta(delta))),
-            style('project', name)
+        click.echo("{time:>12} {project}".format(
+            time=style('time', format_timedelta(delta)),
+            project=style('project', name)
         ))
 
-    click.echo("\nTotal: {}".format(
-        style('time', '{}'.format(format_timedelta(total)))
-    ))
+        for tag in sorted(set(tag for frame in frames for tag in frame.tags)):
+            delta = reduce(
+                operator.add,
+                (f.stop - f.start for f in frames if tag in f.tags),
+                datetime.timedelta()
+            )
+
+            click.echo("\t[{time} {tag}]".format(
+                time=style('time', format_timedelta(delta)),
+                tag=style('tag', tag),
+            ))
+
+    if len(projects) > 1:
+        click.echo("\nTotal: {}".format(
+            style('time', '{}'.format(format_timedelta(total)))
+        ))
 
 
 @cli.command()
@@ -302,14 +342,18 @@ def report(watson, from_, to):
         click.echo(style('date', "{:dddd DD MMMM YYYY}".format(day)))
 
         for frame in sorted(frames):
-            click.echo('\t{id}  {start} to {stop}  {project} {delta}'.format(
-                delta=format_timedelta(frame.stop - frame.start),
-                project=style('project', frame.project),
-                start=style('time',
-                            '{:HH:mm}'.format(frame.start.to('local'))),
-                stop=style('time', '{:HH:mm}'.format(frame.stop.to('local'))),
-                id=style('id', frame.id[:7])
-            ))
+            click.echo(
+                '\t{id}  {start} to {stop}  {project}{tags} {delta}'.format(
+                    delta=format_timedelta(frame.stop - frame.start),
+                    project=style('project', frame.project),
+                    tags=style('tags', frame.tags),
+                    start=style('time',
+                                '{:HH:mm}'.format(frame.start.to('local'))),
+                    stop=style('time',
+                               '{:HH:mm}'.format(frame.stop.to('local'))),
+                    id=style('id', frame.id[:7])
+                )
+            )
 
 
 @cli.command()
@@ -328,6 +372,32 @@ def projects(watson):
     """
     for project in watson.projects:
         click.echo(style('project', project))
+
+
+@cli.command()
+@click.pass_obj
+def tags(watson):
+    """
+    Display the list of all the tags.
+
+    \b
+    Example:
+    $ watson tags
+    antenna
+    brakes
+    camera
+    generators
+    lens
+    module
+    probe
+    reactor
+    sensors
+    steering
+    transmission
+    wheels
+    """
+    for tag in watson.tags:
+        click.echo(style('tag', tag))
 
 
 @cli.command()
@@ -350,7 +420,8 @@ def edit(watson, id):
     text = json.dumps({
         'start': frame.start.to('local').format(format),
         'stop': frame.stop.to('local').format(format),
-        'project': frame.project
+        'project': frame.project,
+        'tags': frame.tags,
     }, indent=4, sort_keys=True)
 
     output = click.edit(text, extension='.json')
@@ -363,6 +434,7 @@ def edit(watson, id):
         data = json.loads(output)
 
         project = data['project']
+        tags = data['tags']
         start = arrow.get(
             data['start'], format).replace(tzinfo=tz.tzlocal()).to('utc')
         stop = arrow.get(
@@ -375,16 +447,17 @@ def edit(watson, id):
             "The edited frame must contain the project, start and stop keys."
         )
 
-    watson.frames[id] = (project, start, stop)
+    watson.frames[id] = (project, start, stop, tags)
     frame = watson.frames[id]
 
     watson.save()
 
     click.echo(
-        'Edited frame for project {project}, from {start} to {stop} '
+        'Edited frame for project {project}{tags}, from {start} to {stop} '
         '({delta})'.format(
             delta=format_timedelta(frame.stop - frame.start).strip(),
             project=style('project', frame.project),
+            tags=style('tags', frame.tags),
             start=style('time', '{:HH:mm}'.format(frame.start.to('local'))),
             stop=style('time', '{:HH:mm}'.format(frame.stop.to('local')))
         )

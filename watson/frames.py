@@ -6,11 +6,11 @@ import arrow
 
 from collections import namedtuple
 
-HEADERS = ('start', 'stop', 'project', 'id', 'updated_at')
+HEADERS = ('start', 'stop', 'project', 'id', 'tags', 'updated_at')
 
 
 class Frame(namedtuple('Frame', HEADERS)):
-    def __new__(cls, start, stop, project, id, updated_at=None):
+    def __new__(cls, start, stop, project, id, tags=None, updated_at=None,):
         try:
             if not isinstance(start, arrow.Arrow):
                 start = arrow.get(start)
@@ -26,8 +26,11 @@ class Frame(namedtuple('Frame', HEADERS)):
         elif not isinstance(updated_at, arrow.Arrow):
             updated_at = arrow.get(updated_at)
 
+        if tags is None:
+            tags = []
+
         return super(Frame, cls).__new__(
-            cls, start, stop, project, id, updated_at
+            cls, start, stop, project, id, tags, updated_at
         )
 
     def dump(self):
@@ -35,7 +38,7 @@ class Frame(namedtuple('Frame', HEADERS)):
         stop = self.stop.timestamp
         updated_at = self.updated_at.timestamp
 
-        return (start, stop, self.project, self.id, updated_at)
+        return (start, stop, self.project, self.id, self.tags, updated_at)
 
     @property
     def day(self):
@@ -129,10 +132,10 @@ class Frames(object):
         self._rows.append(frame)
         return frame
 
-    def new_frame(self, project, start, stop, id=None):
+    def new_frame(self, project, start, stop, tags=None, id=None):
         if not id:
             id = uuid.uuid4().hex
-        return Frame(start, stop, project, id)
+        return Frame(start, stop, project, id, tags)
 
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
