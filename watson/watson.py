@@ -131,7 +131,8 @@ class Watson(object):
                 if self.is_started:
                     current = {
                         'project': self.current['project'],
-                        'start': self._format_date(self.current['start'])
+                        'start': self._format_date(self.current['start']),
+                        'tags': self.current['tags'],
                     }
                 else:
                     current = {}
@@ -193,7 +194,8 @@ class Watson(object):
 
         self._current = {
             'project': value['project'],
-            'start': start
+            'start': start,
+            'tags': value.get('tags') or []
         }
 
         if self._old_state is None:
@@ -223,7 +225,7 @@ class Watson(object):
     def is_started(self):
         return bool(self.current)
 
-    def start(self, project):
+    def start(self, project, tags=None):
         if self.is_started:
             raise WatsonError(
                 "Project {} is already started.".format(
@@ -234,7 +236,7 @@ class Watson(object):
         if not project:
             raise WatsonError("No project given.")
 
-        self.current = {'project': project}
+        self.current = {'project': project, 'tags': tags}
         return self.current
 
     def stop(self):
@@ -242,7 +244,9 @@ class Watson(object):
             raise WatsonError("No project started.")
 
         old = self.current
-        self.frames.add(old['project'], old['start'], arrow.now())
+        self.frames.add(
+            old['project'], old['start'], arrow.now(), tags=old['tags']
+        )
         self.current = None
 
         return old
@@ -261,6 +265,13 @@ class Watson(object):
         Return the list of all the existing projects, sorted by name.
         """
         return sorted(set(self.frames['project']))
+
+    @property
+    def tags(self):
+        """
+        Return the list of the tags, sorted by name.
+        """
+        return sorted(set(tag for tags in self.frames['tags'] for tag in tags))
 
     def _get_request_info(self):
         config = self.config
