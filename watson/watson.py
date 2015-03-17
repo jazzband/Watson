@@ -273,11 +273,14 @@ class Watson(object):
         """
         return sorted(set(tag for tags in self.frames['tags'] for tag in tags))
 
-    def _get_request_info(self):
+    def _get_request_info(self, route):
         config = self.config
 
         try:
-            dest = config.get('crick', 'url').rstrip('/') + '/frames/'
+            dest = "{}/{}/".format(
+                config.get('crick', 'url').rstrip('/'),
+                route.strip('/')
+            )
             token = config.get('crick', 'token')
         except configparser.Error:
             raise WatsonError(
@@ -292,8 +295,27 @@ class Watson(object):
 
         return dest, headers
 
+    def _get_remote_projects(self):
+        if not hasattr(self, '_remote_projects'):
+            dest, headers = self._get_request_info('projects')
+
+            try:
+                response = requests.get(dest, headers=headers)
+                assert response.status_code == 200
+
+                self._remote_projects = response.json()
+            except requests.ConnectionError:
+                raise WatsonError("Unable to reach the server.")
+            except AssertionError:
+                raise WatsonError(
+                    "An error occured with the remote "
+                    "server: {}".format(response.json())
+                )
+
+        return self._remote_projects
+
     def pull(self):
-        dest, headers = self._get_request_info()
+        dest, headers = self._get_request_info('frames')
 
         try:
             response = requests.get(
@@ -311,29 +333,55 @@ class Watson(object):
         frames = response.json() or ()
 
         for frame in frames:
-            self.frames[frame['id']] = (frame['project']['name'],
-                                        frame['start'], frame['stop'])
+            try:
+                # Try to find the project name, as the API returns an URL
+                project = next(
+                    p['name'] for p in self._get_remote_projects()
+                    if p['url'] == frame['project']
+                )
+            except StopIteration:
+                raise WatsonError(
+                    "Received frame with invalid project from the server "
+                    "(id: {})".format(frame['project']['id'])
+                )
+
+            self.frames[frame['id']] = (project, frame['start'], frame['stop'],
+                                        frame['tags'])
 
         return frames
 
     def push(self, last_pull):
-        dest, headers = self._get_request_info()
+        dest, headers = self._get_request_info('frames/bulk')
 
-        frames = tuple(
-            {
-                'id': f.id,
-                'start': str(f.start),
-                'stop': str(f.stop),
-                'project': {'name': f.project}
-            }
-            for f in self.frames if last_pull > f.updated_at > self.last_sync
-        )
+        frames = []
+
+        for frame in self.frames:
+            if last_pull > frame.updated_at > self.last_sync:
+                try:
+                    # Find the url of the project
+                    project = next(
+                        p['url'] for p in self._get_remote_projects()
+                        if p['name'] == frame.project
+                    )
+                except StopIteration:
+                    raise WatsonError(
+                        "The project {} does not exists on the remote server, "
+                        "please create it or edit the frame (id: {})".format(
+                            frame.project, frame.id
+                        )
+                    )
+
+                frames.append({
+                    'id': frame.id,
+                    'start': str(frame.start),
+                    'stop': str(frame.stop),
+                    'project': project,
+                    'tags': frame.tags
+                })
 
         try:
-            response = requests.put(
-                dest, json.dumps(frames), headers=headers
-            )
-            assert response.status_code == 200
+            response = requests.post(dest, json.dumps(frames), headers=headers)
+            assert response.status_code == 201
         except requests.ConnectionError:
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
