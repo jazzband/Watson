@@ -238,9 +238,9 @@ toto
 
 
 def test_empty_config(watson):
-    mocked_read = lambda self, name: self._read(StringIO(''), name)
+    mocked_read = lambda self, name: self._read(StringIO(u''), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
-        assert watson.config == ConfigParser()
+        assert len(watson.config.sections()) == 0
 
 
 def test_set_config(watson):
