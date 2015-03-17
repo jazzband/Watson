@@ -3,6 +3,7 @@
 import json
 import datetime
 import operator
+import itertools
 
 from functools import reduce
 from dateutil import tz
@@ -68,9 +69,9 @@ def cli(ctx):
 
 
 @cli.command()
-@click.argument('project', nargs=-1)
+@click.argument('args', nargs=-1)
 @click.pass_obj
-def start(watson, project):
+def start(watson, args):
     """
     Start monitoring the time for the given project.
 
@@ -79,10 +80,23 @@ def start(watson, project):
     $ watson start apollo11
     Starting apollo11 at 16:34
     """
-    project = ' '.join(project)
+    project = ' '.join(
+        itertools.takewhile(lambda s: not s.startswith('+'), args)
+    )
 
-    current = watson.start(project)
+    # Find all the tags starting by a '+', even if there are spaces in them,
+    # then strip each tag and filter out the empty ones
+    tags = list(filter(None, map(operator.methodcaller('strip'), (
+        # We concatenate the word with the '+' to the following words
+        # not starting with a '+'
+        w[1:] + ' ' + ' '.join(itertools.takewhile(
+            lambda s: not s.startswith('+'), args[i + 1:]
+        ))
+        for i, w in enumerate(args) if w.startswith('+')
+    ))))  # pile of pancakes !
+
     click.echo("Starting {} at {}".format(
+    current = watson.start(project, tags)
         style('project', project),
         style('time', "{:HH:mm}".format(current['start'].to('local')))
     ))
