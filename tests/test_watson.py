@@ -497,7 +497,7 @@ def test_push_with_no_token(watson):
         watson.push(arrow.now())
 
 
-def test_push(watson):
+def test_push(watson, monkeypatch):
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'url', 'http://foo.com')
@@ -508,7 +508,7 @@ def test_push(watson):
 
     watson.last_sync = arrow.now()
 
-    watson.frames.add('bar', 1, 2)
+    watson.frames.add('bar', 1, 2, ['A', 'B'])
     watson.frames.add('lol', 1, 2)
 
     last_pull = arrow.now()
@@ -516,11 +516,17 @@ def test_push(watson):
     watson.frames.add('foo', 1, 2)
     watson.frames.add('bar', 3, 4)
 
+    monkeypatch.setattr(watson, '_get_remote_projects', lambda *args: [
+        {'name': 'foo', 'url': '/projects/1/'},
+        {'name': 'bar', 'url': '/projects/2/'},
+        {'name': 'lol', 'url': '/projects/3/'},
+    ])
+
     class Response:
         def __init__(self):
-            self.status_code = 200
+            self.status_code = 201
 
-    with mock.patch('requests.put') as mock_put:
+    with mock.patch('requests.post') as mock_put:
         mock_put.return_value = Response()
 
         with mock.patch.object(
@@ -529,7 +535,7 @@ def test_push(watson):
             mock_config.return_value = config
             watson.push(last_pull)
 
-        requests.put.assert_called_once_with(
+        requests.post.assert_called_once_with(
             mock.ANY,
             mock.ANY,
             headers={
@@ -540,6 +546,12 @@ def test_push(watson):
 
         frames_sent = json.loads(mock_put.call_args[0][1])
         assert len(frames_sent) == 2
+
+        assert frames_sent[0].get('project') == '/projects/2/'
+        assert frames_sent[0].get('tags') == ['A', 'B']
+
+        assert frames_sent[1].get('project') == '/projects/3/'
+        assert frames_sent[1].get('tags') == []
 
 
 # pull
@@ -572,7 +584,7 @@ def test_pull_with_no_token(watson):
         watson.pull()
 
 
-def test_pull(watson):
+def test_pull(watson, monkeypatch):
     config = ConfigParser()
     config.add_section('crick')
     config.set('crick', 'url', 'http://foo.com')
@@ -580,12 +592,24 @@ def test_pull(watson):
 
     watson.last_sync = arrow.now()
 
+    watson.frames.add('foo', 1, 2, ['A', 'B'], id='1')
+
+    monkeypatch.setattr(watson, '_get_remote_projects', lambda *args: [
+        {'name': 'foo', 'url': '/projects/1/'},
+        {'name': 'bar', 'url': '/projects/2/'},
+    ])
+
     class Response:
         def __init__(self):
             self.status_code = 200
 
         def json(self):
-            pass
+            return [
+                {'project': '/projects/1/', 'start': 3, 'stop': 4, 'id': '1',
+                 'tags': ['A']},
+                {'project': '/projects/2/', 'start': 4, 'stop': 5, 'id': '2',
+                 'tags': []}
+            ]
 
     with mock.patch('requests.get') as mock_get:
         mock_get.return_value = Response()
@@ -604,6 +628,20 @@ def test_pull(watson):
                 'Authorization': "Token " + config.get('crick', 'token')
             }
         )
+
+    assert len(watson.frames) == 2
+
+    assert watson.frames[0].id == '1'
+    assert watson.frames[0].project == 'foo'
+    assert watson.frames[0].start.timestamp == 3
+    assert watson.frames[0].stop.timestamp == 4
+    assert watson.frames[0].tags == ['A']
+
+    assert watson.frames[1].id == '2'
+    assert watson.frames[1].project == 'bar'
+    assert watson.frames[1].start.timestamp == 4
+    assert watson.frames[1].stop.timestamp == 5
+    assert watson.frames[1].tags == []
 
 
 # projects
