@@ -15,22 +15,32 @@ from . import watson
 from .utils import format_timedelta
 
 
-def style(type, string):
-    styles = {
+def style(name, element):
+    def _style_tags(tags):
+        if not tags:
+            return ''
+
+        return ' [{}]'.format(', '.join(
+            style('tag', tag) for tag in tags
+        ))
+
+    formats = {
         'project': {'fg': 'magenta'},
+        'tags': _style_tags,
+        'tag': {'fg': 'blue'},
         'time': {'fg': 'green'},
         'error': {'fg': 'red'},
         'date': {'fg': 'cyan'},
         'id': {'fg': 'white'}
     }
 
-    style = styles.get(type, {})
+    fmt = formats.get(name, {})
 
-    if isinstance(style, dict):
-        return click.style(string, **style)
+    if isinstance(fmt, dict):
+        return click.style(element, **fmt)
     else:
-        # The style might be a function if we need to do some computation
-        return style(string)
+        # The fmt might be a function if we need to do some computation
+        return fmt(element)
 
 
 class WatsonCliError(click.ClickException):
@@ -95,9 +105,10 @@ def start(watson, args):
         for i, w in enumerate(args) if w.startswith('+')
     ))))  # pile of pancakes !
 
-    click.echo("Starting {} at {}".format(
     current = watson.start(project, tags)
+    click.echo("Starting {}{} at {}".format(
         style('project', project),
+        style('tags', tags),
         style('time', "{:HH:mm}".format(current['start'].to('local')))
     ))
     watson.save()
@@ -115,8 +126,9 @@ def stop(watson):
     Stopping project apollo11, started a minute ago
     """
     old = watson.stop()
-    click.echo("Stopping project {}, started {}.".format(
+    click.echo("Stopping project {}{}, started {}.".format(
         style('project', old['project']),
+        style('tags', old['tags']),
         style('time', old['start'].humanize())
     ))
     watson.save()
@@ -130,8 +142,9 @@ def cancel(watson):
     not be recorded.
     """
     old = watson.cancel()
-    click.echo("Canceling the timer for project {}".format(
-        style('project', old['project'])
+    click.echo("Canceling the timer for project {}{}".format(
+        style('project', old['project']),
+        style('tags', old['tags'])
     ))
     watson.save()
 
@@ -152,8 +165,9 @@ def status(watson):
         return
 
     current = watson.current
-    click.echo("Project {} started {}".format(
+    click.echo("Project {}{} started {}".format(
         style('project', current['project']),
+        style('tags', current['tags']),
         style('time', current['start'].humanize())
     ))
 
