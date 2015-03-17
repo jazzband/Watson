@@ -186,4 +186,4 @@ Received 42 frames from the server
 Pushed 23 frames to the server
 ```
 
-See [django-crick](https://bitbucket.org/tailordev/django-crick) for more information.
+See [Crick](http://crick.fr) for more information.
