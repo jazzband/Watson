@@ -363,6 +363,32 @@ def projects(watson):
 
 
 @cli.command()
+@click.pass_obj
+def tags(watson):
+    """
+    Display the list of all the tags.
+
+    \b
+    Example:
+    $ watson tags
+    antenna
+    brakes
+    camera
+    generators
+    lens
+    module
+    probe
+    reactor
+    sensors
+    steering
+    transmission
+    wheels
+    """
+    for tag in watson.tags:
+        click.echo(style('tag', tag))
+
+
+@cli.command()
 @click.argument('id')
 @click.pass_obj
 def edit(watson, id):
