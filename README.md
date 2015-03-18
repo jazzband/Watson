@@ -1,4 +1,4 @@
-Watson
+Watson [![Build Status](https://travis-ci.org/TailorDev/Watson.svg)](https://travis-ci.org/TailorDev/Watson)
 ======
 
 Watson is a tool aimed at helping you monitoring your time.
