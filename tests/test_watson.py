@@ -27,15 +27,18 @@ else:
 
 
 @pytest.fixture
-def watson():
-    return Watson(current={}, frames=[])
+def config_dir(tmpdir):
+    return str(tmpdir.mkdir('config'))
+
+
+@pytest.fixture
+def watson(config_dir):
+    return Watson(config_dir=config_dir)
 
 
 # current
 
-def test_current():
-    watson = Watson()
-
+def test_current(watson):
     content = json.dumps({'project': 'foo', 'start': 0, 'tags': ['A', 'B']})
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
@@ -44,24 +47,18 @@ def test_current():
         assert watson.current['tags'] == ['A', 'B']
 
 
-def test_current_with_empty_file():
-    watson = Watson()
-
+def test_current_with_empty_file(watson):
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
         with mock.patch('os.path.getsize', return_value=0):
             assert watson.current == {}
 
 
-def test_current_with_nonexistent_file():
-    watson = Watson()
-
+def test_current_with_nonexistent_file(watson):
     with mock.patch('%s.open' % builtins, side_effect=IOError):
         assert watson.current == {}
 
 
-def test_current_watson_non_valid_json():
-    watson = Watson()
-
+def test_current_watson_non_valid_json(watson):
     content = "{'foo': bar}"
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
@@ -70,17 +67,18 @@ def test_current_watson_non_valid_json():
                 watson.current
 
 
-def test_current_with_given_state():
+def test_current_with_given_state(config_dir):
     content = json.dumps({'project': 'foo', 'start': 0})
-    watson = Watson(current={'project': 'bar', 'start': 0})
+    watson = Watson(current={'project': 'bar', 'start': 0},
+                    config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert watson.current['project'] == 'bar'
 
 
-def test_current_with_empty_given_state():
+def test_current_with_empty_given_state(config_dir):
     content = json.dumps({'project': 'foo', 'start': 0})
-    watson = Watson(current={})
+    watson = Watson(current=[], config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert watson.current == {}
@@ -88,9 +86,7 @@ def test_current_with_empty_given_state():
 
 # last_sync
 
-def test_last_sync():
-    watson = Watson()
-
+def test_last_sync(watson):
     now = arrow.get(123)
     content = json.dumps(now.timestamp)
 
@@ -98,24 +94,18 @@ def test_last_sync():
         assert watson.last_sync == now
 
 
-def test_last_sync_with_empty_file():
-    watson = Watson()
-
+def test_last_sync_with_empty_file(watson):
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
         with mock.patch('os.path.getsize', return_value=0):
             assert watson.last_sync == arrow.get(0)
 
 
-def test_last_sync_with_nonexistent_file():
-    watson = Watson()
-
+def test_last_sync_with_nonexistent_file(watson):
     with mock.patch('%s.open' % builtins, side_effect=IOError):
         assert watson.last_sync == arrow.get(0)
 
 
-def test_last_sync_watson_non_valid_json():
-    watson = Watson()
-
+def test_last_sync_watson_non_valid_json(watson):
     content = "{'foo': bar}"
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
@@ -124,18 +114,18 @@ def test_last_sync_watson_non_valid_json():
                 watson.last_sync
 
 
-def test_last_sync_with_given_state():
+def test_last_sync_with_given_state(config_dir):
     content = json.dumps(123)
     now = arrow.now()
-    watson = Watson(last_sync=now)
+    watson = Watson(last_sync=now, config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert watson.last_sync == now
 
 
-def test_last_sync_with_empty_given_state():
+def test_last_sync_with_empty_given_state(config_dir):
     content = json.dumps(123)
-    watson = Watson(last_sync=None)
+    watson = Watson(last_sync=None, config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert watson.last_sync == arrow.get(0)
@@ -143,9 +133,7 @@ def test_last_sync_with_empty_given_state():
 
 # frames
 
-def test_frames():
-    watson = Watson()
-
+def test_frames(watson):
     content = json.dumps([[0, 10, 'foo', None, ['A', 'B', 'C']]])
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
@@ -156,9 +144,7 @@ def test_frames():
         assert watson.frames[0].tags == ['A', 'B', 'C']
 
 
-def test_frames_without_tags():
-    watson = Watson()
-
+def test_frames_without_tags(watson):
     content = json.dumps([[0, 10, 'foo', None]])
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
@@ -169,34 +155,31 @@ def test_frames_without_tags():
         assert watson.frames[0].tags == []
 
 
-def test_frames_with_empty_file():
-    watson = Watson()
-
+def test_frames_with_empty_file(watson):
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
         with mock.patch('os.path.getsize', return_value=0):
             assert len(watson.frames) == 0
 
 
-def test_frames_with_nonexistent_file():
-    watson = Watson()
-
+def test_frames_with_nonexistent_file(watson):
     with mock.patch('%s.open' % builtins, side_effect=IOError):
         assert len(watson.frames) == 0
 
 
-def test_frames_watson_non_valid_json():
-    watson = Watson()
-
+def test_frames_watson_non_valid_json(watson):
     content = "{'foo': bar}"
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
-        with pytest.raises(WatsonError):
-            watson.frames
+        with mock.patch('os.path.getsize') as mock_getsize:
+            mock_getsize.return_value(len(content))
+            with pytest.raises(WatsonError):
+                watson.frames
 
 
-def test_given_frames():
+def test_given_frames(config_dir):
     content = json.dumps([[0, 10, 'foo', None, ['A']]])
-    watson = Watson(frames=[[0, 10, 'bar', None, ['A', 'B']]])
+    watson = Watson(frames=[[0, 10, 'bar', None, ['A', 'B']]],
+                    config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert len(watson.frames) == 1
@@ -204,9 +187,9 @@ def test_given_frames():
         assert watson.frames[0].tags == ['A', 'B']
 
 
-def test_frames_with_empty_given_state():
+def test_frames_with_empty_given_state(config_dir):
     content = json.dumps([[0, 10, 'foo', None, ['A']]])
-    watson = Watson(frames=[])
+    watson = Watson(frames=[], config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert len(watson.frames) == 0
@@ -371,8 +354,9 @@ def test_save_current_without_tags(watson):
             assert result['tags'] == []
 
 
-def test_save_empty_current():
-    watson = Watson(current={'project': 'foo', 'start': 0})
+def test_save_empty_current(config_dir):
+    watson = Watson(current={'project': 'foo', 'start': 0},
+                    config_dir=config_dir)
     watson.current = {}
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
@@ -384,8 +368,9 @@ def test_save_empty_current():
             assert result == {}
 
 
-def test_save_frames_no_change():
-    watson = Watson(frames=[[0, 10, 'foo', None]])
+def test_save_frames_no_change(config_dir):
+    watson = Watson(frames=[[0, 10, 'foo', None]],
+                    config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
         with mock.patch('json.dump') as json_mock:
@@ -394,8 +379,8 @@ def test_save_frames_no_change():
             assert not json_mock.called
 
 
-def test_save_added_frame():
-    watson = Watson(frames=[[0, 10, 'foo', None]])
+def test_save_added_frame(config_dir):
+    watson = Watson(frames=[[0, 10, 'foo', None]], config_dir=config_dir)
     watson.frames.add('bar', 10, 20, ['A'])
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
@@ -411,8 +396,9 @@ def test_save_added_frame():
             assert result[1][4] == ['A']
 
 
-def test_save_changed_frame():
-    watson = Watson(frames=[[0, 10, 'foo', None, ['A']]])
+def test_save_changed_frame(config_dir):
+    watson = Watson(frames=[[0, 10, 'foo', None, ['A']]],
+                    config_dir=config_dir)
     watson.frames[0] = ('bar', 0, 10, ['A', 'B'])
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
@@ -455,8 +441,8 @@ def test_save_last_sync(watson):
             assert json_mock.call_args[0][0] == now.timestamp
 
 
-def test_save_empty_last_sync():
-    watson = Watson(last_sync=arrow.now())
+def test_save_empty_last_sync(config_dir):
+    watson = Watson(last_sync=arrow.now(), config_dir=config_dir)
     watson.last_sync = None
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
