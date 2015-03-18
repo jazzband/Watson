@@ -128,7 +128,7 @@ class Watson(object):
         """
         try:
             if not os.path.isdir(self._dir):
-                os.mkdir(self._dir)
+                os.makedirs(self._dir)
 
             if self._current is not None and self._old_state != self._current:
                 if self.is_started:
