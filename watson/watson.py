@@ -36,6 +36,9 @@ class Watson(object):
                         If not given, the value is extracted
                         from the state file.
         :type current: dict
+
+        :param config_dir: If given, the directory where the configuration
+                           files will be
         """
         self._current = None
         self._old_state = None
@@ -44,7 +47,7 @@ class Watson(object):
         self._config = None
         self._config_changed = False
 
-        self._dir = click.get_app_dir('watson')
+        self._dir = kwargs.pop('config_dir', click.get_app_dir('watson'))
 
         self.config_file = os.path.join(self._dir, 'config')
         self.frames_file = os.path.join(self._dir, 'frames')
