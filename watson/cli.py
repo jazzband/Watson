@@ -293,8 +293,15 @@ def log(watson, project, from_, to):
 @click.option('-t', '--to', type=Date, default=arrow.now(),
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
+@click.option('-p', '--project', 'projects', multiple=True,
+              help="Reports activity only for the given project. You can add "
+              "other projects by using this option several times.")
+@click.option('--tag', 'tags', multiple=True,
+              help="Reports activity only for frames containing the given "
+              "tag. You can add several tags by using this option multiple "
+              "times")
 @click.pass_obj
-def report(watson, from_, to):
+def report(watson, from_, to, projects, tags):
     """
     Print a report of the time spent on projects during the given timespan.
 
@@ -302,9 +309,13 @@ def report(watson, from_, to):
     can be controlled with the '--from' and '--to' arguments. The dates
     must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
 
+    You can limit the report to a project or a tag using the `--project` and
+    `--tag` options. They can be specified several times each to add multiple
+    projects or tags to the report.
+
     \b
     Example:
-    $ watson report
+    $ watson report --project voyager2 --project apollo11
     Monday 05 May 2014
             a7f8157  09:57 to 12:05  apollo11  2h 08m 34s
             44866f1  12:32 to 16:21  voyager2  3h 48m 59s
@@ -320,13 +331,10 @@ def report(watson, from_, to):
     Wednesday 07 May 2014
             0d2be24  09:16 to 10:53  apollo11 [reactor, steering]  1h 36m 53s
             0ae6308  11:41 to 14:21  apollo11 [wheels, brakes]  2h 39m 53s
-            a62ac93  14:35 to 18:27  hubble  3h 52m 12s
 
     \b
     Thursday 08 May 2014
             b4f3d47  09:34 to 11:29  voyager2 [generators, probe]  1h 55m 01s
-            ae68bf6  11:45 to 15:37  hubble [lens, transmission]  3h 52m 10s
-            501e43a  16:21 to 16:48  hubble [lens, camera] 27m 03s
             7c31426  17:30 to 18:39  voyager2 [sensors, probe]  1h 08m 59s
 
 
@@ -347,8 +355,14 @@ def report(watson, from_, to):
         raise click.ClickException("'from' must be anterior to 'to'")
 
     span = watson.frames.span(from_, to)
+    frames_by_day = itertools.groupby(
+        watson.frames.filter(
+            projects=projects or None, tags=tags or None, span=span
+        ),
+        operator.attrgetter('day')
+    )
 
-    for i, (day, frames) in enumerate(watson.frames.by_day(span)):
+    for i, (day, frames) in enumerate(frames_by_day):
         if i != 0:
             click.echo()
 

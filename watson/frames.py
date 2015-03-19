@@ -1,6 +1,4 @@
 import uuid
-import itertools
-import operator
 
 import arrow
 
@@ -150,7 +148,3 @@ class Frames(object):
 
     def span(self, start, stop):
         return Span(start, stop)
-
-    def by_day(self, span):
-        frames = (f for f in self._rows if f in span)
-        return itertools.groupby(frames, operator.attrgetter('day'))
