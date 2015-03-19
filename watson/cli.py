@@ -20,7 +20,7 @@ def style(name, element):
         if not tags:
             return ''
 
-        return ' [{}]'.format(', '.join(
+        return '[{}]'.format(', '.join(
             style('tag', tag) for tag in tags
         ))
 
@@ -107,7 +107,7 @@ def start(watson, args):
     ))))  # pile of pancakes !
 
     current = watson.start(project, tags)
-    click.echo("Starting {}{} at {}".format(
+    click.echo("Starting {} {} at {}".format(
         style('project', project),
         style('tags', tags),
         style('time', "{:HH:mm}".format(current['start'].to('local')))
@@ -127,7 +127,7 @@ def stop(watson):
     Stopping project apollo11, started a minute ago
     """
     old = watson.stop()
-    click.echo("Stopping project {}{}, started {}.".format(
+    click.echo("Stopping project {} {}, started {}.".format(
         style('project', old['project']),
         style('tags', old['tags']),
         style('time', old['start'].humanize())
@@ -143,7 +143,7 @@ def cancel(watson):
     not be recorded.
     """
     old = watson.cancel()
-    click.echo("Canceling the timer for project {}{}".format(
+    click.echo("Canceling the timer for project {} {}".format(
         style('project', old['project']),
         style('tags', old['tags'])
     ))
@@ -166,7 +166,7 @@ def status(watson):
         return
 
     current = watson.current
-    click.echo("Project {}{} started {}".format(
+    click.echo("Project {} {} started {}".format(
         style('project', current['project']),
         style('tags', current['tags']),
         style('time', current['start'].humanize())
@@ -372,7 +372,7 @@ def report(watson, from_, to, projects, tags):
         click.echo(style('date', "{:dddd DD MMMM YYYY}".format(day)))
 
         click.echo('\n'.join(
-            '\t{id}  {start} to {stop}  {delta:>10}  {project} {tags}'.format(
+            '\t{id}  {start} to {stop}  {delta:>10}  {project}  {tags}'.format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project',
                               '{:>{}}'.format(frame.project, longest_project)),
@@ -485,7 +485,7 @@ def edit(watson, id):
     watson.save()
 
     click.echo(
-        'Edited frame for project {project}{tags}, from {start} to {stop} '
+        'Edited frame for project {project} {tags}, from {start} to {stop} '
         '({delta})'.format(
             delta=format_timedelta(frame.stop - frame.start),
             project=style('project', frame.project),
