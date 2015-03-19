@@ -366,21 +366,26 @@ def report(watson, from_, to, projects, tags):
         if i != 0:
             click.echo()
 
+        frames = tuple(frames)
+        longest_project = max(len(frame.project) for frame in frames)
+
         click.echo(style('date', "{:dddd DD MMMM YYYY}".format(day)))
 
-        for frame in sorted(frames):
-            click.echo(
-                '\t{id}  {start} to {stop}  {project}{tags} {delta}'.format(
-                    delta=format_timedelta(frame.stop - frame.start),
-                    project=style('project', frame.project),
-                    tags=style('tags', frame.tags),
-                    start=style('time',
-                                '{:HH:mm}'.format(frame.start.to('local'))),
-                    stop=style('time',
-                               '{:HH:mm}'.format(frame.stop.to('local'))),
-                    id=style('id', frame.id[:7])
-                )
+        click.echo('\n'.join(
+            '\t{id}  {start} to {stop}  {delta:>10}  {project} {tags}'.format(
+                delta=format_timedelta(frame.stop - frame.start),
+                project=style('project',
+                              '{:>{}}'.format(frame.project, longest_project)),
+                pad=longest_project,
+                tags=style('tags', frame.tags),
+                start=style('time',
+                            '{:HH:mm}'.format(frame.start.to('local'))),
+                stop=style('time',
+                           '{:HH:mm}'.format(frame.stop.to('local'))),
+                id=style('id', frame.id[:7])
             )
+            for frame in frames
+        ))
 
 
 @cli.command()
