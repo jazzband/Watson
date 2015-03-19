@@ -254,7 +254,7 @@ def log(watson, project, from_, to):
     ))
 
     for name in projects:
-        frames = tuple(f for f in watson.frames.for_project(name) if f in span)
+        frames = tuple(watson.frames.filter(projects=[name], span=span))
         delta = reduce(
             operator.add,
             (f.stop - f.start for f in frames),

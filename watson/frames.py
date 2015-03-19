@@ -140,8 +140,13 @@ class Frames(object):
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
 
-    def for_project(self, name):
-        return (frame for frame in self._rows if frame.project == name)
+    def filter(self, projects=None, tags=None, span=None):
+        return (
+            frame for frame in self._rows
+            if (projects is None or frame.project in projects) and
+               (tags is None or any(tag in frame.tags for tag in tags)) and
+               (span is None or frame in span)
+        )
 
     def span(self, start, stop):
         return Span(start, stop)
