@@ -10,7 +10,7 @@ def format_timedelta(delta):
 
     if total >= 3600:
         hours = seconds // 3600
-        stems.append('{:2}h'.format(hours))
+        stems.append('{}h'.format(hours))
         seconds -= hours * 3600
 
     if total >= 60:

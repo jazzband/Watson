@@ -487,7 +487,7 @@ def edit(watson, id):
     click.echo(
         'Edited frame for project {project}{tags}, from {start} to {stop} '
         '({delta})'.format(
-            delta=format_timedelta(frame.stop - frame.start).strip(),
+            delta=format_timedelta(frame.stop - frame.start),
             project=style('project', frame.project),
             tags=style('tags', frame.tags),
             start=style('time', '{:HH:mm}'.format(frame.start.to('local'))),
