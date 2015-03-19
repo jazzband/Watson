@@ -1,13 +1,30 @@
 Watson [![Build Status](https://travis-ci.org/TailorDev/Watson.svg)](https://travis-ci.org/TailorDev/Watson)
 ======
 
-Watson is a tool aimed at helping you monitoring your time.
+Watson is here to help you monitoring your time. You want to know how much time
+you are spending on your projects ? You want to generate a nice report for your
+client ? Watson is here for that.
 
-You just have to tell Watson when you start working on your
-project with the `start` command, and you can stop the timer
-when you're done with the `stop` command.
+Tell Watson when you start working on a task with the `start` command. Then,
+when you are done with this task, stop the timer with the `stop` command.
+That's it, you have learned how to use Watson!
+
+Each task consist of the name of a project, and some tags. Your tags can be shared
+across projects. The more the merrier!
+
+Watson stores everything on your computer, but you can go wild and use
+[Crick](http://crick.fr) to store your sessions remotely and share it with your
+coworkers.
+
+<p align="center">
+  <img src="screenshot.png" alt="Watson"/>
+</p>
+
 
 ## Commands
+
+Here is the listing of all the commands available with Watson. You can also
+find this help with `watson help`.
 
 ### start
 
@@ -188,3 +205,13 @@ Pushed 23 frames to the server
 ```
 
 See [Crick](http://crick.fr) for more information.
+
+
+## Configuration
+
+The configuration and the data are stored inside your user's application folder.
+On Mac, this is `~/Library/Application Support/watson`, on Windows this is
+`C:\Users\<user>\AppData\Local\watson` and on Linux `~/.config/watson`.
+
+If you want to edit your configuration, the best is to use the
+[`config`](#config) command.
