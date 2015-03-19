@@ -201,25 +201,32 @@ def log(watson, project, from_, to):
     Mon 05 May 2014 -> Mon 12 May 2014
 
     \b
-    14h 51m 35s apollo11
-            [14h 49m 46s brakes]
-            [ 8h 58m 20s module]
-            [10h 01m 20s reactor]
-            [12h 39m 40s steering]
-            [11h 34m 51s wheels]
-    11h 34m 36s hubble
-            [ 8h 07m 26s camera]
-            [ 7h 59m 32s lens]
-            [ 9h 20m 33s transmission]
-     7h 47m 41s voyager1
-            [ 1h 25m 32s antenna]
-            [ 1h 25m 32s generators]
-            [ 1h 25m 32s probe]
-     9h 28m 28s voyager2
-            [ 5h 31m 48s antenna]
-            [ 9h 08m 25s generators]
-            [ 2h 43m 03s probe]
-            [ 5h 51m 51s sensors]
+    apollo11 - 13h 22m 20s
+            [brakes    7h 53m 18s]
+            [module    7h 41m 41s]
+            [reactor   8h 35m 50s]
+            [steering 10h 33m 37s]
+            [wheels   10h 11m 35s]
+
+    \b
+    hubble - 8h 54m 46s
+            [camera        8h 38m 17s]
+            [lens          5h 56m 22s]
+            [transmission  6h 27m 07s]
+
+    \b
+    voyager1 - 11h 45m 13s
+            [antenna     5h 53m 57s]
+            [generators  9h 04m 58s]
+            [probe      10h 14m 29s]
+            [sensors    10h 30m 26s]
+
+    \b
+    voyager2 - 16h 16m 09s
+            [antenna     7h 05m 50s]
+            [generators 12h 20m 29s]
+            [probe      12h 20m 29s]
+            [sensors    11h 23m 17s]
 
     \b
     Total: 43h 42m 20s
@@ -229,12 +236,12 @@ def log(watson, project, from_, to):
     Tue 01 April 2014 -> Wed 30 April 2014
 
     \b
-    39h 44m 06s apollo11
-            [17h 49m 47s brakes]
-            [10h 12m 06s module]
-            [22h 44m 33s reactor]
-            [14h 08m 04s steering]
-            [11h 19m 01s wheels]
+    apollo11 - 13h 22m 20s
+            [brakes    7h 53m 18s]
+            [module    7h 41m 41s]
+            [reactor   8h 35m 50s]
+            [steering 10h 33m 37s]
+            [wheels   10h 11m 35s]
     """
     if project:
         projects = (project,)
@@ -321,41 +328,36 @@ def report(watson, from_, to, projects, tags):
     \b
     Example:
     $ watson report --project voyager2 --project apollo11
-    Monday 05 May 2014
-            a7f8157  09:57 to 12:05  apollo11  2h 08m 34s
-            44866f1  12:32 to 16:21  voyager2  3h 48m 59s
-            4864459  16:36 to 19:12  voyager2 [antenna]  2h 35m 07s
+    Monday 05 May 2015
+            f35bb24  09:26 to 10:22     56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
 
     \b
-    Tuesday 06 May 2014
-            3142104  09:49 to 12:49  voyager2 [sensors]  2h 59m 20s
-            8c99d9e  13:03 to 14:43  voyager2 [antenna, sensors]  1h 39m 45s
-            0469b72  15:41 to 18:40  voyager2 [antenna, probe]  2h 59m 03s
+    Tuesday 06 May 2015
+            9a1325d  09:48 to 10:15     27m 29s  voyager2  [sensors, generators, probe]
 
     \b
-    Wednesday 07 May 2014
-            0d2be24  09:16 to 10:53  apollo11 [reactor, steering]  1h 36m 53s
-            0ae6308  11:41 to 14:21  apollo11 [wheels, brakes]  2h 39m 53s
+    Wednesday 07 May 2015
+            530768b  12:40 to 14:16  1h 35m 45s  apollo11  [wheels]
+            84164f0  14:23 to 14:35     11m 37s  apollo11  [brakes, steering]
 
     \b
-    Thursday 08 May 2014
-            b4f3d47  09:34 to 11:29  voyager2 [generators, probe]  1h 55m 01s
-            7c31426  17:30 to 18:39  voyager2 [sensors, probe]  1h 08m 59s
-
+    Thursday 08 May 2015
+            26a2817  09:05 to 10:03     57m 12s  voyager2  [probe, generators]
+            5590aca  10:51 to 14:47  3h 55m 40s  apollo11
+            c32c74e  15:12 to 18:38  3h 25m 34s  voyager2  [probe, generators, sensors, antenna]
 
     \b
     $ watson report --from 2014-04-16 --to 2014-04-17
     Wednesday 16 April 2014
-            c983586  09:28 to 12:55  apollo11  3h 26m 12s
-            1a5dbe5  13:52 to 14:51  voyager2 [sensors, antenna] 58m 21s
-            478ad13  15:44 to 16:52  hubble [transmission]  1h 07m 43s
+            a96fcde  09:15 to 09:43     28m 11s    hubble  [lens, camera, transmission]
+            5e91316  10:19 to 12:59  2h 39m 15s    hubble  [camera, transmission]
+            761dd51  14:42 to 15:54  1h 11m 47s  voyager1  [antenna]
 
     \b
     Thursday 17 April 2014
-            a57e276  09:29 to 12:33  voyager1 [antenna, probe]  3h 04m 45s
-            8f25306  13:03 to 13:15  voyager1 11m 53s
-            975c6f6  13:46 to 17:34  apollo11 [reactor]  3h 47m 29s
-    """
+            02cb269  09:53 to 12:43  2h 50m 07s  apollo11  [wheels]
+            1070ddb  13:48 to 16:17  2h 29m 11s  voyager1  [antenna, sensors]
+    """  # noqa
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
