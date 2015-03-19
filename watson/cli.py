@@ -262,25 +262,30 @@ def log(watson, project, from_, to):
         )
         total += delta
 
-        click.echo("{time:>12} {project}".format(
+        click.echo("{project} - {time}".format(
             time=style('time', format_timedelta(delta)),
             project=style('project', name)
         ))
 
-        for tag in sorted(set(tag for frame in frames for tag in frame.tags)):
+        tags = sorted(set(tag for frame in frames for tag in frame.tags))
+        longest_tag = max(len(tag) for tag in tags)
+
+        for tag in tags:
             delta = reduce(
                 operator.add,
                 (f.stop - f.start for f in frames if tag in f.tags),
                 datetime.timedelta()
             )
 
-            click.echo("\t[{time} {tag}]".format(
-                time=style('time', format_timedelta(delta)),
-                tag=style('tag', tag),
+            click.echo("\t[{tag} {time}]".format(
+                time=style('time', '{:>11}'.format(format_timedelta(delta))),
+                tag=style('tag', '{:<{}}'.format(tag, longest_tag)),
             ))
 
+        click.echo()
+
     if len(projects) > 1:
-        click.echo("\nTotal: {}".format(
+        click.echo("Total: {}".format(
             style('time', '{}'.format(format_timedelta(total)))
         ))
 
