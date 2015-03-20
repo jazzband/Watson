@@ -1,0 +1,7 @@
+include README.md
+include LICENCE
+include tox.ini
+include requirements.txt
+recursive-include requirements *
+recursive-include tests *
+recursive-include scripts *
