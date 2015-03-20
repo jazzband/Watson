@@ -1,3 +1,3 @@
-from .cli import cli
+from watson import cli
 
-cli()
+cli.cli()
