@@ -3,14 +3,14 @@ Watson [![Build Status](https://travis-ci.org/TailorDev/Watson.svg)](https://tra
 
 Watson is here to help you monitoring your time. You want to know how much time
 you are spending on your projects ? You want to generate a nice report for your
-client ? Watson is here for that.
+client ? Watson is here for you.
 
 Tell Watson when you start working on a task with the `start` command. Then,
 when you are done with this task, stop the timer with the `stop` command.
-That's it, you have learned how to use Watson!
+That's pretty much everything you need to know to start using Watson.
 
-Each task consist of the name of a project, and some tags. Your tags can be shared
-across projects. The more the merrier!
+Each task consists of the name of a project and some tags. Your tags can be shared
+across projects and can be used to generate detailed reports.
 
 Watson stores everything on your computer, but you can go wild and use
 [Crick](http://crick.fr) to store your sessions remotely and share it with your
