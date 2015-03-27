@@ -10,7 +10,7 @@ setup(
     packages=['watson'],
     author='TailorDev',
     author_email='contact@tailordev.com',
-    licence='MIT',
+    license='MIT',
     long_description=readme,
     install_requires=[
         'Click',
