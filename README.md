@@ -20,6 +20,20 @@ coworkers.
   <img src="screenshot.png" alt="Watson"/>
 </p>
 
+## Install
+
+Watson is available on any platform supported by Python (Windows, Mac, Linux,
+*BSD…). We are working on providing a clean and easy way to install it for each
+platform, but for now the easiest way is to run the following commands:
+
+```bash
+$ git clone https://github.com/TailorDev/Watson.git
+$ cd Watson/
+$ sudo python setup.py install
+```
+
+The sudo is needed to install Watson for the system, so that it can be accessed
+from anywhere.
 
 ## Commands
 
