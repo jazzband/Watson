@@ -275,7 +275,7 @@ def log(watson, project, from_, to):
         ))
 
         tags = sorted(set(tag for frame in frames for tag in frame.tags))
-        longest_tag = max(len(tag) for tag in tags)
+        longest_tag = max(len(tag) for tag in tags) if tags else 0
 
         for tag in tags:
             delta = reduce(
