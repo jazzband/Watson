@@ -174,7 +174,6 @@ def status(watson):
 
 
 @cli.command()
-@click.argument('project', required=False)
 @click.option('-f', '--from', 'from_', type=Date,
               default=arrow.now().replace(days=-7),
               help="The date from when the report should start. Defaults "
@@ -182,8 +181,15 @@ def status(watson):
 @click.option('-t', '--to', type=Date, default=arrow.now(),
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
+@click.option('-p', '--project', 'projects', multiple=True,
+              help="Reports activity only for the given project. You can add "
+              "other projects by using this option several times.")
+@click.option('-T', '--tag', 'tags', multiple=True,
+              help="Reports activity only for frames containing the given "
+              "tag. You can add several tags by using this option multiple "
+              "times")
 @click.pass_obj
-def report(watson, project, from_, to):
+def report(watson, from_, to, projects, tags):
     """
     Display a report of the time spent on each project.
 
@@ -194,6 +200,10 @@ def report(watson, project, from_, to):
     By default, the time spent the last 7 days is printed. This timespan
     can be controlled with the '--from' and '--to' arguments. The dates
     must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
+
+    You can limit the report to a project or a tag using the `--project` and
+    `--tag` options. They can be specified several times each to add multiple
+    projects or tags to the report.
 
     \b
     Example:
@@ -232,7 +242,7 @@ def report(watson, project, from_, to):
     Total: 43h 42m 20s
 
     \b
-    $ watson report --from 2014-04-01 --to 2014-04-30  apollo11
+    $ watson report --from 2014-04-01 --to 2014-04-30 --project apollo11
     Tue 01 April 2014 -> Wed 30 April 2014
 
     \b
@@ -243,15 +253,17 @@ def report(watson, project, from_, to):
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     """
-    if project:
-        projects = (project,)
-    else:
-        projects = watson.projects
-
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
     span = watson.frames.span(from_, to)
+
+    frames_by_project = sorted_groupby(
+        watson.frames.filter(
+            projects=projects or None, tags=tags or None, span=span
+        ),
+        operator.attrgetter('project')
+    )
 
     total = datetime.timedelta()
 
@@ -260,8 +272,8 @@ def report(watson, project, from_, to):
         style('date', '{:ddd DD MMMM YYYY}'.format(span.stop))
     ))
 
-    for name in projects:
-        frames = tuple(watson.frames.filter(projects=[name], span=span))
+    for project, frames in frames_by_project:
+        frames = tuple(frames)
         delta = reduce(
             operator.add,
             (f.stop - f.start for f in frames),
@@ -271,7 +283,7 @@ def report(watson, project, from_, to):
 
         click.echo("{project} - {time}".format(
             time=style('time', format_timedelta(delta)),
-            project=style('project', name)
+            project=style('project', project)
         ))
 
         tags = sorted(set(tag for frame in frames for tag in frame.tags))

@@ -84,6 +84,11 @@ By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
+You can limit the report to a project or a tag using the `--project` and
+`--tag` options. They can be specified several times each to add multiple
+projects or tags to the report.
+
+
 ```
 $ watson report
 Mon 05 May 2014 -> Mon 12 May 2014
@@ -115,7 +120,7 @@ voyager2 - 16h 16m 09s
 Total: 43h 42m 20s
 
 
-$ watson report --from 2014-04-01 --to 2014-04-30  apollo11
+$ watson report --from 2014-04-01 --to 2014-04-30 --project apollo11
 Tue 01 April 2014 -> Wed 30 April 2014
 
 apollo11 - 13h 22m 20s
