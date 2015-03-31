@@ -308,7 +308,7 @@ def report(watson, project, from_, to):
 @click.option('-p', '--project', 'projects', multiple=True,
               help="Logs activity only for the given project. You can add "
               "other projects by using this option several times.")
-@click.option('--tag', 'tags', multiple=True,
+@click.option('-T', '--tag', 'tags', multiple=True,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
