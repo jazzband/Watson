@@ -286,10 +286,14 @@ def report(watson, from_, to, projects, tags):
             project=style('project', project)
         ))
 
-        tags = sorted(set(tag for frame in frames for tag in frame.tags))
-        longest_tag = max(len(tag) for tag in tags) if tags else 0
+        tags_to_print = sorted(
+            set(tag for frame in frames for tag in frame.tags
+                if tag in tags or not tags)
+        )
+        if tags_to_print:
+            longest_tag = max(len(tag) for tag in tags_to_print or [''])
 
-        for tag in tags:
+        for tag in tags_to_print:
             delta = reduce(
                 operator.add,
                 (f.stop - f.start for f in frames if tag in f.tags),
