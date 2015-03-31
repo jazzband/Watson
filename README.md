@@ -57,7 +57,7 @@ Stop monitoring time for the current project
 
 ```
 $ watson stop
-Stopping project apollo11, started a minute ago
+Stopping project apollo11, started a minute ago. (id: e7ccd52)
 ```
 
 ### cancel

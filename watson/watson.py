@@ -247,12 +247,12 @@ class Watson(object):
             raise WatsonError("No project started.")
 
         old = self.current
-        self.frames.add(
+        frame = self.frames.add(
             old['project'], old['start'], arrow.now(), tags=old['tags']
         )
         self.current = None
 
-        return old
+        return frame
 
     def cancel(self):
         if not self.is_started:

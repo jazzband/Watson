@@ -24,6 +24,9 @@ def style(name, element):
             style('tag', tag) for tag in tags
         ))
 
+    def _style_short_id(id):
+        return style('id', id[:7])
+
     formats = {
         'project': {'fg': 'magenta'},
         'tags': _style_tags,
@@ -31,6 +34,7 @@ def style(name, element):
         'time': {'fg': 'green'},
         'error': {'fg': 'red'},
         'date': {'fg': 'cyan'},
+        'short_id': _style_short_id,
         'id': {'fg': 'white'}
     }
 
@@ -124,13 +128,14 @@ def stop(watson):
     \b
     Example:
     $ watson stop
-    Stopping project apollo11, started a minute ago
+    Stopping project apollo11, started a minute ago. (id: e7ccd52)
     """
-    old = watson.stop()
-    click.echo("Stopping project {} {}, started {}.".format(
-        style('project', old['project']),
-        style('tags', old['tags']),
-        style('time', old['start'].humanize())
+    frame = watson.stop()
+    click.echo("Stopping project {} {}, started {}. (id: {})".format(
+        style('project', frame.project),
+        style('tags', frame.tags),
+        style('time', frame.start.humanize()),
+        style('short_id', frame.id)
     ))
     watson.save()
 
@@ -407,7 +412,7 @@ def log(watson, from_, to, projects, tags):
                             '{:HH:mm}'.format(frame.start.to('local'))),
                 stop=style('time',
                            '{:HH:mm}'.format(frame.stop.to('local'))),
-                id=style('id', frame.id[:7])
+                id=style('short_id', frame.id)
             )
             for frame in frames
         ))
