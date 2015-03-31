@@ -145,29 +145,29 @@ projects or tags to the log.
 
 ```
 $ watson log
-Monday 05 May 2015
+Thursday 08 May 2015
         f35bb24  09:26 to 10:22     56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
 
-Tuesday 06 May 2015
+Wednesday 07 May 2015
         9a1325d  09:48 to 10:15     27m 29s  voyager2  [sensors, generators, probe]
 
-Wednesday 07 May 2015
+Tuesday 06 May 2015
         530768b  12:40 to 14:16  1h 35m 45s  apollo11  [wheels]
         84164f0  14:23 to 14:35     11m 37s  apollo11  [brakes, steering]
 
-Thursday 08 May 2015
+Monday 05 May 2015
         26a2817  09:05 to 10:03     57m 12s  voyager2  [probe, generators]
         5590aca  10:51 to 14:47  3h 55m 40s  apollo11
         c32c74e  15:12 to 18:38  3h 25m 34s  voyager2  [probe, generators, sensors, antenna]
 
 
 $ watson log --from 2014-04-16 --to 2014-04-17
-Wednesday 16 April 2014
+Thursday 17 April 2014
         a96fcde  09:15 to 09:43     28m 11s    hubble  [lens, camera, transmission]
         5e91316  10:19 to 12:59  2h 39m 15s    hubble  [camera, transmission]
         761dd51  14:42 to 15:54  1h 11m 47s  voyager1  [antenna]
 
-Thursday 17 April 2014
+Wednesday 16 April 2014
         02cb269  09:53 to 12:43  2h 50m 07s  apollo11  [wheels]
         1070ddb  13:48 to 16:17  2h 29m 11s  voyager1  [antenna, sensors]
 ```
