@@ -31,4 +31,4 @@ def sorted_groupby(iterator, key, reverse=False):
     Similar to `itertools.groupby`, but sorts the iterator with the same
     key first.
     """
-    return itertools.groupby(sorted(iterator, key=key), key)
+    return itertools.groupby(sorted(iterator, key=key, reverse=reverse), key)
