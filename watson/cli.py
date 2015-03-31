@@ -177,15 +177,15 @@ def status(watson):
 @click.argument('project', required=False)
 @click.option('-f', '--from', 'from_', type=Date,
               default=arrow.now().replace(days=-7),
-              help="The date from when the log should start. Defaults "
+              help="The date from when the report should start. Defaults "
               "to seven days ago.")
 @click.option('-t', '--to', type=Date, default=arrow.now(),
-              help="The date at which the log should stop (inclusive). "
+              help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
 @click.pass_obj
-def log(watson, project, from_, to):
+def report(watson, project, from_, to):
     """
-    Display a summary of the time spent on each project.
+    Display a report of the time spent on each project.
 
     If a project is given, the time spent on this project
     is printed. Else, print the total for each root
@@ -197,7 +197,7 @@ def log(watson, project, from_, to):
 
     \b
     Example:
-    $ watson log
+    $ watson report
     Mon 05 May 2014 -> Mon 12 May 2014
 
     \b
@@ -232,7 +232,7 @@ def log(watson, project, from_, to):
     Total: 43h 42m 20s
 
     \b
-    $ watson log --from 2014-04-01 --to 2014-04-30  apollo11
+    $ watson report --from 2014-04-01 --to 2014-04-30  apollo11
     Tue 01 April 2014 -> Wed 30 April 2014
 
     \b
@@ -300,34 +300,34 @@ def log(watson, project, from_, to):
 @cli.command()
 @click.option('-f', '--from', 'from_', type=Date,
               default=arrow.now().replace(days=-7),
-              help="The date from when the report should start. Defaults "
+              help="The date from when the log should start. Defaults "
               "to seven days ago.")
 @click.option('-t', '--to', type=Date, default=arrow.now(),
-              help="The date at which the report should stop (inclusive). "
+              help="The date at which the log should stop (inclusive). "
               "Defaults to tomorrow.")
 @click.option('-p', '--project', 'projects', multiple=True,
-              help="Reports activity only for the given project. You can add "
+              help="Logs activity only for the given project. You can add "
               "other projects by using this option several times.")
 @click.option('--tag', 'tags', multiple=True,
-              help="Reports activity only for frames containing the given "
+              help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.pass_obj
-def report(watson, from_, to, projects, tags):
+def log(watson, from_, to, projects, tags):
     """
-    Print a report of the time spent on projects during the given timespan.
+    Display each recorded session during the given timespan.
 
-    By default, the time spent the last 7 days is printed. This timespan
+    By default, the sessions from the last 7 days are printed. This timespan
     can be controlled with the '--from' and '--to' arguments. The dates
     must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
 
-    You can limit the report to a project or a tag using the `--project` and
+    You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
-    projects or tags to the report.
+    projects or tags to the log.
 
     \b
     Example:
-    $ watson report --project voyager2 --project apollo11
+    $ watson log --project voyager2 --project apollo11
     Monday 05 May 2015
             f35bb24  09:26 to 10:22     56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
 
@@ -347,7 +347,7 @@ def report(watson, from_, to, projects, tags):
             c32c74e  15:12 to 18:38  3h 25m 34s  voyager2  [probe, generators, sensors, antenna]
 
     \b
-    $ watson report --from 2014-04-16 --to 2014-04-17
+    $ watson log --from 2014-04-16 --to 2014-04-17
     Wednesday 16 April 2014
             a96fcde  09:15 to 09:43     28m 11s    hubble  [lens, camera, transmission]
             5e91316  10:19 to 12:59  2h 39m 15s    hubble  [camera, transmission]
@@ -444,7 +444,7 @@ def tags(watson):
 @click.pass_obj
 def edit(watson, id):
     """
-    Edit a frame. You can get the id of a frame with the `watson report`
+    Edit a frame. You can get the id of a frame with the `watson log`
     command.
 
     The `$EDITOR` environment variable is used to detect your editor.

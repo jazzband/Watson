@@ -74,8 +74,8 @@ $ watson status
 Project apollo11 started seconds ago
 ```
 
-### log
-Display a summary of the time spent on each project.
+### report
+Display a report of the time spent on each project.
 
 If a project is given, the time spent on this project is printed. Else,
 print the total for each root project.
@@ -85,7 +85,7 @@ can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
 ```
-$ watson log
+$ watson report
 Mon 05 May 2014 -> Mon 12 May 2014
 
 apollo11 - 13h 22m 20s
@@ -115,7 +115,7 @@ voyager2 - 16h 16m 09s
 Total: 43h 42m 20s
 
 
-$ watson log --from 2014-04-01 --to 2014-04-30  apollo11
+$ watson report --from 2014-04-01 --to 2014-04-30  apollo11
 Tue 01 April 2014 -> Wed 30 April 2014
 
 apollo11 - 13h 22m 20s
@@ -126,20 +126,20 @@ apollo11 - 13h 22m 20s
         [wheels   10h 11m 35s]
 ```
 
-### report
+### log
 
-Print a report of the time spent on projects during the given timespan.
+Display each recorded session during the given timespan.
 
-By default, the time spent the last 7 days is printed. This timespan
+By default, the sessions from the last 7 days are printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
-You can limit the report to a project or a tag using the `--project` and
+You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
-projects or tags to the report.
+projects or tags to the log.
 
 ```
-$ watson report
+$ watson log
 Monday 05 May 2015
         f35bb24  09:26 to 10:22     56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
 
@@ -156,7 +156,7 @@ Thursday 08 May 2015
         c32c74e  15:12 to 18:38  3h 25m 34s  voyager2  [probe, generators, sensors, antenna]
 
 
-$ watson report --from 2014-04-16 --to 2014-04-17
+$ watson log --from 2014-04-16 --to 2014-04-17
 Wednesday 16 April 2014
         a96fcde  09:15 to 09:43     28m 11s    hubble  [lens, camera, transmission]
         5e91316  10:19 to 12:59  2h 39m 15s    hubble  [camera, transmission]
@@ -181,8 +181,7 @@ voyager2
 
 ### edit
 
-Edit a frame. You can get the id of a frame with the `watson report`
-command.
+Edit a frame. You can get the id of a frame with the `watson log` command.
 
 The `$EDITOR` environment variable is used to detect your editor.
 
