@@ -1,3 +1,6 @@
+import itertools
+
+
 def format_timedelta(delta):
     """
     Return a string roughly representing a timedelta.
@@ -21,3 +24,11 @@ def format_timedelta(delta):
     stems.append('{:02}s'.format(seconds))
 
     return ('-' if neg else '') + ' '.join(stems)
+
+
+def sorted_groupby(iterator, key):
+    """
+    Similar to `itertools.groupby`, but sorts the iterator with the same
+    key first.
+    """
+    return itertools.groupby(sorted(iterator, key=key), key)

@@ -12,7 +12,7 @@ import click
 import arrow
 
 from . import watson
-from .utils import format_timedelta
+from .utils import format_timedelta, sorted_groupby
 
 
 def style(name, element):
@@ -362,7 +362,7 @@ def log(watson, from_, to, projects, tags):
         raise click.ClickException("'from' must be anterior to 'to'")
 
     span = watson.frames.span(from_, to)
-    frames_by_day = itertools.groupby(
+    frames_by_day = sorted_groupby(
         watson.frames.filter(
             projects=projects or None, tags=tags or None, span=span
         ),
