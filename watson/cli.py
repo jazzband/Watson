@@ -60,7 +60,12 @@ class DateParamType(click.ParamType):
 
     def convert(self, value, param, ctx):
         if value:
-            return arrow.get(value)
+            date = arrow.get(value)
+            # When we parse a date, we want to parse it in the timezone
+            # expected by the user, so that midnight is midnight in the local
+            # timezone, not in UTC. Cf issue #16.
+            date.tzinfo = tz.tzlocal()
+            return date
 
 
 Date = DateParamType()
