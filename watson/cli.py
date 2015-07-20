@@ -119,7 +119,7 @@ def start(watson, args):
     click.echo("Starting {} {} at {}".format(
         style('project', project),
         style('tags', tags),
-        style('time', "{:HH:mm}".format(current['start'].to('local')))
+        style('time', "{:HH:mm}".format(current['start']))
     ))
     watson.save()
 
@@ -413,10 +413,8 @@ def log(watson, from_, to, projects, tags):
                               '{:>{}}'.format(frame.project, longest_project)),
                 pad=longest_project,
                 tags=style('tags', frame.tags),
-                start=style('time',
-                            '{:HH:mm}'.format(frame.start.to('local'))),
-                stop=style('time',
-                           '{:HH:mm}'.format(frame.stop.to('local'))),
+                start=style('time', '{:HH:mm}'.format(frame.start)),
+                stop=style('time', '{:HH:mm}'.format(frame.stop)),
                 id=style('short_id', frame.id)
             )
             for frame in frames
@@ -487,8 +485,8 @@ def edit(watson, id):
     format = 'YYYY-MM-DD HH:mm:ss'
 
     text = json.dumps({
-        'start': frame.start.to('local').format(format),
-        'stop': frame.stop.to('local').format(format),
+        'start': frame.start.format(format),
+        'stop': frame.stop.format(format),
         'project': frame.project,
         'tags': frame.tags,
     }, indent=4, sort_keys=True)
@@ -527,8 +525,8 @@ def edit(watson, id):
             delta=format_timedelta(frame.stop - frame.start),
             project=style('project', frame.project),
             tags=style('tags', frame.tags),
-            start=style('time', '{:HH:mm}'.format(frame.start.to('local'))),
-            stop=style('time', '{:HH:mm}'.format(frame.stop.to('local')))
+            start=style('time', '{:HH:mm}'.format(frame.start)),
+            stop=style('time', '{:HH:mm}'.format(frame.stop))
         )
     )
 

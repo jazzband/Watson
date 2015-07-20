@@ -90,7 +90,7 @@ class Watson(object):
             )
 
     def _parse_date(self, date):
-        return arrow.Arrow.utcfromtimestamp(date)
+        return arrow.Arrow.utcfromtimestamp(date).to('local')
 
     def _format_date(self, date):
         if not isinstance(date, arrow.Arrow):

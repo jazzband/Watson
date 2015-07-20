@@ -19,6 +19,9 @@ class Frame(namedtuple('Frame', HEADERS)):
             from .watson import WatsonError
             raise WatsonError("Error converting date: {}".format(e))
 
+        start = start.to('local')
+        stop = stop.to('local')
+
         if updated_at is None:
             updated_at = arrow.utcnow()
         elif not isinstance(updated_at, arrow.Arrow):
@@ -32,8 +35,8 @@ class Frame(namedtuple('Frame', HEADERS)):
         )
 
     def dump(self):
-        start = self.start.timestamp
-        stop = self.stop.timestamp
+        start = self.start.to('utc').timestamp
+        stop = self.stop.to('utc').timestamp
         updated_at = self.updated_at.timestamp
 
         return (start, stop, self.project, self.id, self.tags, updated_at)
