@@ -209,6 +209,7 @@ $ watson config crick.token
 ```
 
 ### sync
+
 Get the frames from the server and push the new ones.
 
 The URL of the server and the User Token must be defined in a `.watson.conf` file
@@ -222,8 +223,7 @@ Received 42 frames from the server
 Pushed 23 frames to the server
 ```
 
-See [Crick](http://crick.fr) for more information.
-
+In a near future, you will be able to sync Watson with your [artich.io](https://artich.io/?pk_campaign=GitHubWatson) account or any compatible third-party back-end.
 
 ## Configuration
 
