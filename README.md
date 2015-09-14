@@ -13,8 +13,8 @@ Each task consists of the name of a project and some tags. Your tags can be shar
 across projects and can be used to generate detailed reports.
 
 Watson stores everything on your computer, but you can go wild and use
-[Crick](http://crick.fr) to store your sessions remotely and share it with your
-coworkers.
+[artich.io](https://artich.io/?pk_campaign=GitHubWatson) to store your sessions remotely and share it with your
+colleagues.
 
 <p align="center">
   <img src="screenshot.png" alt="Watson"/>
