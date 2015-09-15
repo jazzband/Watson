@@ -536,15 +536,31 @@ def edit(watson, id):
 
 @cli.command()
 @click.argument('id')
+@click.option('-f', '--force', is_flag=True,
+              help="Don't ask for confirmation.")
 @click.pass_obj
-def remove(watson, id):
+def remove(watson, id, force):
     """
     Remove a frame.
     """
     try:
-        del watson.frames[id]
+        frame = watson.frames[id]
     except KeyError:
         raise click.ClickException("No frame found with id {}.".format(id))
+
+    if not force:
+        click.confirm(
+            "You are about to remove frame "
+            "{project} {tags} from {start} to {stop}, continue?".format(
+                project=style('project', frame.project),
+                tags=style('tags', frame.tags),
+                start=style('time', '{:HH:mm}'.format(frame.start)),
+                stop=style('time', '{:HH:mm}'.format(frame.stop))
+            ),
+            abort=True
+        )
+
+    del watson.frames[id]
 
     watson.save()
     click.echo("Frame deleted.")
