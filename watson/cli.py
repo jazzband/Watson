@@ -468,19 +468,22 @@ def tags(watson):
 
 
 @cli.command()
-@click.argument('id')
+@click.argument('id', required=False)
 @click.pass_obj
 def edit(watson, id):
     """
     Edit a frame. You can get the id of a frame with the `watson log`
-    command.
+    command. If no id is given, defaults to the last recorded frame.
 
     The `$EDITOR` environment variable is used to detect your editor.
     """
-    try:
-        frame = watson.frames[id]
-    except KeyError:
-        raise click.ClickException("No frame found with id {}.".format(id))
+    if not id:
+        frame = watson.frames[-1]
+    else:
+        try:
+            frame = watson.frames[id]
+        except KeyError:
+            raise click.ClickException("No frame found with id {}.".format(id))
 
     format = 'YYYY-MM-DD HH:mm:ss'
 

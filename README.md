@@ -187,6 +187,7 @@ voyager2
 ### edit
 
 Edit a frame. You can get the id of a frame with the `watson log` command.
+If no id is given, defaults to the last recorded frame.
 
 The `$EDITOR` environment variable is used to detect your editor.
 
