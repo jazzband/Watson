@@ -401,7 +401,7 @@ def log(watson, from_, to, projects, tags):
         if i != 0:
             lines.append('')
 
-        frames = tuple(frames)
+        frames = sorted(frames, key=operator.attrgetter('start'))
         longest_project = max(len(frame.project) for frame in frames)
 
         lines.append(style('date', "{:dddd DD MMMM YYYY}".format(day)))
