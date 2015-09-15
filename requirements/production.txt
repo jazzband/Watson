@@ -1,6 +1,0 @@
-# Install everything that needs to be compiled
--r compiled.txt
-
-click
-arrow
-requests
