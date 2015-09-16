@@ -478,6 +478,9 @@ def edit(watson, id):
     The `$EDITOR` environment variable is used to detect your editor.
     """
     if not id:
+        if not len(watson.frames):
+            click.echo("No frame to edit. It's time to start a new one!")
+            return
         frame = watson.frames[-1]
     else:
         try:
