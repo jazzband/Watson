@@ -2,19 +2,16 @@ Watson [![Build Status](https://travis-ci.org/TailorDev/Watson.svg)](https://tra
 ======
 
 Watson is here to help you monitoring your time. You want to know how much time
-you are spending on your projects ? You want to generate a nice report for your
-client ? Watson is here for you.
+you are spending on your projects? You want to generate a nice report for your
+client? Watson is here for you.
 
 Tell Watson when you start working on a task with the `start` command. Then,
-when you are done with this task, stop the timer with the `stop` command.
-That's pretty much everything you need to know to start using Watson.
+when you are done with this task, stop the timer with the `stop` command. This will create what we call a **frame**. That's pretty much everything you need to know to start using Watson.
 
-Each task consists of the name of a project and some tags. Your tags can be shared
-across projects and can be used to generate detailed reports.
+Each frame consists of the name of a project and some tags. Your tags can be shared across projects and can be used to generate detailed reports.
 
 Watson stores everything on your computer, but you can go wild and use
-[artich.io](https://artich.io/?pk_campaign=GitHubWatson) to store your sessions remotely and share it with your
-colleagues.
+[artich.io](https://artich.io/?pk_campaign=GitHubWatson) to store your sessions remotely and share it with your colleagues.
 
 <p align="center">
   <img src="screenshot.png" alt="Watson"/>
@@ -75,6 +72,7 @@ Project apollo11 started seconds ago
 ```
 
 ### report
+
 Display a report of the time spent on each project.
 
 If a project is given, the time spent on this project is printed. Else,
@@ -133,9 +131,9 @@ apollo11 - 13h 22m 20s
 
 ### log
 
-Display each recorded session during the given timespan.
+Display each recorded frames during the given timespan.
 
-By default, the sessions from the last 7 days are printed. This timespan
+By default, the frames from the last 7 days are printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
@@ -174,7 +172,7 @@ Wednesday 16 April 2014
 
 ### projects
 
-Display the list of all the existing projects.
+Display the list of all existing projects.
 
 ```
 $ watson projects
@@ -196,12 +194,13 @@ The `$EDITOR` environment variable is used to detect your editor.
 Remove a frame.
 
 ### config
+
 Get and set configuration options.
 
 If value is not provided, the content of the key is displayed. Else,
 the given value is set.
 
-You can edit the config file with an editor with the '--edit' option.
+You can edit the configuration file with an editor with the '--edit' option.
 
 ```
 $ watson config crick.token 7e329263e329
@@ -211,10 +210,13 @@ $ watson config crick.token
 
 ### sync
 
-Get the frames from the server and push the new ones.
+Get frames from the server and push the new ones.
 
-The URL of the server and the User Token must be defined in a `.watson.conf` file
-placed inside your user directory.
+**Warning:** this feature is still experimental and not yet publicly available.
+
+> In a near future, you will be able to sync Watson with your [artich.io](https://artich.io/?pk_campaign=GitHubWatson) account or any compatible third-party back-end.
+
+The URL of the server and the User Token must be defined in your [configuration file](#configuration) or with the [`config`](#config) command.
 
 ```
 $ watson config crick.url http://localhost:4242
@@ -224,13 +226,12 @@ Received 42 frames from the server
 Pushed 23 frames to the server
 ```
 
-In a near future, you will be able to sync Watson with your [artich.io](https://artich.io/?pk_campaign=GitHubWatson) account or any compatible third-party back-end.
-
 ## Configuration
 
 The configuration and the data are stored inside your user's application folder.
-On Mac, this is `~/Library/Application Support/watson`, on Windows this is
-`C:\Users\<user>\AppData\Local\watson` and on Linux `~/.config/watson`.
+
+On Mac, this is `~/Library/Application Support/watson/config`, on Windows this is
+`C:\Users\<user>\AppData\Local\watson\config` and on Linux `~/.config/watson/config`.
 
 If you want to edit your configuration, the best is to use the
 [`config`](#config) command.
