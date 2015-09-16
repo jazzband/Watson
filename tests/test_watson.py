@@ -199,15 +199,15 @@ def test_frames_with_empty_given_state(config_dir):
 
 def test_config(watson):
     content = u"""
-[crick]
+[backend]
 url = foo
 token = bar
     """
     mocked_read = lambda self, name: self._read(StringIO(content), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
         config = watson.config
-        assert config.get('crick', 'url') == 'foo'
-        assert config.get('crick', 'token') == 'bar'
+        assert config.get('backend', 'url') == 'foo'
+        assert config.get('backend', 'token') == 'bar'
 
 
 def test_wrong_config(watson):
@@ -465,8 +465,8 @@ def test_push_with_no_config(watson):
 
 def test_push_with_no_url(watson):
     config = ConfigParser()
-    config.add_section('crick')
-    config.set('crick', 'token', 'bar')
+    config.add_section('backend')
+    config.set('backend', 'token', 'bar')
     watson.config = config
 
     with pytest.raises(WatsonError):
@@ -475,8 +475,8 @@ def test_push_with_no_url(watson):
 
 def test_push_with_no_token(watson):
     config = ConfigParser()
-    config.add_section('crick')
-    config.set('crick', 'url', 'http://foo.com')
+    config.add_section('backend')
+    config.set('backend', 'url', 'http://foo.com')
     watson.config = config
 
     with pytest.raises(WatsonError):
@@ -485,9 +485,9 @@ def test_push_with_no_token(watson):
 
 def test_push(watson, monkeypatch):
     config = ConfigParser()
-    config.add_section('crick')
-    config.set('crick', 'url', 'http://foo.com')
-    config.set('crick', 'token', 'bar')
+    config.add_section('backend')
+    config.set('backend', 'url', 'http://foo.com')
+    config.set('backend', 'token', 'bar')
 
     watson.frames.add('foo', 1, 2)
     watson.frames.add('foo', 3, 4)
@@ -526,7 +526,7 @@ def test_push(watson, monkeypatch):
             mock.ANY,
             headers={
                 'content-type': 'application/json',
-                'Authorization': "Token " + config.get('crick', 'token')
+                'Authorization': "Token " + config.get('backend', 'token')
             }
         )
 
@@ -552,8 +552,8 @@ def test_pull_with_no_config(watson):
 
 def test_pull_with_no_url(watson):
     config = ConfigParser()
-    config.add_section('crick')
-    config.set('crick', 'token', 'bar')
+    config.add_section('backend')
+    config.set('backend', 'token', 'bar')
     watson.config = config
 
     with pytest.raises(WatsonError):
@@ -562,8 +562,8 @@ def test_pull_with_no_url(watson):
 
 def test_pull_with_no_token(watson):
     config = ConfigParser()
-    config.add_section('crick')
-    config.set('crick', 'url', 'http://foo.com')
+    config.add_section('backend')
+    config.set('backend', 'url', 'http://foo.com')
     watson.config = config
 
     with pytest.raises(WatsonError):
@@ -572,9 +572,9 @@ def test_pull_with_no_token(watson):
 
 def test_pull(watson, monkeypatch):
     config = ConfigParser()
-    config.add_section('crick')
-    config.set('crick', 'url', 'http://foo.com')
-    config.set('crick', 'token', 'bar')
+    config.add_section('backend')
+    config.set('backend', 'url', 'http://foo.com')
+    config.set('backend', 'token', 'bar')
 
     watson.last_sync = arrow.now()
 
@@ -611,7 +611,7 @@ def test_pull(watson, monkeypatch):
             params={'last_sync': watson.last_sync},
             headers={
                 'content-type': 'application/json',
-                'Authorization': "Token " + config.get('crick', 'token')
+                'Authorization': "Token " + config.get('backend', 'token')
             }
         )
 

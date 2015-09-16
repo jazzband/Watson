@@ -203,8 +203,8 @@ the given value is set.
 You can edit the configuration file with an editor with the '--edit' option.
 
 ```
-$ watson config crick.token 7e329263e329
-$ watson config crick.token
+$ watson config backend.token 7e329263e329
+$ watson config backend.token
 7e329263e329
 ```
 
@@ -219,8 +219,8 @@ Get frames from the server and push the new ones.
 The URL of the server and the User Token must be defined in your [configuration file](#configuration) or with the [`config`](#config) command.
 
 ```
-$ watson config crick.url http://localhost:4242
-$ watson config crick.token 7e329263e329
+$ watson config backend.url http://localhost:4242
+$ watson config backend.token 7e329263e329
 $ watson sync
 Received 42 frames from the server
 Pushed 23 frames to the server
