@@ -20,17 +20,23 @@ Watson stores everything on your computer, but you can go wild and use
 ## Install
 
 Watson is available on any platform supported by Python (Windows, Mac, Linux,
-*BSD…). We are working on providing a clean and easy way to install it for each
-platform, but for now the easiest way is to run the following commands:
+*BSD…). The easiest way to install it is to use [pip](https://pip.pypa.io/en/stable/installing/):
+
+```bash
+$ pip install td-watson
+```
+
+You might need to run this command as root in order to install Watson globally.
+
+### Development version
+
+The latest development version can be installed using the following commands:
 
 ```bash
 $ git clone https://github.com/TailorDev/Watson.git
 $ cd Watson/
-$ sudo python setup.py install
+$ python setup.py install
 ```
-
-The sudo is needed to install Watson for the system, so that it can be accessed
-from anywhere.
 
 ## Commands
 
