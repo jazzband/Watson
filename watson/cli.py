@@ -88,6 +88,25 @@ def cli(ctx):
 
 
 @cli.command()
+@click.argument('command', required=False)
+@click.pass_context
+def help(ctx, command):
+    """
+    Display help information
+    """
+    if not command:
+        click.echo(ctx.parent.get_help())
+        return
+
+    cmd = cli.get_command(ctx, command)
+
+    if not cmd:
+        raise click.ClickException("No such command: {}".format(command))
+
+    click.echo(cmd.get_help(ctx))
+
+
+@cli.command()
 @click.argument('args', nargs=-1)
 @click.pass_obj
 def start(watson, args):
