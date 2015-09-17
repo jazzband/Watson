@@ -478,7 +478,12 @@ def edit(watson, id):
     The `$EDITOR` environment variable is used to detect your editor.
     """
     if not id:
-        frame = watson.frames[-1]
+        try:
+            frame = watson.frames[-1]
+        except IndexError:
+            raise click.ClickException(
+                "No frame to edit. It's time to create your first one!"
+            )
     else:
         try:
             frame = watson.frames[id]
