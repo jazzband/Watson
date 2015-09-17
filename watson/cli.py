@@ -479,8 +479,9 @@ def edit(watson, id):
     """
     if not id:
         if not len(watson.frames):
-            click.echo("No frame to edit. It's time to start a new one!")
-            return
+            raise click.ClickException(
+                "No frame to edit. It's time to create your first one!"
+            )
         frame = watson.frames[-1]
     else:
         try:
