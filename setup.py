@@ -6,7 +6,7 @@ with open('README.md') as f:
 
 setup(
     name='watson',
-    version='0.1',
+    version='1.0.0',
     packages=['watson'],
     author='TailorDev',
     author_email='contact@tailordev.com',
@@ -23,7 +23,7 @@ setup(
         ]
     },
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Customer Service",
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Information Technology",
