@@ -583,8 +583,8 @@ def config(context, key, value, edit):
 
     \b
     Example:
-    $ watson config crick.token 7e329263e329
-    $ watson config crick.token
+    $ watson config backend.token 7e329263e329
+    $ watson config backend.token
     7e329263e329
     """
     watson = context.obj
@@ -643,13 +643,11 @@ def sync(watson):
 
     \b
     Example:
-    $ watson config crick.url http://localhost:4242
-    $ watson config crick.token 7e329263e329
+    $ watson config backend.url http://localhost:4242
+    $ watson config backend.token 7e329263e329
     $ watson sync
     Received 42 frames from the server
     Pushed 23 frames to the server
-
-    See https://bitbucket.org/tailordev/django-crick for more information.
     """
     last_pull = arrow.utcnow()
     pulled = watson.pull()

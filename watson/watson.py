@@ -281,14 +281,14 @@ class Watson(object):
 
         try:
             dest = "{}/{}/".format(
-                config.get('crick', 'url').rstrip('/'),
+                config.get('backend', 'url').rstrip('/'),
                 route.strip('/')
             )
-            token = config.get('crick', 'token')
+            token = config.get('backend', 'token')
         except configparser.Error:
             raise WatsonError(
-                "You must specify a remote URL (crick.url) and a token "
-                "(crick.token) using the config command."
+                "You must specify a remote URL (backend.url) and a token "
+                "(backend.token) using the config command."
             )
 
         headers = {
