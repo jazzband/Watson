@@ -6,7 +6,7 @@ with open('README.md') as f:
 
 setup(
     name='td-watson',
-    version='1.0.0',
+    version='1.0.1',
     packages=['watson'],
     author='TailorDev',
     author_email='contact@tailordev.com',
