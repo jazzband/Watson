@@ -28,6 +28,20 @@ $ pip install td-watson
 
 You might need to run this command as root in order to install Watson globally.
 
+Alternatively, you can choose to install Watson for your user only by running:
+
+```bash
+$ pip install --user td-watson
+```
+
+If after this the `watson` command is not available, you need to add `~/.local/bin/` to your PATH. If your terminal is Bash, you can do this by running:
+
+```bash
+$ echo 'export PATH="$HOME/.local/bin:$PATH"' >> .bashrc  # Add ~/.local/bin/ to your .bashrc PATH
+```
+
+and restarting your terminal session.
+
 ### Development version
 
 The latest development version can be installed using the following commands:
