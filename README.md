@@ -255,3 +255,8 @@ On Mac, this is `~/Library/Application Support/watson/config`, on Windows this i
 
 If you want to edit your configuration, the best is to use the
 [`config`](#config) command.
+
+### Deleting all your frames
+
+If you want to remove all your frames, you can delete the `frames` file in your
+configuration folder (see above to find its location).
