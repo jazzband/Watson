@@ -20,6 +20,7 @@ tmp/*
 *.sublime-workspace
 public/*
 .sass-cache/
+.cache/
 bower_components/
 node_modules/
 .tox

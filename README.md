@@ -28,6 +28,20 @@ $ pip install td-watson
 
 You might need to run this command as root in order to install Watson globally.
 
+Alternatively, you can choose to install Watson for your user only by running:
+
+```bash
+$ pip install --user td-watson
+```
+
+If after this the `watson` command is not available, you need to add `~/.local/bin/` to your PATH. If your terminal is Bash, you can do this by running:
+
+```bash
+$ echo 'export PATH="$HOME/.local/bin:$PATH"' >> .bashrc  # Add ~/.local/bin/ to your .bashrc PATH
+```
+
+and restarting your terminal session.
+
 ### Development version
 
 The latest development version can be installed using the following commands:
@@ -241,3 +255,8 @@ On Mac, this is `~/Library/Application Support/watson/config`, on Windows this i
 
 If you want to edit your configuration, the best is to use the
 [`config`](#config) command.
+
+### Deleting all your frames
+
+If you want to remove all your frames, you can delete the `frames` file in your
+configuration folder (see above to find its location).
