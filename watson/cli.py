@@ -499,6 +499,7 @@ def edit(watson, id):
     if not id:
         try:
             frame = watson.frames[-1]
+            id = frame.id
         except IndexError:
             raise click.ClickException(
                 "No frame to edit. It's time to create your first one!"
