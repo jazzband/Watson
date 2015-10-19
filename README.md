@@ -1,5 +1,9 @@
-Watson [![Build Status](https://travis-ci.org/TailorDev/Watson.svg)](https://travis-ci.org/TailorDev/Watson)
+Watson
 ======
+
+[![Build Status](https://travis-ci.org/TailorDev/Watson.svg)](https://travis-ci.org/TailorDev/Watson)
+[![PyPI Downloads Per Month](https://img.shields.io/pypi/dm/td-watson.svg)](https://pypi.python.org/pypi/td-watson)
+[![PyPI Latest Version](https://img.shields.io/pypi/v/td-watson.svg)](https://pypi.python.org/pypi/td-watson)
 
 Watson is here to help you monitoring your time. You want to know how much time
 you are spending on your projects? You want to generate a nice report for your
