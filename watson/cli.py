@@ -487,6 +487,24 @@ def tags(watson):
 
 
 @cli.command()
+@click.pass_obj
+def frames(watson):
+    """
+    Display the list of all frame IDs.
+
+    \b
+    Example:
+    $ watson frames
+    f1c4815
+    9d1a989
+    8801ec3
+    [...]
+    """
+    for frame in watson.frames:
+        click.echo(style('short_id', frame.id))
+
+
+@cli.command()
 @click.argument('id', required=False)
 @click.pass_obj
 def edit(watson, id):

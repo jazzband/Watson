@@ -52,6 +52,15 @@ $ cd Watson/
 $ python setup.py install
 ```
 
+### Command line completion
+
+If you use a Bash-compatible shell, you can install the `watson.completion`
+file from the source distribution as `/etc/bash.completion.d/watson` - or
+wherever your distribution keeps the Bash completion configuration files.
+After you restart your shell, you can then just type `watson` on your command
+line and then hit TAB to see all available commands. Depending on your input,
+it completes watson commands, command options, projects, tags and frame IDs.
+
 ## Commands
 
 Here is the listing of all the commands available with Watson. You can also
@@ -188,6 +197,19 @@ Thursday 17 April 2014
 Wednesday 16 April 2014
         02cb269  09:53 to 12:43  2h 50m 07s  apollo11  [wheels]
         1070ddb  13:48 to 16:17  2h 29m 11s  voyager1  [antenna, sensors]
+```
+
+### frames
+Display the list of all frame IDs.
+
+This is mainly useful for implementing Bash command line completion.
+
+```
+$ watson frames
+f1c4815
+9d1a989
+8801ec3
+[...]
 ```
 
 ### projects
