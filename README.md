@@ -37,10 +37,13 @@ $ pip install --user td-watson
 If after this the `watson` command is not available, you need to add `~/.local/bin/` to your PATH. If your terminal is Bash, you can do this by running:
 
 ```bash
-$ echo 'export PATH="$HOME/.local/bin:$PATH"' >> .bashrc  # Add ~/.local/bin/ to your .bashrc PATH
+$ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc  # Add ~/.local/bin/ to your .bashrc PATH
 ```
 
-and restarting your terminal session.
+and restarting your terminal session or sourcing the .bashrc:
+```bash
+$ source ~/.bashrc  # Reload your .bashrc
+```
 
 ### Development version
 
