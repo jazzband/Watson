@@ -141,11 +141,12 @@ class Watson(object):
                     current = {}
 
                 with open(self.state_file, 'w+') as f:
-                    json.dump(current, f, indent=1)
+                    json.dump(current, f, indent=1, ensure_ascii=False)
 
             if self._frames is not None and self._frames.changed:
                 with open(self.frames_file, 'w+') as f:
-                    json.dump(self.frames.dump(), f, indent=1)
+                    json.dump(self.frames.dump(), f, indent=1,
+                              ensure_ascii=False)
 
             if self._config_changed:
                 with open(self.config_file, 'w+') as f:

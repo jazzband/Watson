@@ -517,7 +517,7 @@ def edit(watson, id):
         'stop': frame.stop.format(format),
         'project': frame.project,
         'tags': frame.tags,
-    }, indent=4, sort_keys=True)
+    }, indent=4, sort_keys=True, ensure_ascii=False)
 
     output = click.edit(text, extension='.json')
 
