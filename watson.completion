@@ -1,0 +1,66 @@
+# Bash completion support for watson
+#
+# Install this as `/etc/bash_completion.d/watson` and restart your shell.
+
+_watson_complete () {
+  local cur cmd commands frames projects tags
+
+  commands='cancel config edit frames help log projects remove report start status stop sync tags'
+
+  cur=${COMP_WORDS[COMP_CWORD]}
+  cmd=${COMP_WORDS[1]}
+
+  case ${COMP_CWORD} in
+    1)
+      COMPREPLY=($(compgen -W "$commands" -- "$cur" )) ;;
+    *)
+      case "${cmd}" in
+        config)
+          COMPREPLY=($(compgen -W "-e --edit" -- ${cur})) ;;
+        edit)
+          frames="$(watson frames)"
+          COMPREPLY=($(compgen -W "$frames" -- ${cur}))
+          ;;
+        help)
+          COMPREPLY=($(compgen -W "$commands" -- "$cur" )) ;;
+        log|report)
+          case "$3" in
+            -p|--project)
+              projects="$(watson projects)"
+              COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+              ;;
+            -T|--tag)
+              tags="$(watson tags)"
+              COMPREPLY=($(compgen -W "$tags" -- ${cur}))
+              ;;
+            *)
+              COMPREPLY=($(compgen -W "-f -t -p -T --from --to --project --tag" -- ${cur})) ;;
+          esac
+          ;;
+        remove)
+          case "${cur}" in
+            -*)
+              COMPREPLY=($(compgen -W "-f --force" -- ${cur})) ;;
+            *)
+              frames="$(watson frames)"
+              COMPREPLY=($(compgen -W "$frames" -- ${cur}))
+              ;;
+          esac
+          ;;
+        start)
+          if [[ $COMP_CWORD -eq 2 ]]; then
+            projects="$(watson projects)"
+            COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+          else
+            tags="$(watson tags | awk '$0="+"$0')"
+            COMPREPLY=($(compgen -W "$tags" -- ${cur}))
+          fi
+          ;;
+      esac
+      ;;
+  esac
+
+  return 0
+}
+
+complete -F _watson_complete watson
