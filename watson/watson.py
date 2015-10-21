@@ -5,10 +5,10 @@ import json
 
 try:
     import configparser
-    from configparser import ConfigParser
+    from configparser import RawConfigParser as ConfigParser
 except ImportError:
     import ConfigParser as configparser  # noqa
-    from ConfigParser import SafeConfigParser as ConfigParser  # noqa
+    from ConfigParser import RawConfigParser as ConfigParser  # noqa
 
 import arrow
 import click

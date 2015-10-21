@@ -100,11 +100,23 @@ be recorded.
 
 ### status
 
-Display the time spent since the current project was started.
+Display when the current project was started and the time spent since.
+
+You can configure how the date and time of when the project was started are
+displayed by setting `options.date_format` and `options.time_format` in the
+configuration. The syntax of these formatting strings and the supported
+placeholders are the same as for the `strftime` method of Python's
+[datetime.datetime][datetime] class.
+
+[datetime]: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
 ```
 $ watson status
-Project apollo11 started seconds ago
+Project apollo11 [brakes] started seconds ago (2014-05-19 14:32:41+0100)
+$ watson config options.date_format %d.%m.%Y
+$ watson config options.time_format "at %I:%M %p"
+$ watson status
+Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
 ```
 
 ### report
