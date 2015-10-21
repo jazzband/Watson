@@ -20,14 +20,7 @@ Watson stores everything on your computer, but you can go wild and use
 `artich.io <https://artich.io/?pk_campaign=GitHubWatson>`__ to store
 your sessions remotely and share it with your colleagues.
 
-.. raw:: html
-
-   <p align="center">
-     
-
-.. raw:: html
-
-   </p>
+.. image:: screenshot.png
 
 Install
 -------
@@ -58,8 +51,11 @@ this by running:
 
     $ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc  # Add ~/.local/bin/ to your .bashrc PATH
 
-and restarting your terminal session or sourcing the .bashrc:
-``bash $ source ~/.bashrc  # Reload your .bashrc``
+and restarting your terminal session or sourcing the ``.bashrc``:
+
+.. code:: bash
+
+    $ source ~/.bashrc  # Reload your .bashrc
 
 Development version
 ~~~~~~~~~~~~~~~~~~~
@@ -312,7 +308,7 @@ available.
 
 The URL of the server and the User Token must be defined in your
 `configuration file <#configuration>`__ or with the
-```config`` <#config>`__ command.
+`config <#config>`__ command.
 
 ::
 
@@ -333,7 +329,7 @@ Windows this is ``C:\Users\<user>\AppData\Local\watson\config`` and on
 Linux ``~/.config/watson/config``.
 
 If you want to edit your configuration, the best is to use the
-```config`` <#config>`__ command.
+`config <#config>`__ command.
 
 Deleting all your frames
 ~~~~~~~~~~~~~~~~~~~~~~~~
