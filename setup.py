@@ -1,12 +1,12 @@
 from setuptools import setup
 
-with open('README.md') as f:
+with open('README.rst') as f:
     readme = f.read()
 
 
 setup(
     name='td-watson',
-    version='1.0.2',
+    version='1.1.0',
     packages=['watson'],
     author='TailorDev',
     author_email='contact@tailordev.com',
