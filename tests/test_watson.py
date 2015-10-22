@@ -353,6 +353,9 @@ def test_save_current_without_tags(watson):
             assert isinstance(result['start'], (int, float))
             assert result['tags'] == []
 
+            dump_args = json_mock.call_args[1]
+            assert dump_args['ensure_ascii'] is False
+
 
 def test_save_empty_current(config_dir):
     watson = Watson(current={'project': 'foo', 'start': 0},
@@ -410,6 +413,9 @@ def test_save_changed_frame(config_dir):
             assert len(result) == 1
             assert result[0][2] == 'bar'
             assert result[0][4] == ['A', 'B']
+
+            dump_args = json_mock.call_args[1]
+            assert dump_args['ensure_ascii'] is False
 
 
 def test_save_config_no_changes(watson):
