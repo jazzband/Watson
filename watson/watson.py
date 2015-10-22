@@ -5,20 +5,22 @@ import json
 
 try:
     import configparser
-    from configparser import RawConfigParser as ConfigParser
 except ImportError:
-    import ConfigParser as configparser  # noqa
-    from ConfigParser import RawConfigParser as ConfigParser  # noqa
+    import ConfigParser as configparser
 
 import arrow
 import click
 import requests
 
-
+from .config import ConfigParser
 from .frames import Frames
 
 
 class WatsonError(RuntimeError):
+    pass
+
+
+class ConfigurationError(WatsonError, configparser.Error):
     pass
 
 
@@ -108,7 +110,8 @@ class Watson(object):
                 config = ConfigParser()
                 config.read(self.config_file)
             except configparser.Error as e:
-                raise WatsonError("Cannot parse config file: {}".format(e))
+                raise ConfigurationError(
+                    "Cannot parse config file: {}".format(e))
 
             self._config = config
 
@@ -117,7 +120,7 @@ class Watson(object):
     @config.setter
     def config(self, value):
         """
-        Set a ConfigParser object as the current configuration
+        Set a ConfigParser object as the current configuration.
         """
         self._config = value
         self._config_changed = True
@@ -279,14 +282,16 @@ class Watson(object):
     def _get_request_info(self, route):
         config = self.config
 
-        try:
+        dest = config.get('backend', 'url')
+        token = config.get('backend', 'token')
+
+        if dest and token:
             dest = "{}/{}/".format(
-                config.get('backend', 'url').rstrip('/'),
+                dest.rstrip('/'),
                 route.strip('/')
             )
-            token = config.get('backend', 'token')
-        except configparser.Error:
-            raise WatsonError(
+        else:
+            raise ConfigurationError(
                 "You must specify a remote URL (backend.url) and a token "
                 "(backend.token) using the config command."
             )

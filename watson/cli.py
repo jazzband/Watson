@@ -205,10 +205,8 @@ def status(watson):
         return
 
     current = watson.current
-    options = (dict(watson.config.items('options'))
-               if watson.config.has_section('options') else {})
-    datefmt = options.get('date_format', '%Y.%m.%d')
-    timefmt = options.get('time_format', '%H:%M:%S%z')
+    datefmt = watson.config.get('options', 'date_format', '%Y.%m.%d')
+    timefmt = watson.config.get('options', 'time_format', '%H:%M:%S%z')
     click.echo("Project {} {} started {} ({} {})".format(
         style('project', current['project']),
         style('tags', current['tags']),
