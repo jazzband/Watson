@@ -119,7 +119,7 @@ def start(watson, args):
     $ watson start apollo11 +module +brakes
     Starting apollo11 [module, brakes] at 16:34
     """
-    if watson.config.get('options', 'auto_stop'):
+    if watson.config.get('options', 'stop_on_start'):
         try:
             frame = watson.stop()
             click.echo("Stopping project {} {}, started {}. (id: {})".format(
