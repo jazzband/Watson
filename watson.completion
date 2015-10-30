@@ -5,7 +5,7 @@
 _watson_complete () {
   local cur cmd commands frames projects tags
 
-  commands='cancel config edit frames help log projects remove report start status stop sync tags'
+  commands='cancel config edit frames help log projects remove report restart start status stop sync tags'
 
   cur=${COMP_WORDS[COMP_CWORD]}
   cmd=${COMP_WORDS[1]}
@@ -41,6 +41,16 @@ _watson_complete () {
           case "${cur}" in
             -*)
               COMPREPLY=($(compgen -W "-f --force" -- ${cur})) ;;
+            *)
+              frames="$(watson frames)"
+              COMPREPLY=($(compgen -W "$frames" -- ${cur}))
+              ;;
+          esac
+          ;;
+        restart)
+          case "${cur}" in
+            -*)
+              COMPREPLY=($(compgen -W "-s --stop -S --no-stop" -- ${cur})) ;;
             *)
               frames="$(watson frames)"
               COMPREPLY=($(compgen -W "$frames" -- ${cur}))

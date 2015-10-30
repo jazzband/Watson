@@ -106,35 +106,39 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
+def _start(watson, project, tags):
+    """
+    Start project with given list of tags and save status.
+    """
+    current = watson.start(project, tags)
+    click.echo("Starting project {} {} at {}".format(
+        style('project', project),
+        style('tags', tags),
+        style('time', "{:HH:mm}".format(current['start']))
+    ))
+    watson.save()
+
+
 @cli.command()
 @click.argument('args', nargs=-1)
 @click.pass_obj
-def start(watson, args):
+@click.pass_context
+def start(ctx, watson, args):
     """
-    Start monitoring the time for the given project.
+    Start monitoring time for the given project.
 
     You can add tags indicating more specifically what you are working on with
     '+tag'.
 
     If there is already a running project and the configuration option
-    ``stop_on_start`` is set to a true value (``'1'``, ``'on'``, ``'true'`` or
-    ``'yes'``), it is stopped before the new project is started.
+    'options.stop_on_start' is set to a true value ('1', 'on', 'true' or
+    'yes'), it is stopped before the new project is started.
 
     \b
     Example :
     $ watson start apollo11 +module +brakes
-    Starting apollo11 [module, brakes] at 16:34
+    Starting project apollo11 [module, brakes] at 16:34
     """
-    if (watson.config.getboolean('options', 'stop_on_start')
-            and watson.is_started):
-        frame = watson.stop()
-        click.echo("Stopping project {} {}, started {}. (id: {})".format(
-            style('project', frame.project),
-            style('tags', frame.tags),
-            style('time', frame.start.humanize()),
-            style('short_id', frame.id)
-        ))
-
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
@@ -150,20 +154,18 @@ def start(watson, args):
         for i, w in enumerate(args) if w.startswith('+')
     ))))  # pile of pancakes !
 
-    current = watson.start(project, tags)
-    click.echo("Starting {} {} at {}".format(
-        style('project', project),
-        style('tags', tags),
-        style('time', "{:HH:mm}".format(current['start']))
-    ))
-    watson.save()
+    if (project and watson.is_started and
+            watson.config.getboolean('options', 'stop_on_start')):
+        ctx.invoke(stop)
+
+    _start(watson, project, tags)
 
 
 @cli.command()
 @click.pass_obj
 def stop(watson):
     """
-    Stop monitoring time for the current project
+    Stop monitoring time for the current project.
 
     \b
     Example:
@@ -178,6 +180,73 @@ def stop(watson):
         style('short_id', frame.id)
     ))
     watson.save()
+
+
+@cli.command()
+@click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
+              help="(Don't) Stop an already running project.")
+@click.argument('frame', default='-1')
+@click.pass_obj
+@click.pass_context
+def restart(ctx, watson, frame, stop_):
+    """
+    Restart monitoring time for a previously stopped project.
+
+    By default, the project from the last frame, which was recorded, is
+    restarted, using the same tags as recorded in that frame. You can specify
+    the frame to use with an integer frame index argument or a frame ID. For
+    example, to restart the second-to-last frame, pass -2 as the frame index.
+
+    Normally, if a project is currently started, watson will print an error and
+    do nothing. If you set the configuration option 'options.stop_on_restart'
+    to a true value ('1', 'on', 'true' or 'yes'), the current project, if any,
+    will be stopped before the new frame is started. You can pass the option
+    '-s' or '--stop' resp. '-S' or '--no-stop' to override the default or
+    configured behaviour.
+
+    If no previous frame exists or an invalid frame index or ID was given,
+    an error is printed and no further action taken.
+
+    \b
+    Example:
+    $ watson start apollo11 +module +brakes
+    Starting project apollo11 [module, brakes] at 16:34
+    $ watson stop
+    Stopping project apollo11, started a minute ago. (id: e7ccd52)
+    $ watson restart
+    Starting project apollo11 [module, brakes] at 16:36
+    """
+    if not watson.frames and not watson.is_started:
+        raise click.ClickException(
+            style('error', "No frames recorded yet. It's time to create your "
+                           "first one!"))
+
+    if watson.is_started:
+        if stop_ or (stop_ is None and
+                     watson.config.getboolean('options', 'stop_on_restart')):
+            ctx.invoke(stop)
+        else:
+            # Raise error here, instead of in watson.start(), otherwise
+            # will give misleading error if running frame is the first one
+            raise click.ClickException("{} {} {}".format(
+                style('error', "Project already started:"),
+                style('project', watson.current['project']),
+                style('tags', watson.current['tags'])))
+
+    try:
+        frame = watson.frames[int(frame)]
+    except IndexError:
+        raise click.ClickException(
+            style('error', "Frame index {} not in range.".format(frame)))
+    except (TypeError, ValueError):
+        try:
+            frame = watson.frames[frame]
+        except KeyError:
+            raise click.ClickException("{} {}.".format(
+                style('error', "No frame found with id"),
+                style('short_id', frame)))
+
+    _start(watson, frame.project, frame.tags)
 
 
 @cli.command()

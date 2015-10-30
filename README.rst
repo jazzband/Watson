@@ -93,8 +93,8 @@ Start monitoring the time for the given project. You can add tags
 indicating more specifically what you are working on with '+tag'.
 
 If there is already a running project and the configuration option
-``stop_on_start`` is set to a true value (``'1'``, ``'on'``, ``'true'`` or
-``'yes'``), it is stopped before the new project is started.
+``options.stop_on_start`` is set to a true value (``'1'``, ``'on'``, ``'true'``
+or ``'yes'``), it is stopped before the new project is started.
 
 ::
 
@@ -111,6 +111,35 @@ Stop monitoring time for the current project
 
     $ watson stop
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
+
+restart
+~~~~~~~
+
+Restart monitoring time for a previously stopped project.
+
+By default, the project from the last frame, which was recorded, is restarted,
+using the same tags as recorded in that frame. You can specify the frame to use
+with an integer frame index argument or a frame ID. For example, to restart the
+second-to-last frame, pass ``-2`` as the frame index.
+
+Normally, if a project is currently started, watson will print an error and do
+nothing. If you set the configuration option ``options.stop_on_restart`` to a
+true value (``'1'``, ``'on'``, ``'true'`` or ``'yes'``), the current project,
+if any, will be stopped before the new farme is started. You can pass the
+option ``-s`` or ``--stop`` resp. ``-S`` or ``--no-stop`` to override the
+default or configured behaviour.
+
+If no previous frame exists or and invalid frame index or ID was given, an
+error is printed and no further action taken.
+
+Example::
+
+    $ watson start apollo11 +module +brakes
+    Starting project apollo11 [module, brakes] at 16:34
+    $ watson stop
+    Stopping project apollo11, started a minute ago. (id: e7ccd52)
+    $ watson restart
+    Starting project apollo11 [module, brakes] at 16:36
 
 cancel
 ~~~~~~

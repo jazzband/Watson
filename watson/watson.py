@@ -233,15 +233,15 @@ class Watson(object):
         return bool(self.current)
 
     def start(self, project, tags=None):
+        if not project:
+            raise WatsonError("No project given.")
+
         if self.is_started:
             raise WatsonError(
                 "Project {} is already started.".format(
                     self.current['project']
                 )
             )
-
-        if not project:
-            raise WatsonError("No project given.")
 
         self.current = {'project': project, 'tags': tags}
         return self.current
