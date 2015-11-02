@@ -119,17 +119,15 @@ def start(watson, args):
     $ watson start apollo11 +module +brakes
     Starting apollo11 [module, brakes] at 16:34
     """
-    if watson.config.getboolean('options', 'stop_on_start'):
-        try:
-            frame = watson.stop()
-            click.echo("Stopping project {} {}, started {}. (id: {})".format(
-                style('project', frame.project),
-                style('tags', frame.tags),
-                style('time', frame.start.humanize()),
-                style('short_id', frame.id)
-            ))
-        except WatsonCliError:
-            pass
+    if (watson.config.getboolean('options', 'stop_on_start')
+            and watson.is_started):
+        frame = watson.stop()
+        click.echo("Stopping project {} {}, started {}. (id: {})".format(
+            style('project', frame.project),
+            style('tags', frame.tags),
+            style('time', frame.start.humanize()),
+            style('short_id', frame.id)
+        ))
 
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
