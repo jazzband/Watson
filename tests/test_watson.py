@@ -16,7 +16,7 @@ import requests
 import arrow
 
 from watson import Watson, WatsonError
-from watson.watson import ConfigParser
+from watson.watson import ConfigurationError, ConfigParser
 
 PY2 = sys.version_info[0] == 2
 
@@ -197,26 +197,13 @@ def test_frames_with_empty_given_state(config_dir):
 
 # config
 
-def test_config(watson):
-    content = u"""
-[backend]
-url = foo
-token = bar
-    """
-    mocked_read = lambda self, name: self._read(StringIO(content), name)
-    with mock.patch.object(ConfigParser, 'read', mocked_read):
-        config = watson.config
-        assert config.get('backend', 'url') == 'foo'
-        assert config.get('backend', 'token') == 'bar'
-
-
 def test_wrong_config(watson):
     content = u"""
 toto
     """
     mocked_read = lambda self, name: self._read(StringIO(content), name)
     with mock.patch.object(ConfigParser, 'read', mocked_read):
-        with pytest.raises(WatsonError):
+        with pytest.raises(ConfigurationError):
             watson.config
 
 
@@ -226,9 +213,102 @@ def test_empty_config(watson):
         assert len(watson.config.sections()) == 0
 
 
+def test_config_get(watson):
+    content = u"""
+[backend]
+url = foo
+token =
+    """
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        config = watson.config
+        assert config.get('backend', 'url') == 'foo'
+        assert config.get('backend', 'token') == ''
+        assert config.get('backend', 'foo') is None
+        assert config.get('backend', 'foo', 'bar') == 'bar'
+        assert config.get('option', 'spamm') is None
+        assert config.get('option', 'spamm', 'eggs') == 'eggs'
+
+
+def test_config_getboolean(watson):
+    content = u"""
+[options]
+flag1 = 1
+flag2 = ON
+flag3 = True
+flag4 = yes
+flag5 = false
+flag6 =
+    """
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        config = watson.config
+        assert config.getboolean('options', 'flag1') is True
+        assert config.getboolean('options', 'flag1', False) is True
+        assert config.getboolean('options', 'flag2') is True
+        assert config.getboolean('options', 'flag3') is True
+        assert config.getboolean('options', 'flag4') is True
+        assert config.getboolean('options', 'flag5') is False
+        assert config.getboolean('options', 'flag6') is False
+        assert config.getboolean('options', 'flag6', True) is True
+        assert config.getboolean('options', 'missing') is False
+        assert config.getboolean('options', 'missing', True) is True
+
+
+def test_config_getint(watson):
+    content = u"""
+[options]
+value1 = 42
+value2 = spamm
+value3 =
+    """
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        config = watson.config
+        assert config.getint('options', 'value1') == 42
+        assert config.getint('options', 'value1', 666) == 42
+        assert config.getint('options', 'missing') is None
+        assert config.getint('options', 'missing', 23) == 23
+        # default is not converted!
+        assert config.getint('options', 'missing', '42') == '42'
+        assert config.getint('options', 'missing', 6.66) == 6.66
+
+        with pytest.raises(ValueError):
+            config.getint('options', 'value2')
+
+        with pytest.raises(ValueError):
+            config.getint('options', 'value3')
+
+
+def test_config_getfloat(watson):
+    content = u"""
+[options]
+value1 = 3.14
+value2 = 42
+value3 = spamm
+value4 =
+    """
+    mocked_read = lambda self, name: self._read(StringIO(content), name)
+    with mock.patch.object(ConfigParser, 'read', mocked_read):
+        config = watson.config
+        assert config.getfloat('options', 'value1') == 3.14
+        assert config.getfloat('options', 'value1', 6.66) == 3.14
+        assert config.getfloat('options', 'value2') == 42.0
+        assert isinstance(config.getfloat('options', 'value2'), float)
+        assert config.getfloat('options', 'missing') is None
+        assert config.getfloat('options', 'missing', 3.14) == 3.14
+        # default is not converted!
+        assert config.getfloat('options', 'missing', '3.14') == '3.14'
+
+        with pytest.raises(ValueError):
+            config.getfloat('options', 'value3')
+
+        with pytest.raises(ValueError):
+            config.getfloat('options', 'value4')
+
+
 def test_set_config(watson):
     config = ConfigParser()
-    config.add_section('foo')
     config.set('foo', 'bar', 'lol')
     watson.config = config
 
@@ -546,7 +626,7 @@ def test_pull_with_no_config(watson):
     config = ConfigParser()
     watson.config = config
 
-    with pytest.raises(WatsonError):
+    with pytest.raises(ConfigurationError):
         watson.pull()
 
 
@@ -556,7 +636,7 @@ def test_pull_with_no_url(watson):
     config.set('backend', 'token', 'bar')
     watson.config = config
 
-    with pytest.raises(WatsonError):
+    with pytest.raises(ConfigurationError):
         watson.pull()
 
 
@@ -566,7 +646,7 @@ def test_pull_with_no_token(watson):
     config.set('backend', 'url', 'http://foo.com')
     watson.config = config
 
-    with pytest.raises(WatsonError):
+    with pytest.raises(ConfigurationError):
         watson.pull()
 
 
