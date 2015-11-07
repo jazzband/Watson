@@ -111,8 +111,14 @@ def help(ctx, command):
 @click.pass_obj
 def start(watson, args):
     """
-    Start monitoring the time for the given project. You can add tags
-    indicating more specifically what you are working on with '+tag'.
+    Start monitoring the time for the given project.
+
+    You can add tags indicating more specifically what you are working on with
+    '+tag'.
+
+    If there is already a running project and the configuration option
+    ``stop_on_start`` is set to a true value (``'1'``, ``'on'``, ``'true'`` or
+    ``'yes'``), it is stopped before the new project is started.
 
     \b
     Example :
