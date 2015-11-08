@@ -111,14 +111,30 @@ def help(ctx, command):
 @click.pass_obj
 def start(watson, args):
     """
-    Start monitoring the time for the given project. You can add tags
-    indicating more specifically what you are working on with '+tag'.
+    Start monitoring the time for the given project.
+
+    You can add tags indicating more specifically what you are working on with
+    '+tag'.
+
+    If there is already a running project and the configuration option
+    ``stop_on_start`` is set to a true value (``'1'``, ``'on'``, ``'true'`` or
+    ``'yes'``), it is stopped before the new project is started.
 
     \b
     Example :
     $ watson start apollo11 +module +brakes
     Starting apollo11 [module, brakes] at 16:34
     """
+    if (watson.config.getboolean('options', 'stop_on_start')
+            and watson.is_started):
+        frame = watson.stop()
+        click.echo("Stopping project {} {}, started {}. (id: {})".format(
+            style('project', frame.project),
+            style('tags', frame.tags),
+            style('time', frame.start.humanize()),
+            style('short_id', frame.id)
+        ))
+
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
