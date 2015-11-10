@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import division
 
 import json
 import datetime
@@ -247,8 +248,11 @@ def status(watson):
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-w', '--workweek', 'special', flag_value='workweek',
+              help="Shortcut for the current work week, overriding -f and -t "
+              "by setting them to Monday and Friday respectively.")
 @click.pass_obj
-def report(watson, from_, to, projects, tags):
+def report(watson, from_, to, projects, tags, special):
     """
     Display a report of the time spent on each project.
 
@@ -312,6 +316,12 @@ def report(watson, from_, to, projects, tags):
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     """
+    if special == 'workweek':
+        now = arrow.now()
+        monday = now - datetime.timedelta(days=now.isoweekday()-1)
+        friday = monday + datetime.timedelta(days=4)
+        from_, to = monday, friday
+
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
@@ -370,6 +380,23 @@ def report(watson, from_, to, projects, tags):
         click.echo("Total: {}".format(
             style('time', '{}'.format(format_timedelta(total)))
         ))
+
+    target_hours_per_week = watson.config.getfloat('options',
+                                                   'target_hours_per_week')
+    if target_hours_per_week is not None:
+        sec_per_min = 60
+        min_per_hr = 60
+        offset = 1000
+        weeks = abs(span.start - span.stop).days/7
+        target_hours = weeks*target_hours_per_week
+        actual_hours = total.total_seconds()/sec_per_min/min_per_hr
+        comparison_target_hours = int(offset*target_hours)
+        comparison_actual_hours = int(offset*actual_hours)
+        label = 'Work completed: {:.1f}h/{:.1f}h'.format(actual_hours,
+                                                        target_hours)
+        with click.progressbar(length=comparison_target_hours,
+                               label=label) as bar:
+            bar.update(comparison_actual_hours)
 
 
 @cli.command()
