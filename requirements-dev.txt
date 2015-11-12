@@ -1,0 +1,7 @@
+-r requirements.txt
+
+# Tests
+flake8
+pytest
+mock
+tox
