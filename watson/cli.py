@@ -12,6 +12,7 @@ import click
 import arrow
 
 from . import watson
+from .frames import Frame
 from .utils import format_timedelta, sorted_groupby
 
 
@@ -539,34 +540,55 @@ def frames(watson):
 @click.pass_obj
 def edit(watson, id):
     """
-    Edit a frame. You can get the id of a frame with the `watson log`
-    command. If no id is given, defaults to the last recorded frame.
+    Edit a frame.
+
+    You can specify the frame to edit with an integer frame index or a frame
+    id. For example, to edit the second-to-last frame, pass `-2` as the frame
+    index (put ` -- ` in front of negative indexes to prevent them from being
+    interpreted as an option). You can get the id of a frame with the `watson
+    log` command.
+
+    If no id or index is given, the frame defaults to the current frame or the
+    last recorded frame, if no project is currently running.
 
     The `$EDITOR` environment variable is used to detect your editor.
     """
-    if not id:
+    date_format = 'YYYY-MM-DD HH:mm:ss'
+
+    if id:
         try:
-            frame = watson.frames[-1]
-            id = frame.id
+            frame = watson.frames[int(id)]
         except IndexError:
             raise click.ClickException(
-                "No frame to edit. It's time to create your first one!"
-            )
+                style('error', "Frame index {} not in range.".format(id)))
+        except (TypeError, ValueError):
+            try:
+                frame = watson.frames[id]
+            except KeyError:
+                raise click.ClickException("{} {}.".format(
+                    style('error', "No frame found with id"),
+                    style('short_id', id)))
+    elif watson.is_started:
+        frame = Frame(watson.current['start'], None, watson.current['project'],
+                      None, watson.current['tags'])
+    elif watson.frames:
+        frame = watson.frames[-1]
+        id = frame.id
     else:
-        try:
-            frame = watson.frames[id]
-        except KeyError:
-            raise click.ClickException("No frame found with id {}.".format(id))
+        raise click.ClickException(
+            style('error', "No frames recorded yet. It's time to create your "
+                           "first one!"))
 
-    format = 'YYYY-MM-DD HH:mm:ss'
-
-    text = json.dumps({
-        'start': frame.start.format(format),
-        'stop': frame.stop.format(format),
+    data = {
+        'start': frame.start.format(date_format),
         'project': frame.project,
         'tags': frame.tags,
-    }, indent=4, sort_keys=True, ensure_ascii=False)
+    }
 
+    if id:
+        data['stop'] = frame.stop.format(date_format)
+
+    text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
     output = click.edit(text, extension='.json')
 
     if not output:
@@ -575,14 +597,12 @@ def edit(watson, id):
 
     try:
         data = json.loads(output)
-
         project = data['project']
         tags = data['tags']
-        start = arrow.get(
-            data['start'], format).replace(tzinfo=tz.tzlocal()).to('utc')
-        stop = arrow.get(
-            data['stop'], format).replace(tzinfo=tz.tzlocal()).to('utc')
-
+        start = arrow.get(data['start'], date_format).replace(
+            tzinfo=tz.tzlocal()).to('utc')
+        stop = arrow.get(data['stop'], date_format).replace(
+            tzinfo=tz.tzlocal()).to('utc') if id else None
     except (ValueError, RuntimeError) as e:
         raise click.ClickException("Error saving edited frame: {}".format(e))
     except KeyError:
@@ -590,19 +610,20 @@ def edit(watson, id):
             "The edited frame must contain the project, start and stop keys."
         )
 
-    watson.frames[id] = (project, start, stop, tags)
-    frame = watson.frames[id]
+    if id:
+        watson.frames[id] = (project, start, stop, tags)
+    else:
+        watson.current = dict(start=start, project=project, tags=tags)
 
     watson.save()
-
     click.echo(
         'Edited frame for project {project} {tags}, from {start} to {stop} '
         '({delta})'.format(
-            delta=format_timedelta(frame.stop - frame.start),
-            project=style('project', frame.project),
-            tags=style('tags', frame.tags),
-            start=style('time', '{:HH:mm}'.format(frame.start)),
-            stop=style('time', '{:HH:mm}'.format(frame.stop))
+            delta=format_timedelta(stop - start) if stop else '-',
+            project=style('project', project),
+            tags=style('tags', tags),
+            start=style('time', '{:HH:mm}'.format(start)),
+            stop=style('time', '{:HH:mm}'.format(stop) if stop else '-')
         )
     )
 

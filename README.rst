@@ -271,8 +271,16 @@ Display the list of all existing projects.
 edit
 ~~~~
 
-Edit a frame. You can get the id of a frame with the ``watson log``
-command. If no id is given, defaults to the last recorded frame.
+Edit a frame.
+
+You can specify the frame to edit with an integer frame index or a frame id.
+For example, to edit the second-to-last frame, pass ``-2`` as the frame index
+(put `` -- `` in front of negative indexes to prevent them from being
+interpreted as an option). You can get the id of a frame with the
+``watson log`` command.
+
+If no id or index is given, the frame defaults to the current frame or the last
+recorded frame, if no project is currently running.
 
 The ``$EDITOR`` environment variable is used to detect your editor.
 
