@@ -72,6 +72,7 @@ Date = DateParamType()
 
 
 @click.group()
+@click.version_option(version=watson.__version__, prog_name='Watson')
 @click.pass_context
 def cli(ctx):
     """

@@ -1,12 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Setup file for the Watson distribution."""
+
+from os.path import join
+
 from setuptools import setup
 
 with open('README.rst') as f:
     readme = f.read()
 
+# read package meta-data from version.py
+pkg = {}
+mod = join('watson', 'version.py')
+exec(compile(open(mod).read(), mod, 'exec'), {}, pkg)
+
 
 setup(
     name='td-watson',
-    version='1.1.0',
+    version=pkg['version'],
     description='A wonderful CLI to track your time!',
     packages=['watson'],
     author='TailorDev',

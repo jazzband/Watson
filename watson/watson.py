@@ -14,6 +14,7 @@ import requests
 
 from .config import ConfigParser
 from .frames import Frames
+from .version import version as __version__  # noqa
 
 
 class WatsonError(RuntimeError):
