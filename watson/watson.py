@@ -16,8 +16,6 @@ from .config import ConfigParser
 from .frames import Frames
 from .version import version as __version__  # noqa
 
-import pdb
-
 
 class WatsonError(RuntimeError):
     pass
