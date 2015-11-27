@@ -16,6 +16,8 @@ from .config import ConfigParser
 from .frames import Frames
 from .version import version as __version__  # noqa
 
+import pdb
+
 
 class WatsonError(RuntimeError):
     pass
@@ -401,3 +403,26 @@ class Watson(object):
             )
 
         return frames
+
+    def merge_report(self, frames, frames_with_conflict):
+        original_frames = Frames(self._load_json_file(frames, type=list))
+        conflict_frames = Frames(self._load_json_file(frames_with_conflict,
+                                 type=list))
+
+        unchanged = len(original_frames)
+        merged = 0
+
+        for conflict_frame in conflict_frames:
+            try:
+                original_frame = original_frames[conflict_frame.id]
+
+                if original_frame != conflict_frame:
+                    unchanged -= 1
+
+            except KeyError:
+                # conflicting frame doesn't exist in original frame
+                merged += 1
+
+        conflict = len(original_frames) - unchanged
+
+        return unchanged, merged, conflict

@@ -822,3 +822,31 @@ def sync(watson):
 
     watson.last_sync = arrow.utcnow()
     watson.save()
+
+
+@cli.command()
+@click.argument('frames', type=click.Path(exists=True))
+@click.argument('frames_with_conflict', type=click.Path(exists=True))
+@click.option('--no-dry-run', 'no_dry_run', is_flag=True,
+              help='Fill out later...')
+@click.pass_obj
+def merge(watson, frames, frames_with_conflict, no_dry_run):
+    # TODO: fill this help message out later
+    """
+    Merge files.
+    """
+    unchanged, merged, conflict = watson.merge_report(frames,
+                                                      frames_with_conflict)
+
+    # get the number of digits of the biggest number
+    digits = len(str(max(unchanged, merged, conflict)))
+
+    click.echo("{:<{width}} frames will be left unchanged".format(
+        unchanged, width=digits))
+    click.echo("{:<{width}} frames will be merged".format(
+        merged, width=digits))
+    click.echo("{:<{width}} frames will need to be resolved".format(
+        conflict, width=digits))
+
+#    if no_dry_run:
+#        watson.merge(frames, frames_with_conflict)
