@@ -13,7 +13,7 @@ import arrow
 
 from . import watson
 from .frames import Frame
-from .utils import format_timedelta, sorted_groupby
+from .utils import format_timedelta, sorted_groupby, options
 
 
 def style(name, element):
@@ -835,18 +835,66 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
     """
     Merge files.
     """
-    unchanged, merged, conflict = watson.merge_report(frames,
-                                                      frames_with_conflict)
+    original_frames, merging, conflicting = watson.merge_report(
+        frames, frames_with_conflict)
 
-    # get the number of digits of the biggest number
-    digits = len(str(max(unchanged, merged, conflict)))
+    # find the length of the largest list, then get the number of digits of
+    # this length
+    dig = len(str(max(len(original_frames), len(merging), len(conflicting))))
 
     click.echo("{:<{width}} frames will be left unchanged".format(
-        unchanged, width=digits))
+        len(original_frames) - len(conflicting), width=dig))
     click.echo("{:<{width}} frames will be merged".format(
-        merged, width=digits))
+        len(merging), width=dig))
     click.echo("{:<{width}} frames will need to be resolved".format(
-        conflict, width=digits))
+        len(conflicting), width=dig))
 
-#    if no_dry_run:
-#        watson.merge(frames, frames_with_conflict)
+    if not no_dry_run:
+        return
+
+    if conflicting:
+        click.echo("Will resolve conflicts:")
+
+    for conflict_frame in conflicting:
+        original_frame = original_frames[conflict_frame.id]
+        click.echo("frame {}:".format(style('short_id', original_frame.id)))
+        click.echo("{}".format('< '.join(json.dumps(
+            original_frame, indent=4, ensure_ascii=False).splitlines())))
+        click.echo("---")
+
+        # make a copy of the namedtuple
+        conflict_frame_copy = conflict_frame.replace()
+
+        if conflict_frame.project != original_frame.project:
+            project = '**' + conflict_frame.project + '**'
+            conflict_frame_copy = conflict_frame_copy._replace(project=project)
+
+        if conflict_frame.start != original_frame.start:
+            project = '**' + conflict_frame.start + '**'
+            conflict_frame_copy = conflict_frame_copy._replace(start=start)
+
+        if conflict_frame.stop != original_frame.stop:
+            project = '**' + conflict_frame.stop + '**'
+            conflict_frame_copy = conflict_frame_copy._replace(stop=start)
+
+        for idx, tag in enumerate(conflict_frame.tags):
+            if tag not in original_frame.tags:
+                conflict_frame_copy.tags[idx] = '**' + tag + '**'
+
+        click.echo("{}".format('< ').join(json.dumps(
+            conflict_frame_copy, indent=4, ensure_ascii=False).splitlines()))
+        resp = click.prompt(
+            "Select the frame you want to keep: left or right? (L/r)",
+            value_proc=options(['L', 'r']))
+
+        if resp == 'r':
+            # replace original frame with conflicting frame
+            original_frames[conflict_frame.id] = conflict_frame
+
+    # merge in any non-conflicting frames
+    for frame in merging:
+        original_frames.add(*frame.dump())
+
+    if original_frames is not None and original_frames.changed:
+        with open(frames, 'w+') as f:
+            json.dump(original_frames.dump(), f, indent=1, ensure_ascii=False)
