@@ -860,6 +860,7 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
     for conflict_frame in conflicting:
         original_frame = original_frames[conflict_frame.id]
 
+        # Print original frame
         original_frame_data = {
             'project': original_frame.project,
             'start': original_frame.start.format(date_format),
@@ -874,6 +875,7 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
         # make a copy of the namedtuple
         conflict_frame_copy = conflict_frame._replace()
 
+        # Highlight conflicts
         if conflict_frame.project != original_frame.project:
             project = '**' + str(conflict_frame.project) + '**'
             conflict_frame_copy = conflict_frame_copy._replace(project=project)
@@ -891,6 +893,7 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
                 conflict_frame_copy.tags[idx] = '**' + str(tag) + '**'
 
 
+        # Print conflicting frame
         conflict_frame_data = {
             'project': conflict_frame_copy.project,
             'start': conflict_frame_copy.start.format(date_format),
