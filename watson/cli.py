@@ -879,11 +879,11 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
             conflict_frame_copy = conflict_frame_copy._replace(project=project)
 
         if conflict_frame.start != original_frame.start:
-            start = '**' + str(conflict_frame.start) + '**'
+            start = '**' + str(conflict_frame.start.format(date_format)) + '**'
             conflict_frame_copy = conflict_frame_copy._replace(start=start)
 
         if conflict_frame.stop != original_frame.stop:
-            stop = '**' + str(conflict_frame.stop) + '**'
+            stop = '**' + str(conflict_frame.stop.format(date_format)) + '**'
             conflict_frame_copy = conflict_frame_copy._replace(stop=stop)
 
         for idx, tag in enumerate(conflict_frame.tags):
