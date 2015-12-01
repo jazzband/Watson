@@ -37,6 +37,15 @@ _watson_complete () {
               COMPREPLY=($(compgen -W "-f -t -p -T --from --to --project --tag" -- ${cur})) ;;
           esac
           ;;
+        merge)
+          case "${cur}" in
+            -*)
+              COMPREPLY=($(compgen -W "-f --force" -- ${cur})) ;;
+            *)
+              COMPREPLY=($(compgen -o filenames -f -- ${cur}))
+              ;;
+          esac
+          ;;
         remove)
           case "${cur}" in
             -*)

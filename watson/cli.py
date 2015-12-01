@@ -826,7 +826,7 @@ def sync(watson):
 
 @cli.command()
 @click.argument('frames_with_conflict', type=click.Path(exists=True))
-@click.option('--force', 'force', is_flag=True,
+@click.option('-f', '--force', 'force', is_flag=True,
               help="If specified, then the merge will automatically "
               "be performed.")
 @click.pass_obj
