@@ -828,29 +828,29 @@ def sync(watson):
 @click.argument('frames', type=click.Path(exists=True))
 @click.argument('frames_with_conflict', type=click.Path(exists=True))
 @click.option('--no-dry-run', 'no_dry_run', is_flag=True,
-              help='Fill out later...')
+              help="If not specified, then merge will not be performed "
+              "and only merge statistics will be shown.")
 @click.pass_obj
 def merge(watson, frames, frames_with_conflict, no_dry_run):
-    # TODO: fill this help message out later
     """
     Perform a merge of the frame file, with a conflicting frames file.
-    
-    When storing the frames on a file hosting service, there is the 
-    possibility that the frame file goes out-of-sync due to one or 
-    more of the connected clients going offline. This can cause the 
+
+    When storing the frames on a file hosting service, there is the
+    possibility that the frame file goes out-of-sync due to one or
+    more of the connected clients going offline. This can cause the
     frames to diverge.
-    
+
     If the `--no-dry-run` command is not specified, only the statistics
     of the merge will be shown, and the merge will not be performed.
-    
-    The arguments `FRAMES` and `FRAMES_WITH_CONFLICT` are paths to the 
+
+    The arguments `FRAMES` and `FRAMES_WITH_CONFLICT` are paths to the
     `frames` and the conflicting `frames` file respectively.
     """
     original_frames, conflicting, merging = watson.merge_report(
         frames, frames_with_conflict)
 
-    # find the length of the largest list, then get the number of digits of
-    # this length
+    # find the length of the largest returned list, then get the number of
+    # digits of this length
     dig = len(str(max(len(original_frames), len(merging), len(conflicting))))
 
     click.echo("{:<{width}} frames will be left unchanged".format(
@@ -886,7 +886,7 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
         # make a copy of the namedtuple
         conflict_frame_copy = conflict_frame._replace()
 
-        # Highlight conflicts
+        # highlight conflicts
         if conflict_frame.project != original_frame.project:
             project = '**' + str(conflict_frame.project) + '**'
             conflict_frame_copy = conflict_frame_copy._replace(project=project)
@@ -902,7 +902,6 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
         for idx, tag in enumerate(conflict_frame.tags):
             if tag not in original_frame.tags:
                 conflict_frame_copy.tags[idx] = '**' + str(tag) + '**'
-
 
         # Print conflicting frame
         conflict_frame_data = {
@@ -924,8 +923,10 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
     # merge in any non-conflicting frames
     for frame in merging:
         start, stop, project, id, tags, updated_at = frame.dump()
-        original_frames.add(project, start, stop, tags=tags, id=id, updated_at=updated_at)
+        original_frames.add(project, start, stop, tags=tags, id=id,
+                            updated_at=updated_at)
 
+    # overwrite the original frames file if any frames have changed
     if original_frames is not None and original_frames.changed:
         with open(frames, 'w+') as f:
             json.dump(original_frames.dump(), f, indent=1, ensure_ascii=False)

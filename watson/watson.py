@@ -415,6 +415,8 @@ class Watson(object):
                 original_frame = original_frames[conflict_frame.id]
 
                 if original_frame != conflict_frame:
+                    # frame from conflict frames file conflicts with frame
+                    # from original frames file
                     conflicting.append(conflict_frame)
 
             except KeyError:
