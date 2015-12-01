@@ -5,4 +5,5 @@ requests
 # Tests
 flake8
 pytest
+pytest-datafiles
 mock

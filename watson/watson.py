@@ -414,6 +414,7 @@ class Watson(object):
             try:
                 original_frame = original_frames[conflict_frame.id]
 
+                # TODO: Should different 'updated_at' cause a conflict?
                 if original_frame != conflict_frame:
                     conflicting.append(conflict_frame)
 
