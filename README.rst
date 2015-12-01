@@ -368,11 +368,54 @@ When storing the frames on a file hosting service, there is the
 possibility that the frame file goes out-of-sync due to one or more of the
 connected clients going offline. This can cause the frames to diverge.
 
-If the `--no-dry-run` command is not specified, only the statistics of the
+If the ``--force`` command is not specified, only the statistics of the
 merge will be shown, and the merge will not be performed.
 
-The argument `FRAMES_WITH_CONFLICT` is a path to the the conflicting
-`frames` file.
+The argument ``FRAMES_WITH_CONFLICT`` is a path to the the conflicting
+``frames`` file.
+
+Merge will output statistics about the merge operation.
+
+Example:
+::
+
+  $ watson merge frames-with-conflicts
+  120 frames will be left unchanged
+  12  frames will be merged
+  3   frame conflicts need to be resolved
+
+To perform a merge operation, the user will be prompted to
+select the frame they would like to keep.
+
+Example:
+::
+
+  $ watson merge frames-with-conflicts --force
+  120 frames will be left unchanged
+  12  frames will be merged
+  3   frame conflicts need to be resolved
+  Will resolve conflicts:
+  frame 8804872:
+  < {
+  <     "project": "tailordev",
+  <     "start": "2015-07-28 09:33:33",
+  <     "stop": "2015-07-28 10:39:36",
+  <     "tags": [
+  <         "intern",
+  <         "daily-meeting"
+  <     ]
+  < }
+  ---
+  > {
+  >     "project": "tailordev",
+  >     "start": "2015-07-28 09:33:33",
+  >     "stop": "**2015-07-28 11:39:36**",
+  >     "tags": [
+  >         "intern",
+  >         "daily-meeting"
+  >     ]
+  > }
+  Select the frame you want to keep: left or right? (L/r)
 
 Configuration
 -------------

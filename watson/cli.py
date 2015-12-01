@@ -826,11 +826,11 @@ def sync(watson):
 
 @cli.command()
 @click.argument('frames_with_conflict', type=click.Path(exists=True))
-@click.option('--no-dry-run', 'no_dry_run', is_flag=True,
-              help="If not specified, then merge will not be performed "
-              "and only merge statistics will be shown.")
+@click.option('--force', 'force', is_flag=True,
+              help="If specified, then the merge will automatically "
+              "be performed.")
 @click.pass_obj
-def merge(watson, frames_with_conflict, no_dry_run):
+def merge(watson, frames_with_conflict, force):
     """
     Perform a merge of the frame file, with a conflicting frames file.
 
@@ -839,11 +839,50 @@ def merge(watson, frames_with_conflict, no_dry_run):
     more of the connected clients going offline. This can cause the
     frames to diverge.
 
-    If the `--no-dry-run` command is not specified, only the statistics
-    of the merge will be shown, and the merge will not be performed.
+    If the `--force` command is specified, the merge operation
+    will automatically be performed.
 
     The argument `FRAMES_WITH_CONFLICT` is a path to the
     the conflicting `frames` file.
+
+    \b
+    Merge will output statistics about the merge operation.
+    Example:
+    $ watson merge frames-with-conflicts
+    120 frames will be left unchanged
+    12  frames will be merged
+    3   frame conflicts need to be resolved
+
+    \b
+    To perform a merge operation, the user will be prompted to
+    select the frame they would like to keep.
+    Example:
+    $ watson merge frames-with-conflicts --force
+    120 frames will be left unchanged
+    12  frames will be merged
+    3   frame conflicts need to be resolved
+    Will resolve conflicts:
+    frame 8804872:
+    < {
+    <     "project": "tailordev",
+    <     "start": "2015-07-28 09:33:33",
+    <     "stop": "2015-07-28 10:39:36",
+    <     "tags": [
+    <         "intern",
+    <         "daily-meeting"
+    <     ]
+    < }
+    ---
+    > {
+    >     "project": "tailordev",
+    >     "start": "2015-07-28 09:33:33",
+    >     "stop": "**2015-07-28 11:39:36**",
+    >     "tags": [
+    >         "intern",
+    >         "daily-meeting"
+    >     ]
+    > }
+    Select the frame you want to keep: left or right? (L/r)
     """
     original_frames = watson.frames
     conflicting, merging = watson.merge_report(frames_with_conflict)
@@ -864,7 +903,7 @@ def merge(watson, frames_with_conflict, no_dry_run):
         return
 
     # Confirm user would like to merge
-    if not no_dry_run and not click.confirm("Do you want to continue?"):
+    if not force and not click.confirm("Do you want to continue?"):
         return
 
     if conflicting:

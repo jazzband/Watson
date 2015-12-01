@@ -403,7 +403,6 @@ class Watson(object):
         return frames
 
     def merge_report(self, frames_with_conflict):
-        print(frames_with_conflict)
         conflict_file_frames = Frames(self._load_json_file(
                                       frames_with_conflict, type=list))
         conflicting = []
