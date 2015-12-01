@@ -5,7 +5,7 @@
 _watson_complete () {
   local cur cmd commands frames projects tags
 
-  commands='cancel config edit frames help log projects remove report restart start status stop sync tags'
+  commands='cancel config edit frames help log merge projects remove report restart start status stop sync tags'
 
   cur=${COMP_WORDS[COMP_CWORD]}
   cmd=${COMP_WORDS[1]}
