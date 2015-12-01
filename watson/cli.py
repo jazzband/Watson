@@ -833,7 +833,18 @@ def sync(watson):
 def merge(watson, frames, frames_with_conflict, no_dry_run):
     # TODO: fill this help message out later
     """
-    Merge files.
+    Perform a merge of the frame file, with a conflicting frames file.
+    
+    When storing the frames on a file hosting service, there is the 
+    possibility that the frame file goes out-of-sync due to one or 
+    more of the connected clients going offline. This can cause the 
+    frames to diverge.
+    
+    If the `--no-dry-run` command is not specified, only the statistics
+    of the merge will be shown, and the merge will not be performed.
+    
+    The arguments `FRAMES` and `FRAMES_WITH_CONFLICT` are paths to the 
+    `frames` and the conflicting `frames` file respectively.
     """
     original_frames, conflicting, merging = watson.merge_report(
         frames, frames_with_conflict)
