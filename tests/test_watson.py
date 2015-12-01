@@ -768,7 +768,8 @@ def test_merge_report(watson, datafiles):
     watson.frames.add('foo', 0, 15, id='1', updated_at=15)
     watson.frames.add('bar', 20, 45, id='2', updated_at=45)
 
-    conflicting, merging = watson.merge_report(str(datafiles) + '/frames-with-conflict')
+    conflicting, merging = watson.merge_report(
+            str(datafiles) + '/frames-with-conflict')
 
     assert len(conflicting) == 1
     assert len(merging) == 1
