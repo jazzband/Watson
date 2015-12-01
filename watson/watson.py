@@ -405,8 +405,7 @@ class Watson(object):
     def merge_report(self, frames, frames_with_conflict):
         original_frames = Frames(self._load_json_file(frames, type=list))
         conflict_file_frames = Frames(self._load_json_file(
-                                        frames_with_conflict,
-                                        type=list))
+                                      frames_with_conflict, type=list))
         conflicting = []
         merging = []
 

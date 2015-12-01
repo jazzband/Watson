@@ -133,10 +133,12 @@ class Frames(object):
         self._rows.append(frame)
         return frame
 
-    def new_frame(self, project, start, stop, tags=None, id=None, updated_at=None):
+    def new_frame(self, project, start, stop, tags=None, id=None,
+                  updated_at=None):
         if not id:
             id = uuid.uuid4().hex
-        return Frame(start, stop, project, id, tags=tags, updated_at=updated_at)
+        return Frame(start, stop, project, id, tags=tags,
+                     updated_at=updated_at)
 
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
