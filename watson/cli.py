@@ -924,7 +924,7 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
     # merge in any non-conflicting frames
     for frame in merging:
         start, stop, project, id, tags, updated_at = frame.dump()
-        original_frames.add(project, start, stop, tags, id)
+        original_frames.add(project, start, stop, tags=tags, id=id, updated_at=updated_at)
 
     if original_frames is not None and original_frames.changed:
         with open(frames, 'w+') as f:
