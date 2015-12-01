@@ -359,6 +359,21 @@ The URL of the server and the User Token must be defined in your
     Received 42 frames from the server
     Pushed 23 frames to the server
 
+merge
+~~~~~
+
+Perform a merge of the frame file, with a conflicting frames file.
+
+When storing the frames on a file hosting service, there is the
+possibility that the frame file goes out-of-sync due to one or more of the
+connected clients going offline. This can cause the frames to diverge.
+
+If the `--no-dry-run` command is not specified, only the statistics of the
+merge will be shown, and the merge will not be performed.
+
+The argument `FRAMES_WITH_CONFLICT` is a path to the the conflicting
+`frames` file.
+
 Configuration
 -------------
 
