@@ -860,7 +860,12 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
     click.echo("{:<{width}} frames will need to be resolved".format(
         len(conflicting), width=dig))
 
-    if not no_dry_run:
+    # No frames to resolve or merge.
+    if not conflicting and not merging:
+        return
+
+    # Confirm user would like to merge
+    if not no_dry_run and not click.confirm("Do you want to continue?"):
         return
 
     if conflicting:
