@@ -825,13 +825,12 @@ def sync(watson):
 
 
 @cli.command()
-@click.argument('frames', type=click.Path(exists=True))
 @click.argument('frames_with_conflict', type=click.Path(exists=True))
 @click.option('--no-dry-run', 'no_dry_run', is_flag=True,
               help="If not specified, then merge will not be performed "
               "and only merge statistics will be shown.")
 @click.pass_obj
-def merge(watson, frames, frames_with_conflict, no_dry_run):
+def merge(watson, frames_with_conflict, no_dry_run):
     """
     Perform a merge of the frame file, with a conflicting frames file.
 
@@ -843,11 +842,11 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
     If the `--no-dry-run` command is not specified, only the statistics
     of the merge will be shown, and the merge will not be performed.
 
-    The arguments `FRAMES` and `FRAMES_WITH_CONFLICT` are paths to the
-    `frames` and the conflicting `frames` file respectively.
+    The argument `FRAMES_WITH_CONFLICT` is a path to the
+    the conflicting `frames` file.
     """
-    original_frames, conflicting, merging = watson.merge_report(
-        frames, frames_with_conflict)
+    original_frames = watson.frames
+    conflicting, merging = watson.merge_report(frames_with_conflict)
 
     # find the length of the largest returned list, then get the number of
     # digits of this length
@@ -931,7 +930,6 @@ def merge(watson, frames, frames_with_conflict, no_dry_run):
         original_frames.add(project, start, stop, tags=tags, id=id,
                             updated_at=updated_at)
 
-    # overwrite the original frames file if any frames have changed
-    if original_frames is not None and original_frames.changed:
-        with open(frames, 'w+') as f:
-            json.dump(original_frames.dump(), f, indent=1, ensure_ascii=False)
+    watson.frames = original_frames
+    watson.frames.changed = True
+    watson.save()

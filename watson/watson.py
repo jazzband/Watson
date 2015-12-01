@@ -402,8 +402,8 @@ class Watson(object):
 
         return frames
 
-    def merge_report(self, frames, frames_with_conflict):
-        original_frames = Frames(self._load_json_file(frames, type=list))
+    def merge_report(self, frames_with_conflict):
+        print(frames_with_conflict)
         conflict_file_frames = Frames(self._load_json_file(
                                       frames_with_conflict, type=list))
         conflicting = []
@@ -411,7 +411,7 @@ class Watson(object):
 
         for conflict_frame in conflict_file_frames:
             try:
-                original_frame = original_frames[conflict_frame.id]
+                original_frame = self.frames[conflict_frame.id]
 
                 if original_frame != conflict_frame:
                     # frame from conflict frames file conflicts with frame
@@ -422,4 +422,4 @@ class Watson(object):
                 # conflicting frame doesn't exist in original frame
                 merging.append(conflict_frame)
 
-        return original_frames, conflicting, merging
+        return conflicting, merging
