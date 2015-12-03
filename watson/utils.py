@@ -46,5 +46,5 @@ def options(opt_list):
             return user_input
         else:
             raise UsageError("Response should be one of [{}]".format(
-                ','.join([str(x) for x in opt_list])))
+                ','.join(str(x) for x in opt_list)))
     return value_proc
