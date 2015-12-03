@@ -832,7 +832,7 @@ def sync(watson):
 @click.pass_obj
 def merge(watson, frames_with_conflict, force):
     """
-    Perform a merge of the frame file, with a conflicting frames file.
+    Perform a merge of the existing frames with a conflicting frames file.
 
     When storing the frames on a file hosting service, there is the
     possibility that the frame file goes out-of-sync due to one or
@@ -842,8 +842,7 @@ def merge(watson, frames_with_conflict, force):
     If the `--force` command is specified, the merge operation
     will automatically be performed.
 
-    The argument `FRAMES_WITH_CONFLICT` is a path to the
-    the conflicting `frames` file.
+    The only argument is a path to the the conflicting `frames` file.
 
     \b
     Merge will output statistics about the merge operation.

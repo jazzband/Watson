@@ -362,17 +362,17 @@ The URL of the server and the User Token must be defined in your
 merge
 ~~~~~
 
-Perform a merge of the frame file, with a conflicting frames file.
+Perform a merge of the existing frames with a conflicting frames file.
 
 When storing the frames on a file hosting service, there is the
-possibility that the frame file goes out-of-sync due to one or more of the
-connected clients going offline. This can cause the frames to diverge.
+possibility that the frame file goes out-of-sync due to one or
+more of the connected clients going offline. This can cause the
+frames to diverge.
 
-If the ``--force`` command is not specified, only the statistics of the
-merge will be shown, and the merge will not be performed.
+If the `--force` command is specified, the merge operation
+will automatically be performed.
 
-The argument ``FRAMES_WITH_CONFLICT`` is a path to the the conflicting
-``frames`` file.
+The only argument is a path to the the conflicting `frames` file.
 
 Merge will output statistics about the merge operation.
 
