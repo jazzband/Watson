@@ -1,5 +1,6 @@
 import sys
 import json
+import os
 
 try:
     from unittest import mock
@@ -11,12 +12,19 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+import py
 import pytest
 import requests
 import arrow
 
 from watson import Watson, WatsonError
 from watson.watson import ConfigurationError, ConfigParser
+
+TEST_FIXTURE_DIR = py.path.local(
+    os.path.dirname(
+        os.path.realpath(__file__)
+        )
+    ) / 'resources'
 
 PY2 = sys.version_info[0] == 2
 
@@ -748,3 +756,23 @@ def test_tags(watson):
 
 def test_tags_no_frames(watson):
     assert watson.tags == []
+
+
+# merge
+
+@pytest.mark.datafiles(
+    TEST_FIXTURE_DIR / 'frames-with-conflict',
+    )
+def test_merge_report(watson, datafiles):
+    # Get report
+    watson.frames.add('foo', 0, 15, id='1', updated_at=15)
+    watson.frames.add('bar', 20, 45, id='2', updated_at=45)
+
+    conflicting, merging = watson.merge_report(
+        str(datafiles) + '/frames-with-conflict')
+
+    assert len(conflicting) == 1
+    assert len(merging) == 1
+
+    assert conflicting[0].id == '2'
+    assert merging[0].id == '3'

@@ -1,5 +1,7 @@
 import itertools
 
+from click.exceptions import UsageError
+
 
 def format_timedelta(delta):
     """
@@ -32,3 +34,17 @@ def sorted_groupby(iterator, key, reverse=False):
     key first.
     """
     return itertools.groupby(sorted(iterator, key=key, reverse=reverse), key)
+
+
+def options(opt_list):
+    """
+    Wrapper for the `value_proc` field in `click.prompt`, which validates
+    that the user response is part of the list of accepted responses.
+    """
+    def value_proc(user_input):
+        if user_input in opt_list:
+            return user_input
+        else:
+            raise UsageError("Response should be one of [{}]".format(
+                ','.join(str(x) for x in opt_list)))
+    return value_proc

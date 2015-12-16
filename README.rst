@@ -359,6 +359,64 @@ The URL of the server and the User Token must be defined in your
     Received 42 frames from the server
     Pushed 23 frames to the server
 
+merge
+~~~~~
+
+Perform a merge of the existing frames with a conflicting frames file.
+
+When storing the frames on a file hosting service, there is the
+possibility that the frame file goes out-of-sync due to one or
+more of the connected clients going offline. This can cause the
+frames to diverge.
+
+If the `--force` command is specified, the merge operation
+will automatically be performed.
+
+The only argument is a path to the the conflicting `frames` file.
+
+Merge will output statistics about the merge operation.
+
+Example:
+::
+
+  $ watson merge frames-with-conflicts
+  120 frames will be left unchanged
+  12  frames will be merged
+  3   frame conflicts need to be resolved
+
+To perform a merge operation, the user will be prompted to
+select the frame they would like to keep.
+
+Example:
+::
+
+  $ watson merge frames-with-conflicts --force
+  120 frames will be left unchanged
+  12  frames will be merged
+  3   frame conflicts need to be resolved
+  Will resolve conflicts:
+  frame 8804872:
+  < {
+  <     "project": "tailordev",
+  <     "start": "2015-07-28 09:33:33",
+  <     "stop": "2015-07-28 10:39:36",
+  <     "tags": [
+  <         "intern",
+  <         "daily-meeting"
+  <     ]
+  < }
+  ---
+  > {
+  >     "project": "tailordev",
+  >     "start": "2015-07-28 09:33:33",
+  >     "stop": "**2015-07-28 11:39:36**",
+  >     "tags": [
+  >         "intern",
+  >         "daily-meeting"
+  >     ]
+  > }
+  Select the frame you want to keep: left or right? (L/r)
+
 Configuration
 -------------
 

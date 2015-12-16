@@ -13,7 +13,7 @@ import arrow
 
 from . import watson
 from .frames import Frame
-from .utils import format_timedelta, sorted_groupby
+from .utils import format_timedelta, sorted_groupby, options
 
 
 def style(name, element):
@@ -821,4 +821,153 @@ def sync(watson):
     click.echo("Pushed {} frames to the server".format(len(pushed)))
 
     watson.last_sync = arrow.utcnow()
+    watson.save()
+
+
+@cli.command()
+@click.argument('frames_with_conflict', type=click.Path(exists=True))
+@click.option('-f', '--force', 'force', is_flag=True,
+              help="If specified, then the merge will automatically "
+              "be performed.")
+@click.pass_obj
+def merge(watson, frames_with_conflict, force):
+    """
+    Perform a merge of the existing frames with a conflicting frames file.
+
+    When storing the frames on a file hosting service, there is the
+    possibility that the frame file goes out-of-sync due to one or
+    more of the connected clients going offline. This can cause the
+    frames to diverge.
+
+    If the `--force` command is specified, the merge operation
+    will automatically be performed.
+
+    The only argument is a path to the the conflicting `frames` file.
+
+    \b
+    Merge will output statistics about the merge operation.
+    Example:
+    $ watson merge frames-with-conflicts
+    120 frames will be left unchanged
+    12  frames will be merged
+    3   frame conflicts need to be resolved
+
+    \b
+    To perform a merge operation, the user will be prompted to
+    select the frame they would like to keep.
+    Example:
+    $ watson merge frames-with-conflicts --force
+    120 frames will be left unchanged
+    12  frames will be merged
+    3   frame conflicts need to be resolved
+    Will resolve conflicts:
+    frame 8804872:
+    < {
+    <     "project": "tailordev",
+    <     "start": "2015-07-28 09:33:33",
+    <     "stop": "2015-07-28 10:39:36",
+    <     "tags": [
+    <         "intern",
+    <         "daily-meeting"
+    <     ]
+    < }
+    ---
+    > {
+    >     "project": "tailordev",
+    >     "start": "2015-07-28 09:33:33",
+    >     "stop": "**2015-07-28 11:39:36**",
+    >     "tags": [
+    >         "intern",
+    >         "daily-meeting"
+    >     ]
+    > }
+    Select the frame you want to keep: left or right? (L/r)
+    """
+    original_frames = watson.frames
+    conflicting, merging = watson.merge_report(frames_with_conflict)
+
+    # find the length of the largest returned list, then get the number of
+    # digits of this length
+    dig = len(str(max(len(original_frames), len(merging), len(conflicting))))
+
+    click.echo("{:<{width}} frames will be left unchanged".format(
+        len(original_frames) - len(conflicting), width=dig))
+    click.echo("{:<{width}} frames will be merged".format(
+        len(merging), width=dig))
+    click.echo("{:<{width}} frames will need to be resolved".format(
+        len(conflicting), width=dig))
+
+    # No frames to resolve or merge.
+    if not conflicting and not merging:
+        return
+
+    # Confirm user would like to merge
+    if not force and not click.confirm("Do you want to continue?"):
+        return
+
+    if conflicting:
+        click.echo("Will resolve conflicts:")
+
+    date_format = 'YYYY-MM-DD HH:mm:ss'
+
+    for conflict_frame in conflicting:
+        original_frame = original_frames[conflict_frame.id]
+
+        # Print original frame
+        original_frame_data = {
+            'project': original_frame.project,
+            'start': original_frame.start.format(date_format),
+            'stop': original_frame.stop.format(date_format),
+            'tags': original_frame.tags
+        }
+        click.echo("frame {}:".format(style('short_id', original_frame.id)))
+        click.echo("{}".format('\n'.join('<' + line for line in json.dumps(
+            original_frame_data, indent=4, ensure_ascii=False).splitlines())))
+        click.echo("---")
+
+        # make a copy of the namedtuple
+        conflict_frame_copy = conflict_frame._replace()
+
+        # highlight conflicts
+        if conflict_frame.project != original_frame.project:
+            project = '**' + str(conflict_frame.project) + '**'
+            conflict_frame_copy = conflict_frame_copy._replace(project=project)
+
+        if conflict_frame.start != original_frame.start:
+            start = '**' + str(conflict_frame.start.format(date_format)) + '**'
+            conflict_frame_copy = conflict_frame_copy._replace(start=start)
+
+        if conflict_frame.stop != original_frame.stop:
+            stop = '**' + str(conflict_frame.stop.format(date_format)) + '**'
+            conflict_frame_copy = conflict_frame_copy._replace(stop=stop)
+
+        for idx, tag in enumerate(conflict_frame.tags):
+            if tag not in original_frame.tags:
+                conflict_frame_copy.tags[idx] = '**' + str(tag) + '**'
+
+        # Print conflicting frame
+        conflict_frame_data = {
+            'project': conflict_frame_copy.project,
+            'start': conflict_frame_copy.start.format(date_format),
+            'stop': conflict_frame_copy.stop.format(date_format),
+            'tags': conflict_frame_copy.tags
+        }
+        click.echo("{}".format('\n'.join('>' + line for line in json.dumps(
+            conflict_frame_data, indent=4, ensure_ascii=False).splitlines())))
+        resp = click.prompt(
+            "Select the frame you want to keep: left or right? (L/r)",
+            value_proc=options(['L', 'r']))
+
+        if resp == 'r':
+            # replace original frame with conflicting frame
+            original_frames[conflict_frame.id] = conflict_frame
+
+    # merge in any non-conflicting frames
+    for frame in merging:
+        start, stop, project, id, tags, updated_at = frame.dump()
+        original_frames.add(project, start, stop, tags=tags, id=id,
+                            updated_at=updated_at)
+
+    watson.frames = original_frames
+    watson.frames.changed = True
     watson.save()
