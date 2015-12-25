@@ -971,3 +971,40 @@ def merge(watson, frames_with_conflict, force):
     watson.frames = original_frames
     watson.frames.changed = True
     watson.save()
+
+
+@cli.command()
+@click.option('--project', default=None, nargs=2)
+@click.option('--tag', default=None, nargs=2)
+@click.pass_obj
+def rename(watson, project, tag):
+    # input validation
+    if not tag and not project:
+        raise click.ClickException(style('error', 'You have to call rename with --project or --tag'))
+
+    if tag:
+        old_tag, new_tag = tag
+        if old_tag not in watson.tags:
+            raise click.ClickException(style('error', 'Tag "%s" does not exist' % old_tag))
+
+    if project:
+        old_project, new_project = project
+
+        if old_project not in watson.projects:
+            raise click.ClickException(style('error', 'Project "%s" does not exist' % old_project))
+
+    # rename project/tag
+    for frame in watson.frames:
+        watson.frames[frame.id] = (
+            new_project if project and frame.project == old_project else frame.project,
+            frame.start,
+            frame.stop,
+            [new_tag if t == old_tag else t for t in frame.tags] if tag else frame.tags
+        )
+    watson.frames.changed = True
+    watson.save()
+
+    if project:
+        click.echo('Renamed project "%s" to "%s"' % project)
+    if tag:
+        click.echo('Renamed tag "%s" to "%s"' % tag)
