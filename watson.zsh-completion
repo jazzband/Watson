@@ -10,6 +10,7 @@ _watson_commands=(
   'help:Display help information'
   'log:Display each recorded session during the...'
   'merge:Perform a merge of the existing frames with a...'
+  'rename:Rename a project or tag.'
   'projects:Display the list of all the existing...'
   'remove:Remove a frame.'
   'report:Display a report of the time spent on each...'
@@ -132,6 +133,12 @@ _watson() {
             '--help' \
             {-f,--force} \
             ': :_files'
+          ;;
+        (rename)
+          _arguments : \
+            '*'{project}'[rename given project]: :_watson_projects' \
+            '*'{tag}'[rename given tag]: :_watson_tags' \
+            '--help'
           ;;
       esac
       ;;
