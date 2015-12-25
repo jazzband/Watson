@@ -75,6 +75,18 @@ _watson_complete () {
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))
           fi
           ;;
+        rename)
+          case "$3" in
+            --project)
+              projects="$(watson projects)"
+              COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+              ;;
+            --tag)
+              tags="$(watson tags)"
+              COMPREPLY=($(compgen -W "$tags" -- ${cur}))
+              ;;
+          esac
+          ;;
       esac
       ;;
   esac
