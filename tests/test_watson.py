@@ -39,6 +39,10 @@ def config_dir(tmpdir):
     return str(tmpdir.mkdir('config'))
 
 
+def mock_read(content):
+    return lambda self, name: self._read(StringIO(content), name)
+
+
 @pytest.fixture
 def watson(config_dir):
     return Watson(config_dir=config_dir)
@@ -209,15 +213,13 @@ def test_wrong_config(watson):
     content = u"""
 toto
     """
-    mocked_read = lambda self, name: self._read(StringIO(content), name)
-    with mock.patch.object(ConfigParser, 'read', mocked_read):
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
         with pytest.raises(ConfigurationError):
             watson.config
 
 
 def test_empty_config(watson):
-    mocked_read = lambda self, name: self._read(StringIO(u''), name)
-    with mock.patch.object(ConfigParser, 'read', mocked_read):
+    with mock.patch.object(ConfigParser, 'read', mock_read(u'')):
         assert len(watson.config.sections()) == 0
 
 
@@ -227,8 +229,7 @@ def test_config_get(watson):
 url = foo
 token =
     """
-    mocked_read = lambda self, name: self._read(StringIO(content), name)
-    with mock.patch.object(ConfigParser, 'read', mocked_read):
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
         config = watson.config
         assert config.get('backend', 'url') == 'foo'
         assert config.get('backend', 'token') == ''
@@ -248,8 +249,7 @@ flag4 = yes
 flag5 = false
 flag6 =
     """
-    mocked_read = lambda self, name: self._read(StringIO(content), name)
-    with mock.patch.object(ConfigParser, 'read', mocked_read):
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
         config = watson.config
         assert config.getboolean('options', 'flag1') is True
         assert config.getboolean('options', 'flag1', False) is True
@@ -270,8 +270,7 @@ value1 = 42
 value2 = spamm
 value3 =
     """
-    mocked_read = lambda self, name: self._read(StringIO(content), name)
-    with mock.patch.object(ConfigParser, 'read', mocked_read):
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
         config = watson.config
         assert config.getint('options', 'value1') == 42
         assert config.getint('options', 'value1', 666) == 42
@@ -296,8 +295,8 @@ value2 = 42
 value3 = spamm
 value4 =
     """
-    mocked_read = lambda self, name: self._read(StringIO(content), name)
-    with mock.patch.object(ConfigParser, 'read', mocked_read):
+
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
         config = watson.config
         assert config.getfloat('options', 'value1') == 3.14
         assert config.getfloat('options', 'value1', 6.66) == 3.14
