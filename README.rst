@@ -1,7 +1,7 @@
 Watson
 ======
 
-|Build Status| |PyPI Downloads Per Month| |PyPI Latest Version|
+|Build Status| |PyPI Downloads Per Month| |PyPI Latest Version| |Requires.io|
 
 Watson is here to help you monitoring your time. You want to know how
 much time you are spending on your projects? You want to generate a nice
@@ -479,3 +479,6 @@ details.
    :target: https://pypi.python.org/pypi/td-watson
 .. |PyPI Latest Version| image:: https://img.shields.io/pypi/v/td-watson.svg
    :target: https://pypi.python.org/pypi/td-watson
+.. |Requires.io| image:: https://requires.io/github/TailorDev/Watson/requirements.svg?branch=develop
+   :target: https://requires.io/github/TailorDev/Watson/requirements/?branch=develop
+   :alt: Requirements Status
