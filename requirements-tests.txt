@@ -1,7 +1,8 @@
--r production.txt
+-r requirements.txt
 
 # Tests
 flake8
 mock<=1.0.1
 pytest
+pytest-datafiles
 tox

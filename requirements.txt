@@ -1,1 +1,4 @@
--r requirements/production.txt
+arrow
+click
+pytest-runner
+requests

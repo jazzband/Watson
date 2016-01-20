@@ -1,4 +1,0 @@
-arrow
-click
-pytest-runner
-requests
