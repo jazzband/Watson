@@ -479,6 +479,6 @@ details.
    :target: https://pypi.python.org/pypi/td-watson
 .. |PyPI Latest Version| image:: https://img.shields.io/pypi/v/td-watson.svg
    :target: https://pypi.python.org/pypi/td-watson
-.. |Requires.io| image:: https://requires.io/github/TailorDev/Watson/requirements.svg?branch=develop
-   :target: https://requires.io/github/TailorDev/Watson/requirements/?branch=develop
+.. |Requires.io| image:: https://requires.io/github/TailorDev/Watson/requirements.svg?branch=master
+   :target: https://requires.io/github/TailorDev/Watson/requirements/?branch=master
    :alt: Requirements Status
