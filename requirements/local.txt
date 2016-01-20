@@ -3,5 +3,5 @@
 # Tests
 flake8
 pytest
-mock==1.0.1
+mock<=1.0.1
 tox
