@@ -30,7 +30,7 @@ def parse_requirements(requirements, ignore=('setuptools',)):
                 continue
             if '#egg=' in line:
                 line = line.split('#egg=')[1]
-            pkg = line.split('==')[0].strip()
+            pkg = line.strip()
             if pkg not in ignore:
                 packages.add(pkg)
         return packages
