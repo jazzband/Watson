@@ -1,3 +1,1 @@
-arrow
-click
-requests
+-r requirements/production.txt

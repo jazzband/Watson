@@ -1,4 +1,4 @@
--r requirements.txt
+-r production.txt
 
 # Tests
 flake8
