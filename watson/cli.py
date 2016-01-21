@@ -527,7 +527,7 @@ def log(watson, from_, to, projects, tags):
         lines.append(style('date', "{:dddd DD MMMM YYYY}".format(day)))
 
         lines.append('\n'.join(
-            '\t{id}  {start} to {stop}  {delta:>10}  {project}  {tags}'.format(
+            '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}'.format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project',
                               '{:>{}}'.format(frame.project, longest_project)),
