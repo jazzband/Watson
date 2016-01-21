@@ -2,7 +2,7 @@ include README.md
 include LICENCE
 include tox.ini
 include requirements.txt
-include requirements-tests.txt
+include requirements-dev.txt
 include watson.completion
 recursive-include tests *
 recursive-include scripts *
