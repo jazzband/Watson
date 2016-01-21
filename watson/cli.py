@@ -524,7 +524,18 @@ def log(watson, from_, to, projects, tags):
         frames = sorted(frames, key=operator.attrgetter('start'))
         longest_project = max(len(frame.project) for frame in frames)
 
-        lines.append(style('date', "{:dddd DD MMMM YYYY}".format(day)))
+        daily_total = reduce(
+            operator.add,
+            (frame.stop - frame.start for frame in frames)
+        )
+
+        lines.append(
+            style(
+                'date', "{:dddd DD MMMM YYYY} ({})".format(
+                    day, format_timedelta(daily_total)
+                )
+            )
+        )
 
         lines.append('\n'.join(
             '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}'.format(
