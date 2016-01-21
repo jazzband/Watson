@@ -244,7 +244,7 @@ multiple projects or tags to the log.
 
     $ watson log
     Thursday 08 May 2015 (56m 33s)
-            f35bb24  09:26 to 10:22     56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
+            f35bb24  09:26 to 10:22      56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
 
     Wednesday 07 May 2015 (27m 29s)
             9a1325d  09:48 to 10:15      27m 29s  voyager2  [sensors, generators, probe]
