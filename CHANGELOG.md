@@ -4,6 +4,17 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.2.0 (2016-01-22)
+
+* Added: Watson now has a `restart` command
+* Added: Watson now has a `merge` command
+* Added: Watson can now stop running project when starting a new one (optional)
+* Added: there is a wrapper for `RawConfigParser` to make option access more convenient
+* Updated: the `edit` command now defaults to the running frame if any (else defaults to the last one)
+* Updated: the `log` command now has a daily total time summary
+* Fixed: unicode issues with cjk characters
+* Fixed: edition summary is now converted to local time
+
 ## 1.1.0 (2015-10-21)
 
 * Added: configurable date and time to output of `status` command (#33)
