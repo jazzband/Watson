@@ -15,6 +15,26 @@ mod = join('watson', 'version.py')
 exec(compile(open(mod).read(), mod, 'exec'), {}, pkg)
 
 
+def parse_requirements(requirements, ignore=('setuptools',)):
+    """Read dependencies from requirements file (with version numbers if any)
+
+    Note: this implementation does not support requirements files with extra
+    requirements
+    """
+    with open(requirements) as f:
+        packages = set()
+        for line in f:
+            line = line.strip()
+            if line.startswith(('#', '-r', '--')):
+                continue
+            if '#egg=' in line:
+                line = line.split('#egg=')[1]
+            pkg = line.strip()
+            if pkg not in ignore:
+                packages.add(pkg)
+        return packages
+
+
 setup(
     name='td-watson',
     version=pkg['version'],
@@ -24,11 +44,8 @@ setup(
     author_email='contact@tailordev.fr',
     license='MIT',
     long_description=readme,
-    install_requires=[
-        'Click',
-        'arrow',
-        'requests',
-    ],
+    install_requires=parse_requirements('requirements.txt'),
+    tests_require=parse_requirements('requirements-tests.txt'),
     entry_points={
         'console_scripts': [
             'watson = watson.__main__:cli',
