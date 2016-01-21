@@ -1,7 +1,7 @@
 -r requirements.txt
 
-# Tests
 flake8
+# mock>1.0.1 requires setuptools>17
 mock<=1.0.1
 pytest
 pytest-datafiles
