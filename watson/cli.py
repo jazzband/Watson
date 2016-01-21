@@ -623,7 +623,10 @@ def edit(watson, id):
 
     The `$EDITOR` environment variable is used to detect your editor.
     """
-    date_format = 'YYYY-MM-DD HH:mm:ss'
+    date_format = 'YYYY-MM-DD'
+    time_format = 'HH:mm:ss'
+    datetime_format = '{} {}'.format(date_format, time_format)
+    local_tz = tz.tzlocal()
 
     if id:
         try:
@@ -650,13 +653,13 @@ def edit(watson, id):
                            "first one!"))
 
     data = {
-        'start': frame.start.format(date_format),
+        'start': frame.start.format(datetime_format),
         'project': frame.project,
         'tags': frame.tags,
     }
 
     if id:
-        data['stop'] = frame.stop.format(date_format)
+        data['stop'] = frame.stop.format(datetime_format)
 
     text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
     output = click.edit(text, extension='.json')
@@ -669,10 +672,10 @@ def edit(watson, id):
         data = json.loads(output)
         project = data['project']
         tags = data['tags']
-        start = arrow.get(data['start'], date_format).replace(
-            tzinfo=tz.tzlocal()).to('utc')
-        stop = arrow.get(data['stop'], date_format).replace(
-            tzinfo=tz.tzlocal()).to('utc') if id else None
+        start = arrow.get(data['start'], datetime_format).replace(
+            tzinfo=local_tz).to('utc')
+        stop = arrow.get(data['stop'], datetime_format).replace(
+            tzinfo=local_tz).to('utc') if id else None
     except (ValueError, RuntimeError) as e:
         raise click.ClickException("Error saving edited frame: {}".format(e))
     except KeyError:
@@ -692,8 +695,14 @@ def edit(watson, id):
             delta=format_timedelta(stop - start) if stop else '-',
             project=style('project', project),
             tags=style('tags', tags),
-            start=style('time', '{:HH:mm}'.format(start)),
-            stop=style('time', '{:HH:mm}'.format(stop) if stop else '-')
+            start=style(
+                'time',
+                start.to(local_tz).format(time_format)
+            ),
+            stop=style(
+                'time',
+                stop.to(local_tz).format(time_format) if stop else '-'
+            )
         )
     )
 
