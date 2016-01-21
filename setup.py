@@ -16,11 +16,10 @@ exec(compile(open(mod).read(), mod, 'exec'), {}, pkg)
 
 
 def parse_requirements(requirements, ignore=('setuptools',)):
-    """Read dependencies from requirements file and strip off version numbers.
+    """Read dependencies from requirements file (with version numbers if any)
 
-    Note: this imlementation does not support requirements files with extra
-    requirements (in square brackets) or '>=' and '<=' version qualifiers.
-
+    Note: this implementation does not support requirements files with extra
+    requirements
     """
     with open(requirements) as f:
         packages = set()
