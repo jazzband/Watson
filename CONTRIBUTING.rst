@@ -5,7 +5,7 @@ If you are reading this, we thank you in advance for willing to contribute to th
 
 .. note::
 
-    This document is heavily inspired by `Kinto's project documentation<https://github.com/Kinto/kinto>`_ Thank them for providing high quality content for the community.
+    This document is heavily inspired by `Kinto's project documentation <https://github.com/Kinto/kinto>`_. Thank them for providing high quality content for the community.
 
 
 How to contribute
