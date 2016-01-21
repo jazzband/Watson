@@ -3,7 +3,7 @@ Contributing
 
 If you are reading this, we thank you in advance for willing to contribute to the Watson project! You are awesome.
 
-.. Disclaimer::
+.. note::
 
     This document is heavily inspired by `Kinto's project documentation<https://github.com/Kinto/kinto>`_ Thank them for providing high quality content for the community.
 
