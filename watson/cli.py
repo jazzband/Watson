@@ -130,16 +130,18 @@ def start(ctx, watson, args):
     Start monitoring time for the given project.
 
     You can add tags indicating more specifically what you are working on with
-    '+tag'.
+    ``+tag``.
 
-    If there is already a running project and the configuration option
-    'options.stop_on_start' is set to a true value ('1', 'on', 'true' or
-    'yes'), it is stopped before the new project is started.
+    .. note::
 
-    \b
-    Example :
-    $ watson start apollo11 +module +brakes
-    Starting project apollo11 [module, brakes] at 16:34
+        If there is already a running project and the configuration option
+        ``options.stop_on_start`` is set to a true value (``1``, ``on``,
+        ``true`` or ``yes``), it is stopped before the new project is started.
+
+    Example::
+
+        $ watson start apollo11 +module +brakes
+        Starting project apollo11 [module, brakes] at 16:34
     """
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
