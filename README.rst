@@ -473,7 +473,7 @@ License
 Watson is released under the MIT License. See the bundled LICENSE file for
 details.
 
-.. |Build Status| image:: https://travis-ci.org/TailorDev/Watson.svg?branch=develop
+.. |Build Status| image:: https://travis-ci.org/TailorDev/Watson.svg?branch=master
    :target: https://travis-ci.org/TailorDev/Watson
 .. |PyPI Downloads Per Month| image:: https://img.shields.io/pypi/dm/td-watson.svg
    :target: https://pypi.python.org/pypi/td-watson
