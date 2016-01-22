@@ -39,7 +39,7 @@ for obj in inspect.getmembers(watson_cli, is_click_command):
         idx = sp.index('::')
 
         doc = '\n'.join(sp[:idx])
-        doc += "\n::\n"
+        doc += "\n.. code-block:: shell\n"
 
         for r in sp[idx+1:]:
             doc += '\t{}\n'.format(r)
