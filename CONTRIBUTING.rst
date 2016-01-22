@@ -71,6 +71,7 @@ Get started!
 
     $ mkvirtualenv watson
     $ cd Watson
+    $ pip install -r requirements-tests.txt
     $ python setup.py develop
 
 4. Create a branch for local development::
