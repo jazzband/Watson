@@ -3,10 +3,11 @@ SPHINX_BUILDDIR = docs/_build
 all: install
 
 install:
-	python setup.py develop
+	python setup.py install
 
 install-dev:
 	pip install -r requirements-dev.txt
+	python setup.py develop
 
 clean:
 	find . -name '*.pyc' -delete
