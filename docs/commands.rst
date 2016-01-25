@@ -9,12 +9,25 @@ Commands
 ``cancel``
 ==========
 
+Options:
+
+--help
+  Show this message and exit.
+
 Cancel the last call to the start command. The time will
 not be recorded.
 
 
 ``config``
 ==========
+
+Options:
+
+-e, --edit
+  Edit the configuration file with an editor.
+
+--help
+  Show this message and exit.
 
 Get and set configuration options.
 
@@ -35,6 +48,11 @@ Example:
 ``edit``
 ========
 
+Options:
+
+--help
+  Show this message and exit.
+
 Edit a frame.
 
 You can specify the frame to edit with an integer frame index or a frame
@@ -52,6 +70,11 @@ The `$EDITOR` environment variable is used to detect your editor.
 ``frames``
 ==========
 
+Options:
+
+--help
+  Show this message and exit.
+
 Display the list of all frame IDs.
 
 Example:
@@ -68,11 +91,33 @@ Example:
 ``help``
 ========
 
+Options:
+
+--help
+  Show this message and exit.
+
 Display help information
 
 
 ``log``
 =======
+
+Options:
+
+-f, --from DATE
+  The date from when the log should start. Defaults to seven days ago.
+
+-t, --to DATE
+  The date at which the log should stop (inclusive). Defaults to tomorrow.
+
+-p, --project TEXT
+  Logs activity only for the given project. You can add other projects by using this option several times.
+
+-T, --tag TEXT
+  Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+
+--help
+  Show this message and exit.
 
 Display each recorded session during the given timespan.
 
@@ -117,6 +162,14 @@ Example:
 
 ``merge``
 =========
+
+Options:
+
+-f, --force
+  If specified, then the merge will automatically be performed.
+
+--help
+  Show this message and exit.
 
 Perform a merge of the existing frames with a conflicting frames file.
 
@@ -179,6 +232,11 @@ Example:
 ``projects``
 ============
 
+Options:
+
+--help
+  Show this message and exit.
+
 Display the list of all the existing projects.
 
 Example:
@@ -195,11 +253,36 @@ Example:
 ``remove``
 ==========
 
+Options:
+
+-f, --force
+  Don't ask for confirmation.
+
+--help
+  Show this message and exit.
+
 Remove a frame.
 
 
 ``report``
 ==========
+
+Options:
+
+-f, --from DATE
+  The date from when the report should start. Defaults to seven days ago.
+
+-t, --to DATE
+  The date at which the report should stop (inclusive). Defaults to tomorrow.
+
+-p, --project TEXT
+  Reports activity only for the given project. You can add other projects by using this option several times.
+
+-T, --tag TEXT
+  Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+
+--help
+  Show this message and exit.
 
 Display a report of the time spent on each project.
 
@@ -262,6 +345,14 @@ Example:
 ``restart``
 ===========
 
+Options:
+
+-s, --stop / -S, --no-stop
+  (Don't) Stop an already running project.
+
+--help
+  Show this message and exit.
+
 Restart monitoring time for a previously stopped project.
 
 By default, the project from the last frame, which was recorded, is
@@ -294,6 +385,11 @@ Example:
 ``start``
 =========
 
+Options:
+
+--help
+  Show this message and exit.
+
 Start monitoring time for the given project.
 You can add tags indicating more specifically what you are working on with
 '+tag'.
@@ -312,6 +408,11 @@ Example :
 
 ``status``
 ==========
+
+Options:
+
+--help
+  Show this message and exit.
 
 Display when the current project was started and the time spent since.
 
@@ -336,6 +437,11 @@ Example:
 ``stop``
 ========
 
+Options:
+
+--help
+  Show this message and exit.
+
 Stop monitoring time for the current project.
 
 Example:
@@ -348,6 +454,11 @@ Example:
 
 ``sync``
 ========
+
+Options:
+
+--help
+  Show this message and exit.
 
 Get the frames from the server and push the new ones.
 
@@ -367,6 +478,11 @@ Example:
 
 ``tags``
 ========
+
+Options:
+
+--help
+  Show this message and exit.
 
 Display the list of all the tags.
 

@@ -1,6 +1,7 @@
 import inspect
 
-from click.core import Command
+from click.core import Command, Context
+from click.formatting import HelpFormatter
 from watson import cli as watson_cli
 
 
@@ -10,6 +11,23 @@ def is_click_command(obj):
     if type(obj) is Command:
         return True
     return False
+
+
+class ReStructuredTextFormatter(HelpFormatter):
+
+    def write_dl(self, rows, **kwargs):
+        rows = list(rows)
+        self.write('\n')
+        for row in rows:
+            self.write('{}\n'.format(row[0]))
+            self.write('  {}\n\n'.format(row[1]))
+
+
+class SphinxContext(Context):
+
+    def make_formatter(self):
+        return ReStructuredTextFormatter()
+
 
 commands_rst = """.. This document has been automatically generated.
    It should NOT BE EDITED.
@@ -24,11 +42,22 @@ Commands
 # Iterate over commands to build docs
 for obj in inspect.getmembers(watson_cli, is_click_command):
 
+    formatter = ReStructuredTextFormatter()
     cmd = obj[0]
     doc = inspect.getdoc(obj[1])
 
+    print(("------", cmd))
+
+    _cmd = obj[1]
+    ctx = SphinxContext(_cmd)
+    # print(_cmd.get_usage(ctx))
+    # print(_cmd.get_params(ctx))
+    _cmd.format_options(ctx, formatter)
+
     # Each command is a section
     commands_rst += "``{}``\n{}\n\n".format(cmd, "=" * (len(cmd) + 4))
+
+    commands_rst += ''.join(formatter.buffer)
 
     should_indent = False
     cmd_docs = []
