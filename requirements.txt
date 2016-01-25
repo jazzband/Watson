@@ -1,4 +1,4 @@
 arrow
-click
+click>=5.0
 pytest-runner
 requests
