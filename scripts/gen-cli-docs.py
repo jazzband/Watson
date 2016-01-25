@@ -30,22 +30,26 @@ for obj in inspect.getmembers(watson_cli, is_click_command):
     # Each command is a section
     commands_rst += "``{}``\n{}\n\n".format(cmd, "=" * (len(cmd) + 4))
 
-    # Escaped paragraph should be considered as litteral blocks
-    doc = doc.replace('\b', '::\n', 1)
+    should_indent = False
+    cmd_docs = []
 
-    # Indent litteral block if any
-    sp = doc.split('\n')
-    if '::' in sp:
-        idx = sp.index('::')
+    for doc_row in doc.split('\n'):
 
-        doc = '\n'.join(sp[:idx])
-        doc += "\n.. code-block:: shell\n"
+        if should_indent:
+            doc_row = '    {}'.format(doc_row)
 
-        for r in sp[idx+1:]:
-            doc += '\t{}\n'.format(r)
+        if '\b' in doc_row:
+            if should_indent:
+                doc_row = doc_row.replace('\b', '', 1)
+            else:
+                doc_row = doc_row.replace('\b', '::\n', 1)
+            should_indent = True
+        elif not len(doc_row.strip()):
+            should_indent = False
 
-    # Add substituted docs
-    commands_rst += "{}\n\n\n".format(doc)
+        cmd_docs.append(doc_row)
+
+    commands_rst += "{}\n\n\n".format('\n'.join(cmd_docs))
 
 # Write the commands documentation file
 with open('docs/commands.rst', 'w') as f:
