@@ -87,7 +87,7 @@ class Watson(object):
                 raise WatsonError(
                     "Invalid JSON file {}: {}".format(filename, e)
                 )
-        else:
+        except:
             raise WatsonError(
                 "Impossible to open JSON file in {}".format(filename)
             )
