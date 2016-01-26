@@ -1,1 +1,7 @@
-site_name: My Docs
+site_name: Watson
+theme: mkdocs
+repo_url: https://github.com/TailorDev/Watson
+repo_name: GitHub
+site_description: A wonderful CLI to track your time!
+site_author: TailorDev
+copyright: Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a>
