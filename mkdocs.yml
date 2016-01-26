@@ -5,3 +5,13 @@ repo_name: GitHub
 site_description: A wonderful CLI to track your time!
 site_author: TailorDev
 copyright: Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a>
+pages:
+- Home: 'index.md'
+- User Guide:
+    - Commands: 'user-guide/commands.md'
+    - Configuration: 'user-guide/configuration.md'
+- Contributing: 'contributing.md'
+- FAQ: 'faq.md'
+- About:
+    - License: 'about/license.md'
+    - Release notes: 'about/release-notes.md'
