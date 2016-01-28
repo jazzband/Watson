@@ -5,25 +5,56 @@ from click.formatting import HelpFormatter
 from watson import cli as watson_cli
 
 
-def is_click_command(obj):
-    """A filter for click command objects"""
-
-    if type(obj) is Command:
-        return True
-    return False
-
-
 class MarkdownFormatter(HelpFormatter):
 
+    def write_heading(self, heading):
+        """Writes a heading into the buffer."""
+        self.write('### {}\n'.format(heading))
+
+    def write_usage(self, prog, args='', prefix='Usage: '):
+        """Writes a usage line into the buffer.
+        :param prog: the program name.
+        :param args: whitespace separated list of arguments.
+        :param prefix: the prefix for the first line.
+        """
+        self.write('`{} {} {}`\n'.format(prefix, prog, args))
+
+    def write_text(self, text):
+        """Writes re-indented text into the buffer.
+        """
+
+        should_indent = False
+        rows = []
+
+        for row in text.split('\n'):
+
+            if should_indent:
+                row = '    {}'.format(row)
+
+            if '\b' in row:
+                row = row.replace('\b', '', 1)
+                should_indent = True
+            elif not len(row.strip()):
+                should_indent = False
+
+            rows.append(row)
+
+        self.write("{}\n".format('\n'.join(rows)))
+
     def write_dl(self, rows, **kwargs):
+        """Writes a definition list into the buffer.  This is how options
+        and commands are usually formatted.
+        :param rows: a list of two item tuples for the terms and values.
+        """
         rows = list(rows)
         self.write('\n')
 
-        self.write('Option | Help\n')
-        self.write('-------|-----\n')
+        self.write('Flag | Help\n')
+        self.write('-----|-----\n')
 
         for row in rows:
             self.write('`{}` | {}\n'.format(*row))
+        self.write('\n')
 
 
 class MkdocsContext(Context):
@@ -32,50 +63,47 @@ class MkdocsContext(Context):
         return MarkdownFormatter()
 
 
-md_content = """
-<!-- This document has been automatically generated.
-     It should NOT BE EDITED.
-     To update this part of the documentation,
-     please refer to Watson's documentation (sic!) -->
+def main(rowsput):
+    """Iterate over watson.cli commands,
+    generate commands markdown documentation and
+    write it to the rowsput file.
+    """
 
-# Commands
+    def is_click_command(obj):
+        """A filter for click command objects"""
 
-"""
+        if type(obj) is Command:
+            return True
+        return False
 
-# Iterate over commands to build docs
-for obj in inspect.getmembers(watson_cli, is_click_command):
+    content = """
+    <!-- This document has been automatically generated.
+         It should NOT BE EDITED.
+         To update this part of the documentation,
+         please refer to Watson's documentation (sic!) -->
 
-    formatter = MarkdownFormatter()
-    cmd = obj[0]
-    doc = inspect.getdoc(obj[1])
+    # Commands
 
-    _cmd = obj[1]
-    ctx = MkdocsContext(_cmd)
-    _cmd.format_options(ctx, formatter)
+    """
 
-    # Each command is a section
-    md_content += "## {}\n\n".format(cmd)
+    # Iterate over commands to build docs
+    for cmd_name, cmd in inspect.getmembers(watson_cli, is_click_command):
 
-    md_content += ''.join(formatter.buffer)
+        ctx = MkdocsContext(cmd)
+        formatter = ctx.make_formatter()
 
-    should_indent = False
-    cmd_docs = []
+        cmd.format_help(ctx, formatter)
 
-    for doc_row in doc.split('\n'):
+        # Each command is a section
+        content += "## {}\n\n".format(cmd_name)
+        content += ''.join(formatter.buffer)
 
-        if should_indent:
-            doc_row = '    {}'.format(doc_row)
+    # Write the commands documentation file
+    with open(rowsput, 'w') as f:
+        f.write(content)
 
-        if '\b' in doc_row:
-            doc_row = doc_row.replace('\b', '', 1)
-            should_indent = True
-        elif not len(doc_row.strip()):
-            should_indent = False
 
-        cmd_docs.append(doc_row)
+if __name__ == '__main__':
 
-    md_content += "{}\n\n\n".format('\n'.join(cmd_docs))
-
-# Write the commands documentation file
-with open('docs/user-guide/commands.md', 'w') as f:
-    f.write(md_content)
+    commands_md = 'docs/user-guide/commands.md'
+    main(commands_md)

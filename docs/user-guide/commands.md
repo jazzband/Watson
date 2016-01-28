@@ -1,30 +1,28 @@
 
-<!-- This document has been automatically generated.
-     It should NOT BE EDITED.
-     To update this part of the documentation,
-     please refer to Watson's documentation (sic!) -->
+    <!-- This document has been automatically generated.
+         It should NOT BE EDITED.
+         To update this part of the documentation,
+         please refer to Watson's documentation (sic!) -->
 
-# Commands
+    # Commands
 
-## cancel
+    ## cancel
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Cancel the last call to the start command. The time will
 not be recorded.
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## config
 
-Options:
+`Usage:   [OPTIONS] SECTION.OPTION [VALUE]`
 
-Option | Help
--------|-----
-`-e, --edit` | Edit the configuration file with an editor.
-`--help` | Show this message and exit.
 Get and set configuration options.
 
 If value is not provided, the content of the key is displayed. Else,
@@ -39,14 +37,17 @@ Example:
     $ watson config backend.token
     7e329263e329
 
+### Options
+
+Flag | Help
+-----|-----
+`-e, --edit` | Edit the configuration file with an editor.
+`--help` | Show this message and exit.
 
 ## edit
 
-Options:
+`Usage:   [OPTIONS] [ID]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Edit a frame.
 
 You can specify the frame to edit with an integer frame index or a frame
@@ -60,14 +61,16 @@ last recorded frame, if no project is currently running.
 
 The `$EDITOR` environment variable is used to detect your editor.
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## frames
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Display the list of all frame IDs.
 
 Example:
@@ -79,28 +82,28 @@ Example:
     8801ec3
     [...]
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## help
 
-Options:
+`Usage:   [OPTIONS] [COMMAND]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Display help information
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## log
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`-f, --from DATE` | The date from when the log should start. Defaults to seven days ago.
-`-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
-`-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
-`-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`--help` | Show this message and exit.
 Display each recorded session during the given timespan.
 
 By default, the sessions from the last 7 days are printed. This timespan
@@ -140,15 +143,20 @@ Example:
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
 
+### Options
+
+Flag | Help
+-----|-----
+`-f, --from DATE` | The date from when the log should start. Defaults to seven days ago.
+`-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
+`-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
+`-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`--help` | Show this message and exit.
 
 ## merge
 
-Options:
+`Usage:   [OPTIONS] FRAMES_WITH_CONFLICT`
 
-Option | Help
--------|-----
-`-f, --force` | If specified, then the merge will automatically be performed.
-`--help` | Show this message and exit.
 Perform a merge of the existing frames with a conflicting frames file.
 
 When storing the frames on a file hosting service, there is the
@@ -204,14 +212,17 @@ Example:
     > }
     Select the frame you want to keep: left or right? (L/r)
 
+### Options
+
+Flag | Help
+-----|-----
+`-f, --force` | If specified, then the merge will automatically be performed.
+`--help` | Show this message and exit.
 
 ## projects
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Display the list of all the existing projects.
 
 Example:
@@ -223,29 +234,29 @@ Example:
     voyager1
     voyager2
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## remove
 
-Options:
+`Usage:   [OPTIONS] ID`
 
-Option | Help
--------|-----
-`-f, --force` | Don't ask for confirmation.
-`--help` | Show this message and exit.
 Remove a frame.
 
+### Options
+
+Flag | Help
+-----|-----
+`-f, --force` | Don't ask for confirmation.
+`--help` | Show this message and exit.
 
 ## report
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
-`-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
-`-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
-`-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`--help` | Show this message and exit.
 Display a report of the time spent on each project.
 
 If a project is given, the time spent on this project
@@ -302,15 +313,20 @@ Example:
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
 
+### Options
+
+Flag | Help
+-----|-----
+`-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
+`-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
+`-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
+`-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`--help` | Show this message and exit.
 
 ## restart
 
-Options:
+`Usage:   [OPTIONS] [FRAME]`
 
-Option | Help
--------|-----
-`-s, --stop / -S, --no-stop` | (Don't) Stop an already running project.
-`--help` | Show this message and exit.
 Restart monitoring time for a previously stopped project.
 
 By default, the project from the last frame, which was recorded, is
@@ -338,14 +354,17 @@ Example:
     $ watson restart
     Starting project apollo11 [module, brakes] at 16:36
 
+### Options
+
+Flag | Help
+-----|-----
+`-s, --stop / -S, --no-stop` | (Don't) Stop an already running project.
+`--help` | Show this message and exit.
 
 ## start
 
-Options:
+`Usage:   [OPTIONS] [ARGS]...`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Start monitoring time for the given project.
 You can add tags indicating more specifically what you are working on with
 '+tag'.
@@ -360,14 +379,16 @@ Example :
     $ watson start apollo11 +module +brakes
     Starting project apollo11 [module, brakes] at 16:34
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## status
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Display when the current project was started and the time spent since.
 
 You can configure how the date and time of when the project was started are
@@ -386,14 +407,16 @@ Example:
     $ watson status
     Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## stop
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Stop monitoring time for the current project.
 
 Example:
@@ -402,14 +425,16 @@ Example:
     $ watson stop
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## sync
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Get the frames from the server and push the new ones.
 
 The URL of the server and the User Token must be defined via the
@@ -424,14 +449,16 @@ Example:
     Received 42 frames from the server
     Pushed 23 frames to the server
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
 ## tags
 
-Options:
+`Usage:   [OPTIONS]`
 
-Option | Help
--------|-----
-`--help` | Show this message and exit.
 Display the list of all the tags.
 
 Example:
@@ -451,4 +478,9 @@ Example:
     transmission
     wheels
 
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
 
