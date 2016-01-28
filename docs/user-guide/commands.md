@@ -32,7 +32,7 @@ Get and set configuration options.
 If value is not provided, the content of the key is displayed. Else,
 the given value is set.
 
-You can edit the config file with an editor with the '--edit' option.
+You can edit the config file with an editor with the `--edit` option.
 
 Example:
 
@@ -119,8 +119,8 @@ Usage:  watson log [OPTIONS]
 Display each recorded session during the given timespan.
 
 By default, the sessions from the last 7 days are printed. This timespan
-can be controlled with the '--from' and '--to' arguments. The dates
-must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
+can be controlled with the `--from` and `--to` arguments. The dates
+must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
 You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
@@ -284,8 +284,8 @@ is printed. Else, print the total for each root
 project.
 
 By default, the time spent the last 7 days is printed. This timespan
-can be controlled with the '--from' and '--to' arguments. The dates
-must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
+can be controlled with the `--from` and `--to` arguments. The dates
+must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
 You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
@@ -354,13 +354,13 @@ Restart monitoring time for a previously stopped project.
 By default, the project from the last frame, which was recorded, is
 restarted, using the same tags as recorded in that frame. You can specify
 the frame to use with an integer frame index argument or a frame ID. For
-example, to restart the second-to-last frame, pass -2 as the frame index.
+example, to restart the second-to-last frame, pass `-2` as the frame index.
 
 Normally, if a project is currently started, watson will print an error and
-do nothing. If you set the configuration option 'options.stop_on_restart'
-to a true value ('1', 'on', 'true' or 'yes'), the current project, if any,
+do nothing. If you set the configuration option `options.stop_on_restart`
+to a true value (`1`, `on`, `true` or `yes`), the current project, if any,
 will be stopped before the new frame is started. You can pass the option
-'-s' or '--stop' resp. '-S' or '--no-stop' to override the default or
+`-s` or `--stop` resp. `-S` or `--no-stop` to override the default or
 configured behaviour.
 
 If no previous frame exists or an invalid frame index or ID was given,
@@ -391,11 +391,11 @@ Usage:  watson start [OPTIONS] [ARGS]...
 
 Start monitoring time for the given project.
 You can add tags indicating more specifically what you are working on with
-'+tag'.
+`+tag`.
 
 If there is already a running project and the configuration option
-'options.stop_on_start' is set to a true value ('1', 'on', 'true' or
-'yes'), it is stopped before the new project is started.
+`options.stop_on_start` is set to a true value (`1`, `on`, `true` or
+`yes`), it is stopped before the new project is started.
 
 Example :
 
@@ -418,10 +418,10 @@ Usage:  watson status [OPTIONS]
 Display when the current project was started and the time spent since.
 
 You can configure how the date and time of when the project was started are
-displayed by setting 'options.date_format' and 'options.time_format' in the
+displayed by setting `options.date_format` and `options.time_format` in the
 configuration. The syntax of these formatting strings and the supported
-placeholders are the same as for the 'strftime' method of Python's
-'datetime.datetime' class.
+placeholders are the same as for the `strftime` method of Python's
+`datetime.datetime` class.
 
 Example:
 
@@ -468,7 +468,7 @@ Usage:  watson sync [OPTIONS]
 Get the frames from the server and push the new ones.
 
 The URL of the server and the User Token must be defined via the
-'watson config' command.
+`watson config` command.
 
 Example:
 
