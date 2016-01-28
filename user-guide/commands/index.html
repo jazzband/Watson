@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="TailorDev">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>Commands - Watson</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">Watson</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li class="active">
+                            <a href="./">Commands</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../configuration/">Configuration</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../contributing/how-to/">Howto</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../contributing/hack/">Hack</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../contributing/coc/">Code of Conduct</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../faq/">FAQ</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../about/license/">License</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/release-notes/">Release notes</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li >
+                    <a rel="next" href="../..">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../configuration/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/TailorDev/Watson">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#commands">Commands</a></li>
+        
+            <li><a href="#cancel">cancel</a></li>
+        
+            <li><a href="#config">config</a></li>
+        
+            <li><a href="#edit">edit</a></li>
+        
+            <li><a href="#frames">frames</a></li>
+        
+            <li><a href="#help">help</a></li>
+        
+            <li><a href="#log">log</a></li>
+        
+            <li><a href="#merge">merge</a></li>
+        
+            <li><a href="#projects">projects</a></li>
+        
+            <li><a href="#remove">remove</a></li>
+        
+            <li><a href="#report">report</a></li>
+        
+            <li><a href="#restart">restart</a></li>
+        
+            <li><a href="#start">start</a></li>
+        
+            <li><a href="#status">status</a></li>
+        
+            <li><a href="#stop">stop</a></li>
+        
+            <li><a href="#sync">sync</a></li>
+        
+            <li><a href="#tags">tags</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<!-- 
+    This document has been automatically generated.
+    It should NOT BE EDITED.
+    To update this part of the documentation,
+    please type the following from the repository root:
+    $ make docs-->
+
+<h1 id="commands">Commands</h1>
+<h2 id="cancel"><code>cancel</code></h2>
+<pre><code class="bash">Usage:  watson cancel [OPTIONS]
+</code></pre>
+
+<p>Cancel the last call to the start command. The time will
+not be recorded.</p>
+<h3 id="options">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="config"><code>config</code></h2>
+<pre><code class="bash">Usage:  watson config [OPTIONS] SECTION.OPTION [VALUE]
+</code></pre>
+
+<p>Get and set configuration options.</p>
+<p>If value is not provided, the content of the key is displayed. Else,
+the given value is set.</p>
+<p>You can edit the config file with an editor with the <code>--edit</code> option.</p>
+<p>Example:</p>
+<pre><code>$ watson config backend.token 7e329263e329
+$ watson config backend.token
+7e329263e329
+</code></pre>
+<h3 id="options_1">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-e, --edit</code></td>
+<td>Edit the configuration file with an editor.</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="edit"><code>edit</code></h2>
+<pre><code class="bash">Usage:  watson edit [OPTIONS] [ID]
+</code></pre>
+
+<p>Edit a frame.</p>
+<p>You can specify the frame to edit with an integer frame index or a frame
+id. For example, to edit the second-to-last frame, pass <code>-2</code> as the frame
+index (put <code>--</code> in front of negative indexes to prevent them from being
+interpreted as an option). You can get the id of a frame with the <code>watson
+log</code> command.</p>
+<p>If no id or index is given, the frame defaults to the current frame or the
+last recorded frame, if no project is currently running.</p>
+<p>The <code>$EDITOR</code> environment variable is used to detect your editor.</p>
+<h3 id="options_2">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="frames"><code>frames</code></h2>
+<pre><code class="bash">Usage:  watson frames [OPTIONS]
+</code></pre>
+
+<p>Display the list of all frame IDs.</p>
+<p>Example:</p>
+<pre><code>$ watson frames
+f1c4815
+9d1a989
+8801ec3
+[...]
+</code></pre>
+<h3 id="options_3">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="help"><code>help</code></h2>
+<pre><code class="bash">Usage:  watson help [OPTIONS] [COMMAND]
+</code></pre>
+
+<p>Display help information</p>
+<h3 id="options_4">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="log"><code>log</code></h2>
+<pre><code class="bash">Usage:  watson log [OPTIONS]
+</code></pre>
+
+<p>Display each recorded session during the given timespan.</p>
+<p>By default, the sessions from the last 7 days are printed. This timespan
+can be controlled with the <code>--from</code> and <code>--to</code> arguments. The dates
+must have the format <code>YEAR-MONTH-DAY</code>, like: <code>2014-05-19</code>.</p>
+<p>You can limit the log to a project or a tag using the <code>--project</code> and
+<code>--tag</code> options. They can be specified several times each to add multiple
+projects or tags to the log.</p>
+<p>Example:</p>
+<pre><code>$ watson log --project voyager2 --project apollo11
+Thursday 08 May 2015 (56m 33s)
+        f35bb24  09:26 to 10:22      56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
+
+Wednesday 07 May 2015 (27m 29s)
+        9a1325d  09:48 to 10:15      27m 29s  voyager2  [sensors, generators, probe]
+
+Tuesday 06 May 2015 (1h 47m 22s)
+        530768b  12:40 to 14:16   1h 35m 45s  apollo11  [wheels]
+        84164f0  14:23 to 14:35      11m 37s  apollo11  [brakes, steering]
+
+Monday 05 May 2015 (8h 18m 26s)
+        26a2817  09:05 to 10:03      57m 12s  voyager2  [probe, generators]
+        5590aca  10:51 to 14:47   3h 55m 40s  apollo11
+        c32c74e  15:12 to 18:38   3h 25m 34s  voyager2  [probe, generators, sensors, antenna]
+
+$ watson log --from 2014-04-16 --to 2014-04-17
+Thursday 17 April 2014 (4h 19m 13s)
+        a96fcde  09:15 to 09:43      28m 11s    hubble  [lens, camera, transmission]
+        5e91316  10:19 to 12:59   2h 39m 15s    hubble  [camera, transmission]
+        761dd51  14:42 to 15:54   1h 11m 47s  voyager1  [antenna]
+
+Wednesday 16 April 2014 (5h 19m 18s)
+        02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
+        1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
+</code></pre>
+<h3 id="options_5">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-f, --from DATE</code></td>
+<td>The date from when the log should start. Defaults to seven days ago.</td>
+</tr>
+<tr>
+<td><code>-t, --to DATE</code></td>
+<td>The date at which the log should stop (inclusive). Defaults to tomorrow.</td>
+</tr>
+<tr>
+<td><code>-p, --project TEXT</code></td>
+<td>Logs activity only for the given project. You can add other projects by using this option several times.</td>
+</tr>
+<tr>
+<td><code>-T, --tag TEXT</code></td>
+<td>Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="merge"><code>merge</code></h2>
+<pre><code class="bash">Usage:  watson merge [OPTIONS] FRAMES_WITH_CONFLICT
+</code></pre>
+
+<p>Perform a merge of the existing frames with a conflicting frames file.</p>
+<p>When storing the frames on a file hosting service, there is the
+possibility that the frame file goes out-of-sync due to one or
+more of the connected clients going offline. This can cause the
+frames to diverge.</p>
+<p>If the <code>--force</code> command is specified, the merge operation
+will automatically be performed.</p>
+<p>The only argument is a path to the the conflicting <code>frames</code> file.</p>
+<p>Merge will output statistics about the merge operation.</p>
+<p>Example:</p>
+<pre><code>$ watson merge frames-with-conflicts
+120 frames will be left unchanged
+12  frames will be merged
+3   frame conflicts need to be resolved
+</code></pre>
+<p>To perform a merge operation, the user will be prompted to
+select the frame they would like to keep.</p>
+<p>Example:</p>
+<pre><code>$ watson merge frames-with-conflicts --force
+120 frames will be left unchanged
+12  frames will be merged
+3   frame conflicts need to be resolved
+Will resolve conflicts:
+frame 8804872:
+&lt; {
+&lt;     "project": "tailordev",
+&lt;     "start": "2015-07-28 09:33:33",
+&lt;     "stop": "2015-07-28 10:39:36",
+&lt;     "tags": [
+&lt;         "intern",
+&lt;         "daily-meeting"
+&lt;     ]
+&lt; }
+---
+&gt; {
+&gt;     "project": "tailordev",
+&gt;     "start": "2015-07-28 09:33:33",
+&gt;     "stop": "**2015-07-28 11:39:36**",
+&gt;     "tags": [
+&gt;         "intern",
+&gt;         "daily-meeting"
+&gt;     ]
+&gt; }
+Select the frame you want to keep: left or right? (L/r)
+</code></pre>
+<h3 id="options_6">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-f, --force</code></td>
+<td>If specified, then the merge will automatically be performed.</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="projects"><code>projects</code></h2>
+<pre><code class="bash">Usage:  watson projects [OPTIONS]
+</code></pre>
+
+<p>Display the list of all the existing projects.</p>
+<p>Example:</p>
+<pre><code>$ watson projects
+apollo11
+hubble
+voyager1
+voyager2
+</code></pre>
+<h3 id="options_7">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="remove"><code>remove</code></h2>
+<pre><code class="bash">Usage:  watson remove [OPTIONS] ID
+</code></pre>
+
+<p>Remove a frame.</p>
+<h3 id="options_8">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-f, --force</code></td>
+<td>Don't ask for confirmation.</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="report"><code>report</code></h2>
+<pre><code class="bash">Usage:  watson report [OPTIONS]
+</code></pre>
+
+<p>Display a report of the time spent on each project.</p>
+<p>If a project is given, the time spent on this project
+is printed. Else, print the total for each root
+project.</p>
+<p>By default, the time spent the last 7 days is printed. This timespan
+can be controlled with the <code>--from</code> and <code>--to</code> arguments. The dates
+must have the format <code>YEAR-MONTH-DAY</code>, like: <code>2014-05-19</code>.</p>
+<p>You can limit the report to a project or a tag using the <code>--project</code> and
+<code>--tag</code> options. They can be specified several times each to add multiple
+projects or tags to the report.</p>
+<p>Example:</p>
+<pre><code>$ watson report
+Mon 05 May 2014 -&gt; Mon 12 May 2014
+
+apollo11 - 13h 22m 20s
+        [brakes    7h 53m 18s]
+        [module    7h 41m 41s]
+        [reactor   8h 35m 50s]
+        [steering 10h 33m 37s]
+        [wheels   10h 11m 35s]
+
+hubble - 8h 54m 46s
+        [camera        8h 38m 17s]
+        [lens          5h 56m 22s]
+        [transmission  6h 27m 07s]
+
+voyager1 - 11h 45m 13s
+        [antenna     5h 53m 57s]
+        [generators  9h 04m 58s]
+        [probe      10h 14m 29s]
+        [sensors    10h 30m 26s]
+
+voyager2 - 16h 16m 09s
+        [antenna     7h 05m 50s]
+        [generators 12h 20m 29s]
+        [probe      12h 20m 29s]
+        [sensors    11h 23m 17s]
+
+Total: 43h 42m 20s
+
+$ watson report --from 2014-04-01 --to 2014-04-30 --project apollo11
+Tue 01 April 2014 -&gt; Wed 30 April 2014
+
+apollo11 - 13h 22m 20s
+        [brakes    7h 53m 18s]
+        [module    7h 41m 41s]
+        [reactor   8h 35m 50s]
+        [steering 10h 33m 37s]
+        [wheels   10h 11m 35s]
+</code></pre>
+<h3 id="options_9">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-f, --from DATE</code></td>
+<td>The date from when the report should start. Defaults to seven days ago.</td>
+</tr>
+<tr>
+<td><code>-t, --to DATE</code></td>
+<td>The date at which the report should stop (inclusive). Defaults to tomorrow.</td>
+</tr>
+<tr>
+<td><code>-p, --project TEXT</code></td>
+<td>Reports activity only for the given project. You can add other projects by using this option several times.</td>
+</tr>
+<tr>
+<td><code>-T, --tag TEXT</code></td>
+<td>Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="restart"><code>restart</code></h2>
+<pre><code class="bash">Usage:  watson restart [OPTIONS] [FRAME]
+</code></pre>
+
+<p>Restart monitoring time for a previously stopped project.</p>
+<p>By default, the project from the last frame, which was recorded, is
+restarted, using the same tags as recorded in that frame. You can specify
+the frame to use with an integer frame index argument or a frame ID. For
+example, to restart the second-to-last frame, pass <code>-2</code> as the frame index.</p>
+<p>Normally, if a project is currently started, watson will print an error and
+do nothing. If you set the configuration option <code>options.stop_on_restart</code>
+to a true value (<code>1</code>, <code>on</code>, <code>true</code> or <code>yes</code>), the current project, if any,
+will be stopped before the new frame is started. You can pass the option
+<code>-s</code> or <code>--stop</code> resp. <code>-S</code> or <code>--no-stop</code> to override the default or
+configured behaviour.</p>
+<p>If no previous frame exists or an invalid frame index or ID was given,
+an error is printed and no further action taken.</p>
+<p>Example:</p>
+<pre><code>$ watson start apollo11 +module +brakes
+Starting project apollo11 [module, brakes] at 16:34
+$ watson stop
+Stopping project apollo11, started a minute ago. (id: e7ccd52)
+$ watson restart
+Starting project apollo11 [module, brakes] at 16:36
+</code></pre>
+<h3 id="options_10">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-s, --stop / -S, --no-stop</code></td>
+<td>(Don't) Stop an already running project.</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="start"><code>start</code></h2>
+<pre><code class="bash">Usage:  watson start [OPTIONS] [ARGS]...
+</code></pre>
+
+<p>Start monitoring time for the given project.
+You can add tags indicating more specifically what you are working on with
+<code>+tag</code>.</p>
+<p>If there is already a running project and the configuration option
+<code>options.stop_on_start</code> is set to a true value (<code>1</code>, <code>on</code>, <code>true</code> or
+<code>yes</code>), it is stopped before the new project is started.</p>
+<p>Example :</p>
+<pre><code>$ watson start apollo11 +module +brakes
+Starting project apollo11 [module, brakes] at 16:34
+</code></pre>
+<h3 id="options_11">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="status"><code>status</code></h2>
+<pre><code class="bash">Usage:  watson status [OPTIONS]
+</code></pre>
+
+<p>Display when the current project was started and the time spent since.</p>
+<p>You can configure how the date and time of when the project was started are
+displayed by setting <code>options.date_format</code> and <code>options.time_format</code> in the
+configuration. The syntax of these formatting strings and the supported
+placeholders are the same as for the <code>strftime</code> method of Python's
+<code>datetime.datetime</code> class.</p>
+<p>Example:</p>
+<pre><code>$ watson status
+Project apollo11 [brakes] started seconds ago (2014-05-19 14:32:41+0100)
+$ watson config options.date_format %d.%m.%Y
+$ watson config options.time_format "at %I:%M %p"
+$ watson status
+Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
+</code></pre>
+<h3 id="options_12">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stop"><code>stop</code></h2>
+<pre><code class="bash">Usage:  watson stop [OPTIONS]
+</code></pre>
+
+<p>Stop monitoring time for the current project.</p>
+<p>Example:</p>
+<pre><code>$ watson stop
+Stopping project apollo11, started a minute ago. (id: e7ccd52)
+</code></pre>
+<h3 id="options_13">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sync"><code>sync</code></h2>
+<pre><code class="bash">Usage:  watson sync [OPTIONS]
+</code></pre>
+
+<p>Get the frames from the server and push the new ones.</p>
+<p>The URL of the server and the User Token must be defined via the
+<code>watson config</code> command.</p>
+<p>Example:</p>
+<pre><code>$ watson config backend.url http://localhost:4242
+$ watson config backend.token 7e329263e329
+$ watson sync
+Received 42 frames from the server
+Pushed 23 frames to the server
+</code></pre>
+<h3 id="options_14">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tags"><code>tags</code></h2>
+<pre><code class="bash">Usage:  watson tags [OPTIONS]
+</code></pre>
+
+<p>Display the list of all the tags.</p>
+<p>Example:</p>
+<pre><code>$ watson tags
+antenna
+brakes
+camera
+generators
+lens
+module
+probe
+reactor
+sensors
+steering
+transmission
+wheels
+</code></pre>
+<h3 id="options_15">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table></div>
+        </div>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script src="../../js/base.js"></script>
+    </body>
+</html>

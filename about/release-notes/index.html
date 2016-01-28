@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="TailorDev">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>Release notes - Watson</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">Watson</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../user-guide/commands/">Commands</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../user-guide/configuration/">Configuration</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../contributing/how-to/">Howto</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../contributing/hack/">Hack</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../contributing/coc/">Code of Conduct</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../faq/">FAQ</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../license/">License</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Release notes</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li >
+                    <a rel="next" href="../license/">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li class="disabled">
+                    <a rel="prev" >
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/TailorDev/Watson">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#release-notes">Release Notes</a></li>
+        
+            <li><a href="#120-2016-01-22">1.2.0 (2016-01-22)</a></li>
+        
+            <li><a href="#110-2015-10-21">1.1.0 (2015-10-21)</a></li>
+        
+            <li><a href="#102-2015-10-09">1.0.2 (2015-10-09)</a></li>
+        
+            <li><a href="#101-2015-09-17">1.0.1 (2015-09-17)</a></li>
+        
+            <li><a href="#100-2015-09-17">1.0.0 (2015-09-17)</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="release-notes">Release Notes</h1>
+<p>This document records all notable changes to Watson. This project adheres to
+<a href="http://semver.org/">Semantic Versioning</a>.</p>
+<h2 id="120-2016-01-22">1.2.0 (2016-01-22)</h2>
+<ul>
+<li>Added: Watson now has a <code>restart</code> command</li>
+<li>Added: Watson now has a <code>merge</code> command</li>
+<li>Added: Watson can now stop running project when starting a new one (optional)</li>
+<li>Added: there is a wrapper for <code>RawConfigParser</code> to make option access more convenient</li>
+<li>Updated: the <code>edit</code> command now defaults to the running frame if any (else defaults to the last one)</li>
+<li>Updated: the <code>log</code> command now has a daily total time summary</li>
+<li>Fixed: unicode issues with cjk characters</li>
+<li>Fixed: edition summary is now converted to local time</li>
+</ul>
+<h2 id="110-2015-10-21">1.1.0 (2015-10-21)</h2>
+<ul>
+<li>Added: configurable date and time to output of <code>status</code> command (#33)</li>
+<li>Added: support for Bash-completion (#1)</li>
+<li>Added: new <code>frames</code> command that displays all frame IDs</li>
+<li>Fixed: set id if not provided (#30)</li>
+</ul>
+<h2 id="102-2015-10-09">1.0.2 (2015-10-09)</h2>
+<ul>
+<li>Fix a bug where the last frame could not be deleted</li>
+<li>Improve installation instructions</li>
+<li>Add an explanation to remove all the frames</li>
+</ul>
+<h2 id="101-2015-09-17">1.0.1 (2015-09-17)</h2>
+<ul>
+<li>Fix packaging error with PyPI</li>
+</ul>
+<h2 id="100-2015-09-17">1.0.0 (2015-09-17)</h2>
+<ul>
+<li>First stable version</li>
+</ul></div>
+        </div>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script src="../../js/base.js"></script>
+    </body>
+</html>
