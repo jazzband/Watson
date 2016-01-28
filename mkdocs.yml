@@ -10,7 +10,11 @@ pages:
 - User Guide:
     - Commands: 'user-guide/commands.md'
     - Configuration: 'user-guide/configuration.md'
-- Contributing: 'contributing.md'
+- Contributing:
+    - Howto: 'contributing/how-to.md'
+    - Hack: 'contributing/hack.md'
+    - Pull Request guidelines: 'contributing/pr-guidelines.md'
+    - Code of Conduct: 'contributing/coc.md'
 - FAQ: 'faq.md'
 - About:
     - License: 'about/license.md'
