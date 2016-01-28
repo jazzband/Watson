@@ -2,11 +2,11 @@
     This document has been automatically generated.
     It should NOT BE EDITED.
     To update this part of the documentation,
-    please refer to Watson's documentation (sic!)
--->
+    please type the following from the repository root:
+    $ make docs-->
 
 # Commands
-## cancel
+## `cancel`
 
 ```bash
 Usage:  watson cancel [OPTIONS]
@@ -21,7 +21,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## config
+## `config`
 
 ```bash
 Usage:  watson config [OPTIONS] SECTION.OPTION [VALUE]
@@ -48,7 +48,7 @@ Flag | Help
 `-e, --edit` | Edit the configuration file with an editor.
 `--help` | Show this message and exit.
 
-## edit
+## `edit`
 
 ```bash
 Usage:  watson edit [OPTIONS] [ID]
@@ -73,7 +73,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## frames
+## `frames`
 
 ```bash
 Usage:  watson frames [OPTIONS]
@@ -96,7 +96,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## help
+## `help`
 
 ```bash
 Usage:  watson help [OPTIONS] [COMMAND]
@@ -110,7 +110,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## log
+## `log`
 
 ```bash
 Usage:  watson log [OPTIONS]
@@ -165,7 +165,7 @@ Flag | Help
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `--help` | Show this message and exit.
 
-## merge
+## `merge`
 
 ```bash
 Usage:  watson merge [OPTIONS] FRAMES_WITH_CONFLICT
@@ -233,7 +233,7 @@ Flag | Help
 `-f, --force` | If specified, then the merge will automatically be performed.
 `--help` | Show this message and exit.
 
-## projects
+## `projects`
 
 ```bash
 Usage:  watson projects [OPTIONS]
@@ -256,7 +256,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## remove
+## `remove`
 
 ```bash
 Usage:  watson remove [OPTIONS] ID
@@ -271,7 +271,7 @@ Flag | Help
 `-f, --force` | Don't ask for confirmation.
 `--help` | Show this message and exit.
 
-## report
+## `report`
 
 ```bash
 Usage:  watson report [OPTIONS]
@@ -343,7 +343,7 @@ Flag | Help
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `--help` | Show this message and exit.
 
-## restart
+## `restart`
 
 ```bash
 Usage:  watson restart [OPTIONS] [FRAME]
@@ -383,7 +383,7 @@ Flag | Help
 `-s, --stop / -S, --no-stop` | (Don't) Stop an already running project.
 `--help` | Show this message and exit.
 
-## start
+## `start`
 
 ```bash
 Usage:  watson start [OPTIONS] [ARGS]...
@@ -409,7 +409,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## status
+## `status`
 
 ```bash
 Usage:  watson status [OPTIONS]
@@ -439,7 +439,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## stop
+## `stop`
 
 ```bash
 Usage:  watson stop [OPTIONS]
@@ -459,7 +459,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## sync
+## `sync`
 
 ```bash
 Usage:  watson sync [OPTIONS]
@@ -485,7 +485,7 @@ Flag | Help
 -----|-----
 `--help` | Show this message and exit.
 
-## tags
+## `tags`
 
 ```bash
 Usage:  watson tags [OPTIONS]

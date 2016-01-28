@@ -103,7 +103,7 @@ def main(rowsput):
         cmd.format_help(ctx, formatter)
 
         # Each command is a section
-        content += "## {}\n\n".format(cmd_name)
+        content += "## `{}`\n\n".format(cmd_name)
         content += ''.join(formatter.buffer)
 
     # Write the commands documentation file
