@@ -76,15 +76,17 @@ def main(rowsput):
             return True
         return False
 
-    content = """
-    <!-- This document has been automatically generated.
-         It should NOT BE EDITED.
-         To update this part of the documentation,
-         please refer to Watson's documentation (sic!) -->
-
-    # Commands
-
-    """
+    content = '\n'.join((
+        "<!-- ",
+        "    This document has been automatically generated.",
+        "    It should NOT BE EDITED.",
+        "    To update this part of the documentation,",
+        "    please refer to Watson's documentation (sic!)",
+        "-->",
+        "",
+        "# Commands",
+        "",
+    ))
 
     # Iterate over commands to build docs
     for cmd_name, cmd in inspect.getmembers(watson_cli, is_click_command):

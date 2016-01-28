@@ -1,12 +1,12 @@
+<!-- 
+    This document has been automatically generated.
+    It should NOT BE EDITED.
+    To update this part of the documentation,
+    please refer to Watson's documentation (sic!)
+-->
 
-    <!-- This document has been automatically generated.
-         It should NOT BE EDITED.
-         To update this part of the documentation,
-         please refer to Watson's documentation (sic!) -->
-
-    # Commands
-
-    ## cancel
+# Commands
+## cancel
 
 `Usage:   [OPTIONS]`
 
