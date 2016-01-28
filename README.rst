@@ -23,7 +23,7 @@ Installation
 
   $ pip install td-watson
 
-If you need more details about installing watson, please refer to its `documentation <https://tailordev.github.io/Watson>`_.
+If you need more details about installing watson, please refer to the `documentation <https://tailordev.github.io/Watson>`_.
 
 Usage
 ~~~~~
