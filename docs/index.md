@@ -60,9 +60,9 @@ $ source ~/.bashrc  # Reload your .bashrc
 The latest development version can be installed using the following commands:
 
 ```bash
-    $ git clone https://github.com/TailorDev/Watson.git
-    $ cd Watson/
-    $ python setup.py install
+$ git clone https://github.com/TailorDev/Watson.git
+$ cd Watson/
+$ python setup.py install
 ```
 
 ### Command line completion
@@ -71,4 +71,27 @@ If you use a Bash-compatible shell, you can install the `watson.completion` file
 
 ## Getting started
 
-TODO
+Now that `watson` is installed on your system, let's start tracking your activity:
+
+```bash
+$ watson start world-domination +cats
+```
+
+With this command, you have started a new **frame** for the *world-domination* project with the *cat* tag. Time is running. Now, you need to work on your project. Let's do this. Now.
+
+![Working cat](img/working-cat.gif)
+
+Welcome back! Now that your world domination plan has been set up, let's stop time tracking via:
+
+```bash
+$ watson stop
+Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
+```
+
+To list all available commands, either [explore the commands documentation](user-guide/commands.md) or use:
+
+```bash
+$ watson help
+```
+
+We hope you will enjoy Watson!
