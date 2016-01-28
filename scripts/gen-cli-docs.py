@@ -87,7 +87,8 @@ def main(rowsput):
         "    This document has been automatically generated.",
         "    It should NOT BE EDITED.",
         "    To update this part of the documentation,",
-        "    please refer to Watson's documentation (sic!)",
+        "    please type the following from the repository root:",
+        "    $ make docs"
         "-->",
         "",
         "# Commands",
