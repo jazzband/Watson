@@ -8,7 +8,9 @@
 # Commands
 ## cancel
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson cancel [OPTIONS]
+```
 
 Cancel the last call to the start command. The time will
 not be recorded.
@@ -21,7 +23,9 @@ Flag | Help
 
 ## config
 
-`Usage:   [OPTIONS] SECTION.OPTION [VALUE]`
+```bash
+Usage:  watson config [OPTIONS] SECTION.OPTION [VALUE]
+```
 
 Get and set configuration options.
 
@@ -46,7 +50,9 @@ Flag | Help
 
 ## edit
 
-`Usage:   [OPTIONS] [ID]`
+```bash
+Usage:  watson edit [OPTIONS] [ID]
+```
 
 Edit a frame.
 
@@ -69,7 +75,9 @@ Flag | Help
 
 ## frames
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson frames [OPTIONS]
+```
 
 Display the list of all frame IDs.
 
@@ -90,7 +98,9 @@ Flag | Help
 
 ## help
 
-`Usage:   [OPTIONS] [COMMAND]`
+```bash
+Usage:  watson help [OPTIONS] [COMMAND]
+```
 
 Display help information
 
@@ -102,7 +112,9 @@ Flag | Help
 
 ## log
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson log [OPTIONS]
+```
 
 Display each recorded session during the given timespan.
 
@@ -155,7 +167,9 @@ Flag | Help
 
 ## merge
 
-`Usage:   [OPTIONS] FRAMES_WITH_CONFLICT`
+```bash
+Usage:  watson merge [OPTIONS] FRAMES_WITH_CONFLICT
+```
 
 Perform a merge of the existing frames with a conflicting frames file.
 
@@ -221,7 +235,9 @@ Flag | Help
 
 ## projects
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson projects [OPTIONS]
+```
 
 Display the list of all the existing projects.
 
@@ -242,7 +258,9 @@ Flag | Help
 
 ## remove
 
-`Usage:   [OPTIONS] ID`
+```bash
+Usage:  watson remove [OPTIONS] ID
+```
 
 Remove a frame.
 
@@ -255,7 +273,9 @@ Flag | Help
 
 ## report
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson report [OPTIONS]
+```
 
 Display a report of the time spent on each project.
 
@@ -325,7 +345,9 @@ Flag | Help
 
 ## restart
 
-`Usage:   [OPTIONS] [FRAME]`
+```bash
+Usage:  watson restart [OPTIONS] [FRAME]
+```
 
 Restart monitoring time for a previously stopped project.
 
@@ -363,7 +385,9 @@ Flag | Help
 
 ## start
 
-`Usage:   [OPTIONS] [ARGS]...`
+```bash
+Usage:  watson start [OPTIONS] [ARGS]...
+```
 
 Start monitoring time for the given project.
 You can add tags indicating more specifically what you are working on with
@@ -387,7 +411,9 @@ Flag | Help
 
 ## status
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson status [OPTIONS]
+```
 
 Display when the current project was started and the time spent since.
 
@@ -415,7 +441,9 @@ Flag | Help
 
 ## stop
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson stop [OPTIONS]
+```
 
 Stop monitoring time for the current project.
 
@@ -433,7 +461,9 @@ Flag | Help
 
 ## sync
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson sync [OPTIONS]
+```
 
 Get the frames from the server and push the new ones.
 
@@ -457,7 +487,9 @@ Flag | Help
 
 ## tags
 
-`Usage:   [OPTIONS]`
+```bash
+Usage:  watson tags [OPTIONS]
+```
 
 Display the list of all the tags.
 

@@ -3,6 +3,7 @@ import inspect
 from click.core import Command, Context
 from click.formatting import HelpFormatter
 from watson import cli as watson_cli
+# from watson import watson
 
 
 class MarkdownFormatter(HelpFormatter):
@@ -17,7 +18,7 @@ class MarkdownFormatter(HelpFormatter):
         :param args: whitespace separated list of arguments.
         :param prefix: the prefix for the first line.
         """
-        self.write('`{} {} {}`\n'.format(prefix, prog, args))
+        self.write('```bash\n{} {} {}\n```\n'.format(prefix, prog, args))
 
     def write_text(self, text):
         """Writes re-indented text into the buffer.
@@ -59,6 +60,11 @@ class MarkdownFormatter(HelpFormatter):
 
 class MkdocsContext(Context):
 
+    @property
+    def command_path(self):
+        # Not so proud of it
+        return 'watson {}'.format(self.command.name)
+
     def make_formatter(self):
         return MarkdownFormatter()
 
@@ -92,8 +98,7 @@ def main(rowsput):
     for cmd_name, cmd in inspect.getmembers(watson_cli, is_click_command):
 
         ctx = MkdocsContext(cmd)
-        formatter = ctx.make_formatter()
-
+        formatter = MarkdownFormatter()
         cmd.format_help(ctx, formatter)
 
         # Each command is a section
