@@ -15,6 +15,7 @@
         <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="./css/highlight.css">
         <link href="./css/base.css" rel="stylesheet">
+        <link href="./css/watson.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -174,7 +175,7 @@ much time you are spending on your projects? You want to generate a nice
 report for your client? Watson is here for you.</p>
 <p>Tell Watson when you start working on a task with the <code>start</code> command.
 Then, when you are done with this task, stop the timer with the <code>stop</code>
-command. This will create what we call a <strong>frame</strong>. That's pretty much
+command. This will create what we call a <strong>frame</strong>. That&rsquo;s pretty much
 everything you need to know to start using Watson.</p>
 <p>Each frame consists of the name of a project and some tags. Your tags
 can be shared across projects and can be used to generate detailed
@@ -214,13 +215,13 @@ $ python setup.py install
 <h3 id="command-line-completion">Command line completion</h3>
 <p>If you use a Bash-compatible shell, you can install the <code>watson.completion</code> file from the source distribution as <code>/etc/bash.completion.d/watson</code> - or wherever your distribution keeps the Bash completion configuration files. After you restart your shell, you can then just type <code>watson</code> on your command line and then hit <code>TAB</code> to see all available commands. Depending on your input, it completes <code>watson</code> commands, command options, projects, tags and frame IDs.</p>
 <h2 id="getting-started">Getting started</h2>
-<p>Now that <code>watson</code> is installed on your system, let's start tracking your activity:</p>
+<p>Now that <code>watson</code> is installed on your system, let&rsquo;s start tracking your activity:</p>
 <pre><code class="bash">$ watson start world-domination +cats
 </code></pre>
 
-<p>With this command, you have started a new <strong>frame</strong> for the <em>world-domination</em> project with the <em>cat</em> tag. Time is running. Now, you need to work on your project. Let's do this. Now.</p>
-<p><img alt="Working cat" src="./img/working-cat.gif" /></p>
-<p>Welcome back! Now that your world domination plan has been set up, let's stop time tracking via:</p>
+<p>With this command, you have started a new <strong>frame</strong> for the <em>world-domination</em> project with the <em>cat</em> tag. Time is running. Now, you need to work on your project. Let&rsquo;s do this. Now.</p>
+<p><img alt="Working cat" src="./img/working-cat.gif" width="400px" /></p>
+<p>Welcome back! Now that your world domination plan has been set up, let&rsquo;s stop time tracking via:</p>
 <pre><code class="bash">$ watson stop
 Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
 </code></pre>
