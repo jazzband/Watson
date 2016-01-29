@@ -79,7 +79,7 @@ $ watson start world-domination +cats
 
 With this command, you have started a new **frame** for the *world-domination* project with the *cat* tag. Time is running. Now, you need to work on your project. Let's do this. Now.
 
-![Working cat](img/working-cat.gif)
+![Working cat](img/working-cat.gif){: width="400px" }
 
 Welcome back! Now that your world domination plan has been set up, let's stop time tracking via:
 

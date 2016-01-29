@@ -21,3 +21,6 @@ pages:
     - Release notes: 'about/release-notes.md'
 extra_css:
     - css/watson.css
+markdown_extensions:
+    - attr_list
+    - smarty
