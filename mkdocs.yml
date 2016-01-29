@@ -19,3 +19,5 @@ pages:
 - About:
     - License: 'about/license.md'
     - Release notes: 'about/release-notes.md'
+extra_css:
+    - css/watson.css

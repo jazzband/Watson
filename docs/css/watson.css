@@ -1,0 +1,29 @@
+/*
+    Watson styles.
+ */
+
+a {
+    color:#1abc9c;
+}
+
+h2 {
+    margin-top: 2em;
+}
+
+p {
+    margin: 0 0 1.2em;
+    font-size: 1.1em;
+    line-height: 1.4em;
+    text-align: justify;
+}
+
+p > img {
+    display: block;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+p a {
+    text-decoration: underline;
+}
