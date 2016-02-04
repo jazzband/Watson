@@ -43,6 +43,16 @@ Now stop tracking you world domination plan via:
   $ watson stop
   Project world-domination [cat] started 8 minutes ago (2016.01.27 13:00:28+0100)
 
+You can log your latest working sessions (aka **frames**) thanks to the ``log`` command:
+
+.. code:: bash
+
+  $ watson log
+  Tuesday 26 January 2016 (8m 32s)
+        ffb2a4c  13:00 to 13:08      08m 32s   world-domination  [cat]
+
+Please note that, as `the ``report`` command <https://tailordev.github.io/Watson/user-guide/commands/#report>`_, the ``log`` command comes with projects, tags and dates filtering.
+
 To list all available commands, either `read the documentation <https://tailordev.github.io/Watson>`_ or use:
 
 .. code:: bash
