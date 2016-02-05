@@ -9,7 +9,7 @@ report for your client? Watson is here for you.
 
 Wanna know what it looks like? Check this below.
 
-![screenshot](docs/img/screenshot.png)
+.. image:: docs/img/screenshot.png
 
 Nice isn't it?
 
