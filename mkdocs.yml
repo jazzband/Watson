@@ -1,0 +1,26 @@
+site_name: Watson
+theme: flatly
+repo_url: https://github.com/TailorDev/Watson
+repo_name: GitHub
+site_description: A wonderful CLI to track your time!
+site_author: TailorDev
+copyright: Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a>
+pages:
+- Home: 'index.md'
+- User Guide:
+    - Commands: 'user-guide/commands.md'
+    - Configuration: 'user-guide/configuration.md'
+- Contributing:
+    - Howto: 'contributing/how-to.md'
+    - Hack: 'contributing/hack.md'
+    - Pull Request guidelines: 'contributing/pr-guidelines.md'
+    - Code of Conduct: 'contributing/coc.md'
+- FAQ: 'faq.md'
+- About:
+    - License: 'about/license.md'
+    - Release notes: 'about/release-notes.md'
+extra_css:
+    - css/watson.css
+markdown_extensions:
+    - attr_list
+    - smarty

@@ -128,16 +128,16 @@ def _start(watson, project, tags):
 def start(ctx, watson, args):
     """
     Start monitoring time for the given project.
-
     You can add tags indicating more specifically what you are working on with
-    '+tag'.
+    `+tag`.
 
     If there is already a running project and the configuration option
-    'options.stop_on_start' is set to a true value ('1', 'on', 'true' or
-    'yes'), it is stopped before the new project is started.
+    `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
+    `yes`), it is stopped before the new project is started.
+
+    Example :
 
     \b
-    Example :
     $ watson start apollo11 +module +brakes
     Starting project apollo11 [module, brakes] at 16:34
     """
@@ -169,8 +169,9 @@ def stop(watson):
     """
     Stop monitoring time for the current project.
 
-    \b
     Example:
+
+    \b
     $ watson stop
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
     """
@@ -197,20 +198,21 @@ def restart(ctx, watson, frame, stop_):
     By default, the project from the last frame, which was recorded, is
     restarted, using the same tags as recorded in that frame. You can specify
     the frame to use with an integer frame index argument or a frame ID. For
-    example, to restart the second-to-last frame, pass -2 as the frame index.
+    example, to restart the second-to-last frame, pass `-2` as the frame index.
 
     Normally, if a project is currently started, watson will print an error and
-    do nothing. If you set the configuration option 'options.stop_on_restart'
-    to a true value ('1', 'on', 'true' or 'yes'), the current project, if any,
+    do nothing. If you set the configuration option `options.stop_on_restart`
+    to a true value (`1`, `on`, `true` or `yes`), the current project, if any,
     will be stopped before the new frame is started. You can pass the option
-    '-s' or '--stop' resp. '-S' or '--no-stop' to override the default or
+    `-s` or `--stop` resp. `-S` or `--no-stop` to override the default or
     configured behaviour.
 
     If no previous frame exists or an invalid frame index or ID was given,
     an error is printed and no further action taken.
 
-    \b
     Example:
+
+    \b
     $ watson start apollo11 +module +brakes
     Starting project apollo11 [module, brakes] at 16:34
     $ watson stop
@@ -273,13 +275,14 @@ def status(watson):
     Display when the current project was started and the time spent since.
 
     You can configure how the date and time of when the project was started are
-    displayed by setting 'options.date_format' and 'options.time_format' in the
+    displayed by setting `options.date_format` and `options.time_format` in the
     configuration. The syntax of these formatting strings and the supported
-    placeholders are the same as for the 'strftime' method of Python's
-    'datetime.datetime' class.
+    placeholders are the same as for the `strftime` method of Python's
+    `datetime.datetime` class.
+
+    Example:
 
     \b
-    Example:
     $ watson status
     Project apollo11 [brakes] started seconds ago (2014-05-19 14:32:41+0100)
     $ watson config options.date_format %d.%m.%Y
@@ -328,18 +331,18 @@ def report(watson, from_, to, projects, tags):
     project.
 
     By default, the time spent the last 7 days is printed. This timespan
-    can be controlled with the '--from' and '--to' arguments. The dates
-    must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
+    can be controlled with the `--from` and `--to` arguments. The dates
+    must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the report.
 
-    \b
     Example:
+
+    \b
     $ watson report
     Mon 05 May 2014 -> Mon 12 May 2014
-
     \b
     apollo11 - 13h 22m 20s
             [brakes    7h 53m 18s]
@@ -347,34 +350,28 @@ def report(watson, from_, to, projects, tags):
             [reactor   8h 35m 50s]
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
-
     \b
     hubble - 8h 54m 46s
             [camera        8h 38m 17s]
             [lens          5h 56m 22s]
             [transmission  6h 27m 07s]
-
     \b
     voyager1 - 11h 45m 13s
             [antenna     5h 53m 57s]
             [generators  9h 04m 58s]
             [probe      10h 14m 29s]
             [sensors    10h 30m 26s]
-
     \b
     voyager2 - 16h 16m 09s
             [antenna     7h 05m 50s]
             [generators 12h 20m 29s]
             [probe      12h 20m 29s]
             [sensors    11h 23m 17s]
-
     \b
     Total: 43h 42m 20s
-
     \b
     $ watson report --from 2014-04-01 --to 2014-04-30 --project apollo11
     Tue 01 April 2014 -> Wed 30 April 2014
-
     \b
     apollo11 - 13h 22m 20s
             [brakes    7h 53m 18s]
@@ -464,41 +461,37 @@ def log(watson, from_, to, projects, tags):
     Display each recorded session during the given timespan.
 
     By default, the sessions from the last 7 days are printed. This timespan
-    can be controlled with the '--from' and '--to' arguments. The dates
-    must have the format 'YEAR-MONTH-DAY', like: '2014-05-19'.
+    can be controlled with the `--from` and `--to` arguments. The dates
+    must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the log.
 
-    \b
     Example:
+
+    \b
     $ watson log --project voyager2 --project apollo11
     Thursday 08 May 2015 (56m 33s)
             f35bb24  09:26 to 10:22      56m 33s  apollo11  [reactor, brakes, steering, wheels, module]
-
     \b
     Wednesday 07 May 2015 (27m 29s)
             9a1325d  09:48 to 10:15      27m 29s  voyager2  [sensors, generators, probe]
-
     \b
     Tuesday 06 May 2015 (1h 47m 22s)
             530768b  12:40 to 14:16   1h 35m 45s  apollo11  [wheels]
             84164f0  14:23 to 14:35      11m 37s  apollo11  [brakes, steering]
-
     \b
     Monday 05 May 2015 (8h 18m 26s)
             26a2817  09:05 to 10:03      57m 12s  voyager2  [probe, generators]
             5590aca  10:51 to 14:47   3h 55m 40s  apollo11
             c32c74e  15:12 to 18:38   3h 25m 34s  voyager2  [probe, generators, sensors, antenna]
-
     \b
     $ watson log --from 2014-04-16 --to 2014-04-17
     Thursday 17 April 2014 (4h 19m 13s)
             a96fcde  09:15 to 09:43      28m 11s    hubble  [lens, camera, transmission]
             5e91316  10:19 to 12:59   2h 39m 15s    hubble  [camera, transmission]
             761dd51  14:42 to 15:54   1h 11m 47s  voyager1  [antenna]
-
     \b
     Wednesday 16 April 2014 (5h 19m 18s)
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
@@ -560,8 +553,9 @@ def projects(watson):
     """
     Display the list of all the existing projects.
 
-    \b
     Example:
+
+    \b
     $ watson projects
     apollo11
     hubble
@@ -578,8 +572,9 @@ def tags(watson):
     """
     Display the list of all the tags.
 
-    \b
     Example:
+
+    \b
     $ watson tags
     antenna
     brakes
@@ -604,8 +599,9 @@ def frames(watson):
     """
     Display the list of all frame IDs.
 
-    \b
     Example:
+
+    \b
     $ watson frames
     f1c4815
     9d1a989
@@ -763,10 +759,11 @@ def config(context, key, value, edit):
     If value is not provided, the content of the key is displayed. Else,
     the given value is set.
 
-    You can edit the config file with an editor with the '--edit' option.
+    You can edit the config file with an editor with the `--edit` option.
+
+    Example:
 
     \b
-    Example:
     $ watson config backend.token 7e329263e329
     $ watson config backend.token
     7e329263e329
@@ -823,10 +820,11 @@ def sync(watson):
     Get the frames from the server and push the new ones.
 
     The URL of the server and the User Token must be defined via the
-    'watson config' command.
+    `watson config` command.
+
+    Example:
 
     \b
-    Example:
     $ watson config backend.url http://localhost:4242
     $ watson config backend.token 7e329263e329
     $ watson sync
@@ -864,18 +862,22 @@ def merge(watson, frames_with_conflict, force):
 
     The only argument is a path to the the conflicting `frames` file.
 
-    \b
     Merge will output statistics about the merge operation.
+
     Example:
+
+    \b
     $ watson merge frames-with-conflicts
     120 frames will be left unchanged
     12  frames will be merged
     3   frame conflicts need to be resolved
 
-    \b
     To perform a merge operation, the user will be prompted to
     select the frame they would like to keep.
+
     Example:
+
+    \b
     $ watson merge frames-with-conflicts --force
     120 frames will be left unchanged
     12  frames will be merged

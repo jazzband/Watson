@@ -45,7 +45,7 @@ setup(
     license='MIT',
     long_description=readme,
     install_requires=parse_requirements('requirements.txt'),
-    tests_require=parse_requirements('requirements-tests.txt'),
+    tests_require=parse_requirements('requirements-dev.txt'),
     entry_points={
         'console_scripts': [
             'watson = watson.__main__:cli',

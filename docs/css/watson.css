@@ -1,0 +1,46 @@
+/*
+    Watson styles.
+ */
+
+a {
+    color:#1abc9c;
+}
+
+h2 {
+    margin-top: 2em;
+}
+
+div[role="main"] li,
+p {
+    font-size: 1.1em;
+    line-height: 1.4em;
+    text-align: justify;
+}
+
+p {
+    margin: 0 0 1.2em;
+}
+
+p > img {
+    display: block;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div[role="main"] li a,
+p a {
+    text-decoration: underline;
+}
+
+div[role="main"] dl,
+div[role="main"] ol,
+div[role="main"] ul {
+    margin-top: 1.4em;
+}
+
+div[role="main"] dl li,
+div[role="main"] ol li,
+div[role="main"] ul li {
+    margin-top: 0.8em;
+}
