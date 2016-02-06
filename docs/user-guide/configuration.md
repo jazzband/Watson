@@ -161,7 +161,7 @@ export WATSON_DIR=/path/to/watson/folder
 
 or when calling Watson:
 
-```
+```bash
 $ WATSON_DIR=/path/to/watson/folder watson status
 ```
 
