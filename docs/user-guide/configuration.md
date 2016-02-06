@@ -2,7 +2,7 @@
 
 ## The configuration file
 
-Watson configuration and data are stored inside your user's application folder. Depending on your system it might be:
+Watson configuration and data are stored inside your user's application folder. Depending on your system, the default path might be:
 
 * **MacOSX**: `~/Library/Application Support/watson/config`
 * **Windows**: `C:\Users\<user>\AppData\Local\watson\config`
@@ -147,3 +147,22 @@ stop_on_restart = false
 date_format = '%Y.%m.%d'
 time_format = '%H:%M:%S%z'
 ```
+
+## Application folder
+
+To override Watson's default application folder (see first section), you can set the `$WATSON_DIR` environment variable to the desired path.
+
+It may be defined globally in your shell profile:
+
+```bash
+# .bashrc or .profile
+export WATSON_DIR=/path/to/watson/folder
+```
+
+or when calling Watson:
+
+```bash
+$ WATSON_DIR=/path/to/watson/folder watson status
+```
+
+This can be useful to preserve your real data when hacking with Watson :)

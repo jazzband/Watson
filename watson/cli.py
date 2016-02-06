@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import json
 import datetime
-import operator
 import itertools
+import json
+import operator
+import os
 
-from functools import reduce
 from dateutil import tz
+from functools import reduce
 
-import click
 import arrow
+import click
 
 from . import watson
 from .frames import Frame
@@ -83,10 +84,10 @@ def cli(ctx):
     project with the `start` command, and you can stop the timer
     when you're done with the `stop` command.
     """
+
     # This is the main command group, needed by click in order
     # to handle the subcommands
-
-    ctx.obj = watson.Watson()
+    ctx.obj = watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
 
 
 @cli.command()
