@@ -164,6 +164,8 @@
         
             <li><a href="#sample-configuration-file">Sample configuration file</a></li>
         
+            <li><a href="#application-folder">Application folder</a></li>
+        
     
     </ul>
 </div></div>
@@ -171,7 +173,7 @@
 
 <h1 id="configuration">Configuration</h1>
 <h2 id="the-configuration-file">The configuration file</h2>
-<p>Watson configuration and data are stored inside your user&rsquo;s application folder. Depending on your system it might be:</p>
+<p>Watson configuration and data are stored inside your user&rsquo;s application folder. Depending on your system, the default path might be:</p>
 <ul>
 <li><strong>MacOSX</strong>: <code>~/Library/Application Support/watson/config</code></li>
 <li><strong>Windows</strong>: <code>C:\Users\&lt;user&gt;\AppData\Local\watson\config</code></li>
@@ -281,7 +283,20 @@ stop_on_start = true
 stop_on_restart = false
 date_format = '%Y.%m.%d'
 time_format = '%H:%M:%S%z'
-</code></pre></div>
+</code></pre>
+
+<h2 id="application-folder">Application folder</h2>
+<p>To override Watson&rsquo;s default application folder (see first section), you can set the <code>$WATSON_DIR</code> environment variable to the desired path.</p>
+<p>It may be defined globally in your shell profile:</p>
+<pre><code class="bash"># .bashrc or .profile
+export WATSON_DIR=/path/to/watson/folder
+</code></pre>
+
+<p>or when calling Watson:</p>
+<pre><code class="bash">$ WATSON_DIR=/path/to/watson/folder watson status
+</code></pre>
+
+<p>This can be useful to preserve your real data when hacking with Watson :)</p></div>
         </div>
 
         <script src="../../js/jquery-1.10.2.min.js"></script>
