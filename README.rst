@@ -9,7 +9,7 @@ report for your client? Watson is here for you.
 
 Wanna know what it looks like? Check this below.
 
-.. image:: docs/img/screenshot.png
+|Watson screenshot|_
 
 Nice isn't it?
 
@@ -79,3 +79,5 @@ details.
 .. |Requires.io| image:: https://requires.io/github/TailorDev/Watson/requirements.svg?branch=master
    :target: https://requires.io/github/TailorDev/Watson/requirements/?branch=master
    :alt: Requirements Status
+.. |Watson screenshot| image:: https://asciinema.org/a/35918.png
+.. _Watson screenshot: https://asciinema.org/a/35918
