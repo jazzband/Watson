@@ -7,10 +7,10 @@ env:
   global:
     # - DEPLOY_DOCS: "$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
     - DEPLOY_DOCS: "true"
-    - GH_USER_NAME: "Julien Maupetit"
+    - GH_USER_NAME: "TravisCI"
     - GH_USER_EMAIL: julien@tailordev.fr
     - GH_REF: github.com/TailorDev/Watson.git
-    - secure: "aTFUX0aWro16NzV3yEPnz/VR2O7g6eojnGb9ggsrrZwlRHFR9fSdgVpvETKclGrZtTSEOyO6CCUKhS8R0Kzm8vUF1xtqWjbFWWq8jrwZiXWYmibqA9AnFmfczFnTarJVH0JxdgEj77do8zuau2oIG0VdMjPixc62A5MH+SZ2sZ8="
+    - secure: "DV+BkyLB5GxeIcxUvEpVcqXxkAZz12HhSqccFuea1EQhQ9dIxcuhUzS6jUhaYgQF9KhncgIplo10cC3DUjFVTwQVCoiWWME0tg+WGjWGBSJQPhcAZTvQ17upPEkSDaR8UPBq8bGeCggi1w9zLklukCccatUedqxy4YB35Eo60pc="
   matrix:
     # - TOX_ENV: flake8
     - TOX_ENV: mkdocs
