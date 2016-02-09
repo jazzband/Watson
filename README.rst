@@ -10,7 +10,8 @@ report for your client? Watson is here for you.
 Wanna know what it looks like? Check this below.
 
 .. raw:: html
-  <script type="text/javascript" src="https://asciinema.org/a/35918.js?autoplay=1&loop=1" id="asciicast-35918" async></script>
+
+   <script type="text/javascript" src="https://asciinema.org/a/35918.js?autoplay=1&loop=1" id="asciicast-35918" async></script>
 
 Nice isn't it?
 
