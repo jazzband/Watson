@@ -4,11 +4,11 @@ python:
   - "3.5"
 
 env:
-  - TOX_ENV=flake8
-  - TOX_ENV=py27
-  - TOX_ENV=py33
-  - TOX_ENV=py34
-  - TOX_ENV=py35
+  # - TOX_ENV=flake8
+  # - TOX_ENV=py27
+  # - TOX_ENV=py33
+  # - TOX_ENV=py34
+  # - TOX_ENV=py35
   # - TOX_ENV=mkdocs DEPLOY_DOCS="$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
   - TOX_ENV=mkdocs DEPLOY_DOCS="true"
 
@@ -19,4 +19,4 @@ script:
   - tox -e $TOX_ENV
 
 after_success:
-  - if [[ $DEPLOY_DOCS == "true" ]]; then echo "Preparing to build and deploy documentation" ; make gh-deploy ; echo "Completed deploying documentation" ; fi
+  - if [[ $DEPLOY_DOCS == "true" ]]; then echo "Preparing to build and deploy documentation" ; make gh-deploy ; git log -n 2 --branches gh-pages ; echo "Completed deploying documentation" ; fi
