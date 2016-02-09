@@ -9,7 +9,7 @@ env:
   - TOX_ENV=py33
   - TOX_ENV=py34
   - TOX_ENV=py35
-  - DEPLOY_DOCS="$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
+  - TOX_ENV=mkdocs DEPLOY_DOCS="$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
 
 install:
   - make
@@ -17,7 +17,6 @@ install:
 
 script:
   - tox -e $TOX_ENV
-  - if [[ $DEPLOY_DOCS == "true" && "$TRAVIS_TEST_RESULT" == "0" ]]; then make docs ; fi
 
 after_success:
   - if [[ $DEPLOY_DOCS == "true" ]]; then echo "Preparing to build and deploy documentation" ; make gh-deploy ; echo "Completed deploying documentation" ; fi
