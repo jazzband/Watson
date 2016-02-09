@@ -1,9 +1,19 @@
 import arrow
 import random
+import os
+import sys
 
 from watson import Watson
 
-watson = Watson(frames=None, current=None)
+if not os.environ.get('WATSON_DIR'):
+    sys.exit(
+        "This script will corrupt Watson's data, please set the WATSON_DIR "
+        "environment variable to safely use it for development purpose."
+    )
+
+watson = Watson(config_dir=os.environ.get('WATSON_DIR'),
+                frames=None,
+                current=None)
 
 projects = [
     ("apollo11", ["reactor", "module", "wheels", "steering", "brakes"]),
