@@ -20,5 +20,11 @@ docs: install-dev
 	python scripts/gen-cli-docs.py
 	mkdocs build
 
-gh-deploy: docs
-	mkdocs gh-deploy
+ghp-setup:
+	if [[ -z `git config user.name` && $(GH_USER_NAME) ]] ; then git config user.name $(GH_USER_NAME) ; fi
+	if [[ -z `git config user.email` && $(GH_USER_EMAIL) ]] ; then git config user.email $(GH_USER_EMAIL) ; fi
+	if [[ $(GH_TOKEN) && $(GH_REF) ]] ; then git remote add upstream "https://$(GH_TOKEN)@$(GH_REF)" ; fi
+
+gh-deploy: docs ghp-setup
+	mkdocs gh-deploy -r upstream
+	git log -n 2 upstream/gh-pages

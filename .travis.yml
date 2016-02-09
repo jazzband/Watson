@@ -4,13 +4,20 @@ python:
   - "3.5"
 
 env:
-  # - TOX_ENV=flake8
-  # - TOX_ENV=py27
-  # - TOX_ENV=py33
-  # - TOX_ENV=py34
-  # - TOX_ENV=py35
-  # - TOX_ENV=mkdocs DEPLOY_DOCS="$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
-  - TOX_ENV=mkdocs DEPLOY_DOCS="true"
+  global:
+    # - DEPLOY_DOCS: "$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
+    - DEPLOY_DOCS: "true"
+    - GH_USER_NAME: "Julien Maupetit"
+    - GH_USER_EMAIL: julien@tailordev.fr
+    - GH_REF: github.com/TailorDev/Watson.git
+    - secure: "aTFUX0aWro16NzV3yEPnz/VR2O7g6eojnGb9ggsrrZwlRHFR9fSdgVpvETKclGrZtTSEOyO6CCUKhS8R0Kzm8vUF1xtqWjbFWWq8jrwZiXWYmibqA9AnFmfczFnTarJVH0JxdgEj77do8zuau2oIG0VdMjPixc62A5MH+SZ2sZ8="
+  matrix:
+    # - TOX_ENV: flake8
+    - TOX_ENV: mkdocs
+    # - TOX_ENV: py27
+    # - TOX_ENV: py33
+    # - TOX_ENV: py34
+    # - TOX_ENV: py35
 
 install:
   - pip install tox
@@ -19,4 +26,4 @@ script:
   - tox -e $TOX_ENV
 
 after_success:
-  - if [[ $DEPLOY_DOCS == "true" ]]; then echo "Preparing to build and deploy documentation" ; make gh-deploy ; git log -n 2 --branches gh-pages ; echo "Completed deploying documentation" ; fi
+  - if [[ $DEPLOY_DOCS == "true" ]]; then echo "Preparing to build and deploy documentation" ; make gh-deploy ; echo "Completed deploying documentation" ; fi
