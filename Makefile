@@ -19,3 +19,6 @@ distclean: clean
 docs: install-dev
 	python scripts/gen-cli-docs.py
 	mkdocs build
+
+gh-deploy: docs
+	mkdocs gh-deploy
