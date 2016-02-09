@@ -9,10 +9,10 @@ env:
   - TOX_ENV=py33
   - TOX_ENV=py34
   - TOX_ENV=py35
-  - TOX_ENV=mkdocs DEPLOY_DOCS="$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
+  # - TOX_ENV=mkdocs DEPLOY_DOCS="$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
+  - TOX_ENV=mkdocs DEPLOY_DOCS="true"
 
 install:
-  - make
   - pip install tox
 
 script:
