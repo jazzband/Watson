@@ -50,7 +50,8 @@ class Watson(object):
         self._config = None
         self._config_changed = False
 
-        self._dir = kwargs.pop('config_dir') or click.get_app_dir('watson')
+        self._dir = (kwargs.pop('config_dir', None) or
+                     click.get_app_dir('watson'))
 
         self.config_file = os.path.join(self._dir, 'config')
         self.frames_file = os.path.join(self._dir, 'frames')
