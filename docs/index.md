@@ -1,6 +1,4 @@
-# Watson
-
-A wonderful CLI to track your time!
+![logo Watson](img/logo-watson-600px.png)
 
 ## Overview
 
