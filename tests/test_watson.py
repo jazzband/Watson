@@ -17,6 +17,7 @@ import pytest
 import requests
 import arrow
 
+from click import get_app_dir
 from watson import Watson, WatsonError
 from watson.watson import ConfigurationError, ConfigParser
 
@@ -208,6 +209,11 @@ def test_frames_with_empty_given_state(config_dir):
 
 
 # config
+
+def test_empty_config_dir():
+    watson = Watson()
+    assert watson._dir == get_app_dir('watson')
+
 
 def test_wrong_config(watson):
     content = u"""
