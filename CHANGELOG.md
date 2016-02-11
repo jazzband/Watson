@@ -4,6 +4,12 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.3.0 (2016-02-11)
+
+* Add a complete browsable documentation
+* Add Watson's brand new logo!
+* Add support for Watson's directory override via the WATSON_DIR environment variable
+
 ## 1.2.0 (2016-01-22)
 
 * Added: Watson now has a `restart` command
