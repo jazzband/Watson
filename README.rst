@@ -1,4 +1,4 @@
-.. image:: docs/img/logo-watson-600px.png
+.. image:: https://tailordev.github.io/Watson/img/logo-watson-600px.png
 
 |Build Status| |PyPI Downloads Per Month| |PyPI Latest Version| |Requires.io|
 
