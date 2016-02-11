@@ -3,6 +3,10 @@
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.3.1 (2016-02-11)
+
+* Fix packaging error with PyPI
+
 ## 1.3.0 (2016-02-11)
 
 * Add a complete browsable documentation
