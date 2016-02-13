@@ -33,6 +33,19 @@ $ pip install td-watson
 
 Depending on your system, you might need to run this command with root privileges in order to install Watson globally.
 
+### Distribution packages
+
+You can install Watson using available distribution packages.
+
+**Arch Linux**
+
+A PKGBUILD file for building an Arch Linux package is Available in the
+[AUR](https://aur.archlinux.org/packages/watson/). Build and install
+using the [makepkg](https://wiki.archlinux.org/index.php/Makepkg) or an
+[AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers). Please
+refer to the official documentation for more information on installing
+AUR packages.
+
 ### Single user installation
 
 You can choose to install Watson for your user only by running:
