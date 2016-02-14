@@ -88,9 +88,11 @@ class Watson(object):
                 raise WatsonError(
                     "Invalid JSON file {}: {}".format(filename, e)
                 )
-        else:
+        except Exception as e:
             raise WatsonError(
-                "Impossible to open JSON file in {}".format(filename)
+                "Unexpected error while loading JSON file {}: {}".format(
+                    filename, e
+                )
             )
 
     def _parse_date(self, date):
