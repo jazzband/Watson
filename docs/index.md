@@ -39,12 +39,12 @@ You can install Watson using available distribution packages.
 
 **Arch Linux**
 
-A PKGBUILD file for building an Arch Linux package is Available in the
-[AUR](https://aur.archlinux.org/packages/watson/). Build and install
-using the [makepkg](https://wiki.archlinux.org/index.php/Makepkg) or an
-[AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers). Please
-refer to the official documentation for more information on installing
-AUR packages.
+A `PKGBUILD` file for building an Arch Linux package is available in the
+[AUR](https://aur.archlinux.org/packages/watson/). You can build and
+install it using the [makepkg](https://wiki.archlinux.org/index.php/Makepkg)
+or an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers).
+Please refer to the official documentation for more information on
+installing AUR packages.
 
 ### Single user installation
 
