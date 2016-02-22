@@ -16,7 +16,7 @@ can be shared across projects and can be used to generate detailed
 reports.
 
 Watson stores everything on your computer, but you can go wild and use
-[artich.io](https://artich.io/?pk_campaign=GitHubWatson) to store
+[crick.io](https://crick.io/?pk_campaign=GitHubWatson) to store
 your sessions remotely and share it with your colleagues.
 
 ![screenshot](img/screenshot.png)
