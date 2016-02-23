@@ -1,0 +1,122 @@
+#compdef watson
+
+_watson() {
+  local curcontext="$curcontext" state line
+  local commands projects tags options
+  typeset -A opt_args
+
+  if ([[ ${+watson_commands} -eq 0 ]] || _cache_invalid watson_commands) \
+    && ! _retrieve_cache watson_commands; then
+
+    commands=( \
+      'cancel' \
+      'config' \
+      'edit' \
+      'frames' \
+      'help' \
+      'log' \
+      'merge' \
+      'projects' \
+      'remove' \
+      'report' \
+      'restart' \
+      'start' \
+      'status' \
+      'stop' \
+      'sync' \
+      'tags')
+
+    _store_cache watson_commands commands
+  fi
+
+  if ([[ ${+watson_projects} -eq 0 ]] || _cache_invalid watson_projects) \
+    && ! _retrieve_cache watson_projects; then
+
+    projects=($(watson projects))
+
+    _store_cache watson_projects projects
+  fi
+
+  if ([[ ${+watson_tags} -eq 0 ]] || _cache_invalid watson_tags) \
+    && ! _retrieve_cache watson_tags; then
+
+    tags=($(watson tags))
+
+    _store_cache watson_tags tags
+  fi
+
+  if ([[ ${+watson_tags_add} -eq 0 ]] || _cache_invalid watson_tags_add) \
+    && ! _retrieve_cache watson_tags_add; then
+
+    tags_add=($(watson tags | while read line; do echo "+$line"; done))
+
+    _store_cache watson_tags_add tags_add
+  fi
+
+  if ([[ ${+watson_frames} -eq 0 ]] || _cache_invalid watson_frames) \
+    && ! _retrieve_cache watson_frames; then
+    frames=($(watson frames))
+
+    _store_cache watson_frames frames
+  fi
+
+  _arguments -s -S \
+    "--version[Show the version and exit.]" \
+    "--help[Show the help text and exit.]"
+
+  _arguments \
+    "1: :->command" \
+    "2: :->scope" \
+    "*: :->args"
+
+  case $state in
+    command)
+      _describe 'command' commands
+      ;;
+    projects)
+      _describe 'project' projects
+      ;;
+    tags)
+      _describe 'tag' tags
+      ;;
+    scope)
+      case $words[2] in
+        start)
+          _describe 'project' projects
+          ;;
+        edit|remove)
+          _describe 'frame' frames
+          ;;
+        log|report)
+          options=(\
+            '--from:The date from when the log should start. Defaults to seven days ago.' \
+            '--to:The date at which the log should stop (inclusive). Defaults to tomorrow.' \
+            '--project:Logs activity only for the given project. You can add other projects by using this option several times.' \
+            '--tag:Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times.')
+          _describe 'option' options
+          ;;
+      esac
+      ;;
+    *)
+      case $words[2] in
+        start)
+          _describe 'tag' tags_add
+          ;;
+        log|report)
+          case $words[3] in
+            '--tag')
+              _describe 'tag' tags
+              ;;
+            '--project')
+              _describe 'project' projects
+            ;;
+          esac
+          ;;
+      esac
+      ;;
+  esac
+
+  return 1
+}
+
+_watson "$@"
