@@ -1,13 +1,29 @@
 language: python
+
 python:
   - "3.5"
+
 env:
-  - TOX_ENV=flake8
-  - TOX_ENV=py27
-  - TOX_ENV=py33
-  - TOX_ENV=py34
-  - TOX_ENV=py35
+  global:
+    # - DEPLOY_DOCS: "$(if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true' ; else echo -n 'false' ; fi)"
+    - DEPLOY_DOCS: "true"
+    - GH_USER_NAME: "TravisCI"
+    - GH_USER_EMAIL: julien@tailordev.fr
+    - GH_REF: github.com/TailorDev/Watson.git
+    - secure: "DV+BkyLB5GxeIcxUvEpVcqXxkAZz12HhSqccFuea1EQhQ9dIxcuhUzS6jUhaYgQF9KhncgIplo10cC3DUjFVTwQVCoiWWME0tg+WGjWGBSJQPhcAZTvQ17upPEkSDaR8UPBq8bGeCggi1w9zLklukCccatUedqxy4YB35Eo60pc="
+  matrix:
+    # - TOX_ENV: flake8
+    - TOX_ENV: mkdocs
+    # - TOX_ENV: py27
+    # - TOX_ENV: py33
+    # - TOX_ENV: py34
+    # - TOX_ENV: py35
+
 install:
   - pip install tox
+
 script:
   - tox -e $TOX_ENV
+
+after_success:
+  - if [[ $DEPLOY_DOCS == "true" ]]; then echo "Preparing to build and deploy documentation" ; make gh-deploy ; echo "Completed deploying documentation" ; fi
