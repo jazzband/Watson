@@ -670,12 +670,11 @@ def edit(watson, id):
 @click.pass_obj
 def remove(watson, id, force):
     """
-    Remove a frame.
+    Remove a frame. You can specify the frame either by id or by position
+    (ex: `-1` for the last frame).
     """
-    try:
-        frame = watson.frames[id]
-    except KeyError:
-        raise click.ClickException("No frame found with id {}.".format(id))
+    frame = get_frame_from_argument(watson, id)
+    id = frame.id
 
     if not force:
         click.confirm(
