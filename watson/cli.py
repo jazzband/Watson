@@ -14,7 +14,8 @@ import click
 
 from . import watson
 from .frames import Frame
-from .utils import style, format_timedelta, sorted_groupby, options
+from .utils import (format_timedelta, get_frame_from_argument, options,
+                    sorted_groupby, style)
 
 
 class WatsonCliError(click.ClickException):
@@ -206,18 +207,7 @@ def restart(ctx, watson, frame, stop_):
                 style('project', watson.current['project']),
                 style('tags', watson.current['tags'])))
 
-    try:
-        frame = watson.frames[int(frame)]
-    except IndexError:
-        raise click.ClickException(
-            style('error', "Frame index {} not in range.".format(frame)))
-    except (TypeError, ValueError):
-        try:
-            frame = watson.frames[frame]
-        except KeyError:
-            raise click.ClickException("{} {}.".format(
-                style('error', "No frame found with id"),
-                style('short_id', frame)))
+    frame = get_frame_from_argument(watson, frame)
 
     _start(watson, frame.project, frame.tags)
 
@@ -605,18 +595,8 @@ def edit(watson, id):
     local_tz = tz.tzlocal()
 
     if id:
-        try:
-            frame = watson.frames[int(id)]
-        except IndexError:
-            raise click.ClickException(
-                style('error', "Frame index {} not in range.".format(id)))
-        except (TypeError, ValueError):
-            try:
-                frame = watson.frames[id]
-            except KeyError:
-                raise click.ClickException("{} {}.".format(
-                    style('error', "No frame found with id"),
-                    style('short_id', id)))
+        frame = get_frame_from_argument(watson, id)
+        id = frame.id
     elif watson.is_started:
         frame = Frame(watson.current['start'], None, watson.current['project'],
                       None, watson.current['tags'])
