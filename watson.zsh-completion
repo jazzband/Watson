@@ -1,27 +1,12 @@
 #compdef watson
 
-# _values foo bar bz
-# abc=(foo baA:r ba/s foo:bar:baz foo/bar/baz 'foo[bar]')
-# abc=("${(@f)$(find -L .password-store -type f -prune -o  -print )}")
-# _sep_parts abc
-
-# _arguments 'a[foo]' 'b[bar]'
-# _arguments \
-#   'foo' \
-#   '--version[Show the version and exit.]' \
-#   '--help[Show help and exit.]'
-
-#_alternative 'args:options:((--version\:"show the version and exit" --help\:"Show help and exit"))'\
-               #'files:filenames:_files'
-
-# _arguments '-s[sort output]' '1:first arg:_net_interfaces' '::optional arg:_files' ':next arg:(a b c)' 'foo:bar:(2 3)'
 _watson() {
   typeset -A opt_args
   local context state line curcontext="$curcontext"
 
   local ret=1
 
-  _arguments \
+  _arguments : \
     '--version[Show the version and exit.]' \
     '--help[Show help and exit.]' \
     '1: :_watson_cmds' \
@@ -32,32 +17,38 @@ _watson() {
     (args)
       case $words[1] in
         (cancel|help|projects|restart|status|stop|sync|tags)
-          _arguments '--help'
+          _arguments : '--help'
           ;;
         (start)
-          _arguments -A '-*' \
+          _arguments -A '-*' : \
             ': :_watson_projects' \
             '*: :_watson_plus_tags' \
             '--help'
           ;;
         (edit)
-          _arguments -A '-*' \
+          _arguments -A '-*' : \
             ': :_watson_frames' \
             '--help'
           ;;
         (remove)
-          _arguments \
+          _arguments : \
             '-f[Dont ask for confirmation]' \
             ': :_watson_frames' \
             '--help'
           ;;
         (log|report)
-          _arguments \
+          _arguments : \
             '*'{-p,--project}'[only for the given project]: :_watson_projects' \
             '*'{-T,--tag}'[only for the given tag]: :_watson_tags' \
-            '*'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
-            '*'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
+            '(--from -f)'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
+            '(--to -t)'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
             '--help'
+          ;;
+        (merge)
+          _arguments : \
+            '--help' \
+            {-f,--force} \
+            ': :_files'
           ;;
       esac
       ;;
@@ -65,32 +56,52 @@ _watson() {
 }
 
 
+(( $+functions[_watson_get_projects] )) ||
+_watson_get_projects() {
+  if ( [[ ${+_watson_project_list} -eq 0 ]] ); then
+    _watson_project_list=($(watson projects))
+  fi;
+}
+
 (( $+functions[_watson_projects] )) ||
 _watson_projects() {
-  local projects
-  projects=(${(f)"$(watson projects)"})
-  _describe -t projects 'projects' projects "$@"
+  _watson_get_projects
+  local expl
+  _description projects expl 'projects'
+  compadd "$expl[@]" -a -- _watson_project_list
 }
 
 (( $+functions[_watson_frames] )) ||
 _watson_frames() {
   local frames
-  frames=(${(f)"$(jq -r '.[] | (.[3][:8] + "[" + (.[0] |gmtime|todate) + " " + .[2] + "]")' .config/watson/frames)"})
-  _values -C 'frames' $frames
+  if [ $+commands['jq'] ]; then
+    frames=(${(f)"$(jq -r '.[]|(.[3][:8]+":"+(.[0]|todate)+" "+.[2])' ~/.config/watson/frames)"})
+  else
+    frames=($(watson frames))
+  fi
+  _describe -V "frames" frames
+}
+
+(( $+functions[_watson_get_tags] )) ||
+_watson_get_tags() {
+  if ( [[ ${+_watson_tag_list} -eq 0 ]]);
+  then
+    _watson_tag_list=($(watson tags))
+  fi;
 }
 
 (( $+functions[_watson_tags] )) ||
 _watson_tags() {
-  local tags
-  tags=(${(f)"$(watson tags)"})
-  _describe -t tags 'tags' tags "$@"
+  _watson_get_tags
+  compadd "$@" -a -- _watson_tag_list
 }
 
 (( $+functions[_watson_plus_tags] )) ||
 _watson_plus_tags() {
-  local tags
-  tags=(${(f)"$(watson tags)"/#/+})
-  _describe -t tags 'tags' tags "$@"
+  _watson_get_tags
+  local expl
+  _description tags expl 'tags'
+  compadd "$expl[@]" -a -p '+' -- _watson_tag_list
 }
 
 (( $+functions[_watson_cmds] )) ||
@@ -116,4 +127,4 @@ _watson_cmds() {
   _describe -t commands 'commands' commands "$@"
 }
 
-_watson
+_watson "$@"
