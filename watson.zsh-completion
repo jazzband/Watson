@@ -6,11 +6,7 @@ _watson_frame_file=$HOME/.config/watson/frames
 # Using the cache mechanism of zsh to store projects, tags and frame lists
 (( $+functions[_watson_get_projects] )) ||
 _watson_get_projects() {
-  local cacheid='WATSON_PROJECTS' cache_policy
-  zstyle -s ":completion:${curcontext}:" cache-policy cache_policy
-  if [[ -z "$cache_policy" ]]; then
-    zstyle ":completion:${curcontext}:" cache-policy _watson_caching_policy
-  fi
+  local cacheid='WATSON_PROJECTS'
   if ( [[ ${+_watson_project_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
@@ -22,11 +18,7 @@ _watson_get_projects() {
 
 (( $+functions[_watson_get_tags] )) ||
 _watson_get_tags() {
-  local cacheid='WATSON_TAGS' cache_policy
-  zstyle -s ":completion:${curcontext}:" cache-policy cache_policy
-  if [[ -z "$cache_policy" ]]; then
-    zstyle ":completion:${curcontext}:" cache-policy _watson_caching_policy
-  fi
+  local cacheid='WATSON_TAGS'
   if ( [[ ${+_watson_tag_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
@@ -38,11 +30,7 @@ _watson_get_tags() {
 
 (( $+functions[_watson_get_frames] )) ||
 _watson_get_frames() {
-  local cacheid='WATSON_FRAMES' cache_policy
-  zstyle -s ":completion:${curcontext}:" cache-policy cache_policy
-  if [[ -z "$cache_policy" ]]; then
-    zstyle ":completion:${curcontext}:" cache-policy _watson_caching_policy
-  fi
+  local cacheid='WATSON_FRAMES'
   if ( [[ ${+_watson_frame_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
@@ -58,6 +46,12 @@ _watson_get_frames() {
 
 # Define a default caching policy for watson: we rebuild the cache
 # if the cache file is older than watson's frame file.
+local cache_policy
+zstyle -s ":completion::complete:watson:*" cache-policy cache_policy
+if [[ -z "$cache_policy" ]]; then
+  zstyle ":completion::complete:watson:*" cache-policy _watson_caching_policy
+fi
+
 _watson_caching_policy() {
   [[ $_watson_frame_file -nt "$1" ]] && return 0
   return 1
@@ -69,14 +63,12 @@ _watson() {
   typeset -A opt_args
   local context state line curcontext="$curcontext"
 
-  local ret=1
-
   _arguments : \
     '--version[Show the version and exit.]' \
     '--help[Show help and exit.]' \
     '1: :_watson_cmds' \
     '*::arg:->args' \
-  && ret=0
+  && return 0
 
   case "$state" in
     (args)
