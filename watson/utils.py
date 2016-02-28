@@ -1,6 +1,40 @@
 import itertools
 
+import click
+
 from click.exceptions import UsageError
+
+
+def style(name, element):
+    def _style_tags(tags):
+        if not tags:
+            return ''
+
+        return '[{}]'.format(', '.join(
+            style('tag', tag) for tag in tags
+        ))
+
+    def _style_short_id(id):
+        return style('id', id[:7])
+
+    formats = {
+        'project': {'fg': 'magenta'},
+        'tags': _style_tags,
+        'tag': {'fg': 'blue'},
+        'time': {'fg': 'green'},
+        'error': {'fg': 'red'},
+        'date': {'fg': 'cyan'},
+        'short_id': _style_short_id,
+        'id': {'fg': 'white'}
+    }
+
+    fmt = formats.get(name, {})
+
+    if isinstance(fmt, dict):
+        return click.style(element, **fmt)
+    else:
+        # The fmt might be a function if we need to do some computation
+        return fmt(element)
 
 
 def format_timedelta(delta):
