@@ -155,7 +155,7 @@ def stop(watson):
     watson.save()
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
               help="(Don't) Stop an already running project.")
 @click.argument('frame', default='-1')
@@ -571,18 +571,16 @@ def frames(watson):
         click.echo(style('short_id', frame.id))
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id', required=False)
 @click.pass_obj
 def edit(watson, id):
     """
     Edit a frame.
 
-    You can specify the frame to edit with an integer frame index or a frame
-    id. For example, to edit the second-to-last frame, pass `-2` as the frame
-    index (put ` -- ` in front of negative indexes to prevent them from being
-    interpreted as an option). You can get the id of a frame with the `watson
-    log` command.
+    You can specify the frame to edit by its position or by its frame id.
+    For example, to edit the second-to-last frame, pass `-2` as the frame
+    index. You can get the id of a frame with the `watson log` command.
 
     If no id or index is given, the frame defaults to the current frame or the
     last recorded frame, if no project is currently running.
@@ -663,7 +661,7 @@ def edit(watson, id):
     )
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id')
 @click.option('-f', '--force', is_flag=True,
               help="Don't ask for confirmation.")
