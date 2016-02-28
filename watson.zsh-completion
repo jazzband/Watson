@@ -1,5 +1,70 @@
 #compdef watson
 
+_watson_frame_file=$HOME/.config/watson/frames
+
+# ~~~ CACHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Using the cache mechanism of zsh to store projects, tags and frame lists
+(( $+functions[_watson_get_projects] )) ||
+_watson_get_projects() {
+  local cacheid='WATSON_PROJECTS' cache_policy
+  zstyle -s ":completion:${curcontext}:" cache-policy cache_policy
+  if [[ -z "$cache_policy" ]]; then
+    zstyle ":completion:${curcontext}:" cache-policy _watson_caching_policy
+  fi
+  if ( [[ ${+_watson_project_list} -eq 0 ]] || _cache_invalid $cacheid ) \
+            && ! _retrieve_cache $cacheid;
+  then
+    _watson_project_list=($(watson projects))
+    _store_cache $cacheid _watson_project_list
+  fi;
+}
+
+
+(( $+functions[_watson_get_tags] )) ||
+_watson_get_tags() {
+  local cacheid='WATSON_TAGS' cache_policy
+  zstyle -s ":completion:${curcontext}:" cache-policy cache_policy
+  if [[ -z "$cache_policy" ]]; then
+    zstyle ":completion:${curcontext}:" cache-policy _watson_caching_policy
+  fi
+  if ( [[ ${+_watson_tag_list} -eq 0 ]] || _cache_invalid $cacheid ) \
+            && ! _retrieve_cache $cacheid;
+  then
+    _watson_tag_list=($(watson tags))
+    _store_cache $cacheid _watson_tag_list
+  fi;
+}
+
+
+(( $+functions[_watson_get_frames] )) ||
+_watson_get_frames() {
+  local cacheid='WATSON_FRAMES' cache_policy
+  zstyle -s ":completion:${curcontext}:" cache-policy cache_policy
+  if [[ -z "$cache_policy" ]]; then
+    zstyle ":completion:${curcontext}:" cache-policy _watson_caching_policy
+  fi
+  if ( [[ ${+_watson_frame_list} -eq 0 ]] || _cache_invalid $cacheid ) \
+            && ! _retrieve_cache $cacheid;
+  then
+    if [ $+commands['jq'] ]; then
+      _watson_frame_list=(${(f)"$(jq -r '.[]|(.[3][:8]+":"+(.[0]|todate)+" "+.[2])' $_watson_frame_file)"})
+    else
+      _watson_frame_list=($(watson frames))
+    fi
+    _store_cache $cacheid _watson_frame_list
+  fi;
+}
+
+
+# Define a default caching policy for watson: we rebuild the cache
+# if the cache file is older than watson's frame file.
+_watson_caching_policy() {
+  [[ $_watson_frame_file -nt "$1" ]] && return 0
+  return 1
+}
+
+
+# ~~~ COMPLETION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 _watson() {
   typeset -A opt_args
   local context state line curcontext="$curcontext"
@@ -56,13 +121,6 @@ _watson() {
 }
 
 
-(( $+functions[_watson_get_projects] )) ||
-_watson_get_projects() {
-  if ( [[ ${+_watson_project_list} -eq 0 ]] ); then
-    _watson_project_list=($(watson projects))
-  fi;
-}
-
 (( $+functions[_watson_projects] )) ||
 _watson_projects() {
   _watson_get_projects
@@ -73,21 +131,8 @@ _watson_projects() {
 
 (( $+functions[_watson_frames] )) ||
 _watson_frames() {
-  local frames
-  if [ $+commands['jq'] ]; then
-    frames=(${(f)"$(jq -r '.[]|(.[3][:8]+":"+(.[0]|todate)+" "+.[2])' ~/.config/watson/frames)"})
-  else
-    frames=($(watson frames))
-  fi
-  _describe -V "frames" frames
-}
-
-(( $+functions[_watson_get_tags] )) ||
-_watson_get_tags() {
-  if ( [[ ${+_watson_tag_list} -eq 0 ]]);
-  then
-    _watson_tag_list=($(watson tags))
-  fi;
+  _watson_get_frames
+  _describe -V "frames" _watson_frame_list
 }
 
 (( $+functions[_watson_tags] )) ||
