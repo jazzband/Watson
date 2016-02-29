@@ -9,4 +9,5 @@ flake8
 mock<=1.0.1
 pytest
 pytest-datafiles
+pytest-runner
 tox
