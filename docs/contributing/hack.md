@@ -24,7 +24,7 @@ Ready to contribute? Here's how to set up *Watson* for local development.
 
 5.  When you're done making changes, check that your changes pass the tests:
 
-        $ py.test
+        $ tox
 
 6. If you have added a new command or updated/fixed docstrings, please update the documentation:
 
