@@ -4,6 +4,15 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.3.2 (2016-03-01)
+
+* Added: document installation for Arch Linux
+* Added: improve frame selection by position
+* Fixed: improve error handling
+* Fixed: remove unnecessary dependencies for a stand alone installation
+* Fixed: specify correct source directory for flake8 and pytest (tox test
+suite)
+
 ## 1.3.1 (2016-02-11)
 
 * Fix packaging error with PyPI
