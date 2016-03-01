@@ -14,39 +14,8 @@ import click
 
 from . import watson
 from .frames import Frame
-from .utils import format_timedelta, sorted_groupby, options
-
-
-def style(name, element):
-    def _style_tags(tags):
-        if not tags:
-            return ''
-
-        return '[{}]'.format(', '.join(
-            style('tag', tag) for tag in tags
-        ))
-
-    def _style_short_id(id):
-        return style('id', id[:7])
-
-    formats = {
-        'project': {'fg': 'magenta'},
-        'tags': _style_tags,
-        'tag': {'fg': 'blue'},
-        'time': {'fg': 'green'},
-        'error': {'fg': 'red'},
-        'date': {'fg': 'cyan'},
-        'short_id': _style_short_id,
-        'id': {'fg': 'white'}
-    }
-
-    fmt = formats.get(name, {})
-
-    if isinstance(fmt, dict):
-        return click.style(element, **fmt)
-    else:
-        # The fmt might be a function if we need to do some computation
-        return fmt(element)
+from .utils import (format_timedelta, get_frame_from_argument, options,
+                    sorted_groupby, style)
 
 
 class WatsonCliError(click.ClickException):
@@ -186,7 +155,7 @@ def stop(watson):
     watson.save()
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
               help="(Don't) Stop an already running project.")
 @click.argument('frame', default='-1')
@@ -238,18 +207,7 @@ def restart(ctx, watson, frame, stop_):
                 style('project', watson.current['project']),
                 style('tags', watson.current['tags'])))
 
-    try:
-        frame = watson.frames[int(frame)]
-    except IndexError:
-        raise click.ClickException(
-            style('error', "Frame index {} not in range.".format(frame)))
-    except (TypeError, ValueError):
-        try:
-            frame = watson.frames[frame]
-        except KeyError:
-            raise click.ClickException("{} {}.".format(
-                style('error', "No frame found with id"),
-                style('short_id', frame)))
+    frame = get_frame_from_argument(watson, frame)
 
     _start(watson, frame.project, frame.tags)
 
@@ -613,18 +571,16 @@ def frames(watson):
         click.echo(style('short_id', frame.id))
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id', required=False)
 @click.pass_obj
 def edit(watson, id):
     """
     Edit a frame.
 
-    You can specify the frame to edit with an integer frame index or a frame
-    id. For example, to edit the second-to-last frame, pass `-2` as the frame
-    index (put ` -- ` in front of negative indexes to prevent them from being
-    interpreted as an option). You can get the id of a frame with the `watson
-    log` command.
+    You can specify the frame to edit by its position or by its frame id.
+    For example, to edit the second-to-last frame, pass `-2` as the frame
+    index. You can get the id of a frame with the `watson log` command.
 
     If no id or index is given, the frame defaults to the current frame or the
     last recorded frame, if no project is currently running.
@@ -637,18 +593,8 @@ def edit(watson, id):
     local_tz = tz.tzlocal()
 
     if id:
-        try:
-            frame = watson.frames[int(id)]
-        except IndexError:
-            raise click.ClickException(
-                style('error', "Frame index {} not in range.".format(id)))
-        except (TypeError, ValueError):
-            try:
-                frame = watson.frames[id]
-            except KeyError:
-                raise click.ClickException("{} {}.".format(
-                    style('error', "No frame found with id"),
-                    style('short_id', id)))
+        frame = get_frame_from_argument(watson, id)
+        id = frame.id
     elif watson.is_started:
         frame = Frame(watson.current['start'], None, watson.current['project'],
                       None, watson.current['tags'])
@@ -715,19 +661,18 @@ def edit(watson, id):
     )
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id')
 @click.option('-f', '--force', is_flag=True,
               help="Don't ask for confirmation.")
 @click.pass_obj
 def remove(watson, id, force):
     """
-    Remove a frame.
+    Remove a frame. You can specify the frame either by id or by position
+    (ex: `-1` for the last frame).
     """
-    try:
-        frame = watson.frames[id]
-    except KeyError:
-        raise click.ClickException("No frame found with id {}.".format(id))
+    frame = get_frame_from_argument(watson, id)
+    id = frame.id
 
     if not force:
         click.confirm(
