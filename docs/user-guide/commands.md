@@ -56,11 +56,9 @@ Usage:  watson edit [OPTIONS] [ID]
 
 Edit a frame.
 
-You can specify the frame to edit with an integer frame index or a frame
-id. For example, to edit the second-to-last frame, pass `-2` as the frame
-index (put ` -- ` in front of negative indexes to prevent them from being
-interpreted as an option). You can get the id of a frame with the `watson
-log` command.
+You can specify the frame to edit by its position or by its frame id.
+For example, to edit the second-to-last frame, pass `-2` as the frame
+index. You can get the id of a frame with the `watson log` command.
 
 If no id or index is given, the frame defaults to the current frame or the
 last recorded frame, if no project is currently running.
@@ -262,7 +260,8 @@ Flag | Help
 Usage:  watson remove [OPTIONS] ID
 ```
 
-Remove a frame.
+Remove a frame. You can specify the frame either by id or by position
+(ex: `-1` for the last frame).
 
 ### Options
 
