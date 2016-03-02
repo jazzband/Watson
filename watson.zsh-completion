@@ -1,6 +1,12 @@
 #compdef watson
 
-_watson_frame_file=${WATSON_DIR:-$HOME/.config/watson}/frames
+if [[ -n "$WATSON_DIR" ]]; then
+  _watson_frame_file=${WATSON_DIR}/frames
+elif [[ "$OSTYPE" =~ "^darwin" ]]; then
+  _watson_frame_file=${HOME}/Library/Application Support/frames
+else
+  _watson_frame_file=${HOME}/.config/watson/frames
+fi
 
 # ~~~ CACHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Using the cache mechanism of zsh to store projects, tags and frame lists
@@ -49,7 +55,7 @@ if [[ -z "$cache_policy" ]]; then
 fi
 
 _watson_caching_policy() {
-  [[ $_watson_frame_file -nt "$1" ]] && return 0
+  [[ "$_watson_frame_file" -nt "$1" ]] && return 0
   return 1
 }
 
