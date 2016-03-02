@@ -1,5 +1,28 @@
 #compdef watson
 
+
+# ~~~ LIST OF COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_watson_commands=(
+  'cancel:Cancel the last call to the start command.'
+  'config:Get and set configuration options.'
+  'edit:Edit a frame.'
+  'frames:Display the list of all frame IDs.'
+  'help:Display help information'
+  'log:Display each recorded session during the...'
+  'merge:Perform a merge of the existing frames with a...'
+  'projects:Display the list of all the existing...'
+  'remove:Remove a frame.'
+  'report:Display a report of the time spent on each...'
+  'restart:Restart monitoring time for a previously...'
+  'start:Start monitoring time for the given project.'
+  'status:Display when the current project was started...'
+  'stop:Stop monitoring time for the current project.'
+  'sync:Get the frames from the server and push the...'
+  'tags:Display the list of all the tags.'
+)
+
+
+# ~~~ LOCATING THE FRAMES FILE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [[ -n "$WATSON_DIR" ]]; then
   _watson_frame_file=${WATSON_DIR}/frames
 elif [[ "$OSTYPE" =~ "^darwin" ]]; then
@@ -7,6 +30,7 @@ elif [[ "$OSTYPE" =~ "^darwin" ]]; then
 else
   _watson_frame_file=${HOME}/.config/watson/frames
 fi
+
 
 # ~~~ CACHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Using the cache mechanism of zsh to store projects, tags and frame lists
@@ -156,25 +180,7 @@ _watson_plus_tags() {
 
 (( $+functions[_watson_cmds] )) ||
 _watson_cmds() {
-  local commands; commands=(
-    'cancel:Cancel the last call to the start command.'
-    'config:Get and set configuration options.'
-    'edit:Edit a frame.'
-    'frames:Display the list of all frame IDs.'
-    'help:Display help information'
-    'log:Display each recorded session during the...'
-    'merge:Perform a merge of the existing frames with a...'
-    'projects:Display the list of all the existing...'
-    'remove:Remove a frame.'
-    'report:Display a report of the time spent on each...'
-    'restart:Restart monitoring time for a previously...'
-    'start:Start monitoring time for the given project.'
-    'status:Display when the current project was started...'
-    'stop:Stop monitoring time for the current project.'
-    'sync:Get the frames from the server and push the...'
-    'tags:Display the list of all the tags.'
-  )
-  _describe -t commands 'commands' commands "$@"
+  _describe -t commands 'commands' _watson_commands "$@"
 }
 
 _watson "$@"
