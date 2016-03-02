@@ -1,6 +1,6 @@
 #compdef watson
 
-_watson_frame_file=$HOME/.config/watson/frames
+_watson_frame_file=${WATSON_DIR:-$HOME/.config/watson}/frames
 
 # ~~~ CACHING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Using the cache mechanism of zsh to store projects, tags and frame lists
@@ -10,7 +10,7 @@ _watson_get_projects() {
   if ( [[ ${+_watson_project_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
-    _watson_project_list=($(watson projects))
+    _watson_project_list=($(_call_program watson-projects watson projects))
     _store_cache $cacheid _watson_project_list
   fi;
 }
@@ -22,7 +22,7 @@ _watson_get_tags() {
   if ( [[ ${+_watson_tag_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
-    _watson_tag_list=($(watson tags))
+    _watson_tag_list=($(_call_program watson-tags watson tags))
     _store_cache $cacheid _watson_tag_list
   fi;
 }
@@ -34,11 +34,7 @@ _watson_get_frames() {
   if ( [[ ${+_watson_frame_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
-    if [ $+commands['jq'] ]; then
-      _watson_frame_list=(${(f)"$(jq -r '.[]|(.[3][:8]+":"+(.[0]|todate)+" "+.[2])' $_watson_frame_file)"})
-    else
-      _watson_frame_list=($(watson frames))
-    fi
+    _watson_frame_list=("${(f)$(_call_program watson-log watson log)}")
     _store_cache $cacheid _watson_frame_list
   fi;
 }
@@ -124,7 +120,18 @@ _watson_projects() {
 (( $+functions[_watson_frames] )) ||
 _watson_frames() {
   _watson_get_frames
-  _describe -V "frames" _watson_frame_list
+  local expl i
+  for l in $_watson_frame_list; do
+    if [[ "$l" =~ '^\S' ]];
+    then
+      i=$((i+1))
+      _description -V frames$i expl "${l%%\(*\)}"
+    else
+      desc=(${l##[[:space:]]})
+      val=(${desc%%[[:space:]]*})
+      compadd "$expl[@]" -d desc -l -a -- val
+    fi
+  done;
 }
 
 (( $+functions[_watson_tags] )) ||
