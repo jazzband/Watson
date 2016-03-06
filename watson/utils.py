@@ -40,9 +40,20 @@ def style(name, element):
 def format_timedelta(delta):
     """
     Return a string roughly representing a timedelta.
+
+    For reference, str(timedelta) returns [x days,] hh:mm:ss
+
     """
     neg = '-' if int(delta.total_seconds()) < 0 else ''
-    res = "{}h {}m {}s".format(*str(abs(delta)).split(":"))
+    fmt = ["{}h ", "{}m ", "{}s"]
+    td = str(abs(delta)).split(":")
+    td[:0] = td.pop(0).split(',')
+    if len(td) == 4:
+        add_hours = int(td.pop(0).split()[0].strip()) * 24
+        td[0] = str(int(td[0]) + add_hours)
+    res = str()
+    for f, k in zip(fmt, td):
+        res += f.format(k.strip()) if int(k) else ''
     return "{}{}".format(neg, res)
 
 
