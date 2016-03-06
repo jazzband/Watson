@@ -130,6 +130,10 @@ Globally configure how `dates` should be formatted. All [python's `strftime` dir
 
 Globally configure how `time` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
 
+#### `options.round_to`
+
+Round report and log work total times up to the nearest x minutes. Defaults to 0 min (no rounding).
+
 ## Sample configuration file
 
 A basic configuration file looks like the following:
@@ -146,6 +150,7 @@ stop_on_start = true
 stop_on_restart = false
 date_format = '%Y.%m.%d'
 time_format = '%H:%M:%S%z'
+round_to = 15
 ```
 
 ## Application folder
