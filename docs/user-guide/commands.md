@@ -124,6 +124,10 @@ You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the log.
 
+Total times can be rounded to the nearest x minutes with the `--round_to`
+option. The totals are rounded for each calendar day of work, not for each
+frame.
+
 Example:
 
 
@@ -161,6 +165,7 @@ Flag | Help
 `-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-r, --round-to INTEGER` | Rounds log values up to the nearest x minutes.Defaults to no rounding.
 `--help` | Show this message and exit.
 
 ## `merge`
@@ -290,6 +295,10 @@ You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the report.
 
+Total times can be rounded to the nearest x minutes with the `--round_to`
+option. The totals are rounded for each calendar day of work, not for each
+frame.
+
 Example:
 
 
@@ -340,6 +349,7 @@ Flag | Help
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-r, --round_to INTEGER` | Rounds the total time for each day of work values up to the nearest x minutes. Defaults to no rounding.
 `--help` | Show this message and exit.
 
 ## `restart`
