@@ -280,7 +280,7 @@ def status(watson):
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.option('-r', '--round_to', type=int, default=None,
-              help="Rounds the total time for each day of work values up to "
+              help="Rounds the total time for each day of work up to "
               "the nearest x minutes. Defaults to no rounding.")
 @click.pass_obj
 def report(watson, from_, to, projects, tags, round_to):
@@ -344,6 +344,16 @@ def report(watson, from_, to, projects, tags, round_to):
             [reactor   8h 35m 50s]
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
+    \b
+    $ watson report --from 2016-02-10 --to 2016-03-30 --round_to 15
+    Wed 10 February 2016 -> Wed 30 March 2016
+    \b
+    apollo11 - 22h 45m 00s
+            [brakes   1h 00m 00s]
+            [module  13h 00m 00s]
+            [reactor  7h 15m 00s]
+            [steering 1h 30m 00s]
+            [wheels      45m 00s]
     """
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
@@ -417,7 +427,7 @@ def report(watson, from_, to, projects, tags, round_to):
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.option('-r', '--round-to', type=int, default=None,
-              help="Rounds log values up to the nearest x minutes."
+              help="Rounds daily totals up to the nearest x minutes. "
               "Defaults to no rounding.")
 @click.pass_obj
 def log(watson, from_, to, projects, tags, round_to):
@@ -464,6 +474,19 @@ def log(watson, from_, to, projects, tags, round_to):
     Wednesday 16 April 2014 (5h 19m 18s)
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
+    \b
+    $ watson log --from 2016-02-16 --to 2016-03-15 --round_to 15
+    Friday 04 March 2016 (1h 45m 00s)
+            d7f7cd0  13:57 to 14:17      19m 23s  apollo11  [wheels]
+            4cc9841  14:27 to 15:11      43m 42s  apollo11  [lens]
+            ce3d2aa  16:29 to 17:06      36m 41s  apollo11  [reactor]
+    \b
+    Tuesday 23 February 2016 (2h 30m 00s)
+            6931d90  12:04 to 12:06      02m 02s  apollo11  [antenna]
+            f0d473c  12:06 to 13:15   1h 08m 32s  apollo11  [antenna]
+            678d9af  13:55 to 14:09      14m 04s  apollo11  [antenna]
+            ae51e4d  14:28 to 14:51      23m 18s  apollo11  [antenna]
+            6fe0aa3  20:26 to 21:01      34m 11s  apollo11  [antenna]
     """  # noqa
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
