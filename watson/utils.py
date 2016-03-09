@@ -1,8 +1,6 @@
-import itertools
-
 import click
-
 import datetime
+import itertools
 
 from click.exceptions import UsageError
 
@@ -60,20 +58,28 @@ def format_timedelta(delta, round_up_to=0):
     return "{}{}".format(neg, res)
 
 
-def round_time(dt=None, round_up_to=0):
+def round_time(dt, round_up_to=0):
     """
-    Round a datetime object up to nearest round_to minutes
+    Round a datetime object _up_ to nearest round_to minutes.
+
+    First round seconds up or down to the nearest minute, then round that
+    result up to the nearest round_to minute.
 
     Set round_up_to=0 for no rounding
+
     """
-    round_dt = datetime.timedelta(minutes=round_up_to).total_seconds()
-    if dt is None:
-        dt = datetime.now()
     if round_up_to == 0:
         return dt
-    seconds = (dt - dt.min).seconds
+    round_dt = datetime.timedelta(minutes=round_up_to).total_seconds()
+    seconds = int(dt.total_seconds())
+    rounding = (seconds + 60 / 2) // 60 * 60
+    dt += datetime.timedelta(0, rounding - seconds)
+    seconds = int(dt.total_seconds())
     rounding = (seconds + round_dt) // round_dt * round_dt
-    return dt + datetime.timedelta(0, rounding - seconds)
+    if dt.total_seconds() % (round_up_to * 60) != 0:
+        return dt + datetime.timedelta(0, rounding - seconds)
+    else:
+        return dt
 
 
 def sorted_groupby(iterator, key, reverse=False):
