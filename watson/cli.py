@@ -426,7 +426,7 @@ def report(watson, from_, to, projects, tags, round_to):
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('-r', '--round-to', type=int, default=None,
+@click.option('-r', '--round_to', type=int, default=None,
               help="Rounds daily totals up to the nearest x minutes. "
               "Defaults to no rounding.")
 @click.pass_obj
