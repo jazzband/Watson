@@ -126,8 +126,8 @@ def total_by_each_day(frames, round_to=0, tags=None):
     'tags' if given) and then rounded up to round_to.
     """
     frames = list(i for i in frames if not tags or
-                  (set(i.tags).intersection(set(tags))
-                   or "<untagged>" in tags))
+                  (set(i.tags).intersection(set(tags)) or
+                   "<untagged>" in tags))
     days = [list(group) for k, group in
             sorted_groupby(frames,
                            key=lambda x: x.start.datetime.toordinal())]
