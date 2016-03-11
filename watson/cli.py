@@ -279,7 +279,7 @@ def status(watson):
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('-r', '--round_to', type=int, default=1,
+@click.option('-r', '--round-to', type=int, default=None,
               help="Rounds the total time for each day of work up to "
               "the nearest x minutes. Rounds to nearest 1 minute by default.")
 @click.pass_obj
@@ -299,7 +299,7 @@ def report(watson, from_, to, projects, tags, round_to):
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the report.
 
-    Total times can be rounded to the nearest x minutes with the `--round_to`
+    Total times can be rounded to the nearest x minutes with the `--round-to`
     option. The totals are rounded for each calendar day of work, not for each
     frame.
 
@@ -345,7 +345,7 @@ def report(watson, from_, to, projects, tags, round_to):
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     \b
-    $ watson report -f 2016-03-01 --round_to 15
+    $ watson report -f 2016-03-01 --round-to 15
     Tue 01 March 2016 -> Thu 10 March 2016
     \b
     apollo11 - 5h 30m
@@ -371,7 +371,7 @@ def report(watson, from_, to, projects, tags, round_to):
             and round_to is None:
         round_to = int(watson.config.get('options', 'round_to'))
     else:
-        round_to = round_to or 0
+        round_to = 1 if round_to is None else round_to
 
     span = watson.frames.span(from_, to)
 
@@ -447,7 +447,7 @@ def report(watson, from_, to, projects, tags, round_to):
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('-r', '--round_to', type=int, default=None,
+@click.option('-r', '--round-to', type=int, default=None,
               help="Rounds daily totals up to the nearest x minutes. "
               "Defaults to no rounding.")
 @click.pass_obj
@@ -463,7 +463,7 @@ def log(watson, from_, to, projects, tags, round_to):
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the log.
 
-    Total times can be rounded to the nearest x minutes with the `--round_to`
+    Total times can be rounded to the nearest x minutes with the `--round-to`
     option. The totals are rounded for each calendar day of work, not for each
     frame.
 
@@ -496,7 +496,7 @@ def log(watson, from_, to, projects, tags, round_to):
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
     \b
-    $ watson log --from 2016-02-16 --to 2016-03-15 --round_to 15
+    $ watson log --from 2016-02-16 --to 2016-03-15 --round-to 15
     Friday 04 March 2016 (1h 45m 00s)
             d7f7cd0  13:57 to 14:17      19m 23s  apollo11  [wheels]
             4cc9841  14:27 to 15:11      43m 42s  apollo11  [lens]
@@ -516,7 +516,7 @@ def log(watson, from_, to, projects, tags, round_to):
             and round_to is None:
         round_to = int(watson.config.get('options', 'round_to'))
     else:
-        round_to = round_to or 0
+        round_to = 1 if round_to is None else round_to
 
     span = watson.frames.span(from_, to)
     frames_by_day = sorted_groupby(

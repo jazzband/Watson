@@ -124,7 +124,7 @@ You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the log.
 
-Total times can be rounded to the nearest x minutes with the `--round_to`
+Total times can be rounded to the nearest x minutes with the `--round-to`
 option. The totals are rounded for each calendar day of work, not for each
 frame.
 
@@ -157,7 +157,7 @@ Example:
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
     
-    $ watson log --from 2016-02-16 --to 2016-03-15 --round_to 15
+    $ watson log --from 2016-02-16 --to 2016-03-15 --round-to 15
     Friday 04 March 2016 (1h 45m 00s)
             d7f7cd0  13:57 to 14:17      19m 23s  apollo11  [wheels]
             4cc9841  14:27 to 15:11      43m 42s  apollo11  [lens]
@@ -308,7 +308,7 @@ You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the report.
 
-Total times can be rounded to the nearest x minutes with the `--round_to`
+Total times can be rounded to the nearest x minutes with the `--round-to`
 option. The totals are rounded for each calendar day of work, not for each
 frame.
 
@@ -354,15 +354,24 @@ Example:
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     
-    $ watson report --from 2016-02-10 --to 2016-03-30 --round_to 15
-    Wed 10 February 2016 -> Wed 30 March 2016
+    $ watson report -f 2016-03-01 --round-to 15
+    Tue 01 March 2016 -> Thu 10 March 2016
     
-    apollo11 - 22h 45m 00s
-            [brakes   1h 00m 00s]
-            [module  13h 00m 00s]
-            [reactor  7h 15m 00s]
-            [steering 1h 30m 00s]
-            [wheels      45m 00s]
+    apollo11 - 5h 30m
+    
+            By Tags (unrounded)
+            -------------------
+            [brakes         2h 03m]
+            [module         1h 03m]
+            [reactor        1h 28m]
+            [steering       0h 37m]
+    
+            By Date
+            -------
+            [2016-03-04       1h 45m]
+            [2016-03-07       0h 30m]
+            [2016-03-08       1h 30m]
+            [2016-03-10       1h 45m]
 
 ### Options
 
@@ -372,7 +381,7 @@ Flag | Help
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`-r, --round_to INTEGER` | Rounds the total time for each day of work up to the nearest x minutes. Defaults to no rounding.
+`-r, --round-to INTEGER` | Rounds the total time for each day of work up to the nearest x minutes. Rounds to nearest 1 minute by default.
 `--help` | Show this message and exit.
 
 ## `restart`

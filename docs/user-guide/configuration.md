@@ -132,7 +132,7 @@ Globally configure how `time` should be formatted. All [python's `strftime` dire
 
 #### `options.round_to`
 
-Round report and log work total times up to the nearest x minutes. Defaults to 0 min (no rounding).
+Round report and log work total times up to the nearest x minutes. Default rounds up to the nearest 1 minute
 
 ## Sample configuration file
 
