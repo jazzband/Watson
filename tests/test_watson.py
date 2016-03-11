@@ -783,20 +783,21 @@ def test_merge_report(watson, datafiles):
     assert conflicting[0].id == '2'
     assert merging[0].id == '3'
 
-# format_datetime
 
+# format_datetime
 
 def test_format_timedelta_and_rounding(watson):
     # Test round_to = (0, 1, 5, 10, 15, 30, 60)
     # times = {(xx h, xx m, xx sec): ("res for 0 round", "res for 1 round"...)}
-    times = {(0, 0, 0): ("00s", "00s", "00s", "00s", "00s", "00s", "00s"),
-             (0, 4, 23): ("04m 23s", "04m 00s", "05m 00s", "10m 00s",
-                          "15m 00s", "30m 00s", "1h 00m 00s"),
-             (0, 10, 00): ("10m 00s", "10m 00s", "10m 00s", "10m 00s",
-                           "15m 00s", "30m 00s", "1h 00m 00s"),
-             (23, 53, 32): ("23h 53m 32s", "23h 54m 00s", "23h 55m 00s",
-                            "24h 00m 00s", "24h 00m 00s", "24h 00m 00s",
-                            "24h 00m 00s")
+    times = {(0, 0, 0): ("0h 00m 00s", "0h 00m", "0h 00m", "0h 00m", "0h 00m",
+                         "0h 00m", "0h 00m"),
+             (0, 4, 23): ("0h 04m 23s", "0h 04m", "0h 05m", "0h 10m",
+                          "0h 15m", "0h 30m", "1h 00m"),
+             (0, 10, 00): ("0h 10m 00s", "0h 10m", "0h 10m", "0h 10m",
+                           "0h 15m", "0h 30m", "1h 00m"),
+             (23, 53, 32): ("23h 53m 32s", "23h 54m", "23h 55m",
+                            "24h 00m", "24h 00m", "24h 00m",
+                            "24h 00m")
              }
     round_to = (0, 1, 5, 10, 15, 30, 60)
     for t, res in times.items():
