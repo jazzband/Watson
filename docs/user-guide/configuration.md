@@ -148,6 +148,26 @@ date_format = '%Y.%m.%d'
 time_format = '%H:%M:%S%z'
 ```
 
+If the dmenu script is used, additional options can be added to the
+configuration file to change the dmenu look or use a dmenu replacement such as
+Rofi:
+
+```ini
+[dmenu]
+fn = -*-terminus-medium-*-*-*-16-*-*-*-*-*-*-*
+# dmenu_command = /usr/bin/dmenu
+# # Note that dmenu_command can contain arguments as well like `rofi -width 30`
+# # Rofi and dmenu are set to case insensitive by default `-i`
+# fn = font string
+# nb = normal background (name, #RGB, or #RRGGBB)
+# nf = normal foreground
+# sb = selected background
+# sf = selected foreground
+# b =  (just set to empty value and menu will appear at the bottom
+# m = number of monitor to display on
+# p = Custom Prompt
+```
+
 ## Application folder
 
 To override Watson's default application folder (see first section), you can set the `$WATSON_DIR` environment variable to the desired path.
