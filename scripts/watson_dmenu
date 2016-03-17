@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+"""Watson start/stop dmenu script.
+
+Add dmenu formatting options and default terminal if desired to
+~/.config/watson/config
+
+    [dmenu]
+    dmenu_command = rofi -font "DejaVu Sans Mono 14" -width 60
+
+See the configuration documentation for additional options.
+
+"""
+import itertools
+import locale
+import os
+import shlex
+import sys
+from os.path import expanduser
+from subprocess import Popen, PIPE, STDOUT
+try:
+    import configparser as configparser
+except ImportError:
+    import ConfigParser as configparser
+
+ENV = os.environ.copy()
+ENC = locale.getpreferredencoding()
+
+
+def dmenu_cmd(num_lines, prompt=""):
+    """Parse ~/.config/watson/config if it exists and add options to the dmenu
+    command
+
+    Args: args - num_lines: number of lines to display
+                 prompt: prompt to show
+    Returns: command invocation (as a list of strings) for
+                dmenu -l <num_lines> -p <prompt> -i ...
+
+    """
+    dmenu_command = "dmenu"
+    conf = configparser.ConfigParser()
+    conf.read(expanduser("~/.config/watson/config"))
+    try:
+        args = conf.items('dmenu')
+    except configparser.NoSectionError:
+        conf = False
+    if not conf:
+        res = [dmenu_command, "-i", "-l", str(num_lines), "-p", str(prompt)]
+    else:
+        args_dict = dict(args)
+        dmenu_args = []
+        if "dmenu_command" in args_dict:
+            command = shlex.split(args_dict["dmenu_command"])
+            dmenu_command = command[0]
+            dmenu_args = command[1:]
+            del args_dict["dmenu_command"]
+        if "p" in args_dict and prompt == "Watson":
+            prompt = args_dict["p"]
+            del args_dict["p"]
+        elif "p" in args_dict:
+            del args_dict["p"]
+        if "rofi" in dmenu_command:
+            lines = "-i -dmenu -lines"
+        else:
+            lines = "-i -l"
+        extras = (["-" + str(k), str(v)] for (k, v) in args_dict.items())
+        res = [dmenu_command, str(num_lines), "-p", str(prompt)]
+        res.extend(dmenu_args)
+        res += list(itertools.chain.from_iterable(extras))
+        res[1:1] = lines.split()
+    return res
+
+
+def get_selection(options, prompt="Watson"):
+    """Combine the arg lists and send to dmenu for selection.
+
+    Args: args - options: list of strings
+    Returns: selection (string)
+
+    """
+    inp_bytes = "\n".join(options).encode(ENC)
+    sel = Popen(dmenu_cmd(len(options), prompt=prompt),
+                stdin=PIPE,
+                stdout=PIPE).communicate(input=inp_bytes)[0].decode(ENC)
+    if not sel.rstrip():
+        sys.exit()
+    return sel.rstrip()
+
+
+def run_watson(options):
+    """Run Watson with arguments
+
+    Args: options - list of strings
+    Returns: Watson return text - string
+
+    """
+    cli = ["watson"] + options
+    res = Popen(cli, stdout=PIPE, stderr=STDOUT, env=ENV).communicate()[0]
+    return res.decode(ENC)
+
+
+def run():
+    options = ("start", "stop", "status", "restart")
+    sel = get_selection(options)
+    if sel == "start":
+        projects = run_watson(["projects"]).split()
+        tags = ["<done with tags>"] + run_watson(["tags"]).split()
+        project = get_selection(projects, "Project")
+        tag = get_selection(tags, "Tag")
+        tag = ["+{}".format(tag)] if tag != "<done with tags>" else ""
+        while tag:
+            new_tag = get_selection(tags, "Tag")
+            if new_tag != "<done with tags>":
+                tag += ["+{}".format(new_tag)]
+            else:
+                break
+        cli = ["start"] + [project]
+        if tag:
+            cli += tag
+        res = run_watson(cli)
+        get_selection([res])
+    elif sel == "stop":
+        res = run_watson(["stop"])
+        get_selection([res])
+    elif sel == "status":
+        res = run_watson(["status"])
+        get_selection([res])
+    elif sel == "restart":
+        res = run_watson(["restart"])
+        get_selection([res])
+    else:
+        sys.exit()
+
+
+if __name__ == '__main__':
+    run()

@@ -80,6 +80,10 @@ $ python setup.py install
 
 If you use a Bash-compatible shell, you can install the `watson.completion` file from the source distribution as `/etc/bash.completion.d/watson` - or wherever your distribution keeps the Bash completion configuration files. After you restart your shell, you can then just type `watson` on your command line and then hit `TAB` to see all available commands. Depending on your input, it completes `watson` commands, command options, projects, tags and frame IDs.
 
+### Dmenu
+
+A dmenu script to start, stop and view status is available in the scripts folder. Copy or symlink the script to your bin folder and edit the configuration file if desired to add dmenu options (see the configuration documentation)
+
 ## Getting started
 
 Now that `watson` is installed on your system, let's start tracking your activity:
