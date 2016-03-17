@@ -99,7 +99,7 @@ def run_watson(options):
 
 
 def run():
-    options = ("start", "stop", "status")
+    options = ("start", "stop", "status", "restart")
     sel = get_selection(options)
     if sel == "start":
         projects = run_watson(["projects"]).split()
@@ -123,6 +123,9 @@ def run():
         get_selection([res])
     elif sel == "status":
         res = run_watson(["status"])
+        get_selection([res])
+    elif sel == "restart":
+        res = run_watson(["restart"])
         get_selection([res])
     else:
         sys.exit()
