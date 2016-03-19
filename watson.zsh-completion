@@ -152,14 +152,14 @@ _watson_frames() {
   _watson_get_frames
   local expl i
   for l in $_watson_frame_list; do
-    if [[ "$l" =~ '^\S' ]];
+    if [[ "$l" =~ '^[A-Z]' ]];
     then
-      i=$((i+1))
+      i=$(($i+1))
       _description -V frames$i expl "${l%%\(*\)}"
     else
       desc=(${l##[[:space:]]})
-      val=(${desc%%[[:space:]]*})
-      compadd "$expl[@]" -d desc -l -a -- val
+      IFS=' ' read -r val _ <<< $desc
+      compadd "$expl[@]" -d desc -l - "$val"
     fi
   done;
 }
