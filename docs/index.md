@@ -84,7 +84,7 @@ If you use a Bash-compatible shell, you can install the `watson.completion` file
 
 #### ZSH
 
-If you use zsh, copy the file `watson.zsh-completion` somewhene in your
+If you use zsh, copy the file `watson.zsh-completion` somewhere in your
 `fpath` as `_watson`. For example, you can put it in
 `/usr/local/share/zsh/site-functions`:
 
