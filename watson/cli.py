@@ -106,7 +106,7 @@ def _start(watson, project, tags):
     current = watson.start(project, tags)
     click.echo("Starting project {} {} at {}".format(
         style('project', project),
-        style('tags', tags),
+        style('tags', current['tags']),
         style('time', "{:HH:mm}".format(current['start']))
     ))
     watson.save()
