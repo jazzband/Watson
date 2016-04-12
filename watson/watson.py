@@ -251,7 +251,7 @@ class Watson(object):
                 tags = default_tags
             else:
                 tags = tags + default_tags
-            
+
         self.current = {'project': project, 'tags': tags}
         return self.current
 
