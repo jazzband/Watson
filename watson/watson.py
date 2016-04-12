@@ -245,6 +245,13 @@ class Watson(object):
                 )
             )
 
+        default_tags = self._default_tags(project)
+        if default_tags:
+            if tags is None:
+                tags = default_tags
+            else:
+                tags = tags + default_tags
+            
         self.current = {'project': project, 'tags': tags}
         return self.current
 
@@ -423,3 +430,11 @@ class Watson(object):
                 merging.append(conflict_frame)
 
         return conflicting, merging
+
+    def _default_tags(self, project):
+        default_tags_raw = self.config.get('default_tags', project)
+        if default_tags_raw is None:
+            default_tags = []
+        else:
+            default_tags = default_tags_raw.split()
+        return default_tags
