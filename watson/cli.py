@@ -99,11 +99,11 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags):
+def _start(watson, project, tags, restart=False):
     """
     Start project with given list of tags and save status.
     """
-    current = watson.start(project, tags)
+    current = watson.start(project, tags, restart=restart)
     click.echo("Starting project {} {} at {}".format(
         style('project', project),
         style('tags', current['tags']),
@@ -230,7 +230,7 @@ def restart(ctx, watson, frame, stop_):
 
     frame = get_frame_from_argument(watson, frame)
 
-    _start(watson, frame.project, frame.tags)
+    _start(watson, frame.project, frame.tags, restart=True)
 
 
 @cli.command()

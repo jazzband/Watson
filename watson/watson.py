@@ -235,7 +235,7 @@ class Watson(object):
     def is_started(self):
         return bool(self.current)
 
-    def start(self, project, tags=None):
+    def start(self, project, tags=None, restart=False):
         if not project:
             raise WatsonError("No project given.")
 
@@ -247,7 +247,7 @@ class Watson(object):
             )
 
         default_tags = self._default_tags(project)
-        if default_tags:
+        if default_tags and not restart:
             if tags is None:
                 tags = default_tags
             else:
