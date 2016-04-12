@@ -2,6 +2,7 @@
 
 import os
 import json
+import shlex
 
 try:
     import configparser
@@ -436,5 +437,5 @@ class Watson(object):
         if default_tags_raw is None:
             default_tags = []
         else:
-            default_tags = default_tags_raw.split()
+            default_tags = shlex.split(default_tags_raw)
         return default_tags
