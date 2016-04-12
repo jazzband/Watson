@@ -407,6 +407,21 @@ def test_set_config(watson):
     watson.config.get('foo', 'bar') == 'lol'
 
 
+def test_get_default_tags(watson):
+    content = u"""
+[default_tags]
+single = tag1
+multiple = tag1 tag2 tag3
+spaces = tag1 'with space'
+    """
+
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
+        assert watson._default_tags('single') == ['tag1']
+        assert watson._default_tags('multiple') == ['tag1', 'tag2', 'tag3']
+        assert watson._default_tags('spaces') == ['tag1', 'with space']
+        assert watson._default_tags('non defined') == []
+
+
 # start
 
 def test_start_new_project(watson):
@@ -438,6 +453,28 @@ def test_start_two_projects(watson):
     assert watson.current != {}
     assert watson.current['project'] == 'foo'
     assert watson.is_started is True
+
+
+def test_start_default_tags(watson):
+    content = u"""
+[default_tags]
+my project = A B
+    """
+
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
+        watson.start('my project')
+        assert watson.current['tags'] == ['A', 'B']
+
+
+def test_start_default_tags_with_tags(watson):
+    content = u"""
+[default_tags]
+my project = A B
+    """
+
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
+        watson.start('my project', tags=['C', 'D'])
+        assert watson.current['tags'] == ['C', 'D', 'A', 'B']
 
 
 # stop
