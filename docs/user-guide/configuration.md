@@ -145,7 +145,7 @@ Globally configure how `time` should be formatted. All [python's `strftime` dire
 ### Default tags
 
 Tags can be automatically added for some projects. This is convenient when the
-same tags are always attached to a project.
+same tags are always attached to a particular project.
 
 These automatically attached tags are defined in the `[default_tags]` section
 of the configuration. Each option bellow that section is a project to which
@@ -178,14 +178,14 @@ Starting project python101 [lecture, teaching, python] at 19:28
 Default tags can contain space characters when wrote in between quotes:
 
 ```
-$ watson watson config default_tags.voyager2 'nasa "space mission"'
+$ watson config default_tags.voyager2 'nasa "space mission"'
 ```
 
 Or in the configuration file:
 
 ```ini
 [default_tags]
-voyager2 = nana 'space mission'
+voyager2 = nasa 'space mission'
 ```
 
 ## Sample configuration file
