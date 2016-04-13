@@ -434,8 +434,7 @@ class Watson(object):
 
     def _default_tags(self, project):
         default_tags_raw = self.config.get('default_tags', project)
-        if default_tags_raw is None:
-            default_tags = []
-        else:
+        default_tags = []
+        if default_tags_raw is not None:
             default_tags = shlex.split(default_tags_raw)
         return default_tags
