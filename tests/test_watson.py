@@ -466,7 +466,7 @@ my project = A B
         assert watson.current['tags'] == ['A', 'B']
 
 
-def test_start_default_tags_with_tags(watson):
+def test_start_default_tags_with_supplementary_input_tags(watson):
     content = u"""
 [default_tags]
 my project = A B
