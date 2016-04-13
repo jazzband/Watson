@@ -154,7 +154,7 @@ tags should be attached. The entries should follow the pattern: `project = tag1 
 You can set default tags for a project from the command line:
 
 ```
-$ watson watson config default_tags.python101 'teaching python'
+$ watson config default_tags.python101 'teaching python'
 ```
 
 This corresponds to the following configuration file snippets:
