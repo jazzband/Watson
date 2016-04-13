@@ -662,7 +662,7 @@ def frames(watson):
     [...]
     """
     for frame in watson.frames:
-        click.echo(style('short_id', frame.id))
+        click.echo(style('short_id', frame))
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
@@ -690,10 +690,10 @@ def edit(watson, id):
         frame = get_frame_from_argument(watson, id)
         id = frame.id
     elif watson.is_started:
-        frame = Frame(watson.current['start'], None, watson.current['project'],
+        frame = Frame(None, watson.current['project'], watson.current['start'],
                       None, watson.current['tags'])
     elif watson.frames:
-        frame = watson.frames[-1]
+        frame = watson.frames.get_by_index(-1)
         id = frame.id
     else:
         raise click.ClickException(
