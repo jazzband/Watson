@@ -148,7 +148,7 @@ Tags can be automatically added for some projects. This is convenient when the
 same tags are always attached to a particular project.
 
 These automatically attached tags are defined in the `[default_tags]` section
-of the configuration. Each option bellow that section is a project to which
+of the configuration. Each option in that section is a project to which
 tags should be attached. The entries should follow the pattern: `project = tag1 tag2`.
 
 You can set default tags for a project from the command line:
@@ -175,7 +175,7 @@ $ watson start python101 +lecture
 Starting project python101 [lecture, teaching, python] at 19:28
 ```
 
-Default tags can contain space characters when wrote in between quotes:
+Default tags can contain space characters when written in between quotes:
 
 ```
 $ watson config default_tags.voyager2 'nasa "space mission"'
