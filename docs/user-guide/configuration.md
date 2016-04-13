@@ -149,7 +149,7 @@ same tags are always attached to a particular project.
 
 These automatically attached tags are defined in the `[default_tags]` section
 of the configuration. Each option bellow that section is a project to which
-tags should be attached.
+tags should be attached. The entries should follow the pattern: `project = tag1 tag2`.
 
 You can set default tags for a project from the command line:
 
