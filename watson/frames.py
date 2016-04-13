@@ -1,14 +1,16 @@
+# -*- coding: utf-8 -*-
+
 import uuid
 
 import arrow
 
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 
-HEADERS = ('start', 'stop', 'project', 'id', 'tags', 'updated_at')
+FIELDS = ('id', 'project', 'start', 'stop', 'tags', 'updated_at')
 
 
-class Frame(namedtuple('Frame', HEADERS)):
-    def __new__(cls, start, stop, project, id, tags=None, updated_at=None,):
+class Frame(namedtuple('Frame', FIELDS)):
+    def __new__(cls, id, project, start, stop, tags=None, updated_at=None):
         try:
             if not isinstance(start, arrow.Arrow):
                 start = arrow.get(start)
@@ -31,7 +33,7 @@ class Frame(namedtuple('Frame', HEADERS)):
             tags = []
 
         return super(Frame, cls).__new__(
-            cls, start, stop, project, id, tags, updated_at
+            cls, id, project, start, stop, tags, updated_at
         )
 
     def dump(self):
@@ -39,7 +41,7 @@ class Frame(namedtuple('Frame', HEADERS)):
         stop = self.stop.to('utc').timestamp
         updated_at = self.updated_at.timestamp
 
-        return (start, stop, self.project, self.id, self.tags, updated_at)
+        return (self.id, self.project, start, stop, self.tags, updated_at)
 
     @property
     def day(self):
@@ -68,88 +70,63 @@ class Span(object):
         return frame.start >= self.start and frame.stop <= self.stop
 
 
-class Frames(object):
+class Frames(OrderedDict):
     def __init__(self, frames=None):
-        if not frames:
-            frames = []
+        super(Frames, self).__init__()
+        for frame in frames or []:
+            # convert from old format with project @ idx 2 and ID @ idx 3
+            if not isinstance(frame[2], (int, float)):
+                frame = [frame[3], frame[2], frame[0], frame[1]] + frame[4:]
 
-        rows = [Frame(*frame) for frame in frames]
-        self._rows = rows
+            frame = Frame(*frame)
+            self[frame.id] = frame
 
         self.changed = False
 
-    def __len__(self):
-        return len(self._rows)
-
-    def __getitem__(self, key):
-        if key in HEADERS:
-            return tuple(self._get_col(key))
-        elif isinstance(key, int):
-            return self._rows[key]
-        else:
-            return self._rows[self._get_index_by_id(key)]
-
     def __setitem__(self, key, value):
-        self.changed = True
-
         if isinstance(value, Frame):
-            frame = value
+            frame = self.new_frame(value.project, value.start, value.stop,
+                                   value.tags, value.updated_at, id=key)
         else:
-            frame = self.new_frame(*value)
+            frame = self.new_frame(*value[:5], id=key)
 
-        if isinstance(key, int):
-            self._rows[key] = frame
-        else:
-            frame = frame._replace(id=key)
-            try:
-                self._rows[self._get_index_by_id(key)] = frame
-            except KeyError:
-                self._rows.append(frame)
+        super(Frames, self).__setitem__(key, frame)
+        self.changed = True
 
     def __delitem__(self, key):
+        super(Frames, self).__delitem__(key)
         self.changed = True
-
-        if isinstance(key, int):
-            del self._rows[key]
-        else:
-            del self._rows[self._get_index_by_id(key)]
-
-    def _get_index_by_id(self, id):
-        try:
-            return next(
-                i for i, v in enumerate(self['id']) if v.startswith(id)
-            )
-        except StopIteration:
-            raise KeyError("Frame with id {} not found.".format(id))
-
-    def _get_col(self, col):
-        index = HEADERS.index(col)
-        for row in self._rows:
-            yield row[index]
 
     def add(self, *args, **kwargs):
-        self.changed = True
         frame = self.new_frame(*args, **kwargs)
-        self._rows.append(frame)
+        self[frame.id] = frame
         return frame
 
-    def new_frame(self, project, start, stop, tags=None, id=None,
-                  updated_at=None):
-        if not id:
+    def new_frame(self, project, start, stop, tags=None, updated_at=None,
+                  id=None):
+        if id is None:
             id = uuid.uuid4().hex
-        return Frame(start, stop, project, id, tags=tags,
-                     updated_at=updated_at)
+
+        return Frame(id, project, start, stop, tags, updated_at)
 
     def dump(self):
-        return tuple(frame.dump() for frame in self._rows)
+        return tuple(frame.dump() for frame in self.values())
 
     def filter(self, projects=None, tags=None, span=None):
-        return (
-            frame for frame in self._rows
-            if (projects is None or frame.project in projects) and
-               (tags is None or any(tag in frame.tags for tag in tags)) and
-               (span is None or frame in span)
-        )
+        for frame in self.values():
+            if ((projects is None or frame.project in projects) and
+                (tags is None or any(tag in frame.tags for tag in tags)) and
+                (span is None or frame in span)):
+                yield frame
+
+    def get_by_index(self, index):
+        key = list(self.keys())[index]
+        return self[key]
+
+    def get_column(self, col):
+        index = FIELDS.index(col)
+        for row in self.values():
+            yield row[index]
 
     def span(self, start, stop):
         return Span(start, stop)

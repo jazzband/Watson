@@ -147,25 +147,29 @@ def test_last_sync_with_empty_given_state(config_dir):
 # frames
 
 def test_frames(watson):
-    content = json.dumps([[0, 10, 'foo', None, ['A', 'B', 'C']]])
+    content = json.dumps([['abcdefg', 'foo', 0, 10, ['A', 'B', 'C']]])
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert len(watson.frames) == 1
-        assert watson.frames[0].project == 'foo'
-        assert watson.frames[0].start == arrow.get(0)
-        assert watson.frames[0].stop == arrow.get(10)
-        assert watson.frames[0].tags == ['A', 'B', 'C']
+        frame = watson.frames.get_by_index(0)
+        assert frame.id == 'abcdefg'
+        assert frame.project == 'foo'
+        assert frame.start == arrow.get(0)
+        assert frame.stop == arrow.get(10)
+        assert frame.tags == ['A', 'B', 'C']
 
 
 def test_frames_without_tags(watson):
-    content = json.dumps([[0, 10, 'foo', None]])
+    content = json.dumps([['abcdefg', 'foo', 0, 10]])
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert len(watson.frames) == 1
-        assert watson.frames[0].project == 'foo'
-        assert watson.frames[0].start == arrow.get(0)
-        assert watson.frames[0].stop == arrow.get(10)
-        assert watson.frames[0].tags == []
+        frame = watson.frames.get_by_index(0)
+        assert frame.id == 'abcdefg'
+        assert frame.project == 'foo'
+        assert frame.start == arrow.get(0)
+        assert frame.stop == arrow.get(10)
+        assert frame.tags == []
 
 
 def test_frames_with_empty_file(watson):
@@ -190,18 +194,19 @@ def test_frames_watson_non_valid_json(watson):
 
 
 def test_given_frames(config_dir):
-    content = json.dumps([[0, 10, 'foo', None, ['A']]])
-    watson = Watson(frames=[[0, 10, 'bar', None, ['A', 'B']]],
+    content = json.dumps([['abcdefg', 'foo', 0, 10, ['A']]])
+    watson = Watson(frames=[['abcdefg', 'bar', 0, 10, ['A', 'B']]],
                     config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
         assert len(watson.frames) == 1
-        assert watson.frames[0].project == 'bar'
-        assert watson.frames[0].tags == ['A', 'B']
+        frame = watson.frames.get_by_index(0)
+        assert frame.project == 'bar'
+        assert frame.tags == ['A', 'B']
 
 
 def test_frames_with_empty_given_state(config_dir):
-    content = json.dumps([[0, 10, 'foo', None, ['A']]])
+    content = json.dumps([['abcdefg', 'foo', 0, 10, ['A']]])
     watson = Watson(frames=[], config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
@@ -370,10 +375,11 @@ def test_stop_started_project(watson):
     assert watson.current == {}
     assert watson.is_started is False
     assert len(watson.frames) == 1
-    assert watson.frames[0].project == 'foo'
-    assert isinstance(watson.frames[0].start, arrow.Arrow)
-    assert isinstance(watson.frames[0].stop, arrow.Arrow)
-    assert watson.frames[0].tags == ['A', 'B']
+    frame = watson.frames.get_by_index(0)
+    assert frame.project == 'foo'
+    assert isinstance(frame.start, arrow.Arrow)
+    assert isinstance(frame.stop, arrow.Arrow)
+    assert frame.tags == ['A', 'B']
 
 
 def test_stop_started_project_without_tags(watson):
@@ -383,10 +389,11 @@ def test_stop_started_project_without_tags(watson):
     assert watson.current == {}
     assert watson.is_started is False
     assert len(watson.frames) == 1
-    assert watson.frames[0].project == 'foo'
-    assert isinstance(watson.frames[0].start, arrow.Arrow)
-    assert isinstance(watson.frames[0].stop, arrow.Arrow)
-    assert watson.frames[0].tags == []
+    frame = watson.frames.get_by_index(0)
+    assert frame.project == 'foo'
+    assert isinstance(frame.start, arrow.Arrow)
+    assert isinstance(frame.stop, arrow.Arrow)
+    assert frame.tags == []
 
 
 def test_stop_no_project(watson):
@@ -465,7 +472,7 @@ def test_save_empty_current(config_dir):
 
 
 def test_save_frames_no_change(config_dir):
-    watson = Watson(frames=[[0, 10, 'foo', None]],
+    watson = Watson(frames=[['abcdefg', 'foo', 0, 10]],
                     config_dir=config_dir)
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
@@ -476,8 +483,8 @@ def test_save_frames_no_change(config_dir):
 
 
 def test_save_added_frame(config_dir):
-    watson = Watson(frames=[[0, 10, 'foo', None]], config_dir=config_dir)
-    watson.frames.add('bar', 10, 20, ['A'])
+    watson = Watson(frames=[['abcdefg', 'foo', 0, 10]], config_dir=config_dir)
+    watson.frames.add('bar', 10, 20, tags=['A'])
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
         with mock.patch('json.dump') as json_mock:
@@ -486,16 +493,21 @@ def test_save_added_frame(config_dir):
             assert json_mock.call_count == 1
             result = json_mock.call_args[0][0]
             assert len(result) == 2
-            assert result[0][2] == 'foo'
+            assert result[0][0] == 'abcdefg'
+            assert result[0][1] == 'foo'
+            assert result[0][2] == 0
+            assert result[0][3] == 10
             assert result[0][4] == []
-            assert result[1][2] == 'bar'
+            assert result[1][1] == 'bar'
+            assert result[1][2] == 10
+            assert result[1][3] == 20
             assert result[1][4] == ['A']
 
 
 def test_save_changed_frame(config_dir):
-    watson = Watson(frames=[[0, 10, 'foo', None, ['A']]],
+    watson = Watson(frames=[['abcdefg', 'foo', 0, 10, ['A']]],
                     config_dir=config_dir)
-    watson.frames[0] = ('bar', 0, 10, ['A', 'B'])
+    watson.frames['abcdefg'] = ('bar', 0, 10, ['A', 'B'])
 
     with mock.patch('%s.open' % builtins, mock.mock_open()):
         with mock.patch('json.dump') as json_mock:
@@ -504,7 +516,10 @@ def test_save_changed_frame(config_dir):
             assert json_mock.call_count == 1
             result = json_mock.call_args[0][0]
             assert len(result) == 1
-            assert result[0][2] == 'bar'
+            assert result[0][0] == 'abcdefg'
+            assert result[0][1] == 'bar'
+            assert result[0][2] == 0
+            assert result[0][3] == 10
             assert result[0][4] == ['A', 'B']
 
             dump_args = json_mock.call_args[1]
@@ -716,17 +731,19 @@ def test_pull(watson, monkeypatch):
 
     assert len(watson.frames) == 2
 
-    assert watson.frames[0].id == '1'
-    assert watson.frames[0].project == 'foo'
-    assert watson.frames[0].start.timestamp == 3
-    assert watson.frames[0].stop.timestamp == 4
-    assert watson.frames[0].tags == ['A']
+    frame = watson.frames.get_by_index(0)
+    assert frame.id == '1'
+    assert frame.project == 'foo'
+    assert frame.start.timestamp == 3
+    assert frame.stop.timestamp == 4
+    assert frame.tags == ['A']
 
-    assert watson.frames[1].id == '2'
-    assert watson.frames[1].project == 'bar'
-    assert watson.frames[1].start.timestamp == 4
-    assert watson.frames[1].stop.timestamp == 5
-    assert watson.frames[1].tags == []
+    frame = watson.frames.get_by_index(1)
+    assert frame.id == '2'
+    assert frame.project == 'bar'
+    assert frame.start.timestamp == 4
+    assert frame.stop.timestamp == 5
+    assert frame.tags == []
 
 
 # projects
