@@ -15,7 +15,7 @@ import requests
 
 from .config import ConfigParser
 from .frames import Frames
-from .utils import make_json_writer, safe_save
+from .utils import make_json_writer, safe_save, deduplicate
 from .version import version as __version__  # noqa
 
 
@@ -246,14 +246,12 @@ class Watson(object):
                 )
             )
 
-        default_tags = self._default_tags(project)
-        if default_tags and not restart:
-            if tags is None:
-                tags = default_tags
-            else:
-                tags = tags + default_tags
+        default_tags = self.config.getlist('default_tags', project)
+        if not restart:
+            tags = (tags or []) + default_tags
+            print(deduplicate(tags))
 
-        self.current = {'project': project, 'tags': tags}
+        self.current = {'project': project, 'tags': deduplicate(tags)}
         return self.current
 
     def stop(self):
@@ -431,10 +429,3 @@ class Watson(object):
                 merging.append(conflict_frame)
 
         return conflicting, merging
-
-    def _default_tags(self, project):
-        default_tags_raw = self.config.get('default_tags', project)
-        default_tags = []
-        if default_tags_raw is not None:
-            default_tags = shlex.split(default_tags_raw)
-        return default_tags

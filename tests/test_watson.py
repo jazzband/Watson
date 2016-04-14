@@ -407,21 +407,6 @@ def test_set_config(watson):
     watson.config.get('foo', 'bar') == 'lol'
 
 
-def test_get_default_tags(watson):
-    content = u"""
-[default_tags]
-single = tag1
-multiple = tag1 tag2 tag3
-spaces = tag1 'with space'
-    """
-
-    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
-        assert watson._default_tags('single') == ['tag1']
-        assert watson._default_tags('multiple') == ['tag1', 'tag2', 'tag3']
-        assert watson._default_tags('spaces') == ['tag1', 'with space']
-        assert watson._default_tags('non defined') == []
-
-
 # start
 
 def test_start_new_project(watson):
