@@ -1,4 +1,7 @@
 import itertools
+import operator
+import re
+import fnmatch
 
 import click
 
@@ -111,3 +114,20 @@ def get_frame_from_argument(watson, arg):
             style('error', "No frame found with id"),
             style('short_id', arg))
         )
+
+
+def name_matcher(kind):
+    """
+    Create a function to match a name with an expression.
+    Used in frame filters to select projects and tags.
+    """
+    if kind == 'fixed' or not kind:
+        return operator.eq
+    if kind == 'regex':
+        return lambda name, pattern: re.match(pattern, name) is not None
+    if kind == 'glob':
+        return fnmatch.fnmatch
+    raise click.ClickException("{} {}.".format(
+        style('error', "Unknown matcher kind: "),
+        kind
+    ))

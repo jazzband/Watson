@@ -15,7 +15,7 @@ import click
 from . import watson
 from .frames import Frame
 from .utils import (format_timedelta, get_frame_from_argument, options,
-                    sorted_groupby, style)
+                    sorted_groupby, style, name_matcher)
 
 
 class WatsonCliError(click.ClickException):
@@ -280,8 +280,11 @@ def status(watson):
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-m', '--matcher', 'matcher',
+              help="The matching method to use when filtering frames. "
+              "Can be `regex`, `glob`, of `fixed` (the default).")
 @click.pass_obj
-def report(watson, from_, to, projects, tags):
+def report(watson, from_, to, projects, tags, matcher):
     """
     Display a report of the time spent on each project.
 
@@ -346,7 +349,9 @@ def report(watson, from_, to, projects, tags):
 
     frames_by_project = sorted_groupby(
         watson.frames.filter(
-            projects=projects or None, tags=tags or None, span=span
+            projects=projects or None, tags=tags or None, span=span,
+            matcher=name_matcher(matcher or
+                                 watson.config.get('options', 'matcher'))
         ),
         operator.attrgetter('project')
     )
@@ -414,8 +419,11 @@ def report(watson, from_, to, projects, tags):
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-m', '--matcher', 'matcher',
+              help="The matching method to use when filtering frames. "
+              "Can be `regex`, `glob`, of `fixed` (the default).")
 @click.pass_obj
-def log(watson, from_, to, projects, tags):
+def log(watson, from_, to, projects, tags, matcher):
     """
     Display each recorded session during the given timespan.
 
@@ -462,7 +470,9 @@ def log(watson, from_, to, projects, tags):
     span = watson.frames.span(from_, to)
     frames_by_day = sorted_groupby(
         watson.frames.filter(
-            projects=projects or None, tags=tags or None, span=span
+            projects=projects or None, tags=tags or None, span=span,
+            matcher=name_matcher(matcher or
+                                 watson.config.get('options', 'matcher'))
         ),
         operator.attrgetter('day'), reverse=True
     )

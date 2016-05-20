@@ -161,6 +161,7 @@ Flag | Help
 `-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-m, --matcher TEXT` | The matching method to use when filtering frames. Can be `regex`, `glob`, of `fixed` (the default).
 `--help` | Show this message and exit.
 
 ## `merge`
@@ -340,6 +341,7 @@ Flag | Help
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-m, --matcher TEXT` | The matching method to use when filtering frames. Can be `regex`, `glob`, of `fixed` (the default).
 `--help` | Show this message and exit.
 
 ## `restart`

@@ -20,6 +20,7 @@ import arrow
 from click import get_app_dir
 from watson import Watson, WatsonError
 from watson.watson import ConfigurationError, ConfigParser
+from watson.utils import name_matcher
 
 TEST_FIXTURE_DIR = py.path.local(
     os.path.dirname(
@@ -781,3 +782,67 @@ def test_merge_report(watson, datafiles):
 
     assert conflicting[0].id == '2'
     assert merging[0].id == '3'
+
+
+# frames filter
+
+def test_project_filter_match(watson):
+    watson.frames.add('Foo', 1, 2)
+    watson.frames.add('Bar', 3, 4)
+    watson.frames.add('FooBar', 5, 6)
+    watson.frames.add('BarFoo', 7, 8)
+    assert len(watson.frames) == 4
+
+    def count(matcher, projects):
+        return len(list(
+            watson.frames.filter(matcher=matcher, projects=projects)))
+
+    matcher = name_matcher(None)
+    assert count(matcher, ['Foo', 'Bar']) == 2
+    assert count(matcher, ['Foo']) == 1
+    assert count(matcher, ['Plop']) == 0
+
+    matcher = name_matcher('glob')
+    assert count(matcher, ['Foo*']) == 2
+    assert count(matcher, ['*']) == 4
+    assert count(matcher, ['*Bar*']) == 3
+
+    matcher = name_matcher('regex')
+    assert count(matcher, ['^Foo$', '^Bar$']) == 2
+    assert count(matcher, ['Foo']) == 2
+    assert count(matcher, ['^Foo.*']) == 2
+    assert count(matcher, ['.*Bar$']) == 2
+    assert count(matcher, ['.*Foo.*']) == 3
+    assert count(matcher, ['.*']) == 4
+    assert count(matcher, ['^...$']) == 2
+    assert count(matcher, ['^Foo.*', '^Bar.*']) == 4
+
+
+def test_tags_filter_match(watson):
+    watson.frames.add('Foo', 1, 2, ['tag1', 'tag2'])
+    watson.frames.add('Foo', 3, 4, ['tag2', 'tag3'])
+    watson.frames.add('Bar', 5, 6, ['tag3', 'tag4'])
+
+    def count(matcher, tags):
+        return len(list(watson.frames.filter(matcher=matcher, tags=tags)))
+
+    matcher = name_matcher(None)
+    assert count(matcher, ['tag2']) == 2
+    assert count(matcher, ['tag1']) == 1
+    assert count(matcher, ['tag3']) == 2
+    assert count(matcher, ['tag0']) == 0
+    assert count(matcher, ['tag1', 'tag3']) == 3
+
+    matcher = name_matcher('glob')
+    assert count(matcher, ['tag2']) == 2
+    assert count(matcher, ['*2']) == 2
+    assert count(matcher, ['*1']) == 1
+    assert count(matcher, ['tag*']) == 3
+
+    matcher = name_matcher('regex')
+    assert count(matcher, ['tag2']) == 2
+    assert count(matcher, ['tag']) == 3
+    assert count(matcher, ['.*1']) == 1
+    assert count(matcher, ['tag[14]']) == 2
+    assert count(matcher, ['tag[1-4]']) == 3
+    assert count(matcher, ['tag[^23]']) == 2

@@ -130,6 +130,14 @@ Globally configure how `dates` should be formatted. All [python's `strftime` dir
 
 Globally configure how `time` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
 
+#### `options.matcher`
+
+Globally configure the method used to filter frames (for instance with the `--project` option). Accepted values are:
+
+- `regex`: use plain regular expressions
+- `glob`: use a shell-like pattern
+- `fixed`: use an exact equality (default)
+
 ## Sample configuration file
 
 A basic configuration file looks like the following:
@@ -146,6 +154,7 @@ stop_on_start = true
 stop_on_restart = false
 date_format = '%Y.%m.%d'
 time_format = '%H:%M:%S%z'
+matcher = regex
 ```
 
 ## Application folder

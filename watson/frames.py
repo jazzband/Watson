@@ -1,4 +1,5 @@
 import uuid
+import operator
 
 import arrow
 
@@ -40,6 +41,20 @@ class Frame(namedtuple('Frame', HEADERS)):
         updated_at = self.updated_at.timestamp
 
         return (start, stop, self.project, self.id, self.tags, updated_at)
+
+    def project_matches(self, projects, matcher=None):
+        m = matcher or operator.eq
+        return (
+            projects is None or
+            any(m(self.project, pattern) for pattern in projects)
+        )
+
+    def tags_match(self, tags, matcher=None):
+        m = matcher or operator.eq
+        return (
+            tags is None or
+            any(m(tag, pattern) for tag in self.tags for pattern in tags)
+        )
 
     @property
     def day(self):
@@ -143,12 +158,14 @@ class Frames(object):
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
 
-    def filter(self, projects=None, tags=None, span=None):
+    def filter(self, projects=None, tags=None, span=None, matcher=None):
         return (
             frame for frame in self._rows
-            if (projects is None or frame.project in projects) and
-               (tags is None or any(tag in frame.tags for tag in tags)) and
-               (span is None or frame in span)
+            if (
+                frame.project_matches(projects, matcher) and
+                frame.tags_match(tags, matcher) and
+                (span is None or frame in span)
+            )
         )
 
     def span(self, start, stop):

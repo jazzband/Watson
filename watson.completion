@@ -3,7 +3,7 @@
 # Install this as `/etc/bash_completion.d/watson` and restart your shell.
 
 _watson_complete () {
-  local cur cmd commands frames projects tags
+  local cur cmd commands frames projects tags matchers
 
   commands='cancel config edit frames help log merge projects remove report restart start status stop sync tags'
 
@@ -25,6 +25,10 @@ _watson_complete () {
           COMPREPLY=($(compgen -W "$commands" -- "$cur" )) ;;
         log|report)
           case "$3" in
+            -m|--matcher)
+              matchers="regex glob fixed"
+              COMPREPLY=($(compgen -W "$matchers" -- ${cur}))
+              ;;
             -p|--project)
               projects="$(watson projects)"
               COMPREPLY=($(compgen -W "$projects" -- ${cur}))
@@ -34,7 +38,7 @@ _watson_complete () {
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
             *)
-              COMPREPLY=($(compgen -W "-f -t -p -T --from --to --project --tag" -- ${cur})) ;;
+              COMPREPLY=($(compgen -W "-f -t -p -T -m --from --to --project --tag --matcher" -- ${cur})) ;;
           esac
           ;;
         merge)
