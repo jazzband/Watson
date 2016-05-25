@@ -282,7 +282,7 @@ def status(watson):
               "times")
 @click.option('-m', '--matcher', 'matcher',
               help="The matching method to use when filtering frames. "
-              "Can be `regex`, `glob`, of `fixed` (the default).")
+              "Can be `regex`, `glob`, or `fixed` (the default).")
 @click.pass_obj
 def report(watson, from_, to, projects, tags, matcher):
     """
@@ -421,7 +421,7 @@ def report(watson, from_, to, projects, tags, matcher):
               "times")
 @click.option('-m', '--matcher', 'matcher',
               help="The matching method to use when filtering frames. "
-              "Can be `regex`, `glob`, of `fixed` (the default).")
+              "Can be `regex`, `glob`, or `fixed` (the default).")
 @click.pass_obj
 def log(watson, from_, to, projects, tags, matcher):
     """
