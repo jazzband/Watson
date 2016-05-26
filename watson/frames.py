@@ -78,7 +78,12 @@ class Frames(OrderedDict):
         for frame in frames or []:
             # convert from old format with project @ idx 2 and ID @ idx 3
             if not isinstance(frame[2], (int, float)):
-                frame = [frame[3], frame[2], frame[0], frame[1]] + frame[4:]
+                frame = (
+                    frame[3],  # id
+                    frame[2],  # project
+                    frame[0],  # start
+                    frame[1]   # stop
+                ) + tuple(frame[4:])
 
             frame = Frame(*frame)
             self[frame.id] = frame
