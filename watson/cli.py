@@ -932,9 +932,9 @@ def merge(watson, frames_with_conflict, force):
 
     # merge in any non-conflicting frames
     for frame in merging:
-        start, stop, project, id, tags, updated_at = frame.dump()
-        original_frames.add(project, start, stop, tags=tags, id=id,
-                            updated_at=updated_at)
+        id, project, start, stop, tags, updated_at = frame.dump()
+        original_frames.add(project, start, stop, tags=tags,
+                            updated_at=updated_at, id=id)
 
     watson.frames = original_frames
     watson.frames.changed = True
