@@ -348,6 +348,52 @@ def test_frames_without_tags(watson):
         assert frame.tags == []
 
 
+def test_frames_with_message(watson):
+    content = json.dumps([
+        ['abcdefg', 'foo', 0, 10, ['A', 'B', 'C'], 30,
+         "My hovercraft is full of eels"]
+    ])
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert len(watson.frames) == 1
+        frame = watson.frames['abcdefg']
+        assert frame.id == 'abcdefg'
+        assert frame.project == 'foo'
+        assert frame.start == arrow.get(0)
+        assert frame.stop == arrow.get(10)
+        assert frame.tags == ['A', 'B', 'C']
+        assert frame.message == "My hovercraft is full of eels"
+
+
+def test_frames_without_message(watson):
+    content = json.dumps([
+        ['abcdefg', 'foo', 0, 10],
+        ['hijklmn', 'foo', 10, 20, ['A', 'B', 'C']],
+        ['opqrstu', 'foo', 20, 30, ['A', 'B', 'C'], 30]
+    ])
+
+    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
+        assert len(watson.frames) == 3
+        frame = watson.frames['abcdefg']
+        assert frame.id == 'abcdefg'
+        assert frame.project == 'foo'
+        assert frame.start == arrow.get(0)
+        assert frame.stop == arrow.get(10)
+        assert frame.tags == []
+        assert frame.message is None
+
+        frame = watson.frames['hijklmn']
+        assert frame.id == 'hijklmn'
+        assert frame.tags == ['A', 'B', 'C']
+        assert frame.message is None
+
+        frame = watson.frames['opqrstu']
+        assert frame.id == 'opqrstu'
+        assert frame.tags == ['A', 'B', 'C']
+        assert frame.updated_at == arrow.get(30)
+        assert frame.message is None
+
+
 def test_frames_with_empty_file(watson):
     with mock.patch('%s.open' % builtins, mock.mock_open(read_data="")):
         with mock.patch('os.path.getsize', return_value=0):
@@ -570,6 +616,31 @@ def test_stop_started_project_without_tags(watson):
     assert isinstance(frame.start, arrow.Arrow)
     assert isinstance(frame.stop, arrow.Arrow)
     assert frame.tags == []
+
+
+def test_stop_started_project_without_message(watson):
+    watson.start('foo')
+    watson.stop()
+
+    assert watson.current == {}
+    assert watson.is_started is False
+    assert len(watson.frames) == 1
+    frame = watson.frames.get_by_index(0)
+    assert frame.project == 'foo'
+    assert frame.message is None
+
+
+def test_stop_started_project_with_message(watson):
+    watson.start('foo')
+    watson._current['message'] = "My hovercraft is full of eels"
+    watson.stop()
+
+    assert watson.current == {}
+    assert watson.is_started is False
+    assert len(watson.frames) == 1
+    frame = watson.frames.get_by_index(0)
+    assert frame.project == 'foo'
+    assert frame.message == "My hovercraft is full of eels"
 
 
 def test_stop_no_project(watson):
