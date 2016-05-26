@@ -152,6 +152,7 @@ class Watson(object):
                         'project': self.current['project'],
                         'start': self._format_date(self.current['start']),
                         'tags': self.current['tags'],
+                        'message': self.current.get('message'),
                     }
                 else:
                     current = {}
@@ -215,7 +216,8 @@ class Watson(object):
         self._current = {
             'project': value['project'],
             'start': start,
-            'tags': value.get('tags') or []
+            'tags': value.get('tags') or [],
+            'message': value.get('message'),
         }
 
         if self._old_state is None:
@@ -264,9 +266,8 @@ class Watson(object):
             raise WatsonError("No project started.")
 
         old = self.current
-        frame = self.frames.add(
-            old['project'], old['start'], arrow.now(), tags=old['tags']
-        )
+        frame = self.frames.add(old['project'], old['start'], arrow.now(),
+                                tags=old['tags'], message=old.get('message'))
         self.current = None
 
         return frame
