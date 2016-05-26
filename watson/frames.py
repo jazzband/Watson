@@ -6,11 +6,12 @@ import arrow
 
 from collections import OrderedDict, namedtuple
 
-FIELDS = ('id', 'project', 'start', 'stop', 'tags', 'updated_at')
+FIELDS = ('id', 'project', 'start', 'stop', 'tags', 'updated_at', 'message')
 
 
 class Frame(namedtuple('Frame', FIELDS)):
-    def __new__(cls, id, project, start, stop, tags=None, updated_at=None):
+    def __new__(cls, id, project, start, stop, tags=None, updated_at=None,
+                message=None):
         try:
             if not isinstance(start, arrow.Arrow):
                 start = arrow.get(start)
@@ -33,7 +34,7 @@ class Frame(namedtuple('Frame', FIELDS)):
             tags = []
 
         return super(Frame, cls).__new__(
-            cls, id, project, start, stop, tags, updated_at
+            cls, id, project, start, stop, tags, updated_at, message
         )
 
     def dump(self):
@@ -41,7 +42,8 @@ class Frame(namedtuple('Frame', FIELDS)):
         stop = self.stop.to('utc').timestamp
         updated_at = self.updated_at.timestamp
 
-        return (self.id, self.project, start, stop, self.tags, updated_at)
+        return (self.id, self.project, start, stop, self.tags, updated_at,
+                self.message)
 
     @property
     def day(self):
@@ -103,9 +105,10 @@ class Frames(OrderedDict):
     def __setitem__(self, key, value):
         if isinstance(value, Frame):
             frame = self.new_frame(value.project, value.start, value.stop,
-                                   value.tags, value.updated_at, id=key)
+                                   value.tags, value.updated_at, value.message,
+                                   id=key)
         else:
-            frame = self.new_frame(*value[:5], id=key)
+            frame = self.new_frame(*value[:6], id=key)
 
         if key not in self:
             self._keys.append(key)
@@ -129,11 +132,11 @@ class Frames(OrderedDict):
         return frame
 
     def new_frame(self, project, start, stop, tags=None, updated_at=None,
-                  id=None):
+                  message=None, id=None):
         if id is None:
             id = uuid.uuid4().hex
 
-        return Frame(id, project, start, stop, tags, updated_at)
+        return Frame(id, project, start, stop, tags, updated_at, message)
 
     def dump(self):
         return tuple(frame.dump() for frame in self.values())
