@@ -90,6 +90,9 @@ _watson_complete () {
               ;;
           esac
           ;;
+        stop)
+          COMPREPLY=($(compgen -W "-m --message" -- ${cur}))
+          ;;
       esac
       ;;
   esac
