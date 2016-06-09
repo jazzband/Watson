@@ -314,6 +314,27 @@ def test_frames_get_by_index(watson):
         assert watson.frames.get_by_index(0).project == 'project4'
 
 
+def test_frames_get_by_id(watson):
+    test_frames = (
+        ('abcdef', ('project0',  0, 10)),
+        ('abcxyz', ('project1', 10, 20)),
+        ('defghi', ('project2', 20, 30)),
+    )
+
+    for id, frame in test_frames:
+        watson.frames[id] = frame
+
+    frame = watson.frames['abcdef']
+    assert frame.project == 'project0'
+    frame = watson.frames['abcxyz']
+    assert frame.project == 'project1'
+
+    frame = watson.frames['abc']
+    assert frame.project == 'project0'
+    frame = watson.frames['def']
+    assert frame.project == 'project2'
+
+
 def test_frames_without_tags(watson):
     content = json.dumps([['abcdefg', 'foo', 0, 10]])
 
