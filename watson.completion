@@ -76,6 +76,9 @@ _watson_complete () {
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))
           fi
           ;;
+        stop)
+          COMPREPLY=($(compgen -W "-m --message" -- ${cur}))
+          ;;
       esac
       ;;
   esac
