@@ -12,10 +12,11 @@ from functools import reduce
 import arrow
 import click
 
-from . import watson
+from . import watson as _watson
 from .frames import Frame
-from .utils import (format_timedelta, get_frame_from_argument, options,
-                    sorted_groupby, style, get_start_time_for_period)
+from .utils import (format_timedelta, get_frame_from_argument,
+                    get_start_time_for_period, options, safe_save,
+                    sorted_groupby, style)
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -43,7 +44,7 @@ class WatsonCliError(click.ClickException):
         return style('error', self.message)
 
 
-watson.WatsonError = WatsonCliError
+_watson.WatsonError = WatsonCliError
 
 
 class DateParamType(click.ParamType):
@@ -63,7 +64,7 @@ Date = DateParamType()
 
 
 @click.group()
-@click.version_option(version=watson.__version__, prog_name='Watson')
+@click.version_option(version=_watson.__version__, prog_name='Watson')
 @click.pass_context
 def cli(ctx):
     """
@@ -76,7 +77,7 @@ def cli(ctx):
 
     # This is the main command group, needed by click in order
     # to handle the subcommands
-    ctx.obj = watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
+    ctx.obj = _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
 
 
 @cli.command()
@@ -811,15 +812,19 @@ def config(context, key, value, edit):
     config = watson.config
 
     if edit:
-        click.edit(filename=watson.config_file, extension='.ini')
+        with open(watson.config_file) as fp:
+            newconfig = click.edit(text=fp.read(), extension='.ini')
+
+        if newconfig:
+            safe_save(watson.config_file, newconfig)
 
         try:
             watson.config = None
             watson.config
-        except WatsonCliError:
+        except _watson.ConfigurationError as exc:
             watson.config = config
             watson.save()
-            raise
+            raise WatsonCliError(str(exc))
         return
 
     if not key:

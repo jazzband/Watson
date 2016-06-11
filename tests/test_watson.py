@@ -9,9 +9,9 @@ except ImportError:
     import mock
 
 try:
-    from io import StringIO
-except ImportError:
     from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 import py
 import pytest
@@ -23,7 +23,8 @@ from dateutil.tz.tz import tzutc
 from click import get_app_dir
 from watson import Watson, WatsonError
 from watson.watson import ConfigurationError, ConfigParser
-from watson.utils import get_start_time_for_period
+from watson.utils import get_start_time_for_period, make_json_writer, safe_save
+
 
 TEST_FIXTURE_DIR = py.path.local(
     os.path.dirname(
@@ -630,6 +631,20 @@ def test_save_empty_last_sync(config_dir):
             assert json_mock.call_args[0][0] == 0
 
 
+def test_watson_save_calls_safe_save(watson, config_dir):
+    frames_file = os.path.join(config_dir, 'frames')
+    watson.start('foo', tags=['A', 'B'])
+    watson.stop()
+
+    with mock.patch('watson.watson.safe_save') as save_mock:
+        watson.save()
+
+        assert watson._frames.changed
+        assert save_mock.call_count == 1
+        assert len(save_mock.call_args[0]) == 2
+        assert save_mock.call_args[0][0] == frames_file
+
+
 # push
 
 def test_push_with_no_config(watson):
@@ -881,3 +896,78 @@ _tz = {'tzinfo': tzutc()}
 def test_get_start_time_for_period(now, mode, start_time):
     with mock_datetime(now, datetime):
         assert get_start_time_for_period(mode).datetime == start_time
+
+
+# utils
+
+def test_make_json_writer():
+    fp = StringIO()
+    writer = make_json_writer(lambda: {'foo': 42})
+    writer(fp)
+    assert fp.getvalue() == '{\n "foo": 42\n}'
+
+
+def test_make_json_writer_with_args():
+    fp = StringIO()
+    writer = make_json_writer(lambda x: {'foo': x}, 23)
+    writer(fp)
+    assert fp.getvalue() == '{\n "foo": 23\n}'
+
+
+def test_make_json_writer_with_kwargs():
+    fp = StringIO()
+    writer = make_json_writer(lambda foo=None: {'foo': foo}, foo='bar')
+    writer(fp)
+    assert fp.getvalue() == '{\n "foo": "bar"\n}'
+
+
+def test_safe_save(config_dir):
+    save_file = os.path.join(config_dir, 'test')
+    backup_file = os.path.join(config_dir, 'test' + '.bak')
+
+    assert not os.path.exists(save_file)
+    safe_save(save_file, lambda f: f.write("Success"))
+    assert os.path.exists(save_file)
+    assert not os.path.exists(backup_file)
+
+    with open(save_file) as fp:
+        assert fp.read() == "Success"
+
+    safe_save(save_file, "Again")
+    assert os.path.exists(backup_file)
+
+    with open(save_file) as fp:
+        assert fp.read() == "Again"
+
+    with open(backup_file) as fp:
+        assert fp.read() == "Success"
+
+    assert os.path.getmtime(save_file) >= os.path.getmtime(backup_file)
+
+
+def test_safe_save_with_exception(config_dir):
+    save_file = os.path.join(config_dir, 'test')
+    backup_file = os.path.join(config_dir, 'test' + '.bak')
+
+    def failing_writer(f):
+        raise RuntimeError("Save failed.")
+
+    assert not os.path.exists(save_file)
+
+    with pytest.raises(RuntimeError):
+        safe_save(save_file, failing_writer)
+
+    assert not os.path.exists(save_file)
+    assert not os.path.exists(backup_file)
+
+    safe_save(save_file, lambda f: f.write("Success"))
+    assert os.path.exists(save_file)
+    assert not os.path.exists(backup_file)
+
+    with pytest.raises(RuntimeError):
+        safe_save(save_file, failing_writer)
+
+    with open(save_file) as fp:
+        assert fp.read() == "Success"
+
+    assert not os.path.exists(backup_file)
