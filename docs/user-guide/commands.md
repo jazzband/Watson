@@ -456,6 +456,7 @@ Example:
 
 Flag | Help
 -----|-----
+`-m, --message TEXT` | Save given log message with the project frame.
 `--help` | Show this message and exit.
 
 ## `sync`
