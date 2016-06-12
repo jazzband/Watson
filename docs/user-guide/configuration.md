@@ -98,6 +98,18 @@ To authenticate watson as an API client, once generated, you will need to set up
 
 ### Options
 
+#### `options.log_current`
+
+If `true`, the output of the `log` command will include the currently running
+frame (if any) by default. The option can be overridden on the command line
+with the `-c/-C` resp. `--current/--no-current` flags.
+
+#### `options.log_current`
+
+If `true`, the output of the `report` command will include the currently
+running frame (if any) by default. The option can be overridden on the
+command line with the `-c/-C` resp. `--current/--no-current` flags.
+
 #### `options.stop_on_start`
 
 If `true`, starting a new project will stop running projects:
@@ -146,6 +158,8 @@ stop_on_start = true
 stop_on_restart = false
 date_format = '%Y.%m.%d'
 time_format = '%H:%M:%S%z'
+log_current = false
+report_current = false
 ```
 
 ## Application folder

@@ -35,7 +35,7 @@ _watson_complete () {
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
             *)
-              COMPREPLY=($(compgen -W "-f -t -p -T --from --to --project --tag" -- ${cur})) ;;
+              COMPREPLY=($(compgen -W "-c -C -f -p -t -T --current --no-current --from --to --project --tag" -- ${cur})) ;;
           esac
           ;;
         merge)

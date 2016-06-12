@@ -162,6 +162,7 @@ Example:
 
 Flag | Help
 -----|-----
+`-c, --current / -C, --no-current` | (Don't) include currently running frame in output.
 `-f, --from DATE` | The date from when the log should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
 `-y, --year` | Reports activity for the current year.
@@ -309,9 +310,8 @@ Usage:  watson report [OPTIONS]
 
 Display a report of the time spent on each project.
 
-If a project is given, the time spent on this project
-is printed. Else, print the total for each root
-project.
+If a project is given, the time spent on this project is printed.
+Else, print the total for each root project.
 
 By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
@@ -372,6 +372,7 @@ Example:
 
 Flag | Help
 -----|-----
+`-c, --current / -C, --no-current` | (Don't) include currently running frame in report.
 `-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-y, --year` | Reports activity for the current year.
