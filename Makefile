@@ -1,21 +1,54 @@
 # Watson
 
+ifndef PYTHON
+	PYTHON = python
+endif
+
+ifndef PIP
+	PIP = pip
+endif
+
+VENV = virtualenv
+VENV_ARGS = -p $(PYTHON)
+VENV_DIR = $(CURDIR)/.env
+
 all: install
 
+$(VENV_DIR): requirements-dev.txt
+	$(VENV) $(VENV_ARGS) "$(VENV_DIR)"
+	"$(VENV_DIR)"/bin/pip install -U setuptools wheel pip
+	"$(VENV_DIR)"/bin/pip install -Ur $<
+
+.PHONY: env
+env: $(VENV_DIR)
+
+.PHONY: install
 install:
-	python setup.py install
+	$(PYTHON) setup.py install
 
+.PHONY: install-dev
 install-dev:
-	pip install -r requirements-dev.txt
-	python setup.py develop
+	$(PIP) install -r requirements-dev.txt
+	$(PYTHON) setup.py develop
 
+.PHONY: check
+check: clean
+	$(PYTHON) setup.py test
+
+.PHONY: clean
 clean:
 	find . -name '*.pyc' -delete
 	find . -name '__pycache__' -type d | xargs rm -fr
 
+.PHONY: distclean
 distclean: clean
-	rm -fr *.egg *.egg-info/
+	rm -fr *.egg *.egg-info/ .eggs/
 
+.PHONY:
+mostlyclean: clean distclean
+	rm -rf "$(VENV_DIR)"
+
+.PHONY: docs
 docs: install-dev
-	python scripts/gen-cli-docs.py
+	$(PYTHON) scripts/gen-cli-docs.py
 	mkdocs build
