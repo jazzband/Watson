@@ -819,6 +819,7 @@ def test_merge_report(watson, datafiles):
 _dt = datetime.datetime
 _tz = {'tzinfo': tzutc()}
 
+
 @pytest.mark.parametrize('now, mode, beginning', [
     (_dt(2016, 6, 2, **_tz), 'year', _dt(2016, 1, 1, **_tz)),
     (_dt(2016, 6, 2, **_tz), 'month', _dt(2016, 6, 1, **_tz)),

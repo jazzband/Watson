@@ -31,7 +31,7 @@ class MutuallyExclusiveOption(click.Option):
                                    options=', '
                                    .join(['`--{}`'.format(_) for _ in
                                          self.mutually_exclusive]))
-        )
+            )
 
         return super(MutuallyExclusiveOption, self).handle_parse_result(
             ctx, opts, args
@@ -287,6 +287,7 @@ def status(watson):
 
 _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
 
+
 @cli.command()
 @click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
               default=arrow.now().replace(days=-7),
@@ -334,9 +335,9 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
     can be controlled with the `--from` and `--to` arguments. The dates
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
-    Also you can use a special shortcuts for easily timespan control: `--day` is
-    for the last day activity and `--year`/`--month`/`--week` for an activity
-    during the current year/month/week correspondingly.
+    Also you can use a special shortcuts for easily timespan control: `--day`
+    is for the last day activity and `--year`/`--month`/`--week` for an
+    activity during the current year/month/week correspondingly.
 
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -488,9 +489,9 @@ def log(watson, from_, to, projects, tags, year, month, week, day):
     can be controlled with the `--from` and `--to` arguments. The dates
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
-    Also you can use a special shortcuts for easily timespan control: `--day` is
-    for the last day activity and `--year`/`--month`/`--week` for an activity
-    during the current year/month/week correspondingly.
+    Also you can use a special shortcuts for easily timespan control: `--day`
+    is for the last day activity and `--year`/`--month`/`--week` for an
+    activity during the current year/month/week correspondingly.
 
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
