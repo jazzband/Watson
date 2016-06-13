@@ -4,6 +4,7 @@
 
 _watson_complete () {
   local cur cmd commands frames projects tags
+  local IFS=$'\n'
 
   commands='cancel config edit frames help log merge projects remove report restart start status stop sync tags'
 
@@ -26,11 +27,11 @@ _watson_complete () {
         log|report)
           case "$3" in
             -p|--project)
-              projects="$(watson projects)"
+              projects="$(watson projects | sed -e 's/ /\\\\ /g')"
               COMPREPLY=($(compgen -W "$projects" -- ${cur}))
               ;;
             -T|--tag)
-              tags="$(watson tags)"
+              tags="$(watson tags | sed -e 's/ /\\\\ /g')"
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
             *)
@@ -68,10 +69,10 @@ _watson_complete () {
           ;;
         start)
           if [[ $COMP_CWORD -eq 2 ]]; then
-            projects="$(watson projects)"
+            projects="$(watson projects | sed -e 's/ /\\\\ /g')"
             COMPREPLY=($(compgen -W "$projects" -- ${cur}))
           else
-            tags="$(watson tags | awk '$0="+"$0')"
+            tags="$(watson tags | sed -e 's/ /\\\\ /g' | awk '$0="+"$0')"
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))
           fi
           ;;
