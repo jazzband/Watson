@@ -314,7 +314,7 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
 @click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
               flag_value=arrow.now().replace(hours=-24),
               mutually_exclusive=['week', 'month', 'year'],
-              help='Reports activity for the last day.')
+              help='Reports activity for the last 24 hours.')
 @click.option('-p', '--project', 'projects', multiple=True,
               help="Reports activity only for the given project. You can add "
               "other projects by using this option several times.")
@@ -336,7 +336,7 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
     Also you can use a special shortcuts for easily timespan control: `--day`
-    is for the last day activity and `--year`/`--month`/`--week` for an
+    is for the last 24 hours activity and `--year`/`--month`/`--week` for an
     activity during the current year/month/week correspondingly.
 
     You can limit the report to a project or a tag using the `--project` and
@@ -472,7 +472,7 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
 @click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
               flag_value=arrow.now().replace(hours=-24),
               mutually_exclusive=['week', 'month', 'year'],
-              help='Reports activity for the last day.')
+              help='Reports activity for the last 24 hours.')
 @click.option('-p', '--project', 'projects', multiple=True,
               help="Logs activity only for the given project. You can add "
               "other projects by using this option several times.")
@@ -490,7 +490,7 @@ def log(watson, from_, to, projects, tags, year, month, week, day):
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
     Also you can use a special shortcuts for easily timespan control: `--day`
-    is for the last day activity and `--year`/`--month`/`--week` for an
+    is for the last 24 hours activity and `--year`/`--month`/`--week` for an
     activity during the current year/month/week correspondingly.
 
     You can limit the log to a project or a tag using the `--project` and
