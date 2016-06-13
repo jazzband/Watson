@@ -1,6 +1,8 @@
 import itertools
+import datetime
 
 import click
+import arrow
 
 from click.exceptions import UsageError
 
@@ -111,3 +113,25 @@ def get_frame_from_argument(watson, arg):
             style('error', "No frame found with id"),
             style('short_id', arg))
         )
+
+
+def get_beginning_arrow(shortcut):
+    # Using now() from datetime instead of arrow for mocking compatibility.
+    now = arrow.Arrow.fromdatetime(datetime.datetime.now())
+    date = now.date()
+
+    month = date.month
+    year = date.year
+
+    weekday = now.weekday()
+
+    if shortcut == 'week':
+        arw = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
+    elif shortcut == 'month':
+        arw = arrow.Arrow(year, month, 1)
+    elif shortcut == 'year':
+        arw = arrow.Arrow(year, 1, 1)
+    else:
+        raise ValueError('Unsupported shortcut value: {}'.format(shortcut))
+
+    return arw

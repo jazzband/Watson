@@ -15,7 +15,27 @@ import click
 from . import watson
 from .frames import Frame
 from .utils import (format_timedelta, get_frame_from_argument, options,
-                    sorted_groupby, style)
+                    sorted_groupby, style, get_beginning_arrow)
+
+
+class MutuallyExclusiveOption(click.Option):
+    def __init__(self, *args, **kwargs):
+        self.mutually_exclusive = set(kwargs.pop('mutually_exclusive', []))
+        super(MutuallyExclusiveOption, self).__init__(*args, **kwargs)
+
+    def handle_parse_result(self, ctx, opts, args):
+        if self.mutually_exclusive.intersection(opts) and self.name in opts:
+            raise click.UsageError(
+                '`--{name}` is mutually exclusive with the following options: '
+                '{options}'.format(name=self.name.replace('_', ''),
+                                   options=', '
+                                   .join(['`--{}`'.format(_) for _ in
+                                         self.mutually_exclusive]))
+        )
+
+        return super(MutuallyExclusiveOption, self).handle_parse_result(
+            ctx, opts, args
+        )
 
 
 class WatsonCliError(click.ClickException):
@@ -265,14 +285,35 @@ def status(watson):
     ))
 
 
+_SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
+
 @cli.command()
-@click.option('-f', '--from', 'from_', type=Date,
+@click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
               default=arrow.now().replace(days=-7),
+              mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date from when the report should start. Defaults "
               "to seven days ago.")
-@click.option('-t', '--to', type=Date, default=arrow.now(),
+@click.option('-t', '--to', cls=MutuallyExclusiveOption, type=Date,
+              default=arrow.now(),
+              mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
+@click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=get_beginning_arrow('year'),
+              mutually_exclusive=['day', 'week', 'month'],
+              help='Reports activity for the current year.')
+@click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=get_beginning_arrow('month'),
+              mutually_exclusive=['day', 'week', 'year'],
+              help='Reports activity for the current month.')
+@click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=get_beginning_arrow('week'),
+              mutually_exclusive=['day', 'month', 'year'],
+              help='Reports activity for the current week.')
+@click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=arrow.now().replace(hours=-24),
+              mutually_exclusive=['week', 'month', 'year'],
+              help='Reports activity for the last day.')
 @click.option('-p', '--project', 'projects', multiple=True,
               help="Reports activity only for the given project. You can add "
               "other projects by using this option several times.")
@@ -281,7 +322,7 @@ def status(watson):
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.pass_obj
-def report(watson, from_, to, projects, tags):
+def report(watson, from_, to, projects, tags, year, month, week, day):
     """
     Display a report of the time spent on each project.
 
@@ -292,6 +333,10 @@ def report(watson, from_, to, projects, tags):
     By default, the time spent the last 7 days is printed. This timespan
     can be controlled with the `--from` and `--to` arguments. The dates
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+
+    Also you can use a special shortcuts for easily timespan control: `--day` is
+    for the last day activity and `--year`/`--month`/`--week` for an activity
+    during the current year/month/week correspondingly.
 
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -339,6 +384,10 @@ def report(watson, from_, to, projects, tags):
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     """
+    for shortcut_timestamp in (_ for _ in [day, week, month, year]
+                               if _ is not None):
+        from_ = shortcut_timestamp
+
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
@@ -407,6 +456,22 @@ def report(watson, from_, to, projects, tags):
 @click.option('-t', '--to', type=Date, default=arrow.now(),
               help="The date at which the log should stop (inclusive). "
               "Defaults to tomorrow.")
+@click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=get_beginning_arrow('year'),
+              mutually_exclusive=['day', 'week', 'month'],
+              help='Reports activity for the current year.')
+@click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=get_beginning_arrow('month'),
+              mutually_exclusive=['day', 'week', 'year'],
+              help='Reports activity for the current month.')
+@click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=get_beginning_arrow('week'),
+              mutually_exclusive=['day', 'month', 'year'],
+              help='Reports activity for the current week.')
+@click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
+              flag_value=arrow.now().replace(hours=-24),
+              mutually_exclusive=['week', 'month', 'year'],
+              help='Reports activity for the last day.')
 @click.option('-p', '--project', 'projects', multiple=True,
               help="Logs activity only for the given project. You can add "
               "other projects by using this option several times.")
@@ -415,13 +480,17 @@ def report(watson, from_, to, projects, tags):
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.pass_obj
-def log(watson, from_, to, projects, tags):
+def log(watson, from_, to, projects, tags, year, month, week, day):
     """
     Display each recorded session during the given timespan.
 
     By default, the sessions from the last 7 days are printed. This timespan
     can be controlled with the `--from` and `--to` arguments. The dates
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+
+    Also you can use a special shortcuts for easily timespan control: `--day` is
+    for the last day activity and `--year`/`--month`/`--week` for an activity
+    during the current year/month/week correspondingly.
 
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -456,6 +525,10 @@ def log(watson, from_, to, projects, tags):
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
     """  # noqa
+    for shortcut_timestamp in (_ for _ in [day, week, month, year]
+                               if _ is not None):
+        from_ = shortcut_timestamp
+
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
