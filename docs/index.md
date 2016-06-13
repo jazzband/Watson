@@ -33,6 +33,12 @@ $ pip install td-watson
 
 Depending on your system, you might need to run this command with root privileges in order to install Watson globally.
 
+On OS X, the easiest way to install Watson is using [Homebrew](http://brew.sh/):
+
+```bash
+$ brew update && brew install watson
+```
+
 ### Distribution packages
 
 You can install Watson using available distribution packages.
