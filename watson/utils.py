@@ -1,6 +1,8 @@
 import itertools
+import datetime
 
 import click
+import arrow
 
 from click.exceptions import UsageError
 
@@ -111,3 +113,28 @@ def get_frame_from_argument(watson, arg):
             style('error', "No frame found with id"),
             style('short_id', arg))
         )
+
+
+def get_start_time_for_period(period):
+    # Using now() from datetime instead of arrow for mocking compatibility.
+    now = arrow.Arrow.fromdatetime(datetime.datetime.now())
+    date = now.date()
+
+    day = date.day
+    month = date.month
+    year = date.year
+
+    weekday = now.weekday()
+
+    if period == 'day':
+        start_time = arrow.Arrow(year, month, day)
+    elif period == 'week':
+        start_time = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
+    elif period == 'month':
+        start_time = arrow.Arrow(year, month, 1)
+    elif period == 'year':
+        start_time = arrow.Arrow(year, 1, 1)
+    else:
+        raise ValueError('Unsupported period value: {}'.format(period))
+
+    return start_time
