@@ -335,7 +335,7 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
     can be controlled with the `--from` and `--to` arguments. The dates
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
-    Also you can use a special shortcuts for easily timespan control: `--day`
+    Also you can use a special shortcuts for easy timespan control: `--day`
     is for the last 24 hours activity and `--year`/`--month`/`--week` for an
     activity during the current year/month/week correspondingly.
 
@@ -489,7 +489,7 @@ def log(watson, from_, to, projects, tags, year, month, week, day):
     can be controlled with the `--from` and `--to` arguments. The dates
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
-    Also you can use a special shortcuts for easily timespan control: `--day`
+    Also you can use a special shortcuts for easy timespan control: `--day`
     is for the last 24 hours activity and `--year`/`--month`/`--week` for an
     activity during the current year/month/week correspondingly.
 
