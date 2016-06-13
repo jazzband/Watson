@@ -385,9 +385,9 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     """
-    for shortcut_timestamp in (_ for _ in [day, week, month, year]
-                               if _ is not None):
-        from_ = shortcut_timestamp
+    for shortcut_arrow in (_ for _ in [day, week, month, year]
+                           if _ is not None):
+        from_ = shortcut_arrow
 
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
@@ -526,9 +526,9 @@ def log(watson, from_, to, projects, tags, year, month, week, day):
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
     """  # noqa
-    for shortcut_timestamp in (_ for _ in [day, week, month, year]
-                               if _ is not None):
-        from_ = shortcut_timestamp
+    for shortcut_arrow in (_ for _ in [day, week, month, year]
+                           if _ is not None):
+        from_ = shortcut_arrow
 
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
