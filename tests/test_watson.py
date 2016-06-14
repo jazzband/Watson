@@ -824,10 +824,12 @@ _tz = {'tzinfo': tzutc()}
     (_dt(2016, 6, 2, **_tz), 'year', _dt(2016, 1, 1, **_tz)),
     (_dt(2016, 6, 2, **_tz), 'month', _dt(2016, 6, 1, **_tz)),
     (_dt(2016, 6, 2, **_tz), 'week', _dt(2016, 5, 30, **_tz)),
+    (_dt(2016, 6, 2, **_tz), 'day', _dt(2016, 6, 2, **_tz)),
 
     (_dt(2012, 2, 24, **_tz), 'year', _dt(2012, 1, 1, **_tz)),
     (_dt(2012, 2, 24, **_tz), 'month', _dt(2012, 2, 1, **_tz)),
     (_dt(2012, 2, 24, **_tz), 'week', _dt(2012, 2, 20, **_tz)),
+    (_dt(2012, 2, 24, **_tz), 'day', _dt(2012, 2, 24, **_tz)),
 ])
 def test_get_beginning_arrow(now, mode, beginning):
     with mock_datetime(now, datetime):

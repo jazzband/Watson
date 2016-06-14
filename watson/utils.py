@@ -120,12 +120,15 @@ def get_beginning_arrow(shortcut):
     now = arrow.Arrow.fromdatetime(datetime.datetime.now())
     date = now.date()
 
+    day = date.day
     month = date.month
     year = date.year
 
     weekday = now.weekday()
 
-    if shortcut == 'week':
+    if shortcut == 'day':
+        arw = arrow.Arrow(year, month, day)
+    elif shortcut == 'week':
         arw = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
     elif shortcut == 'month':
         arw = arrow.Arrow(year, month, 1)
