@@ -1,12 +1,7 @@
 # Watson
 
-ifndef PYTHON
-	PYTHON = python
-endif
-
-ifndef PIP
-	PIP = pip
-endif
+PYTHON ?= python
+PIP ?= pip
 
 VENV = virtualenv
 VENV_ARGS = -p $(PYTHON)
