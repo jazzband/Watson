@@ -15,7 +15,7 @@ import click
 from . import watson
 from .frames import Frame
 from .utils import (format_timedelta, get_frame_from_argument, options,
-                    sorted_groupby, style, get_beginning_arrow)
+                    sorted_groupby, style, get_start_time_for_period)
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -300,19 +300,19 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
 @click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('year'),
+              flag_value=get_start_time_for_period('year'),
               mutually_exclusive=['day', 'week', 'month'],
               help='Reports activity for the current year.')
 @click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('month'),
+              flag_value=get_start_time_for_period('month'),
               mutually_exclusive=['day', 'week', 'year'],
               help='Reports activity for the current month.')
 @click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('week'),
+              flag_value=get_start_time_for_period('week'),
               mutually_exclusive=['day', 'month', 'year'],
               help='Reports activity for the current week.')
 @click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('day'),
+              flag_value=get_start_time_for_period('day'),
               mutually_exclusive=['week', 'month', 'year'],
               help='Reports activity for the current day.')
 @click.option('-p', '--project', 'projects', multiple=True,
@@ -386,9 +386,9 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     """
-    for shortcut_arrow in (_ for _ in [day, week, month, year]
-                           if _ is not None):
-        from_ = shortcut_arrow
+    for start_time in (_ for _ in [day, week, month, year]
+                       if _ is not None):
+        from_ = start_time
 
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
@@ -459,19 +459,19 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
               help="The date at which the log should stop (inclusive). "
               "Defaults to tomorrow.")
 @click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('year'),
+              flag_value=get_start_time_for_period('year'),
               mutually_exclusive=['day', 'week', 'month'],
               help='Reports activity for the current year.')
 @click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('month'),
+              flag_value=get_start_time_for_period('month'),
               mutually_exclusive=['day', 'week', 'year'],
               help='Reports activity for the current month.')
 @click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('week'),
+              flag_value=get_start_time_for_period('week'),
               mutually_exclusive=['day', 'month', 'year'],
               help='Reports activity for the current week.')
 @click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_beginning_arrow('day'),
+              flag_value=get_start_time_for_period('day'),
               mutually_exclusive=['week', 'month', 'year'],
               help='Reports activity for the current day.')
 @click.option('-p', '--project', 'projects', multiple=True,
@@ -528,9 +528,9 @@ def log(watson, from_, to, projects, tags, year, month, week, day):
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
     """  # noqa
-    for shortcut_arrow in (_ for _ in [day, week, month, year]
-                           if _ is not None):
-        from_ = shortcut_arrow
+    for start_time in (_ for _ in [day, week, month, year]
+                       if _ is not None):
+        from_ = start_time
 
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")

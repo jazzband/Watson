@@ -115,7 +115,7 @@ def get_frame_from_argument(watson, arg):
         )
 
 
-def get_beginning_arrow(shortcut):
+def get_start_time_for_period(period):
     # Using now() from datetime instead of arrow for mocking compatibility.
     now = arrow.Arrow.fromdatetime(datetime.datetime.now())
     date = now.date()
@@ -126,15 +126,15 @@ def get_beginning_arrow(shortcut):
 
     weekday = now.weekday()
 
-    if shortcut == 'day':
-        arw = arrow.Arrow(year, month, day)
-    elif shortcut == 'week':
-        arw = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
-    elif shortcut == 'month':
-        arw = arrow.Arrow(year, month, 1)
-    elif shortcut == 'year':
-        arw = arrow.Arrow(year, 1, 1)
+    if period == 'day':
+        start_time = arrow.Arrow(year, month, day)
+    elif period == 'week':
+        start_time = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
+    elif period == 'month':
+        start_time = arrow.Arrow(year, month, 1)
+    elif period == 'year':
+        start_time = arrow.Arrow(year, 1, 1)
     else:
-        raise ValueError('Unsupported shortcut value: {}'.format(shortcut))
+        raise ValueError('Unsupported period value: {}'.format(period))
 
-    return arw
+    return start_time

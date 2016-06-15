@@ -23,7 +23,7 @@ from dateutil.tz.tz import tzutc
 from click import get_app_dir
 from watson import Watson, WatsonError
 from watson.watson import ConfigurationError, ConfigParser
-from watson.utils import get_beginning_arrow
+from watson.utils import get_start_time_for_period
 
 TEST_FIXTURE_DIR = py.path.local(
     os.path.dirname(
@@ -820,7 +820,7 @@ _dt = datetime.datetime
 _tz = {'tzinfo': tzutc()}
 
 
-@pytest.mark.parametrize('now, mode, beginning', [
+@pytest.mark.parametrize('now, mode, start_time', [
     (_dt(2016, 6, 2, **_tz), 'year', _dt(2016, 1, 1, **_tz)),
     (_dt(2016, 6, 2, **_tz), 'month', _dt(2016, 6, 1, **_tz)),
     (_dt(2016, 6, 2, **_tz), 'week', _dt(2016, 5, 30, **_tz)),
@@ -831,6 +831,6 @@ _tz = {'tzinfo': tzutc()}
     (_dt(2012, 2, 24, **_tz), 'week', _dt(2012, 2, 20, **_tz)),
     (_dt(2012, 2, 24, **_tz), 'day', _dt(2012, 2, 24, **_tz)),
 ])
-def test_get_beginning_arrow(now, mode, beginning):
+def test_get_start_time_arrow(now, mode, start_time):
     with mock_datetime(now, datetime):
-        assert get_beginning_arrow(mode).datetime == beginning
+        assert get_start_time_for_period(mode).datetime == start_time
