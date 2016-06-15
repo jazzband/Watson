@@ -446,11 +446,15 @@ Usage:  watson stop [OPTIONS]
 
 Stop monitoring time for the current project.
 
+You can optionally pass a log message to be saved with the frame via
+the ``-m/--message`` option.
+
 Example:
 
 
-    $ watson stop
+    $ watson stop -m "Done some thinking"
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
+    Log message: Done some thinking
 
 ### Options
 
