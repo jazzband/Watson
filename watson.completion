@@ -4,7 +4,6 @@
 
 _watson_complete () {
   local cur cmd commands frames projects tags
-  local IFS=$'\n'
 
   commands='cancel config edit frames help log merge projects remove rename report restart start status stop sync tags'
 
@@ -25,6 +24,7 @@ _watson_complete () {
         help)
           COMPREPLY=($(compgen -W "$commands" -- "$cur" )) ;;
         log|report)
+          local IFS=$'\n'
           case "$3" in
             -p|--project)
               projects="$(watson projects | sed -e 's/ /\\\\ /g')"
@@ -68,6 +68,7 @@ _watson_complete () {
           esac
           ;;
         start)
+          local IFS=$'\n'
           if [[ $COMP_CWORD -eq 2 ]]; then
             projects="$(watson projects | sed -e 's/ /\\\\ /g')"
             COMPREPLY=($(compgen -W "$projects" -- ${cur}))
@@ -77,6 +78,7 @@ _watson_complete () {
           fi
           ;;
         rename)
+          local IFS=$'\n'
           case "$3" in
             project)
               projects="$(watson projects | sed -e 's/ /\\\\ /g')"
