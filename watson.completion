@@ -6,7 +6,7 @@ _watson_complete () {
   local cur cmd commands frames projects tags
   local IFS=$'\n'
 
-  commands='cancel config edit frames help log merge projects remove report restart start status stop sync tags'
+  commands='cancel config edit frames help log merge projects remove rename report restart start status stop sync tags'
 
   cur=${COMP_WORDS[COMP_CWORD]}
   cmd=${COMP_WORDS[1]}
@@ -75,6 +75,18 @@ _watson_complete () {
             tags="$(watson tags | sed -e 's/ /\\\\ /g' | awk '$0="+"$0')"
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))
           fi
+          ;;
+        rename)
+          case "$3" in
+            project)
+              projects="$(watson projects | sed -e 's/ /\\\\ /g')"
+              COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+              ;;
+            tag)
+              tags="$(watson tags | sed -e 's/ /\\\\ /g')"
+              COMPREPLY=($(compgen -W "$tags" -- ${cur}))
+              ;;
+          esac
           ;;
       esac
       ;;

@@ -105,7 +105,7 @@ def start(ctx, watson, args):
     `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
     `yes`), it is stopped before the new project is started.
 
-    Example :
+    Example:
 
     \b
     $ watson start apollo11 +module +brakes
@@ -937,5 +937,62 @@ def merge(watson, frames_with_conflict, force):
                             updated_at=updated_at)
 
     watson.frames = original_frames
+    watson.frames.changed = True
+    watson.save()
+
+
+@cli.command()
+@click.argument('type', required=True)
+@click.argument('old_name', required=True)
+@click.argument('new_name', required=True)
+@click.pass_obj
+def rename(watson, type, old_name, new_name):
+    """
+    Rename a project or tag.
+
+    Example:
+
+    \b
+    $ watson rename project read-python-intro learn-python
+    Renamed project "read-python-intro" to "learn-python"
+    $ watson rename tag company-meeting meeting
+    Renamed tag "company-meeting" to "meeting"
+
+    """
+
+    # input validation
+    if type not in ['project', 'tag']:
+        raise click.ClickException(style(
+            'error',
+            'You have to call rename with "project" or "tag"'
+        ))
+
+    if type == 'tag':
+        if old_name not in watson.tags:
+            raise click.ClickException(style(
+                'error',
+                'Tag "%s" does not exist' % old_name
+            ))
+
+        # rename tag
+        for frame in watson.frames:
+            if old_name in frame.tags:
+                watson.frames[frame.id] = frame._replace(
+                    tags=[new_name if t == old_name else t for t in frame.tags]
+                )
+        click.echo('Renamed tag "%s" to "%s"' % (old_name, new_name))
+    if type == 'project':
+        if old_name not in watson.projects:
+            raise click.ClickException(style(
+                'error',
+                'Project "%s" does not exist' % old_name
+            ))
+
+        # rename project
+        for frame in watson.frames:
+            if frame.project == old_name:
+                watson.frames[frame.id] = frame._replace(project=new_name)
+        click.echo('Renamed project "%s" to "%s"' % (old_name, new_name))
+
     watson.frames.changed = True
     watson.save()

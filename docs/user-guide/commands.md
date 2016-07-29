@@ -270,6 +270,28 @@ Flag | Help
 `-f, --force` | Don't ask for confirmation.
 `--help` | Show this message and exit.
 
+## `rename`
+
+```bash
+Usage:  watson rename [OPTIONS] TYPE OLD_NAME NEW_NAME
+```
+
+Rename a project or tag.
+
+Example:
+
+
+    $ watson rename project read-python-intro learn-python
+    Renamed project "read-python-intro" to "learn-python"
+    $ watson rename tag company-meeting meeting
+    Renamed tag "company-meeting" to "meeting"
+
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
+
 ## `report`
 
 ```bash
@@ -396,7 +418,7 @@ If there is already a running project and the configuration option
 `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
 `yes`), it is stopped before the new project is started.
 
-Example :
+Example:
 
 
     $ watson start apollo11 +module +brakes
