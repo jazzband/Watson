@@ -4,6 +4,13 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## Development
+
+* Added: Watson now has a `rename` command.
+* Added: Zsh completion support
+* Added: document installation via homebrew on OS X
+* Fixed: bash completion of projects and tags with spaces in them
+
 ## 1.3.2 (2016-03-01)
 
 * Added: document installation for Arch Linux
