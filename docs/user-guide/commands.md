@@ -120,6 +120,10 @@ By default, the sessions from the last 7 days are printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
+Also you can use a special shortcuts for easily timespan control: `--day` is
+for the last day activity and `--year`/`--month`/`--week` for an activity
+during the current year/month/week correspondingly.
+
 You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the log.
@@ -159,6 +163,10 @@ Flag | Help
 -----|-----
 `-f, --from DATE` | The date from when the log should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
+`-y, --year` | Reports activity for the current year.
+`-m, --month` | Reports activity for the current month.
+`-w, --week` | Reports activity for the current week.
+`-d, --day` | Reports activity for the last day.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `--help` | Show this message and exit.
@@ -308,6 +316,10 @@ By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
+Also you can use a special shortcuts for easily timespan control: `--day` is
+for the last day activity and `--year`/`--month`/`--week` for an activity
+during the current year/month/week correspondingly.
+
 You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the report.
@@ -360,6 +372,10 @@ Flag | Help
 -----|-----
 `-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
+`-y, --year` | Reports activity for the current year.
+`-m, --month` | Reports activity for the current month.
+`-w, --week` | Reports activity for the current week.
+`-d, --day` | Reports activity for the last day.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `--help` | Show this message and exit.
