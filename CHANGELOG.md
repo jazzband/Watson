@@ -7,6 +7,8 @@ This document records all notable changes to Watson. This project adheres to
 ## Development
 
 * Added: Watson now has a `rename` command.
+* Added: the `report` and `log` commands now have new options to set the 
+  timespan to the current year, month, week or day.
 * Added: Zsh completion support
 * Added: document installation via homebrew on OS X
 * Fixed: bash completion of projects and tags with spaces in them
@@ -18,7 +20,7 @@ This document records all notable changes to Watson. This project adheres to
 * Fixed: improve error handling
 * Fixed: remove unnecessary dependencies for a stand alone installation
 * Fixed: specify correct source directory for flake8 and pytest (tox test
-suite)
+  suite)
 
 ## 1.3.1 (2016-02-11)
 
