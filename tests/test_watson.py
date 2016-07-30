@@ -320,6 +320,53 @@ value4 =
             config.getfloat('options', 'value4')
 
 
+def test_config_getlist(watson):
+    content = u"""
+# empty lines in option values (including the first one) are discarded
+[options]
+value1 =
+    one
+
+    two three
+    four
+    five six
+# multiple inner space preserved
+value2 = one  "two three" four 'five  six'
+value3 = one
+    two  three
+# outer space stripped
+value4 = one
+     two three
+    four
+# hash char not at start of line does not start comment
+value5 = one
+   two #three
+   four # five
+"""
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
+        gl = watson.config.getlist
+        assert gl('options', 'value1') == ['one', 'two three', 'four',
+                                           'five six']
+        assert gl('options', 'value2') == ['one', 'two three', 'four',
+                                           'five  six']
+        assert gl('options', 'value3') == ['one', 'two  three']
+        assert gl('options', 'value4') == ['one', 'two three', 'four']
+        assert gl('options', 'value5') == ['one', 'two #three', 'four # five']
+
+        # default values
+        assert gl('options', 'novalue') == []
+        assert gl('options', 'novalue', None) == []
+        assert gl('options', 'novalue', 42) == 42
+        assert gl('nosection', 'dummy') == []
+        assert gl('nosection', 'dummy', None) == []
+        assert gl('nosection', 'dummy', 42) == 42
+
+        default = gl('nosection', 'dummy')
+        default.append(42)
+        assert gl('nosection', 'dummy') != [42], (
+            "Modifying default return value should not have side effect.")
+
+
 def test_set_config(watson):
     config = ConfigParser()
     config.set('foo', 'bar', 'lol')
