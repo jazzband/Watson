@@ -7,7 +7,6 @@ import operator
 import os
 
 from dateutil import tz
-from functools import reduce
 
 import arrow
 import click
@@ -15,7 +14,7 @@ import click
 from . import watson
 from .frames import Frame
 from .utils import (format_timedelta, get_frame_from_argument, options,
-                    sorted_groupby, style)
+                    sorted_groupby, style, total_by_day, total_by_each_day)
 
 
 class WatsonCliError(click.ClickException):
@@ -280,8 +279,11 @@ def status(watson):
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-r', '--round-to', type=int, default=None,
+              help="Rounds the total time for each day of work up to "
+              "the nearest x minutes. Rounds to nearest 1 minute by default.")
 @click.pass_obj
-def report(watson, from_, to, projects, tags):
+def report(watson, from_, to, projects, tags, round_to):
     """
     Display a report of the time spent on each project.
 
@@ -296,6 +298,10 @@ def report(watson, from_, to, projects, tags):
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the report.
+
+    Total times can be rounded to the nearest x minutes with the `--round-to`
+    option. The totals are rounded for each calendar day of work, not for each
+    frame.
 
     Example:
 
@@ -338,9 +344,34 @@ def report(watson, from_, to, projects, tags):
             [reactor   8h 35m 50s]
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
+    \b
+    $ watson report -f 2016-03-01 --round-to 15
+    Tue 01 March 2016 -> Thu 10 March 2016
+    \b
+    apollo11 - 5h 30m
+    \b
+            By Tags (unrounded)
+            -------------------
+            [brakes         2h 03m]
+            [module         1h 03m]
+            [reactor        1h 28m]
+            [steering       0h 37m]
+    \b
+            By Date
+            -------
+            [2016-03-04       1h 45m]
+            [2016-03-07       0h 30m]
+            [2016-03-08       1h 30m]
+            [2016-03-10       1h 45m]
     """
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
+
+    if watson.config.has_option('options', 'round_to') is True \
+            and round_to is None:
+        round_to = int(watson.config.get('options', 'round_to'))
+    else:
+        round_to = 1 if round_to is None else round_to
 
     span = watson.frames.span(from_, to)
 
@@ -360,15 +391,9 @@ def report(watson, from_, to, projects, tags):
 
     for project, frames in frames_by_project:
         frames = tuple(frames)
-        delta = reduce(
-            operator.add,
-            (f.stop - f.start for f in frames),
-            datetime.timedelta()
-        )
-        total += delta
-
+        total += total_by_day(frames, round_to)
         click.echo("{project} - {time}".format(
-            time=style('time', format_timedelta(delta)),
+            time=style('time', format_timedelta(total, round_up_to=1)),
             project=style('project', project)
         ))
 
@@ -376,19 +401,27 @@ def report(watson, from_, to, projects, tags):
             set(tag for frame in frames for tag in frame.tags
                 if tag in tags or not tags)
         )
+        if not tags and [i for i in frames if not i.tags]:
+            tags_to_print.append("<untagged>")
         if tags_to_print:
             longest_tag = max(len(tag) for tag in tags_to_print or [''])
 
+        click.echo(style('project',
+                         "\n\tBy Tags (unrounded) \n\t-------------------"))
         for tag in tags_to_print:
-            delta = reduce(
-                operator.add,
-                (f.stop - f.start for f in frames if tag in f.tags),
-                datetime.timedelta()
-            )
-
+            tag_total = total_by_day(frames, 1, tag)
             click.echo("\t[{tag} {time}]".format(
-                time=style('time', '{:>11}'.format(format_timedelta(delta))),
+                time=style('time', '{:>11}'.format(
+                    format_timedelta(tag_total, round_up_to=1))),
                 tag=style('tag', '{:<{}}'.format(tag, longest_tag)),
+            ))
+        click.echo(style('project', "\n\tBy Date\n\t-------"))
+        for day, time in total_by_each_day(frames, 1 if round_to else 0,
+                                           tags_to_print):
+            click.echo("\t[{date} {time}]".format(
+                date=style('date', '{:YYYY-MM-DD}'.format(day)),
+                time=style('time', '{:>12}'.format(
+                    format_timedelta(time, round_to))),
             ))
 
         click.echo()
@@ -414,8 +447,11 @@ def report(watson, from_, to, projects, tags):
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-r', '--round-to', type=int, default=None,
+              help="Rounds daily totals up to the nearest x minutes. "
+              "Defaults to no rounding.")
 @click.pass_obj
-def log(watson, from_, to, projects, tags):
+def log(watson, from_, to, projects, tags, round_to):
     """
     Display each recorded session during the given timespan.
 
@@ -426,6 +462,10 @@ def log(watson, from_, to, projects, tags):
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the log.
+
+    Total times can be rounded to the nearest x minutes with the `--round-to`
+    option. The totals are rounded for each calendar day of work, not for each
+    frame.
 
     Example:
 
@@ -455,9 +495,28 @@ def log(watson, from_, to, projects, tags):
     Wednesday 16 April 2014 (5h 19m 18s)
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
+    \b
+    $ watson log --from 2016-02-16 --to 2016-03-15 --round-to 15
+    Friday 04 March 2016 (1h 45m 00s)
+            d7f7cd0  13:57 to 14:17      19m 23s  apollo11  [wheels]
+            4cc9841  14:27 to 15:11      43m 42s  apollo11  [lens]
+            ce3d2aa  16:29 to 17:06      36m 41s  apollo11  [reactor]
+    \b
+    Tuesday 23 February 2016 (2h 30m 00s)
+            6931d90  12:04 to 12:06      02m 02s  apollo11  [antenna]
+            f0d473c  12:06 to 13:15   1h 08m 32s  apollo11  [antenna]
+            678d9af  13:55 to 14:09      14m 04s  apollo11  [antenna]
+            ae51e4d  14:28 to 14:51      23m 18s  apollo11  [antenna]
+            6fe0aa3  20:26 to 21:01      34m 11s  apollo11  [antenna]
     """  # noqa
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
+
+    if watson.config.has_option('options', 'round_to') is True \
+            and round_to is None:
+        round_to = int(watson.config.get('options', 'round_to'))
+    else:
+        round_to = 1 if round_to is None else round_to
 
     span = watson.frames.span(from_, to)
     frames_by_day = sorted_groupby(
@@ -476,22 +535,19 @@ def log(watson, from_, to, projects, tags):
         frames = sorted(frames, key=operator.attrgetter('start'))
         longest_project = max(len(frame.project) for frame in frames)
 
-        daily_total = reduce(
-            operator.add,
-            (frame.stop - frame.start for frame in frames)
-        )
-
+        daily_total = sum((frame.stop - frame.start for frame in frames),
+                          datetime.timedelta())
         lines.append(
             style(
                 'date', "{:dddd DD MMMM YYYY} ({})".format(
-                    day, format_timedelta(daily_total)
+                    day, format_timedelta(daily_total, round_to)
                 )
             )
         )
 
         lines.append('\n'.join(
             '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}'.format(
-                delta=format_timedelta(frame.stop - frame.start),
+                delta=format_timedelta(frame.stop - frame.start, 0),
                 project=style('project',
                               '{:>{}}'.format(frame.project, longest_project)),
                 pad=longest_project,

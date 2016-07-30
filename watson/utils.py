@@ -1,6 +1,6 @@
-import itertools
-
 import click
+import datetime
+import itertools
 
 from click.exceptions import UsageError
 
@@ -37,29 +37,53 @@ def style(name, element):
         return fmt(element)
 
 
-def format_timedelta(delta):
+def format_timedelta(delta, round_up_to=1):
     """
-    Return a string roughly representing a timedelta.
+    Return a string roughly representing a timedelta. Round up to `round_up_to`
+    minutes. No rounding by default.
+
+    For reference, str(timedelta) returns [x days,] hh:mm:ss
     """
-    seconds = int(delta.total_seconds())
-    neg = seconds < 0
-    seconds = abs(seconds)
-    total = seconds
-    stems = []
+    neg = '-' if int(delta.total_seconds()) < 0 else ''
+    delta = round_time(delta, round_up_to)
+    fmt = ["{}h ", "{}m", " {}s"]
+    td = str(abs(delta)).split(":")
+    td[:0] = td.pop(0).split(',')
+    if len(td) == 4:
+        add_hours = int(td.pop(0).split()[0].strip()) * 24
+        td[0] = str(int(td[0]) + add_hours)
+    if round_up_to > 0:
+        # Remove seconds when rounding
+        del fmt[-1]
+        del td[-1]
+    res = str()
+    for f, k in zip(fmt, td):
+        res += f.format(k.strip())
+    return "{}{}".format(neg, res)
 
-    if total >= 3600:
-        hours = seconds // 3600
-        stems.append('{}h'.format(hours))
-        seconds -= hours * 3600
 
-    if total >= 60:
-        mins = seconds // 60
-        stems.append('{:02}m'.format(mins))
-        seconds -= mins * 60
+def round_time(dt, round_up_to=1):
+    """
+    Round a datetime object _up_ to nearest round_to minutes.
 
-    stems.append('{:02}s'.format(seconds))
+    First round seconds up or down to the nearest minute, then round that
+    result up to the nearest round_to minute.
 
-    return ('-' if neg else '') + ' '.join(stems)
+    Set round_up_to=0 for no rounding
+
+    """
+    if round_up_to == 0:
+        return dt
+    round_dt = datetime.timedelta(minutes=round_up_to).total_seconds()
+    seconds = int(dt.total_seconds())
+    rounding = (seconds + 60 / 2) // 60 * 60
+    dt += datetime.timedelta(0, rounding - seconds)
+    seconds = int(dt.total_seconds())
+    rounding = (seconds + round_dt) // round_dt * round_dt
+    if dt.total_seconds() % (round_up_to * 60) != 0:
+        return dt + datetime.timedelta(0, rounding - seconds)
+    else:
+        return dt
 
 
 def sorted_groupby(iterator, key, reverse=False):
@@ -68,6 +92,52 @@ def sorted_groupby(iterator, key, reverse=False):
     key first.
     """
     return itertools.groupby(sorted(iterator, key=key, reverse=reverse), key)
+
+
+def total_by_day(frames, round_to=0, tag=None, total=True):
+    """
+    Given an iterator of Frame objects, return a total result where the time
+    for each day is summed and then rounded up to round_to. The rounded totals
+    for each day (and for a tag if given) are then summed without rounding and
+    returned as the result.
+    """
+    if tag == "<untagged>":
+        frames = list((i for i in frames if not i.tags))
+    else:
+        frames = list((i for i in frames if not tag or tag in i.tags))
+    days = [list(group) for k, group in
+            sorted_groupby(frames,
+                           key=lambda x: x.start.datetime.toordinal())]
+    delta = []
+    for day in days:
+        day_iter = (f.stop - f.start for f in day)
+        delta.append(round_time(sum(day_iter, datetime.timedelta()),
+                                round_to))
+    if total is True:
+        return sum(delta, datetime.timedelta())
+    else:
+        return delta
+
+
+def total_by_each_day(frames, round_to=0, tags=None):
+    """
+    Given an iterator of Frame objects, return a list of
+    [(date, total), (...,.)] where the total for each day is summed (only for
+    'tags' if given) and then rounded up to round_to.
+    """
+    frames = list(i for i in frames if not tags or
+                  (set(i.tags).intersection(set(tags)) or
+                   "<untagged>" in tags))
+    days = [list(group) for k, group in
+            sorted_groupby(frames,
+                           key=lambda x: x.start.datetime.toordinal())]
+    delta = []
+    for day in days:
+        day_iter = (f.stop - f.start for f in day)
+        delta.append((day[0].start, round_time(sum(day_iter,
+                                                   datetime.timedelta()),
+                                               round_to)))
+    return delta
 
 
 def options(opt_list):
