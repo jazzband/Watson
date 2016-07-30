@@ -1,6 +1,7 @@
 import sys
 import json
 import os
+import datetime
 
 try:
     from unittest import mock
@@ -17,9 +18,12 @@ import pytest
 import requests
 import arrow
 
+from dateutil.tz.tz import tzutc
+
 from click import get_app_dir
 from watson import Watson, WatsonError
 from watson.watson import ConfigurationError, ConfigParser
+from watson.utils import get_start_time_for_period
 
 TEST_FIXTURE_DIR = py.path.local(
     os.path.dirname(
@@ -33,6 +37,33 @@ if not PY2:
     builtins = 'builtins'
 else:
     builtins = '__builtin__'
+
+
+def mock_datetime(dt, dt_module):
+
+    class DateTimeMeta(type):
+
+        @classmethod
+        def __instancecheck__(mcs, obj):
+            return isinstance(obj, datetime.datetime)
+
+    class BaseMockedDateTime(datetime.datetime):
+
+        @classmethod
+        def now(cls, tz=None):
+            return dt.replace(tzinfo=tz)
+
+        @classmethod
+        def utcnow(cls):
+            return dt
+
+        @classmethod
+        def today(cls):
+            return dt
+
+    MockedDateTime = DateTimeMeta('datetime', (BaseMockedDateTime,), {})
+
+    return mock.patch.object(dt_module, 'datetime', MockedDateTime)
 
 
 @pytest.fixture
@@ -828,3 +859,25 @@ def test_merge_report(watson, datafiles):
 
     assert conflicting[0].id == '2'
     assert merging[0].id == '3'
+
+
+# report/log
+
+_dt = datetime.datetime
+_tz = {'tzinfo': tzutc()}
+
+
+@pytest.mark.parametrize('now, mode, start_time', [
+    (_dt(2016, 6, 2, **_tz), 'year', _dt(2016, 1, 1, **_tz)),
+    (_dt(2016, 6, 2, **_tz), 'month', _dt(2016, 6, 1, **_tz)),
+    (_dt(2016, 6, 2, **_tz), 'week', _dt(2016, 5, 30, **_tz)),
+    (_dt(2016, 6, 2, **_tz), 'day', _dt(2016, 6, 2, **_tz)),
+
+    (_dt(2012, 2, 24, **_tz), 'year', _dt(2012, 1, 1, **_tz)),
+    (_dt(2012, 2, 24, **_tz), 'month', _dt(2012, 2, 1, **_tz)),
+    (_dt(2012, 2, 24, **_tz), 'week', _dt(2012, 2, 20, **_tz)),
+    (_dt(2012, 2, 24, **_tz), 'day', _dt(2012, 2, 24, **_tz)),
+])
+def test_get_start_time_for_period(now, mode, start_time):
+    with mock_datetime(now, datetime):
+        assert get_start_time_for_period(mode).datetime == start_time
