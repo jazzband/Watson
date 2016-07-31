@@ -7,7 +7,9 @@ This document records all notable changes to Watson. This project adheres to
 ## Development
 
 * Added: Watson now has a `rename` command.
-* Added: the `report` and `log` commands now have new options to set the 
+* Added: the `report` and `log` commands now have new command line and
+  config file options to (not) include the current frame in the output.
+* Added: the `report` and `log` commands now have new options to set the
   timespan to the current year, month, week or day.
 * Added: Zsh completion support
 * Added: document installation via homebrew on OS X

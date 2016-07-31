@@ -289,6 +289,8 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
 
 
 @cli.command()
+@click.option('-c/-C', '--current/--no-current', 'current', default=None,
+              help="(Don't) include currently running frame in report.")
 @click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
               default=arrow.now().replace(days=-7),
               mutually_exclusive=_SHORTCUT_OPTIONS,
@@ -323,13 +325,12 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.pass_obj
-def report(watson, from_, to, projects, tags, year, month, week, day):
+def report(watson, current, from_, to, projects, tags, year, month, week, day):
     """
     Display a report of the time spent on each project.
 
-    If a project is given, the time spent on this project
-    is printed. Else, print the total for each root
-    project.
+    If a project is given, the time spent on this project is printed.
+    Else, print the total for each root project.
 
     By default, the time spent the last 7 days is printed. This timespan
     can be controlled with the `--from` and `--to` arguments. The dates
@@ -393,6 +394,13 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
+    if watson.current:
+        if current or (current is None and
+                       watson.config.getboolean('options', 'report_current')):
+            cur = watson.current
+            watson.frames.add(cur['project'], cur['start'], arrow.utcnow(),
+                              cur['tags'], id="current")
+
     span = watson.frames.span(from_, to)
 
     frames_by_project = sorted_groupby(
@@ -451,6 +459,8 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
 
 
 @cli.command()
+@click.option('-c/-C', '--current/--no-current', 'current', default=None,
+              help="(Don't) include currently running frame in output.")
 @click.option('-f', '--from', 'from_', type=Date,
               default=arrow.now().replace(days=-7),
               help="The date from when the log should start. Defaults "
@@ -482,7 +492,7 @@ def report(watson, from_, to, projects, tags, year, month, week, day):
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.pass_obj
-def log(watson, from_, to, projects, tags, year, month, week, day):
+def log(watson, current, from_, to, projects, tags, year, month, week, day):
     """
     Display each recorded session during the given timespan.
 
@@ -534,6 +544,13 @@ def log(watson, from_, to, projects, tags, year, month, week, day):
 
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
+
+    if watson.current:
+        if current or (current is None and
+                       watson.config.getboolean('options', 'log_current')):
+            cur = watson.current
+            watson.frames.add(cur['project'], cur['start'], arrow.utcnow(),
+                              cur['tags'], id="current")
 
     span = watson.frames.span(from_, to)
     frames_by_day = sorted_groupby(
