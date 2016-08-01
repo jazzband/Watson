@@ -13,7 +13,11 @@ This document records all notable changes to Watson. This project adheres to
   timespan to the current year, month, week or day.
 * Added: Zsh completion support
 * Added: document installation via homebrew on OS X
+* Updated: when saving the Watson frames, state or config file, the most recent
+  previous version of the file is kept as a back up.
 * Fixed: bash completion of projects and tags with spaces in them
+* Fixed: if saving the Watson frames, state or config file fails for any
+  reason, the original is kept (and not wiped as before).
 
 ## 1.3.2 (2016-03-01)
 
