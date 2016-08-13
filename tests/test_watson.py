@@ -18,7 +18,7 @@ import pytest
 import requests
 import arrow
 
-from dateutil.tz.tz import tzutc
+from dateutil.tz import tzutc
 
 from click import get_app_dir
 from watson import Watson, WatsonError
