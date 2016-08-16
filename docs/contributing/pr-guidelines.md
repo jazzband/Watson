@@ -3,7 +3,9 @@
 > *nota bene*
 >
 > Open a pull-request even if your contribution is not ready yet! It can
-> be discussed and improved collaboratively!
+> be discussed and improved collaboratively! You may prefix the title of
+> your pull-request with "WIP: " to make it clear that it is not yet ready
+> for merging.
 
 Before we merge a pull request, we check that it meets these guidelines:
 
