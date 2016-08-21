@@ -248,7 +248,6 @@ class Watson(object):
         default_tags = self.config.getlist('default_tags', project)
         if not restart:
             tags = (tags or []) + default_tags
-            print(deduplicate(tags))
 
         self.current = {'project': project, 'tags': deduplicate(tags)}
         return self.current
