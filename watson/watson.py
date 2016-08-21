@@ -2,7 +2,6 @@
 
 import os
 import json
-import shlex
 
 try:
     import configparser
