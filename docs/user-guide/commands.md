@@ -120,6 +120,11 @@ By default, the sessions from the last 7 days are printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
+You can also use special shortcut options for easier timespan control:
+`--day` sets the log timespan to the current day (beginning at 00:00h)
+and `--year`, `--month` and `--week` to the current year, month or week
+respectively.
+
 You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the log.
@@ -157,8 +162,13 @@ Example:
 
 Flag | Help
 -----|-----
+`-c, --current / -C, --no-current` | (Don't) include currently running frame in output.
 `-f, --from DATE` | The date from when the log should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
+`-y, --year` | Reports activity for the current year.
+`-m, --month` | Reports activity for the current month.
+`-w, --week` | Reports activity for the current week.
+`-d, --day` | Reports activity for the current day.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `--help` | Show this message and exit.
@@ -270,6 +280,28 @@ Flag | Help
 `-f, --force` | Don't ask for confirmation.
 `--help` | Show this message and exit.
 
+## `rename`
+
+```bash
+Usage:  watson rename [OPTIONS] TYPE OLD_NAME NEW_NAME
+```
+
+Rename a project or tag.
+
+Example:
+
+
+    $ watson rename project read-python-intro learn-python
+    Renamed project "read-python-intro" to "learn-python"
+    $ watson rename tag company-meeting meeting
+    Renamed tag "company-meeting" to "meeting"
+
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
+
 ## `report`
 
 ```bash
@@ -278,13 +310,17 @@ Usage:  watson report [OPTIONS]
 
 Display a report of the time spent on each project.
 
-If a project is given, the time spent on this project
-is printed. Else, print the total for each root
-project.
+If a project is given, the time spent on this project is printed.
+Else, print the total for each root project.
 
 By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+
+You can also use special shortcut options for easier timespan control:
+`--day` sets the report timespan to the current day (beginning at 00:00h)
+and `--year`, `--month` and `--week` to the current year, month or week
+respectively.
 
 You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
@@ -336,8 +372,13 @@ Example:
 
 Flag | Help
 -----|-----
+`-c, --current / -C, --no-current` | (Don't) include currently running frame in report.
 `-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
+`-y, --year` | Reports activity for the current year.
+`-m, --month` | Reports activity for the current month.
+`-w, --week` | Reports activity for the current week.
+`-d, --day` | Reports activity for the current day.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `--help` | Show this message and exit.
@@ -396,7 +437,7 @@ If there is already a running project and the configuration option
 `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
 `yes`), it is stopped before the new project is started.
 
-Example :
+Example:
 
 
     $ watson start apollo11 +module +brakes

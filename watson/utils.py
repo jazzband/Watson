@@ -1,8 +1,19 @@
+import datetime
 import itertools
+import json
+import os
+import tempfile
 
 import click
+import arrow
 
 from click.exceptions import UsageError
+
+
+try:
+    text_type = (str, unicode)
+except NameError:
+    text_type = str
 
 
 def style(name, element):
@@ -111,3 +122,78 @@ def get_frame_from_argument(watson, arg):
             style('error', "No frame found with id"),
             style('short_id', arg))
         )
+
+
+def get_start_time_for_period(period):
+    # Using now() from datetime instead of arrow for mocking compatibility.
+    now = arrow.Arrow.fromdatetime(datetime.datetime.now())
+    date = now.date()
+
+    day = date.day
+    month = date.month
+    year = date.year
+
+    weekday = now.weekday()
+
+    if period == 'day':
+        start_time = arrow.Arrow(year, month, day)
+    elif period == 'week':
+        start_time = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
+    elif period == 'month':
+        start_time = arrow.Arrow(year, month, 1)
+    elif period == 'year':
+        start_time = arrow.Arrow(year, 1, 1)
+    else:
+        raise ValueError('Unsupported period value: {}'.format(period))
+
+    return start_time
+
+
+def make_json_writer(func, *args, **kwargs):
+    """
+    Return a function that receives a file-like object and writes the return
+    value of func(*args, **kwargs) as JSON to it.
+    """
+    def writer(f):
+        json.dump(func(*args, **kwargs), f, indent=1, ensure_ascii=False)
+    return writer
+
+
+def safe_save(path, content, ext='.bak'):
+    """
+    Save given content to file at given path safely.
+
+    `content` may either be a (unicode) string to write to the file, or a
+    function taking one argument, a file object opened for writing. The
+    function may write (unicode) strings to the file object (but doesn't need
+    to close it).
+
+    The file to write to is created at a temporary location first. If there is
+    an error creating or writing to the temp file or calling `content`, the
+    destination file is left untouched. Otherwise, if all is well, an existing
+    destination file is backed up to `path` + `ext` (defaults to '.bak') and
+    the temporary file moved into its place.
+
+    """
+    tmpfp = tempfile.NamedTemporaryFile(mode='w+', delete=False)
+    try:
+        with tmpfp:
+            if isinstance(content, text_type):
+                tmpfp.write(content)
+            else:
+                content(tmpfp)
+    except:
+        try:
+            os.unlink(tmpfp.name)
+        except (IOError, OSError):
+            pass
+        raise
+    else:
+        if os.path.exists(path):
+            try:
+                os.unlink(path + ext)
+            except OSError:
+                pass
+            os.rename(path, path + ext)
+
+        os.rename(tmpfp.name, path)

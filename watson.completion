@@ -4,9 +4,8 @@
 
 _watson_complete () {
   local cur cmd commands frames projects tags
-  local IFS=$'\n'
 
-  commands='cancel config edit frames help log merge projects remove report restart start status stop sync tags'
+  commands='cancel config edit frames help log merge projects remove rename report restart start status stop sync tags'
 
   cur=${COMP_WORDS[COMP_CWORD]}
   cmd=${COMP_WORDS[1]}
@@ -25,6 +24,7 @@ _watson_complete () {
         help)
           COMPREPLY=($(compgen -W "$commands" -- "$cur" )) ;;
         log|report)
+          local IFS=$'\n'
           case "$3" in
             -p|--project)
               projects="$(watson projects | sed -e 's/ /\\\\ /g')"
@@ -35,7 +35,7 @@ _watson_complete () {
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
             *)
-              COMPREPLY=($(compgen -W "-f -t -p -T --from --to --project --tag" -- ${cur})) ;;
+              COMPREPLY=($(compgen -W "-c -C -f -p -t -T --current --no-current --from --to --project --tag" -- ${cur})) ;;
           esac
           ;;
         merge)
@@ -68,6 +68,7 @@ _watson_complete () {
           esac
           ;;
         start)
+          local IFS=$'\n'
           if [[ $COMP_CWORD -eq 2 ]]; then
             projects="$(watson projects | sed -e 's/ /\\\\ /g')"
             COMPREPLY=($(compgen -W "$projects" -- ${cur}))
@@ -75,6 +76,19 @@ _watson_complete () {
             tags="$(watson tags | sed -e 's/ /\\\\ /g' | awk '$0="+"$0')"
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))
           fi
+          ;;
+        rename)
+          local IFS=$'\n'
+          case "$3" in
+            project)
+              projects="$(watson projects | sed -e 's/ /\\\\ /g')"
+              COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+              ;;
+            tag)
+              tags="$(watson tags | sed -e 's/ /\\\\ /g')"
+              COMPREPLY=($(compgen -W "$tags" -- ${cur}))
+              ;;
+          esac
           ;;
       esac
       ;;

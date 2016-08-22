@@ -15,6 +15,7 @@ import requests
 
 from .config import ConfigParser
 from .frames import Frames
+from .utils import make_json_writer, safe_save
 from .version import version as __version__  # noqa
 
 
@@ -22,7 +23,7 @@ class WatsonError(RuntimeError):
     pass
 
 
-class ConfigurationError(WatsonError, configparser.Error):
+class ConfigurationError(configparser.Error, WatsonError):
     pass
 
 
@@ -155,21 +156,18 @@ class Watson(object):
                 else:
                     current = {}
 
-                with open(self.state_file, 'w+') as f:
-                    json.dump(current, f, indent=1, ensure_ascii=False)
+                safe_save(self.state_file, make_json_writer(lambda: current))
 
             if self._frames is not None and self._frames.changed:
-                with open(self.frames_file, 'w+') as f:
-                    json.dump(self.frames.dump(), f, indent=1,
-                              ensure_ascii=False)
+                safe_save(self.frames_file,
+                          make_json_writer(self.frames.dump))
 
             if self._config_changed:
-                with open(self.config_file, 'w+') as f:
-                    self.config.write(f)
+                safe_save(self.config_file, self.config.write)
 
             if self._last_sync is not None:
-                with open(self.last_sync_file, 'w+') as f:
-                    json.dump(self._format_date(self.last_sync), f)
+                safe_save(self.last_sync_file,
+                          make_json_writer(self._format_date, self.last_sync))
         except OSError as e:
             raise WatsonError(
                 "Impossible to write {}: {}".format(e.filename, e)
