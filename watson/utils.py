@@ -2,6 +2,7 @@ import datetime
 import itertools
 import json
 import os
+import shutil
 import tempfile
 
 import click
@@ -194,9 +195,9 @@ def safe_save(path, content, ext='.bak'):
                 os.unlink(path + ext)
             except OSError:
                 pass
-            os.rename(path, path + ext)
+            shutil.move(path, path + ext)
 
-        os.rename(tmpfp.name, path)
+        shutil.move(tmpfp.name, path)
 
 
 def deduplicate(sequence):
