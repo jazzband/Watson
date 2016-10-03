@@ -24,18 +24,19 @@ _watson_complete () {
         help)
           COMPREPLY=($(compgen -W "$commands" -- "$cur" )) ;;
         log|report)
-          local IFS=$'\n'
           case "$3" in
             -p|--project)
+              local IFS=$'\n'
               projects="$(watson projects | sed -e 's/ /\\\\ /g')"
               COMPREPLY=($(compgen -W "$projects" -- ${cur}))
               ;;
             -T|--tag)
+              local IFS=$'\n'
               tags="$(watson tags | sed -e 's/ /\\\\ /g')"
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
             *)
-              COMPREPLY=($(compgen -W "-c -C -f -p -t -T --current --no-current --from --to --project --tag" -- ${cur})) ;;
+              COMPREPLY=($(compgen -W "-c -C -d -f -m -p -t -T -w -y --current --no-current --from --to --project --tag --day --week --month --year" -- ${cur})) ;;
           esac
           ;;
         merge)
