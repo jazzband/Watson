@@ -14,7 +14,7 @@ import requests
 
 from .config import ConfigParser
 from .frames import Frames
-from .utils import make_json_writer, safe_save, deduplicate
+from .utils import deduplicate, make_json_writer, safe_save
 from .version import version as __version__  # noqa
 
 

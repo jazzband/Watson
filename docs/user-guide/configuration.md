@@ -144,8 +144,8 @@ Globally configure how `time` should be formatted. All [python's `strftime` dire
 
 ### Default tags
 
-Tags can be automatically added for some projects. This is convenient when the
-same tags are always attached to a particular project.
+Tags can be automatically added for selected projects. This is convenient when
+the same tags are always attached to a particular project.
 
 These automatically attached tags are defined in the `[default_tags]` section
 of the configuration. Each option in that section is a project to which
