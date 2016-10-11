@@ -58,7 +58,7 @@ empty string value here =
 _This example configuration file has been taken from the [official python documentation](https://docs.python.org/3.4/library/configparser.html#supported-ini-file-structure)._
 
 
-## Edition
+## Editing
 
 If you want to edit your configuration, the best is to use the [`config`](./commands/#config) command.
 
@@ -104,7 +104,7 @@ If `true`, the output of the `log` command will include the currently running
 frame (if any) by default. The option can be overridden on the command line
 with the `-c/-C` resp. `--current/--no-current` flags.
 
-#### `options.log_current`
+#### `options.report_current`
 
 If `true`, the output of the `report` command will include the currently
 running frame (if any) by default. The option can be overridden on the
