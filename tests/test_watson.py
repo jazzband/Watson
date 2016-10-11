@@ -440,6 +440,28 @@ def test_start_two_projects(watson):
     assert watson.is_started is True
 
 
+def test_start_default_tags(watson):
+    content = u"""
+[default_tags]
+my project = A B
+    """
+
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
+        watson.start('my project')
+        assert watson.current['tags'] == ['A', 'B']
+
+
+def test_start_default_tags_with_supplementary_input_tags(watson):
+    content = u"""
+[default_tags]
+my project = A B
+    """
+
+    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
+        watson.start('my project', tags=['C', 'D'])
+        assert watson.current['tags'] == ['C', 'D', 'A', 'B']
+
+
 # stop
 
 def test_stop_started_project(watson):

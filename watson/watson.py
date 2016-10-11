@@ -14,7 +14,7 @@ import requests
 
 from .config import ConfigParser
 from .frames import Frames
-from .utils import make_json_writer, safe_save
+from .utils import deduplicate, make_json_writer, safe_save
 from .version import version as __version__  # noqa
 
 
@@ -234,7 +234,7 @@ class Watson(object):
     def is_started(self):
         return bool(self.current)
 
-    def start(self, project, tags=None):
+    def start(self, project, tags=None, restart=False):
         if not project:
             raise WatsonError("No project given.")
 
@@ -245,7 +245,11 @@ class Watson(object):
                 )
             )
 
-        self.current = {'project': project, 'tags': tags}
+        default_tags = self.config.getlist('default_tags', project)
+        if not restart:
+            tags = (tags or []) + default_tags
+
+        self.current = {'project': project, 'tags': deduplicate(tags)}
         return self.current
 
     def stop(self):
