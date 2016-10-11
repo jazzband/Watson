@@ -201,7 +201,9 @@ def safe_save(path, content, ext='.bak'):
 
 def deduplicate(sequence):
     """
-    Return the input sequence without duplicate, keep the order.
+    Return a list with all items of the input sequence but duplicates removed.
+
+    Leaves the input sequence unaltered.
     """
     return [element
             for index, element in enumerate(sequence)
