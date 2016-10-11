@@ -142,6 +142,52 @@ Globally configure how `dates` should be formatted. All [python's `strftime` dir
 
 Globally configure how `time` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
 
+### Default tags
+
+Tags can be automatically added for selected projects. This is convenient when
+the same tags are always attached to a particular project.
+
+These automatically attached tags are defined in the `[default_tags]` section
+of the configuration. Each option in that section is a project to which
+tags should be attached. The entries should follow the pattern: `project = tag1 tag2`.
+
+You can set default tags for a project from the command line:
+
+```
+$ watson config default_tags.python101 'teaching python'
+```
+
+This corresponds to the following configuration file snippets:
+
+```ini
+[default_tags]
+python101 = teaching python
+```
+
+With these default tags set, the tags "teaching" and "python" will
+automatically be attached to the project "python101":
+
+```
+$ watson start python101
+Starting project python101 [teaching, python] at 19:27
+
+$ watson start python101 +lecture
+Starting project python101 [lecture, teaching, python] at 19:28
+```
+
+Default tags can contain space characters when written in between quotes:
+
+```
+$ watson config default_tags.voyager2 'nasa "space mission"'
+```
+
+Or in the configuration file:
+
+```ini
+[default_tags]
+voyager2 = nasa 'space mission'
+```
+
 ## Sample configuration file
 
 A basic configuration file looks like the following:

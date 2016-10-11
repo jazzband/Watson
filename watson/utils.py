@@ -197,3 +197,12 @@ def safe_save(path, content, ext='.bak'):
             os.rename(path, path + ext)
 
         os.rename(tmpfp.name, path)
+
+
+def deduplicate(sequence):
+    """
+    Return the input sequence without duplicate, keep the order.
+    """
+    return [element
+            for index, element in enumerate(sequence)
+            if element not in sequence[:index]]
