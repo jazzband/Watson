@@ -6,18 +6,20 @@ This document records all notable changes to Watson. This project adheres to
 
 ## Development
 
-* Added: Watson now has a `rename` command.
+* Added: you can now set default tags for selected projects in the
+  configuration (#113).
+* Added: Watson now has a `rename` command (#74).
 * Added: the `report` and `log` commands now have new command line and
-  config file options to (not) include the current frame in the output.
+  config file options to (not) include the current frame in the output (#123).
 * Added: the `report` and `log` commands now have new options to set the
-  timespan to the current year, month, week or day.
-* Added: Zsh completion support
-* Added: document installation via homebrew on OS X
+  timespan to the current year, month, week or day (#130, based on #124).
+* Added: Zsh completion support (#96)
+* Added: document installation via homebrew on OS X (#121)
 * Updated: when saving the Watson frames, state or config file, the most recent
-  previous version of the file is kept as a back up.
-* Fixed: bash completion of projects and tags with spaces in them
+  previous version of the file is kept as a back up (#120).
+* Fixed: bash completion of projects and tags with spaces in them (#122)
 * Fixed: if saving the Watson frames, state or config file fails for any
-  reason, the original is kept (and not wiped as before).
+  reason, the original is kept (and not wiped as before) (#120).
 
 ## 1.3.2 (2016-03-01)
 
