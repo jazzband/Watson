@@ -4,9 +4,9 @@
 import shlex
 
 try:
-    from configparser import RawConfigParser
+    from configparser import NoSectionError, RawConfigParser
 except ImportError:
-    from ConfigParser import RawConfigParser
+    from ConfigParser import NoSectionError, RawConfigParser
 
 __all__ = ('ConfigParser',)
 
@@ -98,6 +98,17 @@ class ConfigParser(RawConfigParser):
                     for item in value.splitlines() if item.strip()]
         else:
             return shlex.split(value)
+
+    def getitems(self, section, default=None):
+        """Return the option/value pairs of the given section as a dictionary.
+
+        If section does not exist, return default (defaults to an empty dict).
+
+        """
+        try:
+            return dict(self.items(section))
+        except NoSectionError:
+            return {} if default is None else default
 
     def set(self, section, option, value):
         """
