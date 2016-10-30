@@ -1,8 +1,9 @@
 """Unit tests for the 'utils' module."""
 
+import datetime
 import functools
 import os
-import datetime
+import uuid
 
 try:
     from StringIO import StringIO
@@ -12,8 +13,10 @@ except ImportError:
 import pytest
 from dateutil.tz import tzutc
 
-from watson.utils import get_start_time_for_period, make_json_writer, safe_save
-from . import mock_datetime
+from watson.config import ConfigParser
+from watson.utils import (get_start_time_for_period, format_short_id,
+                          format_tags,  make_json_writer, safe_save, style)
+from . import mock_datetime, mock_read
 
 
 _dt = functools.partial(datetime.datetime, tzinfo=tzutc())
@@ -128,3 +131,46 @@ def test_safe_save_with_exception(config_dir):
         assert fp.read() == "Success"
 
     assert not os.path.exists(backup_file)
+
+
+@pytest.mark.parametrize('element, expected', [
+    ('project', '\x1b[35m{}\x1b[0m'),
+    ('tag', '\x1b[34m{}\x1b[0m'),
+    ('time', '\x1b[32m{}\x1b[0m'),
+    ('error', '\x1b[31m{}\x1b[0m'),
+    ('date', '\x1b[36m{}\x1b[0m'),
+    ('id', '\x1b[37m{}\x1b[0m'),
+])
+def test_style_no_context(element, expected):
+    assert style(element, 'foo') == expected.format('foo')
+
+
+@pytest.mark.parametrize('element, expected', [
+    ('project', '\x1b[32m{}\x1b[0m'),
+    ('tag', '\x1b[33m{}\x1b[0m'),
+])
+def test_style_with_context(element, expected, mock):
+    content = u"""
+[style_project]
+fg = green
+[style_tag]
+fg = yellow
+    """
+    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    config = ConfigParser()
+    config.read('dummy')
+    mock_get_ctx = mock.Mock(
+        return_value=mock.Mock(obj=mock.Mock(config=config)))
+    mock.patch('click.get_current_context', mock_get_ctx)
+    assert style(element, 'foo') == expected.format('foo')
+
+
+def test_format_short_id():
+    id_ = uuid.uuid4().hex
+    assert format_short_id(id_) == '\x1b[37m{}\x1b[0m'.format(id_[:7])
+
+
+def test_format_tags():
+    tags = ['foo', 'bar']
+    assert format_tags([]) == ''
+    assert format_tags(tags) == '[\x1b[34mfoo\x1b[0m, \x1b[34mbar\x1b[0m]'
