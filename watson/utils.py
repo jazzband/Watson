@@ -17,36 +17,39 @@ except NameError:
     text_type = str
 
 
+DEFAULT_STYLES = {
+    'project': {'fg': 'magenta'},
+    'tag': {'fg': 'blue'},
+    'time': {'fg': 'green'},
+    'error': {'fg': 'red'},
+    'date': {'fg': 'cyan'},
+    'id': {'fg': 'white'}
+}
+
+
+def format_short_id(id):
+    return style('id', id[:7])
+
+
+def format_tags(tags):
+    if not tags:
+        return ''
+
+    return '[{}]'.format(', '.join(
+        style('tag', tag) for tag in tags
+    ))
+
+
 def style(name, element):
-    def _style_tags(tags):
-        if not tags:
-            return ''
+    style = DEFAULT_STYLES.get(name, {})
+    try:
+        config = click.get_current_context().obj.config
+        style = style.copy()  # take care not change the default styles
+        style.update(config.getitems('style_%s' % name))
+    except (AttributeError, RuntimeError):
+        pass
 
-        return '[{}]'.format(', '.join(
-            style('tag', tag) for tag in tags
-        ))
-
-    def _style_short_id(id):
-        return style('id', id[:7])
-
-    formats = {
-        'project': {'fg': 'magenta'},
-        'tags': _style_tags,
-        'tag': {'fg': 'blue'},
-        'time': {'fg': 'green'},
-        'error': {'fg': 'red'},
-        'date': {'fg': 'cyan'},
-        'short_id': _style_short_id,
-        'id': {'fg': 'white'}
-    }
-
-    fmt = formats.get(name, {})
-
-    if isinstance(fmt, dict):
-        return click.style(element, **fmt)
-    else:
-        # The fmt might be a function if we need to do some computation
-        return fmt(element)
+    return click.style(element, **style)
 
 
 def format_timedelta(delta):

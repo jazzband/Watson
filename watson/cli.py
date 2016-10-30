@@ -14,9 +14,9 @@ import click
 
 from . import watson as _watson
 from .frames import Frame
-from .utils import (format_timedelta, get_frame_from_argument,
-                    get_start_time_for_period, options, safe_save,
-                    sorted_groupby, style)
+from .utils import (format_tags, format_short_id, format_timedelta,
+                    get_frame_from_argument, get_start_time_for_period,
+                    options, safe_save, sorted_groupby, style)
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -106,7 +106,7 @@ def _start(watson, project, tags, restart=False):
     current = watson.start(project, tags, restart=restart)
     click.echo("Starting project {} {} at {}".format(
         style('project', project),
-        style('tags', current['tags']),
+        format_tags(current['tags']),
         style('time', "{:HH:mm}".format(current['start']))
     ))
     watson.save()
@@ -169,9 +169,9 @@ def stop(watson):
     frame = watson.stop()
     click.echo("Stopping project {} {}, started {}. (id: {})".format(
         style('project', frame.project),
-        style('tags', frame.tags),
+        format_tags(frame.tags),
         style('time', frame.start.humanize()),
-        style('short_id', frame.id)
+        format_short_id(frame.id)
     ))
     watson.save()
 
@@ -226,7 +226,7 @@ def restart(ctx, watson, frame, stop_):
             raise click.ClickException("{} {} {}".format(
                 style('error', "Project already started:"),
                 style('project', watson.current['project']),
-                style('tags', watson.current['tags'])))
+                format_tags(watson.current['tags'])))
 
     frame = get_frame_from_argument(watson, frame)
 
@@ -243,7 +243,7 @@ def cancel(watson):
     old = watson.cancel()
     click.echo("Canceling the timer for project {} {}".format(
         style('project', old['project']),
-        style('tags', old['tags'])
+        format_tags(old['tags'])
     ))
     watson.save()
 
@@ -279,7 +279,7 @@ def status(watson):
     timefmt = watson.config.get('options', 'time_format', '%H:%M:%S%z')
     click.echo("Project {} {} started {} ({} {})".format(
         style('project', current['project']),
-        style('tags', current['tags']),
+        format_tags(current['tags']),
         style('time', current['start'].humanize()),
         style('date', current['start'].strftime(datefmt)),
         style('time', current['start'].strftime(timefmt))
@@ -589,10 +589,10 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day):
                 project=style('project',
                               '{:>{}}'.format(frame.project, longest_project)),
                 pad=longest_project,
-                tags=style('tags', frame.tags),
+                tags=format_tags(frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
                 stop=style('time', '{:HH:mm}'.format(frame.stop)),
-                id=style('short_id', frame.id)
+                id=format_short_id(frame.id)
             )
             for frame in frames
         ))
@@ -662,7 +662,7 @@ def frames(watson):
     [...]
     """
     for frame in watson.frames:
-        click.echo(style('short_id', frame.id))
+        click.echo(format_short_id(frame.id))
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
@@ -742,7 +742,7 @@ def edit(watson, id):
         '({delta})'.format(
             delta=format_timedelta(stop - start) if stop else '-',
             project=style('project', project),
-            tags=style('tags', tags),
+            tags=format_tags(tags),
             start=style(
                 'time',
                 start.to(local_tz).format(time_format)
@@ -773,7 +773,7 @@ def remove(watson, id, force):
             "You are about to remove frame "
             "{project} {tags} from {start} to {stop}, continue?".format(
                 project=style('project', frame.project),
-                tags=style('tags', frame.tags),
+                tags=format_tags(frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
                 stop=style('time', '{:HH:mm}'.format(frame.stop))
             ),
@@ -986,7 +986,7 @@ def merge(watson, frames_with_conflict, force):
             'stop': original_frame.stop.format(date_format),
             'tags': original_frame.tags
         }
-        click.echo("frame {}:".format(style('short_id', original_frame.id)))
+        click.echo("frame {}:".format(format_short_id(original_frame.id)))
         click.echo("{}".format('\n'.join('<' + line for line in json.dumps(
             original_frame_data, indent=4, ensure_ascii=False).splitlines())))
         click.echo("---")

@@ -1,3 +1,3 @@
 arrow
-click
+click>=5.0
 requests
