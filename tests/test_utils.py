@@ -4,10 +4,11 @@
 import arrow
 import collections as co
 import csv
+import datetime
 import functools
 import json
 import os
-import datetime
+import uuid
 
 try:
     from StringIO import StringIO
@@ -21,22 +22,26 @@ import pytest
 from click.exceptions import Abort
 from dateutil.tz import tzutc
 
+from watson.config import ConfigParser
 from watson.utils import (
     apply_weekday_offset,
     build_csv,
     confirm_project,
     confirm_tags,
     flatten_report_for_csv,
+    format_short_id,
+    format_tags,
     frames_to_csv,
     frames_to_json,
     get_start_time_for_period,
     make_json_writer,
     safe_save,
+    style,
     parse_tags,
     PY2,
     json_arrow_encoder,
 )
-from . import mock_datetime
+from . import mock_datetime, mock_read
 
 
 _dt = functools.partial(datetime.datetime, tzinfo=tzutc())
@@ -354,3 +359,46 @@ def test_json_arrow_encoder():
 
     now = arrow.utcnow()
     assert json_arrow_encoder(now) == now.for_json()
+
+
+@pytest.mark.parametrize('element, expected', [
+    ('project', '\x1b[35m{}\x1b[0m'),
+    ('tag', '\x1b[34m{}\x1b[0m'),
+    ('time', '\x1b[32m{}\x1b[0m'),
+    ('error', '\x1b[31m{}\x1b[0m'),
+    ('date', '\x1b[36m{}\x1b[0m'),
+    ('id', '\x1b[37m{}\x1b[0m'),
+])
+def test_style_no_context(element, expected):
+    assert style(element, 'foo') == expected.format('foo')
+
+
+@pytest.mark.parametrize('element, expected', [
+    ('project', '\x1b[32m{}\x1b[0m'),
+    ('tag', '\x1b[33m{}\x1b[0m'),
+])
+def test_style_with_context(element, expected, mock):
+    content = u"""
+[style_project]
+fg = green
+[style_tag]
+fg = yellow
+    """
+    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    config = ConfigParser()
+    config.read('dummy')
+    mock_get_ctx = mock.Mock(
+        return_value=mock.Mock(obj=mock.Mock(config=config)))
+    mock.patch('click.get_current_context', mock_get_ctx)
+    assert style(element, 'foo') == expected.format('foo')
+
+
+def test_format_short_id():
+    id_ = uuid.uuid4().hex
+    assert format_short_id(id_) == '\x1b[37m{}\x1b[0m'.format(id_[:7])
+
+
+def test_format_tags():
+    tags = ['foo', 'bar']
+    assert format_tags([]) == ''
+    assert format_tags(tags) == '[\x1b[34mfoo\x1b[0m, \x1b[34mbar\x1b[0m]'
