@@ -7,7 +7,9 @@ mkdocs
 flake8
 # mock>1.0.1 requires setuptools>17
 mock<=1.0.1
+py
 pytest
 pytest-datafiles
+pytest-mock
 pytest-runner
 tox
