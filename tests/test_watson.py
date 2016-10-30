@@ -1,84 +1,37 @@
-import sys
+"""Unit tests for the main 'watson' module."""
+
 import json
 import os
-import datetime
+import sys
 
 try:
     from unittest import mock
 except ImportError:
     import mock
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 import py
 import pytest
 import requests
 import arrow
 
-from dateutil.tz import tzutc
-
 from click import get_app_dir
 from watson import Watson, WatsonError
 from watson.watson import ConfigurationError, ConfigParser
-from watson.utils import get_start_time_for_period, make_json_writer, safe_save
+
+from . import mock_read
 
 
+PY2 = sys.version_info[0] == 2
 TEST_FIXTURE_DIR = py.path.local(
     os.path.dirname(
         os.path.realpath(__file__)
         )
     ) / 'resources'
 
-PY2 = sys.version_info[0] == 2
-
 if not PY2:
     builtins = 'builtins'
 else:
     builtins = '__builtin__'
-
-
-def mock_datetime(dt, dt_module):
-
-    class DateTimeMeta(type):
-
-        @classmethod
-        def __instancecheck__(mcs, obj):
-            return isinstance(obj, datetime.datetime)
-
-    class BaseMockedDateTime(datetime.datetime):
-
-        @classmethod
-        def now(cls, tz=None):
-            return dt.replace(tzinfo=tz)
-
-        @classmethod
-        def utcnow(cls):
-            return dt
-
-        @classmethod
-        def today(cls):
-            return dt
-
-    MockedDateTime = DateTimeMeta('datetime', (BaseMockedDateTime,), {})
-
-    return mock.patch.object(dt_module, 'datetime', MockedDateTime)
-
-
-@pytest.fixture
-def config_dir(tmpdir):
-    return str(tmpdir.mkdir('config'))
-
-
-def mock_read(content):
-    return lambda self, name: self._read(StringIO(content), name)
-
-
-@pytest.fixture
-def watson(config_dir):
-    return Watson(config_dir=config_dir)
 
 
 # current
@@ -259,152 +212,6 @@ toto
 def test_empty_config(watson):
     with mock.patch.object(ConfigParser, 'read', mock_read(u'')):
         assert len(watson.config.sections()) == 0
-
-
-def test_config_get(watson):
-    content = u"""
-[backend]
-url = foo
-token =
-    """
-    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
-        config = watson.config
-        assert config.get('backend', 'url') == 'foo'
-        assert config.get('backend', 'token') == ''
-        assert config.get('backend', 'foo') is None
-        assert config.get('backend', 'foo', 'bar') == 'bar'
-        assert config.get('option', 'spamm') is None
-        assert config.get('option', 'spamm', 'eggs') == 'eggs'
-
-
-def test_config_getboolean(watson):
-    content = u"""
-[options]
-flag1 = 1
-flag2 = ON
-flag3 = True
-flag4 = yes
-flag5 = false
-flag6 =
-    """
-    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
-        config = watson.config
-        assert config.getboolean('options', 'flag1') is True
-        assert config.getboolean('options', 'flag1', False) is True
-        assert config.getboolean('options', 'flag2') is True
-        assert config.getboolean('options', 'flag3') is True
-        assert config.getboolean('options', 'flag4') is True
-        assert config.getboolean('options', 'flag5') is False
-        assert config.getboolean('options', 'flag6') is False
-        assert config.getboolean('options', 'flag6', True) is True
-        assert config.getboolean('options', 'missing') is False
-        assert config.getboolean('options', 'missing', True) is True
-
-
-def test_config_getint(watson):
-    content = u"""
-[options]
-value1 = 42
-value2 = spamm
-value3 =
-    """
-    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
-        config = watson.config
-        assert config.getint('options', 'value1') == 42
-        assert config.getint('options', 'value1', 666) == 42
-        assert config.getint('options', 'missing') is None
-        assert config.getint('options', 'missing', 23) == 23
-        # default is not converted!
-        assert config.getint('options', 'missing', '42') == '42'
-        assert config.getint('options', 'missing', 6.66) == 6.66
-
-        with pytest.raises(ValueError):
-            config.getint('options', 'value2')
-
-        with pytest.raises(ValueError):
-            config.getint('options', 'value3')
-
-
-def test_config_getfloat(watson):
-    content = u"""
-[options]
-value1 = 3.14
-value2 = 42
-value3 = spamm
-value4 =
-    """
-
-    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
-        config = watson.config
-        assert config.getfloat('options', 'value1') == 3.14
-        assert config.getfloat('options', 'value1', 6.66) == 3.14
-        assert config.getfloat('options', 'value2') == 42.0
-        assert isinstance(config.getfloat('options', 'value2'), float)
-        assert config.getfloat('options', 'missing') is None
-        assert config.getfloat('options', 'missing', 3.14) == 3.14
-        # default is not converted!
-        assert config.getfloat('options', 'missing', '3.14') == '3.14'
-
-        with pytest.raises(ValueError):
-            config.getfloat('options', 'value3')
-
-        with pytest.raises(ValueError):
-            config.getfloat('options', 'value4')
-
-
-def test_config_getlist(watson):
-    content = u"""
-# empty lines in option values (including the first one) are discarded
-[options]
-value1 =
-    one
-
-    two three
-    four
-    five six
-# multiple inner space preserved
-value2 = one  "two three" four 'five  six'
-value3 = one
-    two  three
-# outer space stripped
-value4 = one
-     two three
-    four
-# hash char not at start of line does not start comment
-value5 = one
-   two #three
-   four # five
-"""
-    with mock.patch.object(ConfigParser, 'read', mock_read(content)):
-        gl = watson.config.getlist
-        assert gl('options', 'value1') == ['one', 'two three', 'four',
-                                           'five six']
-        assert gl('options', 'value2') == ['one', 'two three', 'four',
-                                           'five  six']
-        assert gl('options', 'value3') == ['one', 'two  three']
-        assert gl('options', 'value4') == ['one', 'two three', 'four']
-        assert gl('options', 'value5') == ['one', 'two #three', 'four # five']
-
-        # default values
-        assert gl('options', 'novalue') == []
-        assert gl('options', 'novalue', None) == []
-        assert gl('options', 'novalue', 42) == 42
-        assert gl('nosection', 'dummy') == []
-        assert gl('nosection', 'dummy', None) == []
-        assert gl('nosection', 'dummy', 42) == 42
-
-        default = gl('nosection', 'dummy')
-        default.append(42)
-        assert gl('nosection', 'dummy') != [42], (
-            "Modifying default return value should not have side effect.")
-
-
-def test_set_config(watson):
-    config = ConfigParser()
-    config.set('foo', 'bar', 'lol')
-    watson.config = config
-
-    watson.config.get('foo', 'bar') == 'lol'
 
 
 # start
@@ -896,100 +703,3 @@ def test_merge_report(watson, datafiles):
 
     assert conflicting[0].id == '2'
     assert merging[0].id == '3'
-
-
-# report/log
-
-_dt = datetime.datetime
-_tz = {'tzinfo': tzutc()}
-
-
-@pytest.mark.parametrize('now, mode, start_time', [
-    (_dt(2016, 6, 2, **_tz), 'year', _dt(2016, 1, 1, **_tz)),
-    (_dt(2016, 6, 2, **_tz), 'month', _dt(2016, 6, 1, **_tz)),
-    (_dt(2016, 6, 2, **_tz), 'week', _dt(2016, 5, 30, **_tz)),
-    (_dt(2016, 6, 2, **_tz), 'day', _dt(2016, 6, 2, **_tz)),
-
-    (_dt(2012, 2, 24, **_tz), 'year', _dt(2012, 1, 1, **_tz)),
-    (_dt(2012, 2, 24, **_tz), 'month', _dt(2012, 2, 1, **_tz)),
-    (_dt(2012, 2, 24, **_tz), 'week', _dt(2012, 2, 20, **_tz)),
-    (_dt(2012, 2, 24, **_tz), 'day', _dt(2012, 2, 24, **_tz)),
-])
-def test_get_start_time_for_period(now, mode, start_time):
-    with mock_datetime(now, datetime):
-        assert get_start_time_for_period(mode).datetime == start_time
-
-
-# utils
-
-def test_make_json_writer():
-    fp = StringIO()
-    writer = make_json_writer(lambda: {'foo': 42})
-    writer(fp)
-    assert fp.getvalue() == '{\n "foo": 42\n}'
-
-
-def test_make_json_writer_with_args():
-    fp = StringIO()
-    writer = make_json_writer(lambda x: {'foo': x}, 23)
-    writer(fp)
-    assert fp.getvalue() == '{\n "foo": 23\n}'
-
-
-def test_make_json_writer_with_kwargs():
-    fp = StringIO()
-    writer = make_json_writer(lambda foo=None: {'foo': foo}, foo='bar')
-    writer(fp)
-    assert fp.getvalue() == '{\n "foo": "bar"\n}'
-
-
-def test_safe_save(config_dir):
-    save_file = os.path.join(config_dir, 'test')
-    backup_file = os.path.join(config_dir, 'test' + '.bak')
-
-    assert not os.path.exists(save_file)
-    safe_save(save_file, lambda f: f.write("Success"))
-    assert os.path.exists(save_file)
-    assert not os.path.exists(backup_file)
-
-    with open(save_file) as fp:
-        assert fp.read() == "Success"
-
-    safe_save(save_file, "Again")
-    assert os.path.exists(backup_file)
-
-    with open(save_file) as fp:
-        assert fp.read() == "Again"
-
-    with open(backup_file) as fp:
-        assert fp.read() == "Success"
-
-    assert os.path.getmtime(save_file) >= os.path.getmtime(backup_file)
-
-
-def test_safe_save_with_exception(config_dir):
-    save_file = os.path.join(config_dir, 'test')
-    backup_file = os.path.join(config_dir, 'test' + '.bak')
-
-    def failing_writer(f):
-        raise RuntimeError("Save failed.")
-
-    assert not os.path.exists(save_file)
-
-    with pytest.raises(RuntimeError):
-        safe_save(save_file, failing_writer)
-
-    assert not os.path.exists(save_file)
-    assert not os.path.exists(backup_file)
-
-    safe_save(save_file, lambda f: f.write("Success"))
-    assert os.path.exists(save_file)
-    assert not os.path.exists(backup_file)
-
-    with pytest.raises(RuntimeError):
-        safe_save(save_file, failing_writer)
-
-    with open(save_file) as fp:
-        assert fp.read() == "Success"
-
-    assert not os.path.exists(backup_file)
