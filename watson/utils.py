@@ -45,7 +45,7 @@ def style(name, element):
     try:
         config = click.get_current_context().obj.config
         style = style.copy()  # take care not change the default styles
-        style.update(config.getitems('style_%s' % name))
+        style.update(config.getitems('style:%s' % name))
     except (AttributeError, RuntimeError):
         pass
 

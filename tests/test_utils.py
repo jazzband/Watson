@@ -151,9 +151,9 @@ def test_style_no_context(element, expected):
 ])
 def test_style_with_context(element, expected, mock):
     content = u"""
-[style_project]
+[style:project]
 fg = green
-[style_tag]
+[style:tag]
 fg = yellow
     """
     mock.patch.object(ConfigParser, 'read', mock_read(content))
