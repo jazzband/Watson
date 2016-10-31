@@ -80,6 +80,28 @@ def test_safe_save(config_dir):
     assert os.path.getmtime(save_file) >= os.path.getmtime(backup_file)
 
 
+def test_safe_save_tmpfile_on_other_filesystem(config_dir, mock):
+    save_file = os.path.join(config_dir, 'test')
+    backup_file = os.path.join(config_dir, 'test' + '.bak')
+
+    assert not os.path.exists(save_file)
+    safe_save(save_file, lambda f: f.write("Success"))
+    assert os.path.exists(save_file)
+    assert not os.path.exists(backup_file)
+
+    with open(save_file) as fp:
+        assert fp.read() == "Success"
+
+    # simulate tmpfile being on another file-system
+    # OSError is caught and handled by shutil.move() used by save_safe()
+    mock.patch('os.rename', side_effect=OSError)
+    safe_save(save_file, "Again")
+    assert os.path.exists(backup_file)
+
+    with open(save_file) as fp:
+        assert fp.read() == "Again"
+
+
 def test_safe_save_with_exception(config_dir):
     save_file = os.path.join(config_dir, 'test')
     backup_file = os.path.join(config_dir, 'test' + '.bak')
