@@ -202,8 +202,8 @@ token = yourapitoken
 [options]
 stop_on_start = true
 stop_on_restart = false
-date_format = '%Y.%m.%d'
-time_format = '%H:%M:%S%z'
+date_format = %Y.%m.%d
+time_format = %H:%M:%S%z
 log_current = false
 report_current = false
 ```
