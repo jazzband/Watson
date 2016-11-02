@@ -61,13 +61,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../commands/">Commands</a>
-                        </li>
+                        
+<li >
+    <a href="../commands/">Commands</a>
+</li>
+
                     
-                        <li class="active">
-                            <a href="./">Configuration</a>
-                        </li>
+                        
+<li class="active">
+    <a href="./">Configuration</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -78,21 +82,29 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../../contributing/how-to/">Howto</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/how-to/">Howto</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../contributing/hack/">Hack</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/hack/">Hack</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../contributing/coc/">Code of Conduct</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/coc/">Code of Conduct</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -109,13 +121,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../../about/license/">License</a>
-                        </li>
+                        
+<li >
+    <a href="../../about/license/">License</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../about/release-notes/">Release notes</a>
-                        </li>
+                        
+<li >
+    <a href="../../about/release-notes/">Release notes</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -125,6 +141,11 @@
 
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
                 <li >
                     <a rel="next" href="../commands/">
                         <i class="fa fa-arrow-left"></i> Previous
@@ -158,7 +179,7 @@
         
             <li><a href="#the-configuration-file">The configuration file</a></li>
         
-            <li><a href="#edition">Edition</a></li>
+            <li><a href="#editing">Editing</a></li>
         
             <li><a href="#available-settings">Available settings</a></li>
         
@@ -225,7 +246,7 @@ empty string value here =
 </code></pre>
 
 <p><em>This example configuration file has been taken from the <a href="https://docs.python.org/3.4/library/configparser.html#supported-ini-file-structure">official python documentation</a>.</em></p>
-<h2 id="edition">Edition</h2>
+<h2 id="editing">Editing</h2>
 <p>If you want to edit your configuration, the best is to use the <a href="../commands/#config"><code>config</code></a> command.</p>
 <p>You can edit your configuration on the fly with:</p>
 <pre><code class="bash">$ watson config SECTION.KEY VALUE
@@ -249,6 +270,14 @@ $ watson config backend.token  # display configuration
 <h4 id="backendtoken"><code>backend.token</code></h4>
 <p>To authenticate watson as an API client, once generated, you will need to set up your API token in your configuration, e.g. <code>7e329263e329</code>.</p>
 <h3 id="options">Options</h3>
+<h4 id="optionslog_current"><code>options.log_current</code></h4>
+<p>If <code>true</code>, the output of the <code>log</code> command will include the currently running
+frame (if any) by default. The option can be overridden on the command line
+with the <code>-c/-C</code> resp. <code>--current/--no-current</code> flags.</p>
+<h4 id="optionsreport_current"><code>options.report_current</code></h4>
+<p>If <code>true</code>, the output of the <code>report</code> command will include the currently
+running frame (if any) by default. The option can be overridden on the
+command line with the <code>-c/-C</code> resp. <code>--current/--no-current</code> flags.</p>
 <h4 id="optionsstop_on_start"><code>options.stop_on_start</code></h4>
 <p>If <code>true</code>, starting a new project will stop running projects:</p>
 <pre><code>$ watson start samourai +pizza +cat
@@ -270,6 +299,39 @@ Starting project voyager2 [reactor, module] at 11:18
 <p>Globally configure how <code>dates</code> should be formatted. All <a href="http://strftime.org">python&rsquo;s <code>strftime</code> directives</a> are supported.</p>
 <h4 id="optionstime_format"><code>options.time_format</code></h4>
 <p>Globally configure how <code>time</code> should be formatted. All <a href="http://strftime.org">python&rsquo;s <code>strftime</code> directives</a> are supported.</p>
+<h3 id="default-tags">Default tags</h3>
+<p>Tags can be automatically added for selected projects. This is convenient when
+the same tags are always attached to a particular project.</p>
+<p>These automatically attached tags are defined in the <code>[default_tags]</code> section
+of the configuration. Each option in that section is a project to which
+tags should be attached. The entries should follow the pattern: <code>project = tag1 tag2</code>.</p>
+<p>You can set default tags for a project from the command line:</p>
+<pre><code>$ watson config default_tags.python101 'teaching python'
+</code></pre>
+
+<p>This corresponds to the following configuration file snippets:</p>
+<pre><code class="ini">[default_tags]
+python101 = teaching python
+</code></pre>
+
+<p>With these default tags set, the tags &ldquo;teaching&rdquo; and &ldquo;python&rdquo; will
+automatically be attached to the project &ldquo;python101&rdquo;:</p>
+<pre><code>$ watson start python101
+Starting project python101 [teaching, python] at 19:27
+
+$ watson start python101 +lecture
+Starting project python101 [lecture, teaching, python] at 19:28
+</code></pre>
+
+<p>Default tags can contain space characters when written in between quotes:</p>
+<pre><code>$ watson config default_tags.voyager2 'nasa &quot;space mission&quot;'
+</code></pre>
+
+<p>Or in the configuration file:</p>
+<pre><code class="ini">[default_tags]
+voyager2 = nasa 'space mission'
+</code></pre>
+
 <h2 id="sample-configuration-file">Sample configuration file</h2>
 <p>A basic configuration file looks like the following:</p>
 <pre><code class="ini"># Watson configuration
@@ -281,8 +343,10 @@ token = yourapitoken
 [options]
 stop_on_start = true
 stop_on_restart = false
-date_format = '%Y.%m.%d'
-time_format = '%H:%M:%S%z'
+date_format = %Y.%m.%d
+time_format = %H:%M:%S%z
+log_current = false
+report_current = false
 </code></pre>
 
 <h2 id="application-folder">Application folder</h2>
@@ -299,9 +363,44 @@ export WATSON_DIR=/path/to/watson/folder
 <p>This can be useful to preserve your real data when hacking with Watson :)</p></div>
         </div>
 
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a></center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
         <script src="../../js/jquery-1.10.2.min.js"></script>
         <script src="../../js/bootstrap-3.0.3.min.js"></script>
         <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
         <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

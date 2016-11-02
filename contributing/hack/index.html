@@ -61,13 +61,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../../user-guide/commands/">Commands</a>
-                        </li>
+                        
+<li >
+    <a href="../../user-guide/commands/">Commands</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../user-guide/configuration/">Configuration</a>
-                        </li>
+                        
+<li >
+    <a href="../../user-guide/configuration/">Configuration</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -78,21 +82,29 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../how-to/">Howto</a>
-                        </li>
+                        
+<li >
+    <a href="../how-to/">Howto</a>
+</li>
+
                     
-                        <li class="active">
-                            <a href="./">Hack</a>
-                        </li>
+                        
+<li class="active">
+    <a href="./">Hack</a>
+</li>
+
                     
-                        <li >
-                            <a href="../pr-guidelines/">Pull Request guidelines</a>
-                        </li>
+                        
+<li >
+    <a href="../pr-guidelines/">Pull Request guidelines</a>
+</li>
+
                     
-                        <li >
-                            <a href="../coc/">Code of Conduct</a>
-                        </li>
+                        
+<li >
+    <a href="../coc/">Code of Conduct</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -109,13 +121,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../../about/license/">License</a>
-                        </li>
+                        
+<li >
+    <a href="../../about/license/">License</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../about/release-notes/">Release notes</a>
-                        </li>
+                        
+<li >
+    <a href="../../about/release-notes/">Release notes</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -125,6 +141,11 @@
 
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
                 <li >
                     <a rel="next" href="../how-to/">
                         <i class="fa fa-arrow-left"></i> Previous
@@ -158,6 +179,8 @@
         
             <li><a href="#get-started">Get started!</a></li>
         
+            <li><a href="#run-the-tests">Run the tests</a></li>
+        
     
     </ul>
 </div></div>
@@ -188,8 +211,9 @@ $ python setup.py develop
 <p>Now you can make your changes locally.</p>
 </li>
 <li>
-<p>When you&rsquo;re done making changes, check that your changes pass the tests:</p>
-<pre><code>$ py.test
+<p>When you&rsquo;re done making changes, check that your changes pass the tests
+    (see <a href="#run-the-tests">Run the tests</a>):</p>
+<pre><code>$ tox
 </code></pre>
 </li>
 <li>
@@ -201,18 +225,65 @@ $ python setup.py develop
 <p>Commit your changes and push your branch to GitHub:</p>
 <pre><code>$ git add .
 $ git commit -m "Your detailed description of your changes."
-$ git push origin name-of-your-bugfix-or-feature
+$ git push -u origin name-of-your-bugfix-or-feature
 </code></pre>
 </li>
 <li>
 <p>After <a href="../pr-guidelines/">reading this</a>, submit a pull request through the GitHub website.</p>
 </li>
-</ol></div>
+</ol>
+<p><a href="#run-the-tests"></a></p>
+<h2 id="run-the-tests">Run the tests</h2>
+<p>The tests use <a href="http://pytest.org/">pytest</a>. To run them with the default Python
+interpreter:</p>
+<pre><code>$ py.test -v tests/
+</code></pre>
+<p>To run the tests via <a href="http://tox.testrun.org/">tox</a> with all Python versions
+which are available on your system and are defined in the <code>tox.ini</code> file,
+simply run:</p>
+<pre><code>$ tox
+</code></pre>
+<p>This will also check the source code with <a href="http://flake8.pycqa.org">flake8</a>.</p></div>
         </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a></center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
 
         <script src="../../js/jquery-1.10.2.min.js"></script>
         <script src="../../js/bootstrap-3.0.3.min.js"></script>
         <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
         <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

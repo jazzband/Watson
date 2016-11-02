@@ -61,13 +61,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li class="active">
-                            <a href="./">Commands</a>
-                        </li>
+                        
+<li class="active">
+    <a href="./">Commands</a>
+</li>
+
                     
-                        <li >
-                            <a href="../configuration/">Configuration</a>
-                        </li>
+                        
+<li >
+    <a href="../configuration/">Configuration</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -78,21 +82,29 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../../contributing/how-to/">Howto</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/how-to/">Howto</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../contributing/hack/">Hack</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/hack/">Hack</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../contributing/coc/">Code of Conduct</a>
-                        </li>
+                        
+<li >
+    <a href="../../contributing/coc/">Code of Conduct</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -109,13 +121,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../../about/license/">License</a>
-                        </li>
+                        
+<li >
+    <a href="../../about/license/">License</a>
+</li>
+
                     
-                        <li >
-                            <a href="../../about/release-notes/">Release notes</a>
-                        </li>
+                        
+<li >
+    <a href="../../about/release-notes/">Release notes</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -125,6 +141,11 @@
 
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
                 <li >
                     <a rel="next" href="../..">
                         <i class="fa fa-arrow-left"></i> Previous
@@ -173,6 +194,8 @@
             <li><a href="#projects">projects</a></li>
         
             <li><a href="#remove">remove</a></li>
+        
+            <li><a href="#rename">rename</a></li>
         
             <li><a href="#report">report</a></li>
         
@@ -259,11 +282,9 @@ $ watson config backend.token
 </code></pre>
 
 <p>Edit a frame.</p>
-<p>You can specify the frame to edit with an integer frame index or a frame
-id. For example, to edit the second-to-last frame, pass <code>-2</code> as the frame
-index (put <code>--</code> in front of negative indexes to prevent them from being
-interpreted as an option). You can get the id of a frame with the <code>watson
-log</code> command.</p>
+<p>You can specify the frame to edit by its position or by its frame id.
+For example, to edit the second-to-last frame, pass <code>-2</code> as the frame
+index. You can get the id of a frame with the <code>watson log</code> command.</p>
 <p>If no id or index is given, the frame defaults to the current frame or the
 last recorded frame, if no project is currently running.</p>
 <p>The <code>$EDITOR</code> environment variable is used to detect your editor.</p>
@@ -337,6 +358,10 @@ f1c4815
 <p>By default, the sessions from the last 7 days are printed. This timespan
 can be controlled with the <code>--from</code> and <code>--to</code> arguments. The dates
 must have the format <code>YEAR-MONTH-DAY</code>, like: <code>2014-05-19</code>.</p>
+<p>You can also use special shortcut options for easier timespan control:
+<code>--day</code> sets the log timespan to the current day (beginning at 00:00h)
+and <code>--year</code>, <code>--month</code> and <code>--week</code> to the current year, month or week
+respectively.</p>
 <p>You can limit the log to a project or a tag using the <code>--project</code> and
 <code>--tag</code> options. They can be specified several times each to add multiple
 projects or tags to the log.</p>
@@ -377,12 +402,32 @@ Wednesday 16 April 2014 (5h 19m 18s)
 </thead>
 <tbody>
 <tr>
+<td><code>-c, --current / -C, --no-current</code></td>
+<td>(Don&rsquo;t) include currently running frame in output.</td>
+</tr>
+<tr>
 <td><code>-f, --from DATE</code></td>
 <td>The date from when the log should start. Defaults to seven days ago.</td>
 </tr>
 <tr>
 <td><code>-t, --to DATE</code></td>
 <td>The date at which the log should stop (inclusive). Defaults to tomorrow.</td>
+</tr>
+<tr>
+<td><code>-y, --year</code></td>
+<td>Reports activity for the current year.</td>
+</tr>
+<tr>
+<td><code>-m, --month</code></td>
+<td>Reports activity for the current month.</td>
+</tr>
+<tr>
+<td><code>-w, --week</code></td>
+<td>Reports activity for the current week.</td>
+</tr>
+<tr>
+<td><code>-d, --day</code></td>
+<td>Reports activity for the current day.</td>
 </tr>
 <tr>
 <td><code>-p, --project TEXT</code></td>
@@ -497,7 +542,8 @@ voyager2
 <pre><code class="bash">Usage:  watson remove [OPTIONS] ID
 </code></pre>
 
-<p>Remove a frame.</p>
+<p>Remove a frame. You can specify the frame either by id or by position
+(ex: <code>-1</code> for the last frame).</p>
 <h3 id="options_8">Options</h3>
 <table>
 <thead>
@@ -517,17 +563,46 @@ voyager2
 </tr>
 </tbody>
 </table>
+<h2 id="rename"><code>rename</code></h2>
+<pre><code class="bash">Usage:  watson rename [OPTIONS] TYPE OLD_NAME NEW_NAME
+</code></pre>
+
+<p>Rename a project or tag.</p>
+<p>Example:</p>
+<pre><code>$ watson rename project read-python-intro learn-python
+Renamed project "read-python-intro" to "learn-python"
+$ watson rename tag company-meeting meeting
+Renamed tag "company-meeting" to "meeting"
+</code></pre>
+<h3 id="options_9">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Help</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="report"><code>report</code></h2>
 <pre><code class="bash">Usage:  watson report [OPTIONS]
 </code></pre>
 
 <p>Display a report of the time spent on each project.</p>
-<p>If a project is given, the time spent on this project
-is printed. Else, print the total for each root
-project.</p>
+<p>If a project is given, the time spent on this project is printed.
+Else, print the total for each root project.</p>
 <p>By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the <code>--from</code> and <code>--to</code> arguments. The dates
 must have the format <code>YEAR-MONTH-DAY</code>, like: <code>2014-05-19</code>.</p>
+<p>You can also use special shortcut options for easier timespan control:
+<code>--day</code> sets the report timespan to the current day (beginning at 00:00h)
+and <code>--year</code>, <code>--month</code> and <code>--week</code> to the current year, month or week
+respectively.</p>
 <p>You can limit the report to a project or a tag using the <code>--project</code> and
 <code>--tag</code> options. They can be specified several times each to add multiple
 projects or tags to the report.</p>
@@ -571,7 +646,7 @@ apollo11 - 13h 22m 20s
         [steering 10h 33m 37s]
         [wheels   10h 11m 35s]
 </code></pre>
-<h3 id="options_9">Options</h3>
+<h3 id="options_10">Options</h3>
 <table>
 <thead>
 <tr>
@@ -581,12 +656,32 @@ apollo11 - 13h 22m 20s
 </thead>
 <tbody>
 <tr>
+<td><code>-c, --current / -C, --no-current</code></td>
+<td>(Don&rsquo;t) include currently running frame in report.</td>
+</tr>
+<tr>
 <td><code>-f, --from DATE</code></td>
 <td>The date from when the report should start. Defaults to seven days ago.</td>
 </tr>
 <tr>
 <td><code>-t, --to DATE</code></td>
 <td>The date at which the report should stop (inclusive). Defaults to tomorrow.</td>
+</tr>
+<tr>
+<td><code>-y, --year</code></td>
+<td>Reports activity for the current year.</td>
+</tr>
+<tr>
+<td><code>-m, --month</code></td>
+<td>Reports activity for the current month.</td>
+</tr>
+<tr>
+<td><code>-w, --week</code></td>
+<td>Reports activity for the current week.</td>
+</tr>
+<tr>
+<td><code>-d, --day</code></td>
+<td>Reports activity for the current day.</td>
 </tr>
 <tr>
 <td><code>-p, --project TEXT</code></td>
@@ -627,7 +722,7 @@ Stopping project apollo11, started a minute ago. (id: e7ccd52)
 $ watson restart
 Starting project apollo11 [module, brakes] at 16:36
 </code></pre>
-<h3 id="options_10">Options</h3>
+<h3 id="options_11">Options</h3>
 <table>
 <thead>
 <tr>
@@ -656,11 +751,11 @@ You can add tags indicating more specifically what you are working on with
 <p>If there is already a running project and the configuration option
 <code>options.stop_on_start</code> is set to a true value (<code>1</code>, <code>on</code>, <code>true</code> or
 <code>yes</code>), it is stopped before the new project is started.</p>
-<p>Example :</p>
+<p>Example:</p>
 <pre><code>$ watson start apollo11 +module +brakes
 Starting project apollo11 [module, brakes] at 16:34
 </code></pre>
-<h3 id="options_11">Options</h3>
+<h3 id="options_12">Options</h3>
 <table>
 <thead>
 <tr>
@@ -693,7 +788,7 @@ $ watson config options.time_format "at %I:%M %p"
 $ watson status
 Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
 </code></pre>
-<h3 id="options_12">Options</h3>
+<h3 id="options_13">Options</h3>
 <table>
 <thead>
 <tr>
@@ -717,7 +812,7 @@ Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
 <pre><code>$ watson stop
 Stopping project apollo11, started a minute ago. (id: e7ccd52)
 </code></pre>
-<h3 id="options_13">Options</h3>
+<h3 id="options_14">Options</h3>
 <table>
 <thead>
 <tr>
@@ -746,7 +841,7 @@ $ watson sync
 Received 42 frames from the server
 Pushed 23 frames to the server
 </code></pre>
-<h3 id="options_14">Options</h3>
+<h3 id="options_15">Options</h3>
 <table>
 <thead>
 <tr>
@@ -781,7 +876,7 @@ steering
 transmission
 wheels
 </code></pre>
-<h3 id="options_15">Options</h3>
+<h3 id="options_16">Options</h3>
 <table>
 <thead>
 <tr>
@@ -798,9 +893,44 @@ wheels
 </table></div>
         </div>
 
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a></center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
         <script src="../../js/jquery-1.10.2.min.js"></script>
         <script src="../../js/bootstrap-3.0.3.min.js"></script>
         <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
         <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

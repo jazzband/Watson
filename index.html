@@ -61,13 +61,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="user-guide/commands/">Commands</a>
-                        </li>
+                        
+<li >
+    <a href="user-guide/commands/">Commands</a>
+</li>
+
                     
-                        <li >
-                            <a href="user-guide/configuration/">Configuration</a>
-                        </li>
+                        
+<li >
+    <a href="user-guide/configuration/">Configuration</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -78,21 +82,29 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="contributing/how-to/">Howto</a>
-                        </li>
+                        
+<li >
+    <a href="contributing/how-to/">Howto</a>
+</li>
+
                     
-                        <li >
-                            <a href="contributing/hack/">Hack</a>
-                        </li>
+                        
+<li >
+    <a href="contributing/hack/">Hack</a>
+</li>
+
                     
-                        <li >
-                            <a href="contributing/pr-guidelines/">Pull Request guidelines</a>
-                        </li>
+                        
+<li >
+    <a href="contributing/pr-guidelines/">Pull Request guidelines</a>
+</li>
+
                     
-                        <li >
-                            <a href="contributing/coc/">Code of Conduct</a>
-                        </li>
+                        
+<li >
+    <a href="contributing/coc/">Code of Conduct</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -109,13 +121,17 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="about/license/">License</a>
-                        </li>
+                        
+<li >
+    <a href="about/license/">License</a>
+</li>
+
                     
-                        <li >
-                            <a href="about/release-notes/">Release notes</a>
-                        </li>
+                        
+<li >
+    <a href="about/release-notes/">Release notes</a>
+</li>
+
                     
                     </ul>
                 </li>
@@ -125,6 +141,11 @@
 
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
                 <li class="disabled">
                     <a rel="next" >
                         <i class="fa fa-arrow-left"></i> Previous
@@ -199,6 +220,10 @@ Linux, *BSD…). The easiest way to install it is to use
 </code></pre>
 
 <p>Depending on your system, you might need to run this command with root privileges in order to install Watson globally.</p>
+<p>On OS X, the easiest way to install Watson is using <a href="http://brew.sh/">Homebrew</a>:</p>
+<pre><code class="bash">$ brew update &amp;&amp; brew install watson
+</code></pre>
+
 <h3 id="distribution-packages">Distribution packages</h3>
 <p>You can install Watson using available distribution packages.</p>
 <p><strong>Arch Linux</strong></p>
@@ -229,7 +254,17 @@ $ python setup.py install
 </code></pre>
 
 <h3 id="command-line-completion">Command line completion</h3>
+<h4 id="bash">Bash</h4>
 <p>If you use a Bash-compatible shell, you can install the <code>watson.completion</code> file from the source distribution as <code>/etc/bash.completion.d/watson</code> - or wherever your distribution keeps the Bash completion configuration files. After you restart your shell, you can then just type <code>watson</code> on your command line and then hit <code>TAB</code> to see all available commands. Depending on your input, it completes <code>watson</code> commands, command options, projects, tags and frame IDs.</p>
+<h4 id="zsh">ZSH</h4>
+<p>If you use zsh, copy the file <code>watson.zsh-completion</code> somewhere in your
+<code>fpath</code> as <code>_watson</code>. For example, you can put it in
+<code>/usr/local/share/zsh/site-functions</code>:</p>
+<pre><code>cp watson.zsh-completion /usr/local/share/zsh/site-functions/_watson
+</code></pre>
+<p>Make sure that your .zshrc enables compinit:</p>
+<pre><code>autoload -Uz compinit &amp;&amp; compinit
+</code></pre>
 <h2 id="getting-started">Getting started</h2>
 <p>Now that <code>watson</code> is installed on your system, let&rsquo;s start tracking your activity:</p>
 <pre><code class="bash">$ watson start world-domination +cats
@@ -249,9 +284,44 @@ Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
 <p>We hope you will enjoy Watson!</p></div>
         </div>
 
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a></center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
         <script src="./js/jquery-1.10.2.min.js"></script>
         <script src="./js/bootstrap-3.0.3.min.js"></script>
         <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
         <script src="./js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

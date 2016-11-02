@@ -1,4 +1,4 @@
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar {% if config.extra.theme_inverse %}navbar-inverse{% else %}navbar-default{% endif %} navbar-fixed-top" role="navigation">
     <div class="container">
 
         <!-- Collapsed navigation -->
@@ -25,9 +25,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ nav_item.title }} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     {% for nav_item in nav_item.children %}
-                        <li {% if nav_item.active %}class="active"{% endif %}>
-                            <a href="{{ nav_item.url }}">{{ nav_item.title }}</a>
-                        </li>
+                        {% include "nav-sub.html" %}
                     {% endfor %}
                     </ul>
                 </li>
@@ -41,6 +39,11 @@
 
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
                 <li {% if not previous_page %}class="disabled"{% endif %}>
                     <a rel="next" {% if previous_page %}href="{{ previous_page.url }}"{% endif %}>
                         <i class="fa fa-arrow-left"></i> Previous
