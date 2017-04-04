@@ -689,3 +689,39 @@ def test_merge_report(watson, datafiles):
 
     assert conflicting[0].id == '2'
     assert merging[0].id == '3'
+
+
+def test_report(watson):
+    watson.start('foo', tags=['A', 'B'])
+    watson.stop()
+
+    report = watson.report(arrow.now(), arrow.now())
+    assert "time" in report
+    assert "timespan" in report
+    assert "from" in report["timespan"]
+    assert "to" in report["timespan"]
+    assert len(report["projects"]) == 1
+    assert report["projects"][0]["name"] == "foo"
+    assert len(report["projects"][0]["tags"]) == 2
+    assert report["projects"][0]["tags"][0]["name"] == "A"
+    assert "time" in report["projects"][0]["tags"][0]
+    assert report["projects"][0]["tags"][1]["name"] == "B"
+    assert "time" in report["projects"][0]["tags"][1]
+
+    watson.start('bar', tags=['C'])
+    watson.stop()
+
+    report = watson.report(arrow.now(), arrow.now())
+    assert len(report["projects"]) == 2
+    assert report["projects"][0]["name"] == "bar"
+    assert report["projects"][1]["name"] == "foo"
+    assert len(report["projects"][0]["tags"]) == 1
+    assert report["projects"][0]["tags"][0]["name"] == "C"
+
+    report = watson.report(
+        arrow.now(), arrow.now(), projects=["foo"], tags=["B"]
+    )
+    assert len(report["projects"]) == 1
+    assert report["projects"][0]["name"] == "foo"
+    assert len(report["projects"][0]["tags"]) == 1
+    assert report["projects"][0]["tags"][0]["name"] == "B"

@@ -326,6 +326,11 @@ You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the report.
 
+You can change to output format by specifing the format via `--format`.
+Available formats are:
+    - rich (console output with human-readable formatted text)
+    - json (console output in json)
+
 Example:
 
 
@@ -367,6 +372,31 @@ Example:
             [reactor   8h 35m 50s]
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
+    
+    $ watson report --format json
+    {
+        "projects": [
+            {
+                "name": "watson",
+                "tags": [
+                    {
+                        "name": "export",
+                        "time": 530.0
+                    },
+                    {
+                        "name": "report",
+                        "time": 530.0
+                    }
+                ],
+                "time": 530.0
+            }
+        ],
+        "time": 530.0,
+        "timespan": {
+            "from": "2016-02-21T00:00:00-08:00",
+            "to": "2016-02-28T23:59:59.999999-08:00"
+        }
+    }
 
 ### Options
 
@@ -381,6 +411,7 @@ Flag | Help
 `-d, --day` | Reports activity for the current day.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-f, --format [rich|json]` | Output format for the report
 `--help` | Show this message and exit.
 
 ## `restart`
