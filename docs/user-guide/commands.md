@@ -326,10 +326,8 @@ You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the report.
 
-You can change to output format by specifing the format via `--format`.
-Available formats are:
-    - rich (console output with human-readable formatted text)
-    - json (console output in json)
+You can change the output format for the report from *plain text* to *JSON*
+by using the `--json` option.
 
 Example:
 
@@ -411,7 +409,7 @@ Flag | Help
 `-d, --day` | Reports activity for the current day.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`-f, --format [rich|json]` | Output format for the report
+`-j, --json` | Format the report in JSON instead of plain text
 `--help` | Show this message and exit.
 
 ## `restart`

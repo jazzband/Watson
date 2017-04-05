@@ -325,12 +325,11 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('-f', '--format', 'output_format', default='rich',
-              type=click.Choice(['rich', 'json']),
-              help='Output format for the report')
+@click.option('-j', '--json', 'format_json', is_flag=True,
+              help="Format the report in JSON instead of plain text")
 @click.pass_obj
 def report(watson, current, from_, to, projects,
-           tags, year, month, week, day, output_format):
+           tags, year, month, week, day, format_json):
     """
     Display a report of the time spent on each project.
 
@@ -350,10 +349,8 @@ def report(watson, current, from_, to, projects,
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the report.
 
-    You can change to output format by specifing the format via `--format`.
-    Available formats are:
-        - rich (console output with human-readable formatted text)
-        - json (console output in json)
+    You can change the output format for the report from *plain text* to *JSON*
+    by using the `--json` option.
 
     Example:
 
@@ -428,46 +425,46 @@ def report(watson, current, from_, to, projects,
     except watson.WatsonError as e:
         raise click.ClickException(e)
 
-    if output_format == 'json':
+    if format_json:
         click.echo(json.dumps(report, indent=4, sort_keys=True))
     else:
-        click.echo("{} -> {}\n".format(
+        click.echo('{} -> {}\n'.format(
             style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report["timespan"]["from"])
+                arrow.get(report['timespan']['from'])
             )),
             style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report["timespan"]["to"])
+                arrow.get(report['timespan']['to'])
             ))
          ))
 
-        projects = report["projects"]
+        projects = report['projects']
         for project in projects:
-            click.echo("{project} - {time}".format(
+            click.echo('{project} - {time}'.format(
                 time=style('time', format_timedelta(
-                    datetime.timedelta(seconds=project["time"])
+                    datetime.timedelta(seconds=project['time'])
                 )),
-                project=style('project', project["name"])
+                project=style('project', project['name'])
             ))
 
-            tags = project["tags"]
+            tags = project['tags']
             if tags:
                 longest_tag = max(len(tag) for tag in tags or [''])
 
                 for tag in tags:
-                    click.echo("\t[{tag} {time}]".format(
+                    click.echo('\t[{tag} {time}]'.format(
                         time=style('time', '{:>11}'.format(format_timedelta(
-                            datetime.timedelta(seconds=tag["time"])
+                            datetime.timedelta(seconds=tag['time'])
                         ))),
                         tag=style('tag', '{:<{}}'.format(
-                            tag["name"], longest_tag
+                            tag['name'], longest_tag
                         )),
                     ))
             click.echo()
 
         if len(projects) > 1:
-            click.echo("Total: {}".format(
+            click.echo('Total: {}'.format(
                 style('time', '{}'.format(format_timedelta(
-                    datetime.timedelta(seconds=report["time"])
+                    datetime.timedelta(seconds=report['time'])
                 )))
             ))
 
