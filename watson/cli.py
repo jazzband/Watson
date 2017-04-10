@@ -325,8 +325,11 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-j', '--json', 'format_json', is_flag=True,
+              help="Format the report in JSON instead of plain text")
 @click.pass_obj
-def report(watson, current, from_, to, projects, tags, year, month, week, day):
+def report(watson, current, from_, to, projects,
+           tags, year, month, week, day, format_json):
     """
     Display a report of the time spent on each project.
 
@@ -345,6 +348,9 @@ def report(watson, current, from_, to, projects, tags, year, month, week, day):
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the report.
+
+    You can change the output format for the report from *plain text* to *JSON*
+    by using the `--json` option.
 
     Example:
 
@@ -387,76 +393,80 @@ def report(watson, current, from_, to, projects, tags, year, month, week, day):
             [reactor   8h 35m 50s]
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
+    \b
+    $ watson report --format json
+    {
+        "projects": [
+            {
+                "name": "watson",
+                "tags": [
+                    {
+                        "name": "export",
+                        "time": 530.0
+                    },
+                    {
+                        "name": "report",
+                        "time": 530.0
+                    }
+                ],
+                "time": 530.0
+            }
+        ],
+        "time": 530.0,
+        "timespan": {
+            "from": "2016-02-21T00:00:00-08:00",
+            "to": "2016-02-28T23:59:59.999999-08:00"
+        }
+    }
     """
-    for start_time in (_ for _ in [day, week, month, year]
-                       if _ is not None):
-        from_ = start_time
+    try:
+        report = watson.report(from_, to, current, projects, tags,
+                               year=year, month=month, week=week, day=day)
+    except watson.WatsonError as e:
+        raise click.ClickException(e)
 
-    if from_ > to:
-        raise click.ClickException("'from' must be anterior to 'to'")
+    if format_json:
+        click.echo(json.dumps(report, indent=4, sort_keys=True))
+    else:
+        click.echo('{} -> {}\n'.format(
+            style('date', '{:ddd DD MMMM YYYY}'.format(
+                arrow.get(report['timespan']['from'])
+            )),
+            style('date', '{:ddd DD MMMM YYYY}'.format(
+                arrow.get(report['timespan']['to'])
+            ))
+         ))
 
-    if watson.current:
-        if current or (current is None and
-                       watson.config.getboolean('options', 'report_current')):
-            cur = watson.current
-            watson.frames.add(cur['project'], cur['start'], arrow.utcnow(),
-                              cur['tags'], id="current")
-
-    span = watson.frames.span(from_, to)
-
-    frames_by_project = sorted_groupby(
-        watson.frames.filter(
-            projects=projects or None, tags=tags or None, span=span
-        ),
-        operator.attrgetter('project')
-    )
-
-    total = datetime.timedelta()
-
-    click.echo("{} -> {}\n".format(
-        style('date', '{:ddd DD MMMM YYYY}'.format(span.start)),
-        style('date', '{:ddd DD MMMM YYYY}'.format(span.stop))
-    ))
-
-    for project, frames in frames_by_project:
-        frames = tuple(frames)
-        delta = reduce(
-            operator.add,
-            (f.stop - f.start for f in frames),
-            datetime.timedelta()
-        )
-        total += delta
-
-        click.echo("{project} - {time}".format(
-            time=style('time', format_timedelta(delta)),
-            project=style('project', project)
-        ))
-
-        tags_to_print = sorted(
-            set(tag for frame in frames for tag in frame.tags
-                if tag in tags or not tags)
-        )
-        if tags_to_print:
-            longest_tag = max(len(tag) for tag in tags_to_print or [''])
-
-        for tag in tags_to_print:
-            delta = reduce(
-                operator.add,
-                (f.stop - f.start for f in frames if tag in f.tags),
-                datetime.timedelta()
-            )
-
-            click.echo("\t[{tag} {time}]".format(
-                time=style('time', '{:>11}'.format(format_timedelta(delta))),
-                tag=style('tag', '{:<{}}'.format(tag, longest_tag)),
+        projects = report['projects']
+        for project in projects:
+            click.echo('{project} - {time}'.format(
+                time=style('time', format_timedelta(
+                    datetime.timedelta(seconds=project['time'])
+                )),
+                project=style('project', project['name'])
             ))
 
-        click.echo()
+            tags = project['tags']
+            if tags:
+                longest_tag = max(len(tag) for tag in tags or [''])
 
-    if len(projects) > 1:
-        click.echo("Total: {}".format(
-            style('time', '{}'.format(format_timedelta(total)))
-        ))
+                for tag in tags:
+                    click.echo('\t[{tag} {time}]'.format(
+                        time=style('time', '{:>11}'.format(format_timedelta(
+                            datetime.timedelta(seconds=tag['time'])
+                        ))),
+                        tag=style('tag', '{:<{}}'.format(
+                            tag['name'], longest_tag
+                        )),
+                    ))
+            click.echo()
+
+        if len(projects) > 1:
+            click.echo('Total: {}'.format(
+                style('time', '{}'.format(format_timedelta(
+                    datetime.timedelta(seconds=report['time'])
+                )))
+            ))
 
 
 @cli.command()

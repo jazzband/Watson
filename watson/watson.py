@@ -2,6 +2,9 @@
 
 import os
 import json
+import datetime
+import operator
+from functools import reduce
 
 try:
     import configparser
@@ -14,7 +17,7 @@ import requests
 
 from .config import ConfigParser
 from .frames import Frames
-from .utils import deduplicate, make_json_writer, safe_save
+from .utils import deduplicate, make_json_writer, safe_save, sorted_groupby
 from .version import version as __version__  # noqa
 
 
@@ -427,3 +430,79 @@ class Watson(object):
                 merging.append(conflict_frame)
 
         return conflicting, merging
+
+    def report(self, from_, to, current=None, projects=None, tags=None,
+               year=None, month=None, week=None, day=None):
+        for start_time in (_ for _ in [day, week, month, year]
+                           if _ is not None):
+            from_ = start_time
+
+        if from_ > to:
+            raise WatsonError("'from' must be anterior to 'to'")
+
+        if tags is None:
+            tags = []
+
+        if self.current:
+            if current or (current is None and
+                           self.config.getboolean(
+                               'options', 'report_current')):
+                cur = self.current
+                self.frames.add(cur['project'], cur['start'], arrow.utcnow(),
+                                cur['tags'], id="current")
+
+        span = self.frames.span(from_, to)
+
+        frames_by_project = sorted_groupby(
+            self.frames.filter(
+                projects=projects or None, tags=tags or None, span=span
+            ),
+            operator.attrgetter('project')
+        )
+
+        total = datetime.timedelta()
+
+        report = {
+             'timespan': {
+                 'from': str(span.start),
+                 'to': str(span.stop),
+             },
+             'projects': []
+         }
+
+        for project, frames in frames_by_project:
+            frames = tuple(frames)
+            delta = reduce(
+                operator.add,
+                (f.stop - f.start for f in frames),
+                datetime.timedelta()
+            )
+            total += delta
+
+            project_report = {
+                'name': project,
+                'time': delta.total_seconds(),
+                'tags': []
+            }
+
+            tags_to_print = sorted(
+                set(tag for frame in frames for tag in frame.tags
+                    if tag in tags or not tags)
+            )
+
+            for tag in tags_to_print:
+                delta = reduce(
+                    operator.add,
+                    (f.stop - f.start for f in frames if tag in f.tags),
+                    datetime.timedelta()
+                )
+
+                project_report['tags'].append({
+                    'name': tag,
+                    'time': delta.total_seconds()
+                })
+
+            report['projects'].append(project_report)
+
+        report['time'] = total.total_seconds()
+        return report
