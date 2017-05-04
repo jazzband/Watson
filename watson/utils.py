@@ -52,26 +52,21 @@ def style(name, element):
 def format_timedelta(delta):
     """
     Return a string roughly representing a timedelta.
+
+    For reference, str(timedelta) returns [x days,] hh:mm:ss
+
     """
-    seconds = int(delta.total_seconds())
-    neg = seconds < 0
-    seconds = abs(seconds)
-    total = seconds
-    stems = []
-
-    if total >= 3600:
-        hours = seconds // 3600
-        stems.append('{}h'.format(hours))
-        seconds -= hours * 3600
-
-    if total >= 60:
-        mins = seconds // 60
-        stems.append('{:02}m'.format(mins))
-        seconds -= mins * 60
-
-    stems.append('{:02}s'.format(seconds))
-
-    return ('-' if neg else '') + ' '.join(stems)
+    neg = '-' if int(delta.total_seconds()) < 0 else ''
+    fmt = ["{}h ", "{}m ", "{}s"]
+    td = str(abs(delta)).split(":")
+    td[:0] = td.pop(0).split(',')
+    if len(td) == 4:
+        add_hours = int(td.pop(0).split()[0].strip()) * 24
+        td[0] = str(int(td[0]) + add_hours)
+    res = str()
+    for f, k in zip(fmt, td):
+        res += f.format(k.strip()) if int(k) else ''
+    return "{}{}".format(neg, res)
 
 
 def sorted_groupby(iterator, key, reverse=False):
