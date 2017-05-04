@@ -607,7 +607,14 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day):
             for frame in frames
         ))
 
-    click.echo_via_pager('\n'.join(lines))
+    num_term_rows, _ = [int(i)
+                        for i in os.popen('stty size', 'r').read().split()]
+    num_rows = len(watson.frames.dump()) + (len(lines)+1) / 3 * 2 - 1
+
+    if num_term_rows > num_rows:
+        click.echo('\n'.join(lines))
+    else:
+        click.echo_via_pager('\n'.join(lines))
 
 
 @cli.command()
