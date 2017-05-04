@@ -502,8 +502,11 @@ def report(watson, current, from_, to, projects,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('--terminal', 'print_to_term', is_flag=True,
+              help="Print to the terminal.")
 @click.pass_obj
-def log(watson, current, from_, to, projects, tags, year, month, week, day):
+def log(watson, current, from_, to, projects, tags, year, month, week, day,
+        print_to_term):
     """
     Display each recorded session during the given timespan.
 
@@ -611,7 +614,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day):
                         for i in os.popen('stty size', 'r').read().split()]
     num_rows = len(watson.frames.dump()) + (len(lines)+1) / 3 * 2 - 1
 
-    if num_term_rows > num_rows:
+    if print_to_term or num_term_rows > num_rows:
         click.echo('\n'.join(lines))
     else:
         click.echo_via_pager('\n'.join(lines))
