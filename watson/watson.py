@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import os
-import json
 import datetime
+import json
 import operator
+import os
+import uuid
+
 from functools import reduce
 
 try:
@@ -330,7 +332,7 @@ class Watson(object):
                     "server: {}".format(response.json())
                 )
 
-        return self._remote_projects
+        return self._remote_projects['projects']
 
     def pull(self):
         dest, headers = self._get_request_info('frames')
@@ -351,20 +353,13 @@ class Watson(object):
         frames = response.json() or ()
 
         for frame in frames:
-            try:
-                # Try to find the project name, as the API returns an URL
-                project = next(
-                    p['name'] for p in self._get_remote_projects()
-                    if p['url'] == frame['project']
-                )
-            except StopIteration:
-                raise WatsonError(
-                    "Received frame with invalid project from the server "
-                    "(id: {})".format(frame['project']['id'])
-                )
-
-            self.frames[frame['id']] = (project, frame['start'], frame['stop'],
-                                        frame['tags'])
+            frame_id = uuid.UUID(frame['id']).hex
+            self.frames[frame_id] = (
+                frame['project'],
+                frame['start_at'],
+                frame['end_at'],
+                frame['tags']
+            )
 
         return frames
 
@@ -375,25 +370,11 @@ class Watson(object):
 
         for frame in self.frames:
             if last_pull > frame.updated_at > self.last_sync:
-                try:
-                    # Find the url of the project
-                    project = next(
-                        p['url'] for p in self._get_remote_projects()
-                        if p['name'] == frame.project
-                    )
-                except StopIteration:
-                    raise WatsonError(
-                        "The project {} does not exists on the remote server, "
-                        "please create it or edit the frame (id: {})".format(
-                            frame.project, frame.id
-                        )
-                    )
-
                 frames.append({
-                    'id': frame.id,
-                    'start': str(frame.start),
-                    'stop': str(frame.stop),
-                    'project': project,
+                    'id': uuid.UUID(frame.id).urn,
+                    'start_at': str(frame.start.to('utc')),
+                    'end_at': str(frame.stop.to('utc')),
+                    'project': frame.project,
                     'tags': frame.tags
                 })
 
@@ -404,8 +385,11 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                "An error occured with the remote "
-                "server: {}".format(response.json())
+                "An error occured with the remote server (status: {}). "
+                "Response was:\n{}".format(
+                    response.status_code,
+                    response.text
+                )
             )
 
         return frames
