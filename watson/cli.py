@@ -819,20 +819,25 @@ def config(context, key, value, edit):
     7e329263e329
     """
     watson = context.obj
-    config = watson.config
+    oldconfig = watson.config
 
     if edit:
-        with open(watson.config_file) as fp:
-            newconfig = click.edit(text=fp.read(), extension='.ini')
+        try:
+            with open(watson.config_file) as fp:
+                rawconfig = fp.read()
+        except (IOError, OSError):
+            rawconfig = ''
+
+        newconfig = click.edit(text=rawconfig, extension='.ini')
 
         if newconfig:
             safe_save(watson.config_file, newconfig)
 
         try:
             watson.config = None
-            watson.config
+            watson.config  # triggers reloading config from file
         except _watson.ConfigurationError as exc:
-            watson.config = config
+            watson.config = oldconfig
             watson.save()
             raise WatsonCliError(str(exc))
         return
