@@ -518,9 +518,9 @@ def test_push(mock, watson):
     watson.frames.add('bar', 3, 4)
 
     mock.patch.object(watson, '_get_remote_projects', return_value=[
-        {'name': 'foo', 'url': '/projects/1/'},
-        {'name': 'bar', 'url': '/projects/2/'},
-        {'name': 'lol', 'url': '/projects/3/'},
+        {'name': 'foo', 'id': '08288b71-4500-40dd-96b1-a995937a15fd'},
+        {'name': 'bar', 'id': 'f0534272-65fa-4832-a49e-0eedf68b3a84'},
+        {'name': 'lol', 'id': '7fdaf65e-66bd-4c01-b09e-74bdc8cbe552'},
     ])
 
     class Response:
@@ -544,10 +544,10 @@ def test_push(mock, watson):
     frames_sent = json.loads(mock_put.call_args[0][1])
     assert len(frames_sent) == 2
 
-    assert frames_sent[0].get('project') == '/projects/2/'
+    assert frames_sent[0].get('project') == 'bar'
     assert frames_sent[0].get('tags') == ['A', 'B']
 
-    assert frames_sent[1].get('project') == '/projects/3/'
+    assert frames_sent[1].get('project') == 'lol'
     assert frames_sent[1].get('tags') == []
 
 
@@ -589,11 +589,13 @@ def test_pull(mock, watson):
 
     watson.last_sync = arrow.now()
 
-    watson.frames.add('foo', 1, 2, ['A', 'B'], id='1')
+    watson.frames.add(
+        'foo', 1, 2, ['A', 'B'], id='1c006c6e6cc14c80ab22b51c857c0b06'
+    )
 
     mock.patch.object(watson, '_get_remote_projects', return_value=[
-        {'name': 'foo', 'url': '/projects/1/'},
-        {'name': 'bar', 'url': '/projects/2/'},
+        {'name': 'foo', 'id': '08288b71-4500-40dd-96b1-a995937a15fd'},
+        {'name': 'bar', 'id': 'f0534272-65fa-4832-a49e-0eedf68b3a84'},
     ])
 
     class Response:
@@ -602,10 +604,20 @@ def test_pull(mock, watson):
 
         def json(self):
             return [
-                {'project': '/projects/1/', 'start': 3, 'stop': 4, 'id': '1',
-                 'tags': ['A']},
-                {'project': '/projects/2/', 'start': 4, 'stop': 5, 'id': '2',
-                 'tags': []}
+                {
+                    'id': '1c006c6e-6cc1-4c80-ab22-b51c857c0b06',
+                    'project': 'foo',
+                    'start_at': 3,
+                    'end_at': 4,
+                    'tags': ['A']
+                },
+                {
+                    'id': 'c44aa815-4d77-4a58-bddd-1afa95562141',
+                    'project': 'bar',
+                    'start_at': 4,
+                    'end_at': 5,
+                    'tags': []
+                }
             ]
 
     mock.patch('requests.get', return_value=Response())
@@ -624,13 +636,13 @@ def test_pull(mock, watson):
 
     assert len(watson.frames) == 2
 
-    assert watson.frames[0].id == '1'
+    assert watson.frames[0].id == '1c006c6e6cc14c80ab22b51c857c0b06'
     assert watson.frames[0].project == 'foo'
     assert watson.frames[0].start.timestamp == 3
     assert watson.frames[0].stop.timestamp == 4
     assert watson.frames[0].tags == ['A']
 
-    assert watson.frames[1].id == '2'
+    assert watson.frames[1].id == 'c44aa8154d774a58bddd1afa95562141'
     assert watson.frames[1].project == 'bar'
     assert watson.frames[1].start.timestamp == 4
     assert watson.frames[1].stop.timestamp == 5
