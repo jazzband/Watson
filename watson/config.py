@@ -84,7 +84,7 @@ class ConfigParser(RawConfigParser):
                 one
                 two three
                 four
-                sive six
+                five six
             option1 = one  "two three" four 'five  six'
 
         """
