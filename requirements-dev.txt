@@ -1,7 +1,7 @@
 -r requirements.txt
 
 # Docs
-mkdocs
+mkdocs<0.15.0
 
 # Tests
 flake8
