@@ -50,10 +50,10 @@ maintainer of the package):
 $ python setup.py sdist bdist_wheel upload
 ```
 
-## Update on-line documentation
+## Update online documentation
 
-We use [`mkdocs`](http://www.mkdocs.org) to generate the documentation. It must
-be update via:
+We use [`mkdocs`](http://www.mkdocs.org) to generate the online documentation.
+It must be updated via:
 
 ```bash
 $ mkdocs gh-deploy --clean
