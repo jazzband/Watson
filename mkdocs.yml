@@ -4,7 +4,10 @@ repo_url: https://github.com/TailorDev/Watson
 repo_name: GitHub
 site_description: A wonderful CLI to track your time!
 site_author: TailorDev
-copyright: Copyright © 2016 <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a>
+copyright: >
+  Watson, by <a
+  href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a>
+  &amp; al. is released under the MIT License.
 pages:
 - Home: 'index.md'
 - User Guide:
