@@ -3,6 +3,9 @@
 # Docs
 mkdocs<0.15.0
 
+# Release
+wheel
+
 # Tests
 flake8
 # mock>1.0.1 requires setuptools>17
