@@ -1,7 +1,7 @@
 # Release a new version
 
 As a maintainer, if you plan to release a new version of Watson, you will find
-useful informations in this page.
+useful information in this page.
 
 ## Bump a new `x.y.z` release
 
@@ -67,7 +67,7 @@ $ mkdocs gh-deploy --clean
 
 ```bash
 $ cd tmp
-$ wget https://pypi.python.org/packages/[...]/td-watson-x.y.z.tar.gz
+$ wget https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz
 # Calculate the package checksum
 # MacOSX
 $ shasum -a 256 tmp/td-watson-x.y.z.tar.gz
@@ -79,7 +79,7 @@ $ sha256sum tmp/td-watson-x.y.z.tar.gz
 
 ```bash
 $ brew bump-formula-pr \
-  --url='https://pypi.python.org/packages/[...]/td-watson-x.y.z.tar.gz' \
+  --url='https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz' \
   --sha256='PASTE THE SHA256 CHECKSUM HERE' \
   watson
 ```
