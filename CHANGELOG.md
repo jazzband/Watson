@@ -4,6 +4,15 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.5.0 (2017-07-31)
+
+* Added: the `report` command now supports JSON output (#102)
+* Updated: the `sync` command is now compatible with the new crick.io backend
+  API (#152)
+* Updated: Python 3.6 is now officially supported (#150)
+* Fixed: catch error when user wants to edit config but file does not exist yet
+  (#154)
+
 ## 1.4.0 (2016-11-01)
 
 * Added: Watson now has a `rename` command (#74).
