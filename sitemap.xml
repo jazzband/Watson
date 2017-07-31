@@ -51,6 +51,12 @@
      <changefreq>daily</changefreq>
     </url>
         
+    <url>
+     <loc>None/contributing/release-new-version/</loc>
+     <lastmod>2017-07-31</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
     

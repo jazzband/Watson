@@ -226,6 +226,36 @@
             "title": "Contributor Code of Conduct"
         },
         {
+            "location": "/contributing/release-new-version/",
+            "text": "Release a new version\n\n\nAs a maintainer, if you plan to release a new version of Watson, you will find\nuseful information in this page.\n\n\nBump a new \nx.y.z\n release\n\n\nCreate a new branch:\n\n\n$ git checkout -b prepare-x.y.z\n\n\n\n\nEdit the following files to describe changes and bump the version number:\n\n\n\n\nwatson/version.py\n: update the version number\n\n\nCHANGELOG.md\n: add release notes (see previous releases examples)\n\n\ndocs/about/release-notes.md\n: copy/paste release notes here\n\n\n\n\nThen commit your work, tag the release and push everything to GitHub:\n\n\n$ git add watson/version.py CHANGELOG.md docs/about/release-notes.md\n$ git commit -m 'Bump release to x.y.z'\n$ git tag x.y.z\n$ git push origin prepare-x.y.z\n$ git push origin --tags\n\n\n\n\nCreate a new pull request (PR) with the \nprepare-x.y.z\n branch. You can safely\nmerge this PR if all tests are green.\n\n\nDraft a new \nWatson Release on\nGitHub\n with the same release\nnotes.\n\n\nPush the \nx.y.z\n release to PyPI\n\n\nCheckout the up-to-date \nmaster\n branch:\n\n\n$ git checkout master\n$ git pull --rebase origin master\n\n\n\n\nNow, build the release and submit it to PyPI using\n\ntwine\n (you\u2019ll need to be registered as a\nmaintainer of the package):\n\n\n$ python setup.py sdist bdist_wheel\n$ twine upload dist/*\n\n\n\n\nUpdate online documentation\n\n\nWe use \nmkdocs\n to generate the online documentation.\nIt must be updated via:\n\n\n$ mkdocs gh-deploy --clean\n\n\n\n\nPublish the \nx.y.z\n release to Homebrew\n\n\n\n\nFork the \nHomebrew/homebrew-core\n\n  repository to your personal GitHub account.\n\n\nCalculate the new release SHA256 checksum:\n\n\n\n\n$ cd tmp\n$ wget https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz\n# Calculate the package checksum\n# MacOSX\n$ shasum -a 256 tmp/td-watson-x.y.z.tar.gz\n# Linux\n$ sha256sum tmp/td-watson-x.y.z.tar.gz\n\n\n\n\n\n\nUpdate brew formula with the automation command \nbump-formula-pr\n:\n\n\n\n\n$ brew bump-formula-pr \\\n  --url='https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz' \\\n  --sha256='PASTE THE SHA256 CHECKSUM HERE' \\\n  watson\n\n\n\n\nNote: you may also need to update versions of Watson\u2019s dependencies (and related\nchecksum). See \nHomebrew\u2019s\ndocumentation\n\nfor details.",
+            "title": "Release a new version"
+        },
+        {
+            "location": "/contributing/release-new-version/#release-a-new-version",
+            "text": "As a maintainer, if you plan to release a new version of Watson, you will find\nuseful information in this page.",
+            "title": "Release a new version"
+        },
+        {
+            "location": "/contributing/release-new-version/#bump-a-new-xyz-release",
+            "text": "Create a new branch:  $ git checkout -b prepare-x.y.z  Edit the following files to describe changes and bump the version number:   watson/version.py : update the version number  CHANGELOG.md : add release notes (see previous releases examples)  docs/about/release-notes.md : copy/paste release notes here   Then commit your work, tag the release and push everything to GitHub:  $ git add watson/version.py CHANGELOG.md docs/about/release-notes.md\n$ git commit -m 'Bump release to x.y.z'\n$ git tag x.y.z\n$ git push origin prepare-x.y.z\n$ git push origin --tags  Create a new pull request (PR) with the  prepare-x.y.z  branch. You can safely\nmerge this PR if all tests are green.  Draft a new  Watson Release on\nGitHub  with the same release\nnotes.",
+            "title": "Bump a new x.y.z release"
+        },
+        {
+            "location": "/contributing/release-new-version/#push-the-xyz-release-to-pypi",
+            "text": "Checkout the up-to-date  master  branch:  $ git checkout master\n$ git pull --rebase origin master  Now, build the release and submit it to PyPI using twine  (you\u2019ll need to be registered as a\nmaintainer of the package):  $ python setup.py sdist bdist_wheel\n$ twine upload dist/*",
+            "title": "Push the x.y.z release to PyPI"
+        },
+        {
+            "location": "/contributing/release-new-version/#update-online-documentation",
+            "text": "We use  mkdocs  to generate the online documentation.\nIt must be updated via:  $ mkdocs gh-deploy --clean",
+            "title": "Update online documentation"
+        },
+        {
+            "location": "/contributing/release-new-version/#publish-the-xyz-release-to-homebrew",
+            "text": "Fork the  Homebrew/homebrew-core \n  repository to your personal GitHub account.  Calculate the new release SHA256 checksum:   $ cd tmp\n$ wget https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz\n# Calculate the package checksum\n# MacOSX\n$ shasum -a 256 tmp/td-watson-x.y.z.tar.gz\n# Linux\n$ sha256sum tmp/td-watson-x.y.z.tar.gz   Update brew formula with the automation command  bump-formula-pr :   $ brew bump-formula-pr \\\n  --url='https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz' \\\n  --sha256='PASTE THE SHA256 CHECKSUM HERE' \\\n  watson  Note: you may also need to update versions of Watson\u2019s dependencies (and related\nchecksum). See  Homebrew\u2019s\ndocumentation \nfor details.",
+            "title": "Publish the x.y.z release to Homebrew"
+        },
+        {
             "location": "/faq/",
             "text": "Frequently Asked Questions\n\n\nCan I delete all my frames?\n\n\nYes! To do so, delete the \nframes\n file in your configuration folder (see \nconfiguration\n to find its location).",
             "title": "FAQ"

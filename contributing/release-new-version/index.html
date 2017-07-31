@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>Release notes - Watson</title>
+	<title>Release a new version - Watson</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -74,28 +74,28 @@
             
             
             
-                <li class="dropdown">
+                <li class="dropdown active">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../../contributing/how-to/">Howto</a>
+                            <a href="../how-to/">Howto</a>
                         </li>
                     
                         <li >
-                            <a href="../../contributing/hack/">Hack</a>
+                            <a href="../hack/">Hack</a>
                         </li>
                     
                         <li >
-                            <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
+                            <a href="../pr-guidelines/">Pull Request guidelines</a>
                         </li>
                     
                         <li >
-                            <a href="../../contributing/coc/">Code of Conduct</a>
+                            <a href="../coc/">Code of Conduct</a>
                         </li>
                     
-                        <li >
-                            <a href="../../contributing/release-new-version/">Release a new version</a>
+                        <li class="active">
+                            <a href="./">Release a new version</a>
                         </li>
                     
                     </ul>
@@ -109,16 +109,16 @@
             
             
             
-                <li class="dropdown active">
+                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../license/">License</a>
+                            <a href="../../about/license/">License</a>
                         </li>
                     
-                        <li class="active">
-                            <a href="./">Release notes</a>
+                        <li >
+                            <a href="../../about/release-notes/">Release notes</a>
                         </li>
                     
                     </ul>
@@ -130,12 +130,12 @@
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
                 <li >
-                    <a rel="next" href="../license/">
+                    <a rel="next" href="../coc/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
-                <li class="disabled">
-                    <a rel="prev" >
+                <li >
+                    <a rel="prev" href="../../faq/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -158,113 +158,95 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#release-notes">Release Notes</a></li>
+        <li class="main active"><a href="#release-a-new-version">Release a new version</a></li>
         
-            <li><a href="#150-2017-07-31">1.5.0 (2017-07-31)</a></li>
+            <li><a href="#bump-a-new-xyz-release">Bump a new x.y.z release</a></li>
         
-            <li><a href="#140-2016-11-01">1.4.0 (2016-11-01)</a></li>
+            <li><a href="#push-the-xyz-release-to-pypi">Push the x.y.z release to PyPI</a></li>
         
-            <li><a href="#132-2016-03-01">1.3.2 (2016-03-01)</a></li>
+            <li><a href="#update-online-documentation">Update online documentation</a></li>
         
-            <li><a href="#131-2016-02-11">1.3.1 (2016-02-11)</a></li>
-        
-            <li><a href="#130-2016-02-11">1.3.0 (2016-02-11)</a></li>
-        
-            <li><a href="#120-2016-01-22">1.2.0 (2016-01-22)</a></li>
-        
-            <li><a href="#110-2015-10-21">1.1.0 (2015-10-21)</a></li>
-        
-            <li><a href="#102-2015-10-09">1.0.2 (2015-10-09)</a></li>
-        
-            <li><a href="#101-2015-09-17">1.0.1 (2015-09-17)</a></li>
-        
-            <li><a href="#100-2015-09-17">1.0.0 (2015-09-17)</a></li>
+            <li><a href="#publish-the-xyz-release-to-homebrew">Publish the x.y.z release to Homebrew</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="release-notes">Release Notes</h1>
-<p>This document records all notable changes to Watson. This project adheres to
-<a href="http://semver.org/">Semantic Versioning</a>.</p>
-<h2 id="150-2017-07-31">1.5.0 (2017-07-31)</h2>
+<h1 id="release-a-new-version">Release a new version</h1>
+<p>As a maintainer, if you plan to release a new version of Watson, you will find
+useful information in this page.</p>
+<h2 id="bump-a-new-xyz-release">Bump a new <code>x.y.z</code> release</h2>
+<p>Create a new branch:</p>
+<pre><code class="bash">$ git checkout -b prepare-x.y.z
+</code></pre>
+
+<p>Edit the following files to describe changes and bump the version number:</p>
 <ul>
-<li>Added: the <code>report</code> command now supports JSON output (#102)</li>
-<li>Updated: the <code>sync</code> command is now compatible with the new crick.io backend
-  API (#152)</li>
-<li>Updated: Python 3.6 is now officially supported (#150)</li>
-<li>Fixed: catch error when user wants to edit config but file does not exist yet
-  (#154)</li>
+<li><code>watson/version.py</code>: update the version number</li>
+<li><code>CHANGELOG.md</code>: add release notes (see previous releases examples)</li>
+<li><code>docs/about/release-notes.md</code>: copy/paste release notes here</li>
 </ul>
-<h2 id="140-2016-11-01">1.4.0 (2016-11-01)</h2>
+<p>Then commit your work, tag the release and push everything to GitHub:</p>
+<pre><code class="bash">$ git add watson/version.py CHANGELOG.md docs/about/release-notes.md
+$ git commit -m 'Bump release to x.y.z'
+$ git tag x.y.z
+$ git push origin prepare-x.y.z
+$ git push origin --tags
+</code></pre>
+
+<p>Create a new pull request (PR) with the <code>prepare-x.y.z</code> branch. You can safely
+merge this PR if all tests are green.</p>
+<p>Draft a new <a href="https://github.com/TailorDev/Watson/releases">Watson Release on
+GitHub</a> with the same release
+notes.</p>
+<h2 id="push-the-xyz-release-to-pypi">Push the <code>x.y.z</code> release to PyPI</h2>
+<p>Checkout the up-to-date <code>master</code> branch:</p>
+<pre><code class="bash">$ git checkout master
+$ git pull --rebase origin master
+</code></pre>
+
+<p>Now, build the release and submit it to PyPI using
+<a href="https://github.com/pypa/twine">twine</a> (you&rsquo;ll need to be registered as a
+maintainer of the package):</p>
+<pre><code class="bash">$ python setup.py sdist bdist_wheel
+$ twine upload dist/*
+</code></pre>
+
+<h2 id="update-online-documentation">Update online documentation</h2>
+<p>We use <a href="http://www.mkdocs.org"><code>mkdocs</code></a> to generate the online documentation.
+It must be updated via:</p>
+<pre><code class="bash">$ mkdocs gh-deploy --clean
+</code></pre>
+
+<h2 id="publish-the-xyz-release-to-homebrew">Publish the <code>x.y.z</code> release to Homebrew</h2>
 <ul>
-<li>Added: Watson now has a <code>rename</code> command (#74).</li>
-<li>Added: the <code>report</code> and <code>log</code> commands now have new command line and
-  config file options to (not) include the current frame in the output (#123).</li>
-<li>Added: the <code>report</code> and <code>log</code> commands now have new command line options to
-  set the timespan to the current year, month, week or day (#130 via #124).</li>
-<li>Added: you can now set default tags for selected projects in the
-  config file (#113).</li>
-<li>Added: Zsh completion support (#96)</li>
-<li>Added: document installation via homebrew on OS X (#121)</li>
-<li>Updated: when saving the Watson frames, state or config file, the most recent
-  previous version of the file is kept as a back up (#120).</li>
-<li>Fixed: bash completion of projects and tags with spaces in them (#122).</li>
-<li>Fixed: if saving the Watson frames, state or config file fails for any
-  reason, the original is kept (and not wiped as before) (#120).</li>
+<li>Fork the <a href="https://github.com/Homebrew/homebrew-core">Homebrew/homebrew-core</a>
+  repository to your personal GitHub account.</li>
+<li>Calculate the new release SHA256 checksum:</li>
 </ul>
-<h2 id="132-2016-03-01">1.3.2 (2016-03-01)</h2>
+<pre><code class="bash">$ cd tmp
+$ wget https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz
+# Calculate the package checksum
+# MacOSX
+$ shasum -a 256 tmp/td-watson-x.y.z.tar.gz
+# Linux
+$ sha256sum tmp/td-watson-x.y.z.tar.gz
+</code></pre>
+
 <ul>
-<li>Added: document installation for Arch Linux</li>
-<li>Added: improve frame selection by position</li>
-<li>Fixed: improve error handling</li>
-<li>Fixed: remove unnecessary dependencies for a stand alone installation</li>
-<li>Fixed: specify correct source directory for flake8 and pytest (tox test
-suite)</li>
+<li>Update brew formula with the automation command <code>bump-formula-pr</code>:</li>
 </ul>
-<h2 id="131-2016-02-11">1.3.1 (2016-02-11)</h2>
-<ul>
-<li>Fix packaging error with PyPI</li>
-</ul>
-<h2 id="130-2016-02-11">1.3.0 (2016-02-11)</h2>
-<ul>
-<li>Add a complete browsable documentation</li>
-<li>Add Watson&rsquo;s brand new logo!</li>
-<li>Add support for Watson&rsquo;s directory override via the WATSON_DIR environment variable</li>
-</ul>
-<h2 id="120-2016-01-22">1.2.0 (2016-01-22)</h2>
-<ul>
-<li>Added: Watson now has a <code>restart</code> command</li>
-<li>Added: Watson now has a <code>merge</code> command</li>
-<li>Added: Watson can now stop running project when starting a new one (optional)</li>
-<li>Added: there is a wrapper for <code>RawConfigParser</code> to make option access more convenient</li>
-<li>Updated: the <code>edit</code> command now defaults to the running frame if any (else defaults to the last one)</li>
-<li>Updated: the <code>log</code> command now has a daily total time summary</li>
-<li>Fixed: unicode issues with cjk characters</li>
-<li>Fixed: edition summary is now converted to local time</li>
-</ul>
-<h2 id="110-2015-10-21">1.1.0 (2015-10-21)</h2>
-<ul>
-<li>Added: configurable date and time to output of <code>status</code> command (#33)</li>
-<li>Added: support for Bash-completion (#1)</li>
-<li>Added: new <code>frames</code> command that displays all frame IDs</li>
-<li>Fixed: set id if not provided (#30)</li>
-</ul>
-<h2 id="102-2015-10-09">1.0.2 (2015-10-09)</h2>
-<ul>
-<li>Fix a bug where the last frame could not be deleted</li>
-<li>Improve installation instructions</li>
-<li>Add an explanation to remove all the frames</li>
-</ul>
-<h2 id="101-2015-09-17">1.0.1 (2015-09-17)</h2>
-<ul>
-<li>Fix packaging error with PyPI</li>
-</ul>
-<h2 id="100-2015-09-17">1.0.0 (2015-09-17)</h2>
-<ul>
-<li>First stable version</li>
-</ul></div>
+<pre><code class="bash">$ brew bump-formula-pr \
+  --url='https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz' \
+  --sha256='PASTE THE SHA256 CHECKSUM HERE' \
+  watson
+</code></pre>
+
+<p>Note: you may also need to update versions of Watson&rsquo;s dependencies (and related
+checksum). See <a href="https://docs.brew.sh/How-To-Open-a-Homebrew-Pull-Request.html">Homebrew&rsquo;s
+documentation</a>
+for details.</p></div>
         </div>
 
         <footer class="col-md-12">
