@@ -15,6 +15,7 @@ pages:
     - Hack: 'contributing/hack.md'
     - Pull Request guidelines: 'contributing/pr-guidelines.md'
     - Code of Conduct: 'contributing/coc.md'
+    - Release a new version: 'contributing/release-new-version.md'
 - FAQ: 'faq.md'
 - About:
     - License: 'about/license.md'
