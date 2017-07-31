@@ -5,6 +5,7 @@ mkdocs<0.15.0
 
 # Release
 wheel
+twine
 
 # Tests
 flake8

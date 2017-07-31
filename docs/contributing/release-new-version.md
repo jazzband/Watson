@@ -43,11 +43,13 @@ $ git checkout master
 $ git pull --rebase origin master
 ```
 
-Now, build and submit the new release to PyPI (you'll need to be registered as a
+Now, build the release and submit it to PyPI using
+[twine](https://github.com/pypa/twine) (you'll need to be registered as a
 maintainer of the package):
 
 ```bash
-$ python setup.py sdist bdist_wheel upload
+$ python setup.py sdist bdist_wheel
+$ twine upload dist/*
 ```
 
 ## Update online documentation
