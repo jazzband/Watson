@@ -4,6 +4,10 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.5.1 (2017-08-01)
+
+* Fix the `config` command (#158)
+
 ## 1.5.0 (2017-07-31)
 
 * Added: the `report` command now supports JSON output (#102)
