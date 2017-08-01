@@ -819,7 +819,7 @@ def config(context, key, value, edit):
     7e329263e329
     """
     watson = context.obj
-    oldconfig = watson.config
+    wconfig = watson.config
 
     if edit:
         try:
@@ -837,7 +837,7 @@ def config(context, key, value, edit):
             watson.config = None
             watson.config  # triggers reloading config from file
         except _watson.ConfigurationError as exc:
-            watson.config = oldconfig
+            watson.config = wconfig
             watson.save()
             raise WatsonCliError(str(exc))
         return
@@ -854,21 +854,20 @@ def config(context, key, value, edit):
         )
 
     if value is None:
-        if not config.has_section(section):
+        if not wconfig.has_section(section):
             raise click.ClickException("No such section {}".format(section))
 
-        if not config.has_option(section, option):
+        if not wconfig.has_option(section, option):
             raise click.ClickException(
                 "No such option {} in {}".format(option, section)
             )
 
-        click.echo(config.get(section, option))
+        click.echo(wconfig.get(section, option))
     else:
-        if not config.has_section(section):
-            config.add_section(section)
+        if not wconfig.has_section(section):
+            wconfig.add_section(section)
 
-        config.set(section, option, value)
-        watson.config = config
+        wconfig.set(section, option, value)
         watson.save()
 
 
