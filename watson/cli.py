@@ -868,6 +868,7 @@ def config(context, key, value, edit):
             wconfig.add_section(section)
 
         wconfig.set(section, option, value)
+        watson.config = wconfig
         watson.save()
 
 
