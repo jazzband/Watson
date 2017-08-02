@@ -3,6 +3,10 @@
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.5.2 (2017-08-02)
+
+* Fixed: Follow up on the `config` command fix (#161)
+
 ## 1.5.1 (2017-08-01)
 
 * Fix the `config` command (#158)
