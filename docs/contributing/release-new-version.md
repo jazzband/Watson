@@ -65,18 +65,8 @@ $ mkdocs gh-deploy --clean
 
 * Fork the [Homebrew/homebrew-core](https://github.com/Homebrew/homebrew-core)
   repository to your personal GitHub account.
-* Calculate the new release SHA256 checksum:
-
-```bash
-$ cd tmp
-$ wget https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz
-# Calculate the package checksum
-# MacOSX
-$ shasum -a 256 tmp/td-watson-x.y.z.tar.gz
-# Linux
-$ sha256sum tmp/td-watson-x.y.z.tar.gz
-```
-
+* Get the new release SHA256 checksum by copying it from [td-watson
+  Warehouse](https://pypi.org/project/td-watson/#files) page (the new PyPI)
 * Update brew formula with the automation command `bump-formula-pr`:
 
 ```bash
