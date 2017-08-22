@@ -502,8 +502,11 @@ def report(watson, current, from_, to, projects,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-j', '--json', 'format_json', is_flag=True,
+              help="Format the log in JSON instead of plain text")
 @click.pass_obj
-def log(watson, current, from_, to, projects, tags, year, month, week, day):
+def log(watson, current, from_, to, projects, tags, year, month, week, day,
+        format_json):
     """
     Display each recorded session during the given timespan.
 
@@ -564,50 +567,66 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day):
                               cur['tags'], id="current")
 
     span = watson.frames.span(from_, to)
-    frames_by_day = sorted_groupby(
-        watson.frames.filter(
-            projects=projects or None, tags=tags or None, span=span
-        ),
-        operator.attrgetter('day'), reverse=True
+    filtered_frames = watson.frames.filter(
+        projects=projects or None, tags=tags or None, span=span
     )
 
-    lines = []
-
-    for i, (day, frames) in enumerate(frames_by_day):
-        if i != 0:
-            lines.append('')
-
-        frames = sorted(frames, key=operator.attrgetter('start'))
-        longest_project = max(len(frame.project) for frame in frames)
-
-        daily_total = reduce(
-            operator.add,
-            (frame.stop - frame.start for frame in frames)
+    if format_json:
+        log = [
+            {
+                'id': frame.id,
+                'start': frame.start.isoformat(),
+                'stop': frame.stop.isoformat(),
+                'project': frame.project,
+                'tags': frame.tags,
+            }
+            for frame in filtered_frames
+        ]
+        click.echo(json.dumps(log, indent=4, sort_keys=True))
+    else:
+        frames_by_day = sorted_groupby(
+            filtered_frames,
+            operator.attrgetter('day'), reverse=True
         )
 
-        lines.append(
-            style(
-                'date', "{:dddd DD MMMM YYYY} ({})".format(
-                    day, format_timedelta(daily_total)
+        lines = []
+
+        for i, (day, frames) in enumerate(frames_by_day):
+            if i != 0:
+                lines.append('')
+
+            frames = sorted(frames, key=operator.attrgetter('start'))
+            longest_project = max(len(frame.project) for frame in frames)
+
+            daily_total = reduce(
+                operator.add,
+                (frame.stop - frame.start for frame in frames)
+            )
+
+            lines.append(
+                style(
+                    'date', "{:dddd DD MMMM YYYY} ({})".format(
+                        day, format_timedelta(daily_total)
+                    )
                 )
             )
-        )
-
-        lines.append('\n'.join(
-            '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}'.format(
-                delta=format_timedelta(frame.stop - frame.start),
-                project=style('project',
-                              '{:>{}}'.format(frame.project, longest_project)),
-                pad=longest_project,
-                tags=style('tags', frame.tags),
-                start=style('time', '{:HH:mm}'.format(frame.start)),
-                stop=style('time', '{:HH:mm}'.format(frame.stop)),
-                id=style('short_id', frame.id)
-            )
-            for frame in frames
-        ))
-
-    click.echo_via_pager('\n'.join(lines))
+            frame_format = (
+                '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}')
+            lines.append('\n'.join(
+                frame_format.format(
+                    delta=format_timedelta(frame.stop - frame.start),
+                    project=style('project',
+                                  '{:>{}}'.format(
+                                      frame.project, longest_project)),
+                    pad=longest_project,
+                    tags=style('tags', frame.tags),
+                    start=style('time', '{:HH:mm}'.format(frame.start)),
+                    stop=style('time', '{:HH:mm}'.format(frame.stop)),
+                    id=style('short_id', frame.id)
+                )
+                for frame in frames
+            ))
+            click.echo_via_pager('\n'.join(lines))
 
 
 @cli.command()

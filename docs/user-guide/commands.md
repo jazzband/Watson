@@ -171,6 +171,7 @@ Flag | Help
 `-d, --day` | Reports activity for the current day.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-j, --json` | Format the log in JSON instead of plain text
 `--help` | Show this message and exit.
 
 ## `merge`
