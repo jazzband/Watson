@@ -583,50 +583,50 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             for frame in filtered_frames
         ]
         click.echo(json.dumps(log, indent=4, sort_keys=True))
-    else:
-        frames_by_day = sorted_groupby(
-            filtered_frames,
-            operator.attrgetter('day'), reverse=True
+        return
+
+    frames_by_day = sorted_groupby(
+        filtered_frames,
+        operator.attrgetter('day'), reverse=True
+    )
+
+    lines = []
+
+    for i, (day, frames) in enumerate(frames_by_day):
+        if i != 0:
+            lines.append('')
+
+        frames = sorted(frames, key=operator.attrgetter('start'))
+        longest_project = max(len(frame.project) for frame in frames)
+
+        daily_total = reduce(
+            operator.add,
+            (frame.stop - frame.start for frame in frames)
         )
 
-        lines = []
-
-        for i, (day, frames) in enumerate(frames_by_day):
-            if i != 0:
-                lines.append('')
-
-            frames = sorted(frames, key=operator.attrgetter('start'))
-            longest_project = max(len(frame.project) for frame in frames)
-
-            daily_total = reduce(
-                operator.add,
-                (frame.stop - frame.start for frame in frames)
-            )
-
-            lines.append(
-                style(
-                    'date', "{:dddd DD MMMM YYYY} ({})".format(
-                        day, format_timedelta(daily_total)
-                    )
+        lines.append(
+            style(
+                'date', "{:dddd DD MMMM YYYY} ({})".format(
+                    day, format_timedelta(daily_total)
                 )
             )
-            frame_format = (
-                '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}')
-            lines.append('\n'.join(
-                frame_format.format(
-                    delta=format_timedelta(frame.stop - frame.start),
-                    project=style('project',
-                                  '{:>{}}'.format(
-                                      frame.project, longest_project)),
-                    pad=longest_project,
-                    tags=style('tags', frame.tags),
-                    start=style('time', '{:HH:mm}'.format(frame.start)),
-                    stop=style('time', '{:HH:mm}'.format(frame.stop)),
-                    id=style('short_id', frame.id)
-                )
-                for frame in frames
-            ))
-            click.echo_via_pager('\n'.join(lines))
+        )
+
+        lines.append('\n'.join(
+            '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}'.format(
+                delta=format_timedelta(frame.stop - frame.start),
+                project=style('project',
+                              '{:>{}}'.format(frame.project, longest_project)),
+                pad=longest_project,
+                tags=style('tags', frame.tags),
+                start=style('time', '{:HH:mm}'.format(frame.start)),
+                stop=style('time', '{:HH:mm}'.format(frame.stop)),
+                id=style('short_id', frame.id)
+            )
+            for frame in frames
+        ))
+
+    click.echo_via_pager('\n'.join(lines))
 
 
 @cli.command()
