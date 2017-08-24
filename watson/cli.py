@@ -502,8 +502,11 @@ def report(watson, current, from_, to, projects,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-j', '--json', 'format_json', is_flag=True,
+              help="Format the log in JSON instead of plain text")
 @click.pass_obj
-def log(watson, current, from_, to, projects, tags, year, month, week, day):
+def log(watson, current, from_, to, projects, tags, year, month, week, day,
+        format_json):
     """
     Display each recorded session during the given timespan.
 
@@ -564,10 +567,26 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day):
                               cur['tags'], id="current")
 
     span = watson.frames.span(from_, to)
+    filtered_frames = watson.frames.filter(
+        projects=projects or None, tags=tags or None, span=span
+    )
+
+    if format_json:
+        log = [
+            {
+                'id': frame.id,
+                'start': frame.start.isoformat(),
+                'stop': frame.stop.isoformat(),
+                'project': frame.project,
+                'tags': frame.tags,
+            }
+            for frame in filtered_frames
+        ]
+        click.echo(json.dumps(log, indent=4, sort_keys=True))
+        return
+
     frames_by_day = sorted_groupby(
-        watson.frames.filter(
-            projects=projects or None, tags=tags or None, span=span
-        ),
+        filtered_frames,
         operator.attrgetter('day'), reverse=True
     )
 
