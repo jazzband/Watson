@@ -708,7 +708,9 @@ def edit(watson, id):
     If no id or index is given, the frame defaults to the current frame or the
     last recorded frame, if no project is currently running.
 
-    The `$EDITOR` environment variable is used to detect your editor.
+    The editor used is determined by the `VISUAL` or `EDITOR` environment
+    variables (in that order) and defaults to `notepad` on Windows systems and
+    to `vim`, `nano` or `vi` (first one found) on all other systems.
     """
     date_format = 'YYYY-MM-DD'
     time_format = 'HH:mm:ss'
