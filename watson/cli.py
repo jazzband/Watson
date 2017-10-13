@@ -249,8 +249,14 @@ def cancel(watson):
 
 
 @cli.command()
+@click.option('-p', '--project', is_flag=True,
+              help="only output project")
+@click.option('-t', '--tags', is_flag=True,
+              help="only show tags")
+@click.option('-e', '--elapsed', is_flag=True,
+              help="only show time elapsed")
 @click.pass_obj
-def status(watson):
+def status(watson, project, tags, elapsed):
     """
     Display when the current project was started and the time spent since.
 
@@ -275,6 +281,25 @@ def status(watson):
         return
 
     current = watson.current
+
+    if project:
+        click.echo("{}".format(
+            style('project', current['project']),
+        ))
+        return
+
+    if tags:
+        click.echo("{}".format(
+            style('tags', current['tags'])
+        ))
+        return
+
+    if elapsed:
+        click.echo("{}".format(
+            style('time', current['start'].humanize())
+        ))
+        return
+
     datefmt = watson.config.get('options', 'date_format', '%Y.%m.%d')
     timefmt = watson.config.get('options', 'time_format', '%H:%M:%S%z')
     click.echo("Project {} {} started {} ({} {})".format(
