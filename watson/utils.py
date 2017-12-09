@@ -183,7 +183,7 @@ def safe_save(path, content, ext='.bak'):
                 tmpfp.write(content)
             else:
                 content(tmpfp)
-    except:
+    except Exception:
         try:
             os.unlink(tmpfp.name)
         except (IOError, OSError):
