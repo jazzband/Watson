@@ -630,10 +630,9 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
         )
 
         lines.append(
-            style(
-                'date', "{:dddd DD MMMM YYYY} ({})".format(
-                    day, format_timedelta(daily_total)
-                )
+            "{date} ({daily_total})".format(
+                date=style('date', "{:dddd DD MMMM YYYY}".format(day)),
+                daily_total=style('time', format_timedelta(daily_total))
             )
         )
 
