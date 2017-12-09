@@ -104,6 +104,13 @@ If `true`, the output of the `log` command will include the currently running
 frame (if any) by default. The option can be overridden on the command line
 with the `-c/-C` resp. `--current/--no-current` flags.
 
+#### `options.log_pager`
+
+If `true` (or not set), the output of the `log` command will be run through a
+pager by default. The option can be overridden on the command line
+with the `--pager/--no-pager` flags. If other commands output in colour, but
+`log` does not, try disabling the pager.
+
 #### `options.report_current`
 
 If `true`, the output of the `report` command will include the currently
@@ -205,6 +212,7 @@ stop_on_restart = false
 date_format = %Y.%m.%d
 time_format = %H:%M:%S%z
 log_current = false
+log_pager = true
 report_current = false
 ```
 

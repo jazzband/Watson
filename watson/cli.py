@@ -529,9 +529,11 @@ def report(watson, current, from_, to, projects,
               "times")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the log in JSON instead of plain text")
+@click.option('--pager/--no-pager', 'pager', default=None,
+              help="(Don't) run output through a pager.")
 @click.pass_obj
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        format_json):
+        format_json, pager):
     """
     Display each recorded session during the given timespan.
 
@@ -650,7 +652,12 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             for frame in frames
         ))
 
-    click.echo_via_pager('\n'.join(lines))
+    if pager or (pager is None and
+                 watson.config.getboolean('options', 'log_pager',
+                                          default=True)):
+        click.echo_via_pager('\n'.join(lines))
+    else:
+        click.echo('\n'.join(lines))
 
 
 @cli.command()
