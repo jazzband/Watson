@@ -509,6 +509,9 @@ Example:
 
 Flag | Help
 -----|-----
+`-p, --project` | only output project
+`-t, --tags` | only show tags
+`-e, --elapsed` | only show time elapsed
 `--help` | Show this message and exit.
 
 ## `stop`
