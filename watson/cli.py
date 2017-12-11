@@ -636,13 +636,13 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             )
         )
 
-        lines.append('\n'.join(
-            '\t{id}  {start} to {stop}  {delta:>11}  {project}  {tags}'.format(
+        lines.append("\n".join(
+            "\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project',
                               '{:>{}}'.format(frame.project, longest_project)),
                 pad=longest_project,
-                tags=style('tags', frame.tags),
+                tags=(" "*2 if frame.tags else "") + style('tags', frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
                 stop=style('time', '{:HH:mm}'.format(frame.stop)),
                 id=style('short_id', frame.id)
@@ -793,11 +793,11 @@ def edit(watson, id):
 
     watson.save()
     click.echo(
-        'Edited frame for project {project} {tags}, from {start} to {stop} '
-        '({delta})'.format(
+        "Edited frame for project {project}{tags}, from {start} to {stop} "
+        "({delta})".format(
             delta=format_timedelta(stop - start) if stop else '-',
             project=style('project', project),
-            tags=style('tags', tags),
+            tags=(" " if tags else "") + style('tags', tags),
             start=style(
                 'time',
                 start.to(local_tz).format(time_format)
@@ -826,9 +826,9 @@ def remove(watson, id, force):
     if not force:
         click.confirm(
             "You are about to remove frame "
-            "{project} {tags} from {start} to {stop}, continue?".format(
+            "{project}{tags} from {start} to {stop}, continue?".format(
                 project=style('project', frame.project),
-                tags=style('tags', frame.tags),
+                tags=(" " if tags else "") + style('tags', frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
                 stop=style('time', '{:HH:mm}'.format(frame.stop))
             ),
