@@ -352,9 +352,11 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
               "times")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the report in JSON instead of plain text")
+@click.option('-v/-V', '--pager/--no-pager', 'pager', default=None,
+              help="(Don't) view output through a pager.")
 @click.pass_obj
 def report(watson, current, from_, to, projects,
-           tags, year, month, week, day, format_json):
+           tags, year, month, week, day, format_json, pager):
     """
     Display a report of the time spent on each project.
 
@@ -373,6 +375,9 @@ def report(watson, current, from_, to, projects,
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the report.
+
+    If you are outputting to the terminal, you can selectively enable a pager
+    through the `--pager`` option.
 
     You can change the output format for the report from *plain text* to *JSON*
     by using the `--json` option.
@@ -453,7 +458,9 @@ def report(watson, current, from_, to, projects,
     if format_json:
         click.echo(json.dumps(report, indent=4, sort_keys=True))
     else:
-        click.echo('{} -> {}\n'.format(
+        lines = []
+
+        lines.append('{} -> {}\n'.format(
             style('date', '{:ddd DD MMMM YYYY}'.format(
                 arrow.get(report['timespan']['from'])
             )),
@@ -464,7 +471,7 @@ def report(watson, current, from_, to, projects,
 
         projects = report['projects']
         for project in projects:
-            click.echo('{project} - {time}'.format(
+            lines.append('{project} - {time}'.format(
                 time=style('time', format_timedelta(
                     datetime.timedelta(seconds=project['time'])
                 )),
@@ -476,7 +483,7 @@ def report(watson, current, from_, to, projects,
                 longest_tag = max(len(tag) for tag in tags or [''])
 
                 for tag in tags:
-                    click.echo('\t[{tag} {time}]'.format(
+                    lines.append('\t[{tag} {time}]'.format(
                         time=style('time', '{:>11}'.format(format_timedelta(
                             datetime.timedelta(seconds=tag['time'])
                         ))),
@@ -484,14 +491,20 @@ def report(watson, current, from_, to, projects,
                             tag['name'], longest_tag
                         )),
                     ))
-            click.echo()
+            lines.append("")
 
         if len(projects) > 1:
-            click.echo('Total: {}'.format(
+            lines.append('Total: {}'.format(
                 style('time', '{}'.format(format_timedelta(
                     datetime.timedelta(seconds=report['time'])
                 )))
             ))
+
+    if pager or (pager is None and
+                 watson.config.getboolean('options', 'pager')):
+        click.echo_via_pager('\n'.join(lines))
+    else:
+        click.echo('\n'.join(lines))
 
 
 @cli.command()
@@ -529,8 +542,8 @@ def report(watson, current, from_, to, projects,
               "times")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the log in JSON instead of plain text")
-@click.option('--pager/--no-pager', 'pager', default=None,
-              help="(Don't) run output through a pager.")
+@click.option('-v/-V', '--pager/--no-pager', 'pager', default=None,
+              help="(Don't) view output through a pager.")
 @click.pass_obj
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
         format_json, pager):
@@ -545,6 +558,9 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     `--day` sets the log timespan to the current day (beginning at 00:00h)
     and `--year`, `--month` and `--week` to the current year, month or week
     respectively.
+
+    If you are outputting to the terminal, you can selectively enable a pager
+    through the `--pager`` option.
 
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -653,8 +669,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
         ))
 
     if pager or (pager is None and
-                 watson.config.getboolean('options', 'log_pager',
-                                          default=True)):
+                 watson.config.getboolean('options', 'pager')):
         click.echo_via_pager('\n'.join(lines))
     else:
         click.echo('\n'.join(lines))
