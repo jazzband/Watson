@@ -457,54 +457,62 @@ def report(watson, current, from_, to, projects,
 
     if format_json:
         click.echo(json.dumps(report, indent=4, sort_keys=True))
-    else:
-        lines = []
+        return
 
-        lines.append('{} -> {}\n'.format(
-            style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report['timespan']['from'])
-            )),
-            style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report['timespan']['to'])
-            ))
-         ))
-
-        projects = report['projects']
-        for project in projects:
-            lines.append('{project} - {time}'.format(
-                time=style('time', format_timedelta(
-                    datetime.timedelta(seconds=project['time'])
-                )),
-                project=style('project', project['name'])
-            ))
-
-            tags = project['tags']
-            if tags:
-                longest_tag = max(len(tag) for tag in tags or [''])
-
-                for tag in tags:
-                    lines.append('\t[{tag} {time}]'.format(
-                        time=style('time', '{:>11}'.format(format_timedelta(
-                            datetime.timedelta(seconds=tag['time'])
-                        ))),
-                        tag=style('tag', '{:<{}}'.format(
-                            tag['name'], longest_tag
-                        )),
-                    ))
-            lines.append("")
-
-        if len(projects) > 1:
-            lines.append('Total: {}'.format(
-                style('time', '{}'.format(format_timedelta(
-                    datetime.timedelta(seconds=report['time'])
-                )))
-            ))
-
+    lines = []
+    # use the pager, or print directly to the terminal
     if pager or (pager is None and
-                 watson.config.getboolean('options', 'pager')):
-        click.echo_via_pager('\n'.join(lines))
+            watson.config.getboolean('options', 'pager')):
+        use_pager = True
+        def _print(line):
+            lines.append(line)
     else:
-        click.echo('\n'.join(lines))
+        use_pager = False
+        def _print(line):
+            click.echo(line)
+
+    _print('{} -> {}\n'.format(
+        style('date', '{:ddd DD MMMM YYYY}'.format(
+            arrow.get(report['timespan']['from'])
+        )),
+        style('date', '{:ddd DD MMMM YYYY}'.format(
+            arrow.get(report['timespan']['to'])
+        ))
+        ))
+
+    projects = report['projects']
+    for project in projects:
+        _print('{project} - {time}'.format(
+            time=style('time', format_timedelta(
+                datetime.timedelta(seconds=project['time'])
+            )),
+            project=style('project', project['name'])
+        ))
+
+        tags = project['tags']
+        if tags:
+            longest_tag = max(len(tag) for tag in tags or [''])
+
+            for tag in tags:
+                _print('\t[{tag} {time}]'.format(
+                    time=style('time', '{:>11}'.format(format_timedelta(
+                        datetime.timedelta(seconds=tag['time'])
+                    ))),
+                    tag=style('tag', '{:<{}}'.format(
+                        tag['name'], longest_tag
+                    )),
+                ))
+        _print("")
+
+    if len(projects) > 1:
+        _print('Total: {}'.format(
+            style('time', '{}'.format(format_timedelta(
+                datetime.timedelta(seconds=report['time'])
+            )))
+        ))
+
+    if use_pager:
+        click.echo_via_pager('\n'.join(lines))
 
 
 @cli.command()
@@ -634,10 +642,20 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     )
 
     lines = []
+    # use the pager, or print directly to the terminal
+    if pager or (pager is None and
+            watson.config.getboolean('options', 'pager')):
+        use_pager = True
+        def _print(line):
+            lines.append(line)
+    else:
+        use_pager = False
+        def _print(line):
+            click.echo(line)
 
     for i, (day, frames) in enumerate(frames_by_day):
         if i != 0:
-            lines.append('')
+            _print('')
 
         frames = sorted(frames, key=operator.attrgetter('start'))
         longest_project = max(len(frame.project) for frame in frames)
@@ -647,14 +665,14 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             (frame.stop - frame.start for frame in frames)
         )
 
-        lines.append(
+        _print(
             "{date} ({daily_total})".format(
                 date=style('date', "{:dddd DD MMMM YYYY}".format(day)),
                 daily_total=style('time', format_timedelta(daily_total))
             )
         )
 
-        lines.append("\n".join(
+        _print("\n".join(
             "\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project',
@@ -668,11 +686,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             for frame in frames
         ))
 
-    if pager or (pager is None and
-                 watson.config.getboolean('options', 'pager')):
+    if use_pager:
         click.echo_via_pager('\n'.join(lines))
-    else:
-        click.echo('\n'.join(lines))
 
 
 @cli.command()
