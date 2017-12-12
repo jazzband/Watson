@@ -108,8 +108,8 @@ with the `-c/-C` resp. `--current/--no-current` flags.
 
 If `true` (or not set), the output of the `log` and `report` command will be
 run through a pager by default. The option can be overridden on the command
-line with the `-v/-V` or `--pager/--no-pager` flags. If other commands output
-in colour, but `log` or `report` does not, try disabling the pager.
+line with the `-g/-G` or `--pager/--no-pager` flags. If other commands output
+in colour, but `log` or `report` do not, try disabling the pager.
 
 #### `options.report_current`
 

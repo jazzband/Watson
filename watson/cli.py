@@ -352,7 +352,7 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
               "times")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the report in JSON instead of plain text")
-@click.option('-v/-V', '--pager/--no-pager', 'pager', default=None,
+@click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 def report(watson, current, from_, to, projects,
@@ -377,7 +377,7 @@ def report(watson, current, from_, to, projects,
     projects or tags to the report.
 
     If you are outputting to the terminal, you can selectively enable a pager
-    through the `--pager`` option.
+    through the `--pager` option.
 
     You can change the output format for the report from *plain text* to *JSON*
     by using the `--json` option.
@@ -462,14 +462,20 @@ def report(watson, current, from_, to, projects,
     lines = []
     # use the pager, or print directly to the terminal
     if pager or (pager is None and
-            watson.config.getboolean('options', 'pager')):
-        use_pager = True
+                 watson.config.getboolean('options', 'pager', True)):
+
         def _print(line):
             lines.append(line)
+
+        def _final_print(lines):
+            click.echo_via_pager('\n'.join(lines))
     else:
-        use_pager = False
+
         def _print(line):
             click.echo(line)
+
+        def _final_print(lines):
+            pass
 
     _print('{} -> {}\n'.format(
         style('date', '{:ddd DD MMMM YYYY}'.format(
@@ -478,7 +484,7 @@ def report(watson, current, from_, to, projects,
         style('date', '{:ddd DD MMMM YYYY}'.format(
             arrow.get(report['timespan']['to'])
         ))
-        ))
+    ))
 
     projects = report['projects']
     for project in projects:
@@ -511,8 +517,7 @@ def report(watson, current, from_, to, projects,
             )))
         ))
 
-    if use_pager:
-        click.echo_via_pager('\n'.join(lines))
+    _final_print(lines)
 
 
 @cli.command()
@@ -550,7 +555,7 @@ def report(watson, current, from_, to, projects,
               "times")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the log in JSON instead of plain text")
-@click.option('-v/-V', '--pager/--no-pager', 'pager', default=None,
+@click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
@@ -568,7 +573,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     respectively.
 
     If you are outputting to the terminal, you can selectively enable a pager
-    through the `--pager`` option.
+    through the `--pager` option.
 
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -644,14 +649,20 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     lines = []
     # use the pager, or print directly to the terminal
     if pager or (pager is None and
-            watson.config.getboolean('options', 'pager')):
-        use_pager = True
+                 watson.config.getboolean('options', 'pager', True)):
+
         def _print(line):
             lines.append(line)
+
+        def _final_print(lines):
+            click.echo_via_pager('\n'.join(lines))
     else:
-        use_pager = False
+
         def _print(line):
             click.echo(line)
+
+        def _final_print(lines):
+            pass
 
     for i, (day, frames) in enumerate(frames_by_day):
         if i != 0:
@@ -686,8 +697,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             for frame in frames
         ))
 
-    if use_pager:
-        click.echo_via_pager('\n'.join(lines))
+    _final_print(lines)
 
 
 @cli.command()

@@ -128,7 +128,7 @@ and `--year`, `--month` and `--week` to the current year, month or week
 respectively.
 
 If you are outputting to the terminal, you can selectively enable a pager
-through the `--pager`` option.
+through the `--pager` option.
 
 You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
@@ -177,7 +177,7 @@ Flag | Help
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the log in JSON instead of plain text
-`-v, --pager / -V, --no-pager` | (Don't) view output through a pager.
+`-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
 
 ## `merge`
@@ -334,7 +334,7 @@ You can limit the report to a project or a tag using the `--project` and
 projects or tags to the report.
 
 If you are outputting to the terminal, you can selectively enable a pager
-through the `--pager`` option.
+through the `--pager` option.
 
 You can change the output format for the report from *plain text* to *JSON*
 by using the `--json` option.
@@ -420,7 +420,7 @@ Flag | Help
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the report in JSON instead of plain text
-`-v, --pager / -V, --no-pager` | (Don't) view output through a pager.
+`-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
 
 ## `restart`
