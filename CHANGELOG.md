@@ -4,6 +4,9 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+* Added: the `report` and `log` commands' output can no selectively be run
+  through a pager.
+
 ## 1.5.2 (2017-08-02)
 
 * Fixed: Follow up on the `config` command fix (#161)

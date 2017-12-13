@@ -352,9 +352,11 @@ _SHORTCUT_OPTIONS = ['year', 'month', 'week', 'day']
               "times")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the report in JSON instead of plain text")
+@click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
+              help="(Don't) view output through a pager.")
 @click.pass_obj
 def report(watson, current, from_, to, projects,
-           tags, year, month, week, day, format_json):
+           tags, year, month, week, day, format_json, pager):
     """
     Display a report of the time spent on each project.
 
@@ -373,6 +375,9 @@ def report(watson, current, from_, to, projects,
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the report.
+
+    If you are outputting to the terminal, you can selectively enable a pager
+    through the `--pager` option.
 
     You can change the output format for the report from *plain text* to *JSON*
     by using the `--json` option.
@@ -452,46 +457,67 @@ def report(watson, current, from_, to, projects,
 
     if format_json:
         click.echo(json.dumps(report, indent=4, sort_keys=True))
+        return
+
+    lines = []
+    # use the pager, or print directly to the terminal
+    if pager or (pager is None and
+                 watson.config.getboolean('options', 'pager', True)):
+
+        def _print(line):
+            lines.append(line)
+
+        def _final_print(lines):
+            click.echo_via_pager('\n'.join(lines))
     else:
-        click.echo('{} -> {}\n'.format(
-            style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report['timespan']['from'])
+
+        def _print(line):
+            click.echo(line)
+
+        def _final_print(lines):
+            pass
+
+    _print('{} -> {}\n'.format(
+        style('date', '{:ddd DD MMMM YYYY}'.format(
+            arrow.get(report['timespan']['from'])
+        )),
+        style('date', '{:ddd DD MMMM YYYY}'.format(
+            arrow.get(report['timespan']['to'])
+        ))
+    ))
+
+    projects = report['projects']
+    for project in projects:
+        _print('{project} - {time}'.format(
+            time=style('time', format_timedelta(
+                datetime.timedelta(seconds=project['time'])
             )),
-            style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report['timespan']['to'])
-            ))
-         ))
+            project=style('project', project['name'])
+        ))
 
-        projects = report['projects']
-        for project in projects:
-            click.echo('{project} - {time}'.format(
-                time=style('time', format_timedelta(
-                    datetime.timedelta(seconds=project['time'])
-                )),
-                project=style('project', project['name'])
-            ))
+        tags = project['tags']
+        if tags:
+            longest_tag = max(len(tag) for tag in tags or [''])
 
-            tags = project['tags']
-            if tags:
-                longest_tag = max(len(tag) for tag in tags or [''])
+            for tag in tags:
+                _print('\t[{tag} {time}]'.format(
+                    time=style('time', '{:>11}'.format(format_timedelta(
+                        datetime.timedelta(seconds=tag['time'])
+                    ))),
+                    tag=style('tag', '{:<{}}'.format(
+                        tag['name'], longest_tag
+                    )),
+                ))
+        _print("")
 
-                for tag in tags:
-                    click.echo('\t[{tag} {time}]'.format(
-                        time=style('time', '{:>11}'.format(format_timedelta(
-                            datetime.timedelta(seconds=tag['time'])
-                        ))),
-                        tag=style('tag', '{:<{}}'.format(
-                            tag['name'], longest_tag
-                        )),
-                    ))
-            click.echo()
+    if len(projects) > 1:
+        _print('Total: {}'.format(
+            style('time', '{}'.format(format_timedelta(
+                datetime.timedelta(seconds=report['time'])
+            )))
+        ))
 
-        if len(projects) > 1:
-            click.echo('Total: {}'.format(
-                style('time', '{}'.format(format_timedelta(
-                    datetime.timedelta(seconds=report['time'])
-                )))
-            ))
+    _final_print(lines)
 
 
 @cli.command()
@@ -529,9 +555,11 @@ def report(watson, current, from_, to, projects,
               "times")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the log in JSON instead of plain text")
+@click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
+              help="(Don't) view output through a pager.")
 @click.pass_obj
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        format_json):
+        format_json, pager):
     """
     Display each recorded session during the given timespan.
 
@@ -543,6 +571,9 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     `--day` sets the log timespan to the current day (beginning at 00:00h)
     and `--year`, `--month` and `--week` to the current year, month or week
     respectively.
+
+    If you are outputting to the terminal, you can selectively enable a pager
+    through the `--pager` option.
 
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -616,10 +647,26 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     )
 
     lines = []
+    # use the pager, or print directly to the terminal
+    if pager or (pager is None and
+                 watson.config.getboolean('options', 'pager', True)):
+
+        def _print(line):
+            lines.append(line)
+
+        def _final_print(lines):
+            click.echo_via_pager('\n'.join(lines))
+    else:
+
+        def _print(line):
+            click.echo(line)
+
+        def _final_print(lines):
+            pass
 
     for i, (day, frames) in enumerate(frames_by_day):
         if i != 0:
-            lines.append('')
+            _print('')
 
         frames = sorted(frames, key=operator.attrgetter('start'))
         longest_project = max(len(frame.project) for frame in frames)
@@ -629,14 +676,14 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             (frame.stop - frame.start for frame in frames)
         )
 
-        lines.append(
+        _print(
             "{date} ({daily_total})".format(
                 date=style('date', "{:dddd DD MMMM YYYY}".format(day)),
                 daily_total=style('time', format_timedelta(daily_total))
             )
         )
 
-        lines.append("\n".join(
+        _print("\n".join(
             "\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project',
@@ -650,7 +697,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             for frame in frames
         ))
 
-    click.echo_via_pager('\n'.join(lines))
+    _final_print(lines)
 
 
 @cli.command()
