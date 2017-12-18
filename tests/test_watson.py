@@ -1,5 +1,6 @@
 """Unit tests for the main 'watson' module."""
 
+import datetime
 import json
 import os
 import sys
@@ -11,10 +12,9 @@ import pytest
 import requests
 
 from watson import Watson, WatsonError
-
-from . import mock_read
 from watson.watson import ConfigParser, ConfigurationError
 
+from . import mock_datetime, mock_read
 
 PY2 = sys.version_info[0] == 2
 TEST_FIXTURE_DIR = py.path.local(
@@ -737,3 +737,39 @@ def test_report(watson):
     assert report['projects'][0]['name'] == 'foo'
     assert len(report['projects'][0]['tags']) == 1
     assert report['projects'][0]['tags'][0]['name'] == 'B'
+
+
+# renaming project updates frame last_updated time
+def test_rename_project_with_time(mock, watson):
+    """
+    Renaming a project should update any the "last_updated" time on any
+    frame that contains that project.
+    """
+    watson.frames.add(
+        'foo', 4001, 4002, ['some_tag'],
+        id='c76d1ad0282c429595cc566d7098c165', updated_at=4005
+    )
+    watson.frames.add(
+        'bar', 4010, 4015, ['other_tag'],
+        id='eed598ff363d42658a095ae6c3ae1088', updated_at=4035
+    )
+
+    with mock_datetime(9000, datetime):
+        watson.rename_project("foo", "baz")
+
+    assert len(watson.frames) == 2
+
+    assert watson.frames[0].id == 'c76d1ad0282c429595cc566d7098c165'
+    assert watson.frames[0].project == 'baz'
+    assert watson.frames[0].start.timestamp == 4001
+    assert watson.frames[0].stop.timestamp == 4002
+    assert watson.frames[0].tags == ['some_tag']
+    # assert watson.frames[0].updated_at.timestamp == 9000
+    assert watson.frames[0].updated_at.timestamp > 4005
+
+    assert watson.frames[1].id == 'eed598ff363d42658a095ae6c3ae1088'
+    assert watson.frames[1].project == 'bar'
+    assert watson.frames[1].start.timestamp == 4010
+    assert watson.frames[1].stop.timestamp == 4015
+    assert watson.frames[1].tags == ['other_tag']
+    assert watson.frames[1].updated_at.timestamp == 4035
