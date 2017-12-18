@@ -1165,9 +1165,31 @@ def rename(watson, rename_type, old_name, new_name):
 
     """
     if rename_type == 'tag':
-        watson.rename_tag(old_name, new_name)
+        try:
+            watson.rename_tag(old_name, new_name)
+        except ValueError:
+            raise click.ClickException(style(
+                'error',
+                'Tag "%s" does not exist' % old_name
+            ))
+        else:
+            click.echo('Renamed tag "{}" to "{}"'.format(
+                            style('tag', old_name),
+                            style('tag', new_name)
+                       ))
     elif rename_type == 'project':
-        watson.rename_project(old_name, new_name)
+        try:
+            watson.rename_project(old_name, new_name)
+        except ValueError:
+            raise click.ClickException(style(
+                'error',
+                'Project "%s" does not exist' % old_name
+            ))
+        else:
+            click.echo('Renamed project "{}" to "{}"'.format(
+                            style('project', old_name),
+                            style('project', new_name)
+                       ))
     else:
         raise click.ClickException(style(
             'error',

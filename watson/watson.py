@@ -17,8 +17,7 @@ import requests
 
 from .config import ConfigParser
 from .frames import Frames
-from .utils import (deduplicate, make_json_writer,
-                    safe_save, sorted_groupby, style)
+from .utils import deduplicate, make_json_writer, safe_save, sorted_groupby
 from .version import version as __version__  # noqa
 
 
@@ -491,12 +490,9 @@ class Watson(object):
         return report
 
     def rename_project(self, old_project, new_project):
-        """Takes a project and renames it in all affected frames."""
+        """Rename a project in all affected frames."""
         if old_project not in self.projects:
-            raise click.ClickException(style(
-                'error',
-                'Project "%s" does not exist' % old_project
-            ))
+            raise ValueError
 
         updated_at = arrow.utcnow()
         # rename project
@@ -509,17 +505,11 @@ class Watson(object):
 
         self.frames.changed = True
         self.save()
-        click.echo('Renamed project "{}" to "{}"'
-                   .format(style('project', old_project),
-                           style('project', new_project)))
 
     def rename_tag(self, old_tag, new_tag):
-        """Takes a tag and renames it in all affected frames."""
+        """Rename a tag in all affected frames."""
         if old_tag not in self.tags:
-            raise click.ClickException(style(
-                'error',
-                'Tag "%s" does not exist' % old_tag
-            ))
+            raise ValueError
 
         updated_at = arrow.utcnow()
         # rename tag
@@ -532,5 +522,3 @@ class Watson(object):
 
         self.frames.changed = True
         self.save()
-        click.echo('Renamed tag "{}" to "{}"'
-                   .format(style('tag', old_tag), style('tag', new_tag)))
