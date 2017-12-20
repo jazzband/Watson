@@ -492,7 +492,7 @@ class Watson(object):
     def rename_project(self, old_project, new_project):
         """Rename a project in all affected frames."""
         if old_project not in self.projects:
-            raise ValueError
+            raise ValueError('Project "%s" does not exist' % old_project)
 
         updated_at = arrow.utcnow()
         # rename project
@@ -509,7 +509,7 @@ class Watson(object):
     def rename_tag(self, old_tag, new_tag):
         """Rename a tag in all affected frames."""
         if old_tag not in self.tags:
-            raise ValueError
+            raise ValueError('Tag "%s" does not exist' % old_tag)
 
         updated_at = arrow.utcnow()
         # rename tag
