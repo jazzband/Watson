@@ -104,9 +104,9 @@ def _start(watson, project, tags, restart=False):
     Start project with given list of tags and save status.
     """
     current = watson.start(project, tags, restart=restart)
-    click.echo("Starting project {} {} at {}".format(
+    click.echo("Starting project {}{} at {}".format(
         style('project', project),
-        style('tags', current['tags']),
+        (" " if current['tags'] else "") + style('tags', current['tags']),
         style('time', "{:HH:mm}".format(current['start']))
     ))
     watson.save()
@@ -167,9 +167,9 @@ def stop(watson):
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
     """
     frame = watson.stop()
-    click.echo("Stopping project {} {}, started {}. (id: {})".format(
+    click.echo("Stopping project {}{}, started {}. (id: {})".format(
         style('project', frame.project),
-        style('tags', frame.tags),
+        (" " if tags else "") + style('tags', frame.tags),
         style('time', frame.start.humanize()),
         style('short_id', frame.id)
     ))
@@ -241,9 +241,9 @@ def cancel(watson):
     not be recorded.
     """
     old = watson.cancel()
-    click.echo("Canceling the timer for project {} {}".format(
+    click.echo("Canceling the timer for project {}{}".format(
         style('project', old['project']),
-        style('tags', old['tags'])
+        (" " if old['tags'] else "") + style('tags', old['tags'])
     ))
     watson.save()
 
@@ -302,9 +302,9 @@ def status(watson, project, tags, elapsed):
 
     datefmt = watson.config.get('options', 'date_format', '%Y.%m.%d')
     timefmt = watson.config.get('options', 'time_format', '%H:%M:%S%z')
-    click.echo("Project {} {} started {} ({} {})".format(
+    click.echo("Project {}{} started {} ({} {})".format(
         style('project', current['project']),
-        style('tags', current['tags']),
+        (" " if current['tags'] else "") + style('tags', current['tags']),
         style('time', current['start'].humanize()),
         style('date', current['start'].strftime(datefmt)),
         style('time', current['start'].strftime(timefmt))
