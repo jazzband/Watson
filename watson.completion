@@ -36,7 +36,7 @@ _watson_complete () {
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
             *)
-              COMPREPLY=($(compgen -W "-c -C -d -f -m -p -t -T -w -y --current --no-current --from --to --project --tag --day --week --month --year" -- ${cur})) ;;
+              COMPREPLY=($(compgen -W "-c -C -d -f -g -G -j -m -p -t -T -w -y --current --no-current --pager --no-pager --from --to --project --tag --day --week --month --year --json" -- ${cur})) ;;
           esac
           ;;
         merge)
@@ -55,6 +55,19 @@ _watson_complete () {
             *)
               frames="$(watson frames)"
               COMPREPLY=($(compgen -W "$frames" -- ${cur}))
+              ;;
+          esac
+          ;;
+        rename)
+          local IFS=$'\n'
+          case "$3" in
+            project)
+              projects="$(watson projects | sed -e 's/ /\\\\ /g')"
+              COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+              ;;
+            tag)
+              tags="$(watson tags | sed -e 's/ /\\\\ /g')"
+              COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
           esac
           ;;
@@ -78,18 +91,8 @@ _watson_complete () {
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))
           fi
           ;;
-        rename)
-          local IFS=$'\n'
-          case "$3" in
-            project)
-              projects="$(watson projects | sed -e 's/ /\\\\ /g')"
-              COMPREPLY=($(compgen -W "$projects" -- ${cur}))
-              ;;
-            tag)
-              tags="$(watson tags | sed -e 's/ /\\\\ /g')"
-              COMPREPLY=($(compgen -W "$tags" -- ${cur}))
-              ;;
-          esac
+        status)
+          COMPREPLY=($(compgen -W "-e --elapsed -p --project -t --tags" -- ${cur}))
           ;;
       esac
       ;;
