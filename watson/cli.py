@@ -1147,11 +1147,11 @@ def merge(watson, frames_with_conflict, force):
 
 
 @cli.command()
-@click.argument('type', required=True)
+@click.argument('rename_type', required=True, metavar='TYPE')
 @click.argument('old_name', required=True)
 @click.argument('new_name', required=True)
 @click.pass_obj
-def rename(watson, type, old_name, new_name):
+def rename(watson, rename_type, old_name, new_name):
     """
     Rename a project or tag.
 
@@ -1164,40 +1164,29 @@ def rename(watson, type, old_name, new_name):
     Renamed tag "company-meeting" to "meeting"
 
     """
-
-    # input validation
-    if type not in ['project', 'tag']:
+    if rename_type == 'tag':
+        try:
+            watson.rename_tag(old_name, new_name)
+        except ValueError as e:
+            raise click.ClickException(style('error', str(e)))
+        else:
+            click.echo('Renamed tag "{}" to "{}"'.format(
+                            style('tag', old_name),
+                            style('tag', new_name)
+                       ))
+    elif rename_type == 'project':
+        try:
+            watson.rename_project(old_name, new_name)
+        except ValueError as e:
+            raise click.ClickException(style('error', str(e)))
+        else:
+            click.echo('Renamed project "{}" to "{}"'.format(
+                            style('project', old_name),
+                            style('project', new_name)
+                       ))
+    else:
         raise click.ClickException(style(
             'error',
-            'You have to call rename with "project" or "tag"'
+            'You have to call rename with type "project" or "tag"; '
+            'you supplied "%s"' % rename_type
         ))
-
-    if type == 'tag':
-        if old_name not in watson.tags:
-            raise click.ClickException(style(
-                'error',
-                'Tag "%s" does not exist' % old_name
-            ))
-
-        # rename tag
-        for frame in watson.frames:
-            if old_name in frame.tags:
-                watson.frames[frame.id] = frame._replace(
-                    tags=[new_name if t == old_name else t for t in frame.tags]
-                )
-        click.echo('Renamed tag "%s" to "%s"' % (old_name, new_name))
-    if type == 'project':
-        if old_name not in watson.projects:
-            raise click.ClickException(style(
-                'error',
-                'Project "%s" does not exist' % old_name
-            ))
-
-        # rename project
-        for frame in watson.frames:
-            if frame.project == old_name:
-                watson.frames[frame.id] = frame._replace(project=new_name)
-        click.echo('Renamed project "%s" to "%s"' % (old_name, new_name))
-
-    watson.frames.changed = True
-    watson.save()

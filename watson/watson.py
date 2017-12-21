@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from functools import reduce
 import json
 import operator
 import os
 import uuid
 
-from functools import reduce
-
 try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
-
 import arrow
 import click
 import requests
@@ -34,13 +32,13 @@ class ConfigurationError(configparser.Error, WatsonError):
 class Watson(object):
     def __init__(self, **kwargs):
         """
-        :param frames: If given, should be a list representating the
+        :param frames: If given, should be a list representing the
                         frames.
                         If not given, the value is extracted
                         from the frames file.
         :type frames: list
 
-        :param current: If given, should be a dict representating the
+        :param current: If given, should be a dict representing the
                         current frame.
                         If not given, the value is extracted
                         from the state file.
@@ -328,7 +326,7 @@ class Watson(object):
                 raise WatsonError("Unable to reach the server.")
             except AssertionError:
                 raise WatsonError(
-                    "An error occured with the remote "
+                    "An error occurred with the remote "
                     "server: {}".format(response.json())
                 )
 
@@ -346,7 +344,7 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                "An error occured with the remote "
+                "An error occurred with the remote "
                 "server: {}".format(response.json())
             )
 
@@ -385,7 +383,7 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                "An error occured with the remote server (status: {}). "
+                "An error occurred with the remote server (status: {}). "
                 "Response was:\n{}".format(
                     response.status_code,
                     response.text
@@ -490,3 +488,37 @@ class Watson(object):
 
         report['time'] = total.total_seconds()
         return report
+
+    def rename_project(self, old_project, new_project):
+        """Rename a project in all affected frames."""
+        if old_project not in self.projects:
+            raise ValueError('Project "%s" does not exist' % old_project)
+
+        updated_at = arrow.utcnow()
+        # rename project
+        for frame in self.frames:
+            if frame.project == old_project:
+                self.frames[frame.id] = frame._replace(
+                    project=new_project,
+                    updated_at=updated_at
+                )
+
+        self.frames.changed = True
+        self.save()
+
+    def rename_tag(self, old_tag, new_tag):
+        """Rename a tag in all affected frames."""
+        if old_tag not in self.tags:
+            raise ValueError('Tag "%s" does not exist' % old_tag)
+
+        updated_at = arrow.utcnow()
+        # rename tag
+        for frame in self.frames:
+            if old_tag in frame.tags:
+                self.frames[frame.id] = frame._replace(
+                    tags=[new_tag if t == old_tag else t for t in frame.tags],
+                    updated_at=updated_at
+                )
+
+        self.frames.changed = True
+        self.save()

@@ -212,7 +212,7 @@ stop_on_restart = false
 date_format = %Y.%m.%d
 time_format = %H:%M:%S%z
 log_current = false
-log_pager = true
+pager = true
 report_current = false
 ```
 
