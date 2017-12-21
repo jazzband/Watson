@@ -4,8 +4,19 @@ CHANGELOG
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
-* Added: the `report` and `log` commands' output can no selectively be run
-  through a pager.
+* Added: the `report` and `log` commands now take a `--json` option to
+  format their output in JSON (#167).
+* Added: the `status` command now takes `--project`, `--tags`, and `--elapsed`
+  options to only output the selected information (#166).
+* Added: the `report` and `log` commands' output can now selectively be run
+  through a pager (#176).
+* Updated: when renaming a project or tag, the `updated_at` timestamp is
+  updated on all affected frames (#181).
+* Updated: some enhancements and formatting fixes have been done to the output
+  of the `log` and `report` commands (#178, #179, #182).
+* Fixed: dependency version restrictions have been added for Watson and its
+  tests for continued support of older (2.7 and 3.3) Python versions
+  (#175, #180).
 
 ## 1.5.2 (2017-08-02)
 
