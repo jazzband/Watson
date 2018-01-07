@@ -144,6 +144,9 @@ def get_start_time_for_period(period):
         start_time = arrow.Arrow(year, month, 1)
     elif period == 'year':
         start_time = arrow.Arrow(year, 1, 1)
+    elif period == 'all':
+        # approximately timestamp `0`
+        start_time = arrow.Arrow(1970, 1, 1)
     else:
         raise ValueError('Unsupported period value: {}'.format(period))
 
