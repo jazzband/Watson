@@ -10,6 +10,8 @@ This document records all notable changes to Watson. This project adheres to
   options to only output the selected information (#166).
 * Added: the `report` and `log` commands' output can now selectively be run
   through a pager (#176).
+* Added: the `report` and `log` commands now take an `--all` option to output
+  all recorded frames (#185).
 * Updated: when renaming a project or tag, the `updated_at` timestamp is
   updated on all affected frames (#181).
 * Updated: some enhancements and formatting fixes have been done to the output
