@@ -174,6 +174,7 @@ Flag | Help
 `-m, --month` | Reports activity for the current month.
 `-w, --week` | Reports activity for the current week.
 `-d, --day` | Reports activity for the current day.
+`-a, --all` | Reports all activities.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the log in JSON instead of plain text
@@ -381,7 +382,7 @@ Example:
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
     
-    $ watson report --format json
+    $ watson report --json
     {
         "projects": [
             {
@@ -417,6 +418,7 @@ Flag | Help
 `-m, --month` | Reports activity for the current month.
 `-w, --week` | Reports activity for the current week.
 `-d, --day` | Reports activity for the current day.
+`-a, --all` | Reports all activities.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the report in JSON instead of plain text

@@ -126,6 +126,7 @@ _watson() {
             '*'{-T,--tag}'[only for the given tag]: :_watson_tags' \
             '(--from -f)'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
             '(--to -t)'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
+            '(--all -a)'{-a,--all}'[output all frames]:' \
             '--help'
           ;;
         (merge)
