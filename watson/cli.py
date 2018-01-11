@@ -169,7 +169,7 @@ def stop(watson):
     frame = watson.stop()
     click.echo("Stopping project {}{}, started {}. (id: {})".format(
         style('project', frame.project),
-        (" " if tags else "") + style('tags', frame.tags),
+        (" " if frame.tags else "") + style('tags', frame.tags),
         style('time', frame.start.humanize()),
         style('short_id', frame.id)
     ))
@@ -884,7 +884,7 @@ def remove(watson, id, force):
             "You are about to remove frame "
             "{project}{tags} from {start} to {stop}, continue?".format(
                 project=style('project', frame.project),
-                tags=(" " if tags else "") + style('tags', frame.tags),
+                tags=(" " if frame.tags else "") + style('tags', frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
                 stop=style('time', '{:HH:mm}'.format(frame.stop))
             ),
