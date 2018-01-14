@@ -2,10 +2,10 @@
 
 ## The configuration file
 
-Watson configuration and data are stored inside your user's application folder. Depending on your system, the default path might be:
+Watson configuration and data are stored inside your user's application folder. Depending on your system, the default path is likely:
 
 * **MacOSX**: `~/Library/Application Support/watson/config`
-* **Windows**: `C:\Users\<user>\AppData\Local\watson\config`
+* **Windows**: `%appdata%\watson\config`, which usually expands to `C:\Users\<user>\AppData\Roaming\watson\config`
 * **Linux**: `~/.config/watson/config`
 
 The configuration file is a typical [python configuration (INI) file](https://docs.python.org/3.4/library/configparser.html#supported-ini-file-structure), that looks like:
