@@ -27,7 +27,7 @@ _watson_commands=(
 if [[ -n "$WATSON_DIR" ]]; then
   _watson_frame_file=${WATSON_DIR}/frames
 elif [[ "$OSTYPE" =~ "^darwin" ]]; then
-  _watson_frame_file=${HOME}/Library/Application Support/frames
+  _watson_frame_file="${HOME}/Library/Application Support/watson/frames"
 else
   _watson_frame_file=${HOME}/.config/watson/frames
 fi
