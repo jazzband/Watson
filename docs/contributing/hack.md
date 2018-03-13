@@ -13,7 +13,7 @@ Ready to contribute? Here's how to set up *Watson* for local development.
 
         $ mkvirtualenv watson
         $ cd Watson
-        $ pip install -r requirements-tests.txt
+        $ pip install -r requirements-dev.txt
         $ python setup.py develop
 
 4.  Create a branch for local development:
