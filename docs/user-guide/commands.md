@@ -275,7 +275,7 @@ Flag | Help
 ## `remove`
 
 ```bash
-Usage:  watson remove [OPTIONS] ID
+Usage:  watson remove [OPTIONS]
 ```
 
 Remove a frame. You can specify the frame either by id or by position
@@ -285,7 +285,6 @@ Remove a frame. You can specify the frame either by id or by position
 
 Flag | Help
 -----|-----
-`-f, --force` | Don't ask for confirmation.
 `--help` | Show this message and exit.
 
 ## `rename`

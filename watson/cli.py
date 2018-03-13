@@ -44,6 +44,27 @@ class WatsonCliError(click.ClickException):
         return style('error', self.message)
 
 
+class CustomMultiCommand(click.Group):
+    def command(self, *args, **kwargs):
+        """Behaves the same as `click.Group.command()` except if passed
+        a list of names, all after the first will be aliases for the first.
+        """
+        def decorator(f):
+            if args and isinstance(args[0], list):
+                _args = [args[0][0]] + list(args[1:])
+                for alias in args[0][1:]:
+                    cmd = super(CustomMultiCommand, self).command(
+                        alias, *args[1:], **kwargs)(f)
+                    cmd.short_help = "Alias for '{}'".format(_args[0])
+            else:
+                _args = args
+            cmd = super(CustomMultiCommand, self).command(
+                *_args, **kwargs)(f)
+            return cmd
+
+        return decorator
+
+
 _watson.WatsonError = WatsonCliError
 
 
@@ -63,7 +84,7 @@ class DateParamType(click.ParamType):
 Date = DateParamType()
 
 
-@click.group()
+@click.group(cls=CustomMultiCommand)
 @click.version_option(version=_watson.__version__, prog_name='Watson')
 @click.pass_context
 def cli(ctx):
@@ -866,7 +887,8 @@ def edit(watson, id):
     )
 
 
-@cli.command(context_settings={'ignore_unknown_options': True})
+@cli.command(['remove', 'delete'],
+             context_settings={'ignore_unknown_options': True})
 @click.argument('id')
 @click.option('-f', '--force', is_flag=True,
               help="Don't ask for confirmation.")
