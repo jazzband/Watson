@@ -894,7 +894,7 @@ def remove(watson, id, force):
     del watson.frames[id]
 
     watson.save()
-    click.echo("Frame deleted.")
+    click.echo("Frame removed.")
 
 
 @cli.command()
