@@ -111,7 +111,6 @@ def _start(watson, project, tags, restart=False):
     ))
     watson.save()
 
-
 @cli.command()
 @click.argument('args', nargs=-1)
 @click.pass_obj
@@ -773,6 +772,45 @@ def frames(watson):
     for frame in watson.frames:
         click.echo(style('short_id', frame.id))
 
+@cli.command(context_settings={'ignore_unknown_options': True})
+@click.argument('args', nargs=-1)
+@click.option('--from-date', required=True, type=Date, help="Date and time of start of tracked activity")
+@click.option("--to-date", required=True, type=Date, help="Date and time of end of tracked activity")
+@click.pass_obj
+def add(watson, args, from_date, to_date):
+    """
+    Add time for project with tag(s) that was not tracked live.
+    
+    Example:
+
+    \b
+    $ watson add --from-date "2018-03-20 12:00:00" --to-date "2018-03-20 13:00:00" programming +addfeature
+    """ 
+    # parse project name from args
+    project = ' '.join(
+        itertools.takewhile(lambda s: not s.startswith('+'), args)
+    )
+    # Find all the tags starting by a '+', even if there are spaces in them,
+    # then strip each tag and filter out the empty ones
+    tags = list(filter(None, map(operator.methodcaller('strip'), (
+        # We concatenate the word with the '+' to the following words
+        # not starting with a '+'
+        w[1:] + ' ' + ' '.join(itertools.takewhile(
+            lambda s: not s.startswith('+'), args[i + 1:]
+        ))
+        for i, w in enumerate(args) if w.startswith('+')
+    ))))  # pile of pancakes !
+
+    # add a new frame, call watson save to update state files
+    frame = watson.add(project=project, tags=tags, from_date=from_date, to_date=to_date)
+    click.echo("Adding project {}{}, started {} and stopped {}. (id: {})".format(
+        style('project', frame.project),
+        (" " if frame.tags else "") + style('tags', frame.tags),
+        style('time', frame.start.humanize()),
+        style('time', frame.stop.humanize()),
+        style('short_id', frame.id)
+    ))
+    watson.save()
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id', required=False)

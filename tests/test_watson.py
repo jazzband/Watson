@@ -808,3 +808,22 @@ def test_rename_tag_with_time(mock, watson):
     assert watson.frames[1].tags == ['baz']
     # assert watson.frames[1].updated_at.timestamp == 9000
     assert watson.frames[1].updated_at.timestamp > 4035
+
+## add
+
+def test_add_success(mock, watson):
+    """
+    Adding a new frame outside of live tracking successfully
+    """
+    watson.add(project="test_project", tags=['fuu','bar'], from_date=6000, to_date=7000)
+
+    assert len(watson.frames) == 1
+    assert watson.frames[0].project == "test_project"
+    assert 'fuu' in watson.frames[0].tags
+
+def test_add_failure(mock, watson):
+    """
+    Adding a new frame outside of live tracking fails when to date is before from date
+    """
+    with pytest.raises(WatsonError):
+        watson.add(project="test_project", tags=['fuu','bar'], from_date=7000, to_date=6000)
