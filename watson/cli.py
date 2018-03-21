@@ -774,10 +774,10 @@ def frames(watson):
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('args', nargs=-1)
-@click.option('--from-date', required=True, type=Date, help="Date and time of start of tracked activity")
-@click.option("--to-date", required=True, type=Date, help="Date and time of end of tracked activity")
+@click.option('-f','--from', required=True, type=Date, help="Date and time of start of tracked activity")
+@click.option('-t','--to', required=True, type=Date, help="Date and time of end of tracked activity")
 @click.pass_obj
-def add(watson, args, from_date, to_date):
+def add(watson, args, from_, to):
     """
     Add time for project with tag(s) that was not tracked live.
     
@@ -802,7 +802,7 @@ def add(watson, args, from_date, to_date):
     ))))  # pile of pancakes !
 
     # add a new frame, call watson save to update state files
-    frame = watson.add(project=project, tags=tags, from_date=from_date, to_date=to_date)
+    frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to_date)
     click.echo("Adding project {}{}, started {} and stopped {}. (id: {})".format(
         style('project', frame.project),
         (" " if frame.tags else "") + style('tags', frame.tags),

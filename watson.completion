@@ -16,7 +16,7 @@ _watson_complete () {
     *)
       case "${cmd}" in
         add)
-          COMPREPLY=($(compgen -W "--from_date --to_date" -- ${cur})) ;;
+          COMPREPLY=($(compgen -W "-f --from -t --to" -- ${cur})) ;;
         config)
           COMPREPLY=($(compgen -W "-e --edit" -- ${cur})) ;;
         edit)
