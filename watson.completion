@@ -16,7 +16,6 @@ _watson_complete () {
     *)
       case "${cmd}" in
         add)
-          # (i hate bash sometimes, this is so much easier with zsh apparently)
           # check if we are inputting a date, in which case return empty completion by returning
           prev="${COMP_WORDS[COMP_CWORD-1]}"
           if [[ ${prev} == "-f" ]] || [[ ${prev} == "--from" ]] || [[ ${prev} == "-t" ]] || [[ ${prev} == "--to" ]]; then
