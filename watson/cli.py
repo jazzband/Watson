@@ -784,7 +784,7 @@ def add(watson, args, from_, to):
     Example:
 
     \b
-    $ watson add --from-date "2018-03-20 12:00:00" --to-date "2018-03-20 13:00:00" programming +addfeature
+    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" programming +addfeature
     """ 
     # parse project name from args
     project = ' '.join(
