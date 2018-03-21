@@ -16,7 +16,28 @@ _watson_complete () {
     *)
       case "${cmd}" in
         add)
-          COMPREPLY=($(compgen -W "-f --from -t --to" -- ${cur})) ;;
+          # (i hate bash sometimes, this is so much easier with zsh apparently)
+          # check if we are inputting a date, in which case return empty completion by returning
+          prev="${COMP_WORDS[COMP_CWORD-1]}"
+          if [[ ${prev} == "-f" ]] || [[ ${prev} == "--from" ]] || [[ ${prev} == "-t" ]] || [[ ${prev} == "--to" ]]; then
+            return 0
+          fi
+          if ((COMP_CWORD < 6)); then
+            # we assume that --from/-f with parameter and -t/--to with parameter need to exist (as they are required)
+            #  and if they are not there COMP_CWORD < 6 we allow completion only for that
+            COMPREPLY=($(compgen -W "-f --from -t --to" -- ${cur}))
+          elif ((COMP_CWORD < 7)); then
+            # we assume that project is one word string and therefore if COMP_CWORD < 7 its not there
+            local IFS=$'\n'
+            projects="$(watson projects | sed -e 's/ /\\\\ /g')"
+            COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+          else
+            # finally in all other cases we expect to be filling in tags
+            local IFS=$'\n'
+            tags="$(watson tags | sed -e 's/ /\\\\ /g' | awk '$0="+"$0')"
+            COMPREPLY=($(compgen -W "$tags" -- ${cur}))            
+          fi
+          ;;
         config)
           COMPREPLY=($(compgen -W "-e --edit" -- ${cur})) ;;
         edit)
