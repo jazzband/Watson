@@ -849,7 +849,7 @@ def edit(watson, id):
         except (ValueError, RuntimeError) as e:
             click.echo("Error while parsing inputted values: {}".format(e), err=True)
         except KeyError:
-            click.echo("The edited frame must contain the project, start and stop keys.")
+            click.echo("The edited frame must contain the project, start and stop keys.", err=True)
         # we reach here if exception was thrown, wait for user to acknowledge the error before
         #  looping in while and showing user the editor again
         click.pause(err=True)
