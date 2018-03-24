@@ -1,3 +1,6 @@
+# editors and ides
+.vscode/
+
 # directories
 
 build/
