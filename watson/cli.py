@@ -852,7 +852,7 @@ def edit(watson, id):
             click.echo("The edited frame must contain the project, start and stop keys.")
         # we reach here if exception was thrown, wait for user to acknowledge the error before
         #  looping in while and showing user the editor again
-        click.pause(err=False)
+        click.pause(err=True)
         # use previous entered values to the user in editor instead of original ones
         text = output
 
