@@ -844,7 +844,7 @@ def edit(watson, id):
                 tzinfo=local_tz).to('utc') if id else None
             # if start time of the project is not before end time
             #  raise ValueException
-            if start > stop:
+            if not watson.is_started and start > stop:
                 raise ValueError(
                     "Tasks start date needs to occur before end date.")
             # break out of while loop and continue execution of
