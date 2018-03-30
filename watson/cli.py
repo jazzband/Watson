@@ -111,6 +111,7 @@ def _start(watson, project, tags, restart=False):
     ))
     watson.save()
 
+
 @cli.command()
 @click.argument('args', nargs=-1)
 @click.pass_obj
@@ -772,20 +773,24 @@ def frames(watson):
     for frame in watson.frames:
         click.echo(style('short_id', frame.id))
 
+
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('args', nargs=-1)
-@click.option('-f','--from', 'from_', required=True, type=Date, help="Date and time of start of tracked activity")
-@click.option('-t','--to', required=True, type=Date, help="Date and time of end of tracked activity")
+@click.option('-f', '--from', 'from_', required=True, type=Date,
+              help="Date and time of start of tracked activity")
+@click.option('-t', '--to', required=True, type=Date,
+              help="Date and time of end of tracked activity")
 @click.pass_obj
 def add(watson, args, from_, to):
     """
     Add time for project with tag(s) that was not tracked live.
-    
+
     Example:
 
     \b
-    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" programming +addfeature
-    """ 
+    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \\
+     programming +addfeature
+    """
     # parse project name from args
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
@@ -803,14 +808,17 @@ def add(watson, args, from_, to):
 
     # add a new frame, call watson save to update state files
     frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to)
-    click.echo("Adding project {}{}, started {} and stopped {}. (id: {})".format(
-        style('project', frame.project),
-        (" " if frame.tags else "") + style('tags', frame.tags),
-        style('time', frame.start.humanize()),
-        style('time', frame.stop.humanize()),
-        style('short_id', frame.id)
-    ))
+    click.echo(
+        "Adding project {}{}, started {} and stopped {}. (id: {})".format(
+            style('project', frame.project),
+            (" " if frame.tags else "") + style('tags', frame.tags),
+            style('time', frame.start.humanize()),
+            style('time', frame.stop.humanize()),
+            style('short_id', frame.id)
+        )
+    )
     watson.save()
+
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id', required=False)
