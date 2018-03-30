@@ -825,7 +825,8 @@ def edit(watson, id):
     start = None
     stop = None
 
-    # enter into while loop until succesful and validated edit has been performed
+    # enter into while loop until succesful and validated
+    #  edit has been performed
     while True:
         output = click.edit(text, extension='.json')
 
@@ -841,19 +842,27 @@ def edit(watson, id):
                 tzinfo=local_tz).to('utc')
             stop = arrow.get(data['stop'], datetime_format).replace(
                 tzinfo=local_tz).to('utc') if id else None
-            # if start time of the project is not before end time raise ValueException
+            # if start time of the project is not before end time
+            #  raise ValueException
             if start > stop:
-                raise ValueError("Tasks start date needs to occur before end date.")
-            # break out of while loop and continue execution of the edit function normally
+                raise ValueError(
+                    "Tasks start date needs to occur before end date.")
+            # break out of while loop and continue execution of
+            #  the edit function normally
             break
         except (ValueError, RuntimeError) as e:
-            click.echo("Error while parsing inputted values: {}".format(e), err=True)
+            click.echo("Error while parsing inputted values: {}".format(e),
+                       err=True)
         except KeyError:
-            click.echo("The edited frame must contain the project, start and stop keys.", err=True)
-        # we reach here if exception was thrown, wait for user to acknowledge the error before
-        #  looping in while and showing user the editor again
+            click.echo(
+                "The edited frame must contain the project, \
+                start and stop keys.", err=True)
+        # we reach here if exception was thrown, wait for user
+        #  to acknowledge the error before looping in while and
+        #  showing user the editor again
         click.pause(err=True)
-        # use previous entered values to the user in editor instead of original ones
+        # use previous entered values to the user in editor
+        #  instead of original ones
         text = output
 
     # we reach this when we break out of the while loop above
