@@ -20,6 +20,21 @@ This document records all notable changes to Watson. This project adheres to
   tests for continued support of older (2.7 and 3.3) Python versions
   (#175, #180).
 
+## 1.6.0 (2018-04-23)
+
+* Added: for report and log, allow specifying a timeperiod of "all"
+* Added: option for log and report command to (not) output via pager
+* Added: --json option to log command
+* Added: optional flags to filter status call
+* Fixed: change message when frame is removed
+* Fixed: cli output when on tags on `stop` and `remove`
+* Fixed: Bash completion with latest additions to command options
+* Fixed: CLI output spacing if a frame has no tags
+* Fixed: frame modification time when renaming projects and tags (#181)
+* Fixed: don't print space before tags if there are no tags (#179)
+* Fixed: match log daily heading format to elsewhere
+* Fixed: set max versions for pytest and arrow for keeping support for Python 2.7 and 3.3
+
 ## 1.5.2 (2017-08-02)
 
 * Fixed: Follow up on the `config` command fix (#161)
