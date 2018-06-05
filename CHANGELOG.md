@@ -19,6 +19,7 @@ This document records all notable changes to Watson. This project adheres to
 * Fixed: dependency version restrictions have been added for Watson and its
   tests for continued support of older (2.7 and 3.3) Python versions
   (#175, #180).
+* Removed: support for Python 3.3 (#210).
 
 ## 1.6.0 (2018-04-23)
 
