@@ -3,6 +3,7 @@
 
 # ~~~ LIST OF COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 _watson_commands=(
+  'add:Add a frame for a project that was not tracked live.'
   'cancel:Cancel the last call to the start command.'
   'config:Get and set configuration options.'
   'edit:Edit a frame.'
@@ -102,6 +103,16 @@ _watson() {
       case $words[1] in
         (cancel|help|projects|restart|status|stop|sync|tags)
           _arguments : '--help'
+          ;;
+        (add)
+          _arguments -A '-*' : \
+            ': :_watson_projects' \
+            '*: :_watson_plus_tags' \
+            '(--from -f)'{-f,--from}'[start date and time (YYYY-MM-DD H:M:S)]' \
+               ':date (YYYY-MM-DD H:M:S):' \
+            '(--to -t)'{-t,--to}'[end date and time (YYYY-MM-DD H:M:S)]' \
+               ':date (YYYY-MM-DD H:M:S):' \
+            '--help'
           ;;
         (start)
           _arguments -A '-*' : \
