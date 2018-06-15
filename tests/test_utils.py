@@ -12,7 +12,8 @@ except ImportError:
 import pytest
 from dateutil.tz import tzutc
 
-from watson.utils import get_start_time_for_period, make_json_writer, safe_save
+from watson.utils import (get_start_time_for_period, make_json_writer, safe_save,
+                          parse_tags)
 from . import mock_datetime
 
 
@@ -130,3 +131,15 @@ def test_safe_save_with_exception(config_dir):
         assert fp.read() == "Success"
 
     assert not os.path.exists(backup_file)
+
+
+@pytest.mark.parametrize('args, parsed_tags', [
+    (['+ham', '+n', '+eggs'], ['ham', 'n', 'eggs']),
+    (['+ham', 'n', '+eggs'], ['ham n', 'eggs']),
+    (['ham', 'n', '+eggs'], ['eggs']),
+    (['ham', '+n', 'eggs'], ['n eggs']),
+    (['+ham', 'n', 'eggs'], ['ham n eggs']),
+])
+def test_parse_tags(args, parsed_tags):
+    tags = parse_tags(args)
+    assert tags == parsed_tags
