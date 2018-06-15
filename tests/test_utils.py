@@ -12,8 +12,8 @@ except ImportError:
 import pytest
 from dateutil.tz import tzutc
 
-from watson.utils import (get_start_time_for_period, make_json_writer, safe_save,
-                          parse_tags)
+from watson.utils import (get_start_time_for_period, make_json_writer,
+                          safe_save, parse_tags)
 from . import mock_datetime
 
 
