@@ -237,6 +237,18 @@ class Watson(object):
     def is_started(self):
         return bool(self.current)
 
+    def add(self, project, from_date, to_date, tags):
+        if not project:
+            raise WatsonError("No project given.")
+        if from_date > to_date:
+            raise WatsonError("Task can not start before it ends.")
+
+        default_tags = self.config.getlist('default_tags', project)
+        tags = (tags or []) + default_tags
+
+        frame = self.frames.add(project, from_date, to_date, tags=tags)
+        return frame
+
     def start(self, project, tags=None, restart=False):
         if not project:
             raise WatsonError("No project given.")

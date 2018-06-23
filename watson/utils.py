@@ -1,6 +1,7 @@
 import datetime
 import itertools
 import json
+import operator
 import os
 import shutil
 import tempfile
@@ -212,3 +213,20 @@ def deduplicate(sequence):
     return [element
             for index, element in enumerate(sequence)
             if element not in sequence[:index]]
+
+
+def parse_tags(values_list):
+    """
+    Return a list of tags parsed from the input values list.
+
+    Find all the tags starting by a '+', even if there are spaces in them,
+    then strip each tag and filter out the empty ones
+    """
+    return list(filter(None, map(operator.methodcaller('strip'), (
+        # We concatenate the word with the '+' to the following words
+        # not starting with a '+'
+        w[1:] + ' ' + ' '.join(itertools.takewhile(
+            lambda s: not s.startswith('+'), values_list[i + 1:]
+        ))
+        for i, w in enumerate(values_list) if w.startswith('+')
+    ))))  # pile of pancakes !

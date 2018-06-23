@@ -16,7 +16,7 @@ from . import watson as _watson
 from .frames import Frame
 from .utils import (format_timedelta, get_frame_from_argument,
                     get_start_time_for_period, options, safe_save,
-                    sorted_groupby, style)
+                    sorted_groupby, style, parse_tags)
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -136,16 +136,8 @@ def start(ctx, watson, args):
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
 
-    # Find all the tags starting by a '+', even if there are spaces in them,
-    # then strip each tag and filter out the empty ones
-    tags = list(filter(None, map(operator.methodcaller('strip'), (
-        # We concatenate the word with the '+' to the following words
-        # not starting with a '+'
-        w[1:] + ' ' + ' '.join(itertools.takewhile(
-            lambda s: not s.startswith('+'), args[i + 1:]
-        ))
-        for i, w in enumerate(args) if w.startswith('+')
-    ))))  # pile of pancakes !
+    # Parse all the tags
+    tags = parse_tags(args)
 
     if (project and watson.is_started and
             watson.config.getboolean('options', 'stop_on_start')):
@@ -772,6 +764,45 @@ def frames(watson):
     """
     for frame in watson.frames:
         click.echo(style('short_id', frame.id))
+
+
+@cli.command(context_settings={'ignore_unknown_options': True})
+@click.argument('args', nargs=-1)
+@click.option('-f', '--from', 'from_', required=True, type=Date,
+              help="Date and time of start of tracked activity")
+@click.option('-t', '--to', required=True, type=Date,
+              help="Date and time of end of tracked activity")
+@click.pass_obj
+def add(watson, args, from_, to):
+    """
+    Add time for project with tag(s) that was not tracked live.
+
+    Example:
+
+    \b
+    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \\
+     programming +addfeature
+    """
+    # parse project name from args
+    project = ' '.join(
+        itertools.takewhile(lambda s: not s.startswith('+'), args)
+    )
+
+    # Parse all the tags
+    tags = parse_tags(args)
+
+    # add a new frame, call watson save to update state files
+    frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to)
+    click.echo(
+        "Adding project {}{}, started {} and stopped {}. (id: {})".format(
+            style('project', frame.project),
+            (" " if frame.tags else "") + style('tags', frame.tags),
+            style('time', frame.start.humanize()),
+            style('time', frame.stop.humanize()),
+            style('short_id', frame.id)
+        )
+    )
+    watson.save()
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
