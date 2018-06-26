@@ -852,27 +852,51 @@ def edit(watson, id):
         data['stop'] = frame.stop.format(datetime_format)
 
     text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
-    output = click.edit(text, extension='.json')
 
-    if not output:
-        click.echo("No change made.")
-        return
+    start = None
+    stop = None
 
-    try:
-        data = json.loads(output)
-        project = data['project']
-        tags = data['tags']
-        start = arrow.get(data['start'], datetime_format).replace(
-            tzinfo=local_tz).to('utc')
-        stop = arrow.get(data['stop'], datetime_format).replace(
-            tzinfo=local_tz).to('utc') if id else None
-    except (ValueError, RuntimeError) as e:
-        raise click.ClickException("Error saving edited frame: {}".format(e))
-    except KeyError:
-        raise click.ClickException(
-            "The edited frame must contain the project, start and stop keys."
-        )
+    # enter into while loop until succesful and validated
+    #  edit has been performed
+    while True:
+        output = click.edit(text, extension='.json')
 
+        if not output:
+            click.echo("No change made.")
+            return
+
+        try:
+            data = json.loads(output)
+            project = data['project']
+            tags = data['tags']
+            start = arrow.get(data['start'], datetime_format).replace(
+                tzinfo=local_tz).to('utc')
+            stop = arrow.get(data['stop'], datetime_format).replace(
+                tzinfo=local_tz).to('utc') if id else None
+            # if start time of the project is not before end time
+            #  raise ValueException
+            if not watson.is_started and start > stop:
+                raise ValueError(
+                    "Tasks start date needs to occur before end date.")
+            # break out of while loop and continue execution of
+            #  the edit function normally
+            break
+        except (ValueError, RuntimeError) as e:
+            click.echo("Error while parsing inputted values: {}".format(e),
+                       err=True)
+        except KeyError:
+            click.echo(
+                "The edited frame must contain the project, \
+                start and stop keys.", err=True)
+        # we reach here if exception was thrown, wait for user
+        #  to acknowledge the error before looping in while and
+        #  showing user the editor again
+        click.pause(err=True)
+        # use previous entered values to the user in editor
+        #  instead of original ones
+        text = output
+
+    # we reach this when we break out of the while loop above
     if id:
         watson.frames[id] = (project, start, stop, tags)
     else:
