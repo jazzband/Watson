@@ -2,7 +2,6 @@
 
 import json
 import os
-import sys
 
 import arrow
 from click import get_app_dir
@@ -12,10 +11,10 @@ import requests
 
 from watson import Watson, WatsonError
 from watson.watson import ConfigParser, ConfigurationError
+from watson.utils import PY2
 
 from . import mock_read
 
-PY2 = sys.version_info[0] == 2
 TEST_FIXTURE_DIR = py.path.local(
     os.path.dirname(
         os.path.realpath(__file__)
@@ -26,6 +25,13 @@ if not PY2:
     builtins = 'builtins'
 else:
     builtins = '__builtin__'
+
+
+@pytest.fixture
+def json_mock(mock):
+    return mock.patch.object(
+        json, 'dumps', side_effect=json.dumps, autospec=True
+    )
 
 
 # NOTE: All timestamps need to be > 3600 to avoid breaking the tests on
@@ -315,19 +321,17 @@ def test_cancel_no_project(watson):
 
 # save
 
-def test_save_without_changes(mock, watson):
+def test_save_without_changes(mock, watson, json_mock):
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert not json_mock.called
 
 
-def test_save_current(mock, watson):
+def test_save_current(mock, watson, json_mock):
     watson.start('foo', ['A', 'B'])
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert json_mock.call_count == 1
@@ -337,11 +341,10 @@ def test_save_current(mock, watson):
     assert result['tags'] == ['A', 'B']
 
 
-def test_save_current_without_tags(mock, watson):
+def test_save_current_without_tags(mock, watson, json_mock):
     watson.start('foo')
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert json_mock.call_count == 1
@@ -354,13 +357,12 @@ def test_save_current_without_tags(mock, watson):
     assert dump_args['ensure_ascii'] is False
 
 
-def test_save_empty_current(config_dir, mock):
+def test_save_empty_current(config_dir, mock, json_mock):
     watson = Watson(current={'project': 'foo', 'start': 4000},
                     config_dir=config_dir)
     watson.current = {}
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert json_mock.call_count == 1
@@ -368,23 +370,21 @@ def test_save_empty_current(config_dir, mock):
     assert result == {}
 
 
-def test_save_frames_no_change(config_dir, mock):
+def test_save_frames_no_change(config_dir, mock, json_mock):
     watson = Watson(frames=[[4000, 4010, 'foo', None]],
                     config_dir=config_dir)
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert not json_mock.called
 
 
-def test_save_added_frame(config_dir, mock):
+def test_save_added_frame(config_dir, mock, json_mock):
     watson = Watson(frames=[[4000, 4010, 'foo', None]], config_dir=config_dir)
     watson.frames.add('bar', 4010, 4020, ['A'])
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert json_mock.call_count == 1
@@ -396,13 +396,12 @@ def test_save_added_frame(config_dir, mock):
     assert result[1][4] == ['A']
 
 
-def test_save_changed_frame(config_dir, mock):
+def test_save_changed_frame(config_dir, mock, json_mock):
     watson = Watson(frames=[[4000, 4010, 'foo', None, ['A']]],
                     config_dir=config_dir)
     watson.frames[0] = ('bar', 4000, 4010, ['A', 'B'])
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert json_mock.call_count == 1
@@ -432,24 +431,22 @@ def test_save_config(mock, watson):
     assert write_mock.call_count == 1
 
 
-def test_save_last_sync(mock, watson):
+def test_save_last_sync(mock, watson, json_mock):
     now = arrow.now()
     watson.last_sync = now
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert json_mock.call_count == 1
     assert json_mock.call_args[0][0] == now.timestamp
 
 
-def test_save_empty_last_sync(config_dir, mock):
+def test_save_empty_last_sync(config_dir, mock, json_mock):
     watson = Watson(last_sync=arrow.now(), config_dir=config_dir)
     watson.last_sync = None
 
     mock.patch('%s.open' % builtins, mock.mock_open())
-    json_mock = mock.patch('json.dump')
     watson.save()
 
     assert json_mock.call_count == 1

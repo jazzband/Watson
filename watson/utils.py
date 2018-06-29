@@ -4,12 +4,15 @@ import json
 import operator
 import os
 import shutil
+import sys
 import tempfile
 
 import click
 import arrow
 
 from click.exceptions import UsageError
+
+PY2 = sys.version_info[0] == 2
 
 
 try:
@@ -23,7 +26,7 @@ def style(name, element):
         if not tags:
             return ''
 
-        return '[{}]'.format(', '.join(
+        return u'[{}]'.format(', '.join(
             style('tag', tag) for tag in tags
         ))
 
@@ -111,7 +114,7 @@ def get_frame_from_argument(watson, arg):
             return watson.frames[index]
     except IndexError:
         raise click.ClickException(
-            style('error', "No frame found for index {}.".format(arg))
+            style('error', u"No frame found for index {}.".format(arg))
         )
     except (ValueError, TypeError):
         pass
@@ -120,8 +123,8 @@ def get_frame_from_argument(watson, arg):
     try:
         return watson.frames[arg]
     except KeyError:
-        raise click.ClickException("{} {}.".format(
-            style('error', "No frame found with id"),
+        raise click.ClickException(u"{} {}.".format(
+            style('error', u"No frame found with id"),
             style('short_id', arg))
         )
 
@@ -149,7 +152,7 @@ def get_start_time_for_period(period):
         # approximately timestamp `0`
         start_time = arrow.Arrow(1970, 1, 1)
     else:
-        raise ValueError('Unsupported period value: {}'.format(period))
+        raise ValueError(u'Unsupported period value: {}'.format(period))
 
     return start_time
 
@@ -160,7 +163,12 @@ def make_json_writer(func, *args, **kwargs):
     value of func(*args, **kwargs) as JSON to it.
     """
     def writer(f):
-        json.dump(func(*args, **kwargs), f, indent=1, ensure_ascii=False)
+        dump = json.dumps(func(*args, **kwargs), indent=1, ensure_ascii=False)
+        if PY2:
+            # in Python, json.dumps with ensure_ascii=False can return
+            # unicode, but we need to write bytes in the file
+            dump = dump.encode('utf-8')
+        f.write(dump)
     return writer
 
 

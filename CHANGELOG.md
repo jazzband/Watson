@@ -20,6 +20,7 @@ This document records all notable changes to Watson. This project adheres to
   tests for continued support of older (2.7 and 3.3) Python versions
   (#175, #180).
 * Removed: support for Python 3.3 (#210).
+* Fixed support for UTF-8 with Python 2 (#211)
 
 ## 1.6.0 (2018-04-23)
 

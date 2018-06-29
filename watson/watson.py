@@ -90,11 +90,11 @@ class Watson(object):
                 return type()
             else:
                 raise WatsonError(
-                    "Invalid JSON file {}: {}".format(filename, e)
+                    u"Invalid JSON file {}: {}".format(filename, e)
                 )
         except Exception as e:
             raise WatsonError(
-                "Unexpected error while loading JSON file {}: {}".format(
+                u"Unexpected error while loading JSON file {}: {}".format(
                     filename, e
                 )
             )
@@ -119,7 +119,7 @@ class Watson(object):
                 config.read(self.config_file)
             except configparser.Error as e:
                 raise ConfigurationError(
-                    "Cannot parse config file: {}".format(e))
+                    u"Cannot parse config file: {}".format(e))
 
             self._config = config
 
@@ -165,7 +165,7 @@ class Watson(object):
                           make_json_writer(self._format_date, self.last_sync))
         except OSError as e:
             raise WatsonError(
-                "Impossible to write {}: {}".format(e.filename, e)
+                u"Impossible to write {}: {}".format(e.filename, e)
             )
 
     @property
@@ -255,7 +255,7 @@ class Watson(object):
 
         if self.is_started:
             raise WatsonError(
-                "Project {} is already started.".format(
+                u"Project {} is already started.".format(
                     self.current['project']
                 )
             )
@@ -308,7 +308,7 @@ class Watson(object):
         token = config.get('backend', 'token')
 
         if dest and token:
-            dest = "{}/{}/".format(
+            dest = u"{}/{}/".format(
                 dest.rstrip('/'),
                 route.strip('/')
             )
@@ -338,7 +338,7 @@ class Watson(object):
                 raise WatsonError("Unable to reach the server.")
             except AssertionError:
                 raise WatsonError(
-                    "An error occurred with the remote "
+                    u"An error occurred with the remote "
                     "server: {}".format(response.json())
                 )
 
@@ -356,7 +356,7 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                "An error occurred with the remote "
+                u"An error occurred with the remote "
                 "server: {}".format(response.json())
             )
 
@@ -395,8 +395,8 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                "An error occurred with the remote server (status: {}). "
-                "Response was:\n{}".format(
+                u"An error occurred with the remote server (status: {}). "
+                u"Response was:\n{}".format(
                     response.status_code,
                     response.text
                 )
@@ -504,7 +504,7 @@ class Watson(object):
     def rename_project(self, old_project, new_project):
         """Rename a project in all affected frames."""
         if old_project not in self.projects:
-            raise ValueError('Project "%s" does not exist' % old_project)
+            raise ValueError(u'Project "%s" does not exist' % old_project)
 
         updated_at = arrow.utcnow()
         # rename project
@@ -521,7 +521,7 @@ class Watson(object):
     def rename_tag(self, old_tag, new_tag):
         """Rename a tag in all affected frames."""
         if old_tag not in self.tags:
-            raise ValueError('Tag "%s" does not exist' % old_tag)
+            raise ValueError(u'Tag "%s" does not exist' % old_tag)
 
         updated_at = arrow.utcnow()
         # rename tag

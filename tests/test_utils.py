@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Unit tests for the 'utils' module."""
 
 import functools
@@ -13,7 +14,7 @@ import pytest
 from dateutil.tz import tzutc
 
 from watson.utils import (get_start_time_for_period, make_json_writer,
-                          safe_save, parse_tags)
+                          safe_save, parse_tags, PY2)
 from . import mock_datetime
 
 
@@ -57,6 +58,16 @@ def test_make_json_writer_with_kwargs():
     writer = make_json_writer(lambda foo=None: {'foo': foo}, foo='bar')
     writer(fp)
     assert fp.getvalue() == '{\n "foo": "bar"\n}'
+
+
+def test_make_json_writer_with_unicode():
+    fp = StringIO()
+    writer = make_json_writer(lambda: {u'ùñï©ôð€': u'εvεrywhεrε'})
+    writer(fp)
+    expected = u'{\n "ùñï©ôð€": "εvεrywhεrε"\n}'
+    if PY2:
+        expected = expected.encode('utf-8')
+    assert fp.getvalue() == expected
 
 
 def test_safe_save(config_dir):
