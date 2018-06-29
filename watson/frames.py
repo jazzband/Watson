@@ -17,7 +17,7 @@ class Frame(namedtuple('Frame', HEADERS)):
                 stop = arrow.get(stop)
         except RuntimeError as e:
             from .watson import WatsonError
-            raise WatsonError("Error converting date: {}".format(e))
+            raise WatsonError(u"Error converting date: {}".format(e))
 
         start = start.to('local')
         stop = stop.to('local')
@@ -120,7 +120,7 @@ class Frames(object):
                 i for i, v in enumerate(self['id']) if v.startswith(id)
             )
         except StopIteration:
-            raise KeyError("Frame with id {} not found.".format(id))
+            raise KeyError(u"Frame with id {} not found.".format(id))
 
     def _get_col(self, col):
         index = HEADERS.index(col)

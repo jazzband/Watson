@@ -26,7 +26,7 @@ def style(name, element):
         if not tags:
             return ''
 
-        return '[{}]'.format(', '.join(
+        return u'[{}]'.format(', '.join(
             style('tag', tag) for tag in tags
         ))
 
@@ -114,7 +114,7 @@ def get_frame_from_argument(watson, arg):
             return watson.frames[index]
     except IndexError:
         raise click.ClickException(
-            style('error', "No frame found for index {}.".format(arg))
+            style('error', u"No frame found for index {}.".format(arg))
         )
     except (ValueError, TypeError):
         pass
@@ -123,8 +123,8 @@ def get_frame_from_argument(watson, arg):
     try:
         return watson.frames[arg]
     except KeyError:
-        raise click.ClickException("{} {}.".format(
-            style('error', "No frame found with id"),
+        raise click.ClickException(u"{} {}.".format(
+            style('error', u"No frame found with id"),
             style('short_id', arg))
         )
 
@@ -152,7 +152,7 @@ def get_start_time_for_period(period):
         # approximately timestamp `0`
         start_time = arrow.Arrow(1970, 1, 1)
     else:
-        raise ValueError('Unsupported period value: {}'.format(period))
+        raise ValueError(u'Unsupported period value: {}'.format(period))
 
     return start_time
 
