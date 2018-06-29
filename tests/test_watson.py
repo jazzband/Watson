@@ -2,7 +2,6 @@
 
 import json
 import os
-import sys
 
 import arrow
 from click import get_app_dir
@@ -12,10 +11,10 @@ import requests
 
 from watson import Watson, WatsonError
 from watson.watson import ConfigParser, ConfigurationError
+from watson.utils import PY2
 
 from . import mock_read
 
-PY2 = sys.version_info[0] == 2
 TEST_FIXTURE_DIR = py.path.local(
     os.path.dirname(
         os.path.realpath(__file__)

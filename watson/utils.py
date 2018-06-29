@@ -4,12 +4,15 @@ import json
 import operator
 import os
 import shutil
+import sys
 import tempfile
 
 import click
 import arrow
 
 from click.exceptions import UsageError
+
+PY2 = sys.version_info[0] == 2
 
 
 try:
@@ -160,7 +163,12 @@ def make_json_writer(func, *args, **kwargs):
     value of func(*args, **kwargs) as JSON to it.
     """
     def writer(f):
-        json.dump(func(*args, **kwargs), f, indent=1, ensure_ascii=False)
+        dump = json.dumps(func(*args, **kwargs), indent=1, ensure_ascii=False)
+        if PY2:
+            # in Python, json.dumps with ensure_ascii=False can return
+            # unicode, but we need to write bytes in the file
+            dump = dump.encode('utf-8')
+        f.write(dump)
     return writer
 
 
