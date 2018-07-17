@@ -358,14 +358,21 @@ def test_save_current_without_tags(mock, watson, json_mock):
 
 
 def test_save_empty_current(config_dir, mock, json_mock):
-    watson = Watson(current={'project': 'foo', 'start': 4000},
-                    config_dir=config_dir)
-    watson.current = {}
+    watson = Watson(current={}, config_dir=config_dir)
 
     mock.patch('%s.open' % builtins, mock.mock_open())
+
+    watson.current = {'project': 'foo', 'start': 4000}
     watson.save()
 
     assert json_mock.call_count == 1
+    result = json_mock.call_args[0][0]
+    assert result == {'project': 'foo', 'start': 4000, 'tags': []}
+
+    watson.current = {}
+    watson.save()
+
+    assert json_mock.call_count == 2
     result = json_mock.call_args[0][0]
     assert result == {}
 

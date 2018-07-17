@@ -152,6 +152,7 @@ class Watson(object):
                     current = {}
 
                 safe_save(self.state_file, make_json_writer(lambda: current))
+                self._old_state = current
 
             if self._frames is not None and self._frames.changed:
                 safe_save(self.frames_file,
