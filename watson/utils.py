@@ -10,6 +10,8 @@ import tempfile
 import click
 import arrow
 
+from .fullmoon import get_last_full_moon
+
 from click.exceptions import UsageError
 
 PY2 = sys.version_info[0] == 2
@@ -146,6 +148,8 @@ def get_start_time_for_period(period):
         start_time = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
     elif period == 'month':
         start_time = arrow.Arrow(year, month, 1)
+    elif period == 'luna':
+        start_time = get_last_full_moon(now)
     elif period == 'year':
         start_time = arrow.Arrow(year, 1, 1)
     elif period == 'all':
