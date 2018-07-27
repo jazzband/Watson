@@ -371,6 +371,8 @@ def report(watson, current, from_, to, projects, tags, year, month,
     `--day` sets the report timespan to the current day (beginning at 00:00h)
     and `--year`, `--month` and `--week` to the current year, month or week
     respectively.
+    The shortcut `--luna` sets the timespan to the current moon cycle with
+    the last full moon marking the start of the cycle.
 
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -580,6 +582,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     `--day` sets the log timespan to the current day (beginning at 00:00h)
     and `--year`, `--month` and `--week` to the current year, month or week
     respectively.
+    The shortcut `--luna` sets the timespan to the current moon cycle with
+    the last full moon marking the start of the cycle.
 
     If you are outputting to the terminal, you can selectively enable a pager
     through the `--pager` option.

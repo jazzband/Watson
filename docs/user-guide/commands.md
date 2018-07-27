@@ -126,6 +126,8 @@ You can also use special shortcut options for easier timespan control:
 `--day` sets the log timespan to the current day (beginning at 00:00h)
 and `--year`, `--month` and `--week` to the current year, month or week
 respectively.
+The shortcut `--luna` sets the timespan to the current moon cycle with
+the last full moon marking the start of the cycle.
 
 If you are outputting to the terminal, you can selectively enable a pager
 through the `--pager` option.
@@ -172,6 +174,7 @@ Flag | Help
 `-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
 `-y, --year` | Reports activity for the current year.
 `-m, --month` | Reports activity for the current month.
+`-l, --luna` | Reports activity for the current moon cycle.
 `-w, --week` | Reports activity for the current week.
 `-d, --day` | Reports activity for the current day.
 `-a, --all` | Reports all activities.
@@ -329,6 +332,8 @@ You can also use special shortcut options for easier timespan control:
 `--day` sets the report timespan to the current day (beginning at 00:00h)
 and `--year`, `--month` and `--week` to the current year, month or week
 respectively.
+The shortcut `--luna` sets the timespan to the current moon cycle with
+the last full moon marking the start of the cycle.
 
 You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
@@ -416,6 +421,7 @@ Flag | Help
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-y, --year` | Reports activity for the current year.
 `-m, --month` | Reports activity for the current month.
+`-l, --luna` | Reports activity for the current moon cycle.
 `-w, --week` | Reports activity for the current week.
 `-d, --day` | Reports activity for the current day.
 `-a, --all` | Reports all activities.
