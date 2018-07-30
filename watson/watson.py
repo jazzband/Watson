@@ -427,8 +427,9 @@ class Watson(object):
         return conflicting, merging
 
     def report(self, from_, to, current=None, projects=None, tags=None,
-               year=None, month=None, week=None, day=None, all=None):
-        for start_time in (_ for _ in [day, week, month, year, all]
+               year=None, month=None, week=None, day=None, luna=None,
+               all=None):
+        for start_time in (_ for _ in [day, week, month, year, luna, all]
                            if _ is not None):
             from_ = start_time
 
