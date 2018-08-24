@@ -17,7 +17,8 @@ from . import watson as _watson
 from .frames import Frame
 from .utils import (apply_weekday_offset, format_timedelta,
                     get_frame_from_argument, get_start_time_for_period,
-                    options, safe_save, sorted_groupby, style, parse_tags)
+                    options, safe_save, sorted_groupby, style, parse_tags,
+                    confirm_project, confirm_tags)
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -155,9 +156,13 @@ def _start(watson, project, tags, restart=False, gap=True):
               help=("(Don't) leave gap between end time of previous project "
                     "and start time of the current."))
 @click.argument('args', nargs=-1)
+@click.option('--confirm-new-project/--no-confirm-new-project', default=False,
+              help="Confirm addition of new project.")
+@click.option('--confirm-new-tag/--no-confirm-new-tag', default=False,
+              help="Confirm creation of new tag.")
 @click.pass_obj
 @click.pass_context
-def start(ctx, watson, args, gap_=True):
+def start(ctx, watson, confirm_new_project, confirm_new_tags, args, gap_=True):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -179,9 +184,11 @@ def start(ctx, watson, args, gap_=True):
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
+    confirm_project(watson, project, confirm_new_project)
 
     # Parse all the tags
     tags = parse_tags(args)
+    confirm_tags(watson, tags, confirm_new_tag)
 
     if project and watson.is_started and not gap_:
         current = watson.current
@@ -997,8 +1004,12 @@ def frames(watson):
               help="Date and time of start of tracked activity")
 @click.option('-t', '--to', required=True, type=Date,
               help="Date and time of end of tracked activity")
+@click.option('--confirm-new-project/--no-confirm-new-project', default=False,
+              help="Confirm addition of new project.")
+@click.option('--confirm-new-tag/--no-confirm-new-tag', default=False,
+              help="Confirm creation of new tag.")
 @click.pass_obj
-def add(watson, args, from_, to):
+def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     """
     Add time for project with tag(s) that was not tracked live.
 
@@ -1012,9 +1023,11 @@ def add(watson, args, from_, to):
     project = ' '.join(
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
+    confirm_project(watson, project, confirm_new_project)
 
     # Parse all the tags
     tags = parse_tags(args)
+    confirm_tags(watson, tags, confirm_new_tag)
 
     # add a new frame, call watson save to update state files
     frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to)
@@ -1031,9 +1044,13 @@ def add(watson, args, from_, to):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
+@click.option('--confirm-new-project/--no-confirm-new-project', default=False,
+              help="Confirm addition of new project.")
+@click.option('--confirm-new-tag/--no-confirm-new-tag', default=False,
+              help="Confirm creation of new tag.")
 @click.argument('id', required=False)
 @click.pass_obj
-def edit(watson, id):
+def edit(watson, confirm_new_project, confirm_new_tag, id):
     """
     Edit a frame.
 
@@ -1093,7 +1110,9 @@ def edit(watson, id):
         try:
             data = json.loads(output)
             project = data['project']
+            confirm_project(watson, project, confirm_new_project)
             tags = data['tags']
+            confirm_tags(watson, tags, confirm_new_tag)
             start = arrow.get(data['start'], datetime_format).replace(
                 tzinfo=local_tz).to('utc')
             stop = arrow.get(data['stop'], datetime_format).replace(
