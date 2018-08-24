@@ -33,6 +33,7 @@ def confirm_project(watson, project, confirm_new_project):
                 click.echo("Aborting operation.", err=True)
                 sys.exit(1)
 
+
 def confirm_tags(watson, tags, confirm_new_tag):
     # https://github.com/TailorDev/Watson/issues/191 - for tags
     if watson.config.getboolean('options',
@@ -43,6 +44,7 @@ def confirm_tags(watson, tags, confirm_new_tag):
                 if not click.confirm(msg, err=True):
                     click.echo("Aborting operation.", err=True)
                     sys.exit(1)
+
 
 def style(name, element):
     def _style_tags(tags):
