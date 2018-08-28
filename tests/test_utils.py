@@ -27,12 +27,14 @@ _dt = functools.partial(datetime.datetime, tzinfo=tzutc())
     (_dt(2016, 6, 2), 'week', _dt(2016, 5, 30)),
     (_dt(2016, 6, 2), 'day', _dt(2016, 6, 2)),
     (_dt(2016, 6, 2), 'all', _dt(1970, 1, 1)),
+    (_dt(2016, 6, 2), 'luna', _dt(2016, 5, 21, 21, 16)),
 
     (_dt(2012, 2, 24), 'year', _dt(2012, 1, 1)),
     (_dt(2012, 2, 24), 'month', _dt(2012, 2, 1)),
     (_dt(2012, 2, 24), 'week', _dt(2012, 2, 20)),
     (_dt(2012, 2, 24), 'day', _dt(2012, 2, 24)),
     (_dt(2012, 2, 24), 'all', _dt(1970, 1, 1)),
+    (_dt(2012, 2, 24), 'luna', _dt(2012, 2, 7, 21, 56)),
 ])
 def test_get_start_time_for_period(now, mode, start_time):
     with mock_datetime(now, datetime):
