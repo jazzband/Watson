@@ -1,4 +1,5 @@
 import arrow
+import bisect
 
 # timestamps for fullmoons between year 2000 and 2099
 # data source http://home.hiwaay.net/~krcool/Astro/moon/fullmoon.htm
@@ -217,20 +218,16 @@ fullmoons = [
 def get_last_full_moon(d):
     """
     Returns the last full moon for d
+
+    Raises ValueError if the d value is not between 2000 - 2099
     """
 
     now = d.timestamp
-    if now < min(fullmoons) or now > max(fullmoons):
+    idx = bisect.bisect_right(fullmoons, now)
+    if idx in [0, len(fullmoons)]:
         raise ValueError(
             u'watson has only full moon dates from year 2000 to 2099, not {}'
             .format(d.year))
 
-    last = fullmoons[0]
-
-    for fullmoon in fullmoons[1:]:
-        if fullmoon < now:
-            last = fullmoon
-        else:
-            break
-
+    last = fullmoons[idx - 1]
     return arrow.get(last)
