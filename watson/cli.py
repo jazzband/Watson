@@ -304,6 +304,9 @@ def status(watson, project, tags, elapsed):
 
 
 _SHORTCUT_OPTIONS = ['all', 'year', 'month', 'luna', 'week', 'day']
+_SHORTCUT_OPTIONS_VALUES = {
+    k: get_start_time_for_period(k) for k in _SHORTCUT_OPTIONS
+}
 
 
 @cli.command()
@@ -320,27 +323,27 @@ _SHORTCUT_OPTIONS = ['all', 'year', 'month', 'luna', 'week', 'day']
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
 @click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('year'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['year'],
               mutually_exclusive=['day', 'week', 'luna', 'month', 'all'],
               help='Reports activity for the current year.')
 @click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('month'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['month'],
               mutually_exclusive=['day', 'week', 'luna', 'year', 'all'],
               help='Reports activity for the current month.')
 @click.option('-l', '--luna', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('luna'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['luna'],
               mutually_exclusive=['day', 'week', 'month', 'year', 'all'],
               help='Reports activity for the current moon cycle.')
 @click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('week'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['week'],
               mutually_exclusive=['day', 'month', 'luna', 'year', 'all'],
               help='Reports activity for the current week.')
 @click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('day'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['day'],
               mutually_exclusive=['week', 'month', 'luna', 'year', 'all'],
               help='Reports activity for the current day.')
 @click.option('-a', '--all', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('all'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'luna', 'year'],
               help='Reports all activities.')
 @click.option('-p', '--project', 'projects', multiple=True,
@@ -534,27 +537,27 @@ def report(watson, current, from_, to, projects, tags, year, month,
               help="The date at which the log should stop (inclusive). "
               "Defaults to tomorrow.")
 @click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('year'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['year'],
               mutually_exclusive=['day', 'week', 'month', 'all'],
               help='Reports activity for the current year.')
 @click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('month'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['month'],
               mutually_exclusive=['day', 'week', 'year', 'all'],
               help='Reports activity for the current month.')
 @click.option('-l', '--luna', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('luna'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['luna'],
               mutually_exclusive=['day', 'week', 'month', 'year', 'all'],
               help='Reports activity for the current moon cycle.')
 @click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('week'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['week'],
               mutually_exclusive=['day', 'month', 'year', 'all'],
               help='Reports activity for the current week.')
 @click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('day'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['day'],
               mutually_exclusive=['week', 'month', 'year', 'all'],
               help='Reports activity for the current day.')
 @click.option('-a', '--all', cls=MutuallyExclusiveOption, type=Date,
-              flag_value=get_start_time_for_period('all'),
+              flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'year'],
               help='Reports all activities.')
 @click.option('-p', '--project', 'projects', multiple=True,
