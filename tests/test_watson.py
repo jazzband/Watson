@@ -19,7 +19,6 @@ import arrow
 
 from click import get_app_dir
 from watson import Watson, WatsonError
-from watson.frames import Frame, Frames
 from watson.watson import ConfigurationError, ConfigParser
 
 TEST_FIXTURE_DIR = py.path.local(
@@ -158,106 +157,6 @@ def test_frames(watson):
         assert frame.start == arrow.get(0)
         assert frame.stop == arrow.get(10)
         assert frame.tags == ['A', 'B', 'C']
-
-
-def test_frames_from_sequence_of_tuples(watson):
-    test_frames = (
-        ('0', 'project0',  0, 10),
-        ('1', 'project1', 10, 20, ['A', 'B', 'C'])
-    )
-    watson.frames = test_frames
-
-    assert len(watson.frames) == 2
-    assert isinstance(watson.frames, Frames)
-
-    frame = watson.frames.get_by_index(0)
-    assert isinstance(frame, Frame)
-    assert frame.id == '0'
-    assert frame.project == 'project0'
-    assert frame.start == arrow.get(0)
-    assert frame.stop == arrow.get(10)
-
-    frame = watson.frames.get_by_index(1)
-    assert isinstance(frame, Frame)
-    assert frame.id == '1'
-    assert frame.project == 'project1'
-    assert frame.start == arrow.get(10)
-    assert frame.stop == arrow.get(20)
-    assert frame.tags == ['A', 'B', 'C']
-
-
-def test_frames_from_sequence_of_lists(watson):
-    test_frames = (
-        ['0', 'project0',  0, 10],
-        ['1', 'project1', 10, 20, ['A', 'B', 'C']]
-    )
-    watson.frames = test_frames
-
-    assert len(watson.frames) == 2
-    assert isinstance(watson.frames, Frames)
-
-    frame = watson.frames.get_by_index(0)
-    assert isinstance(frame, Frame)
-    assert frame.id == '0'
-    assert frame.project == 'project0'
-    assert frame.start == arrow.get(0)
-    assert frame.stop == arrow.get(10)
-
-    frame = watson.frames.get_by_index(1)
-    assert isinstance(frame, Frame)
-    assert frame.id == '1'
-    assert frame.project == 'project1'
-    assert frame.start == arrow.get(10)
-    assert frame.stop == arrow.get(20)
-    assert frame.tags == ['A', 'B', 'C']
-
-
-def test_frames_from_old_format(watson):
-    test_frames = (
-        [0, 10, 'project0', '0'],
-        [10, 20, 'project1', '1', ['A', 'B', 'C']],
-        [20, 30, 'project2', '2', ['D', 'E', 'F'], 30]
-    )
-    watson.frames = test_frames
-
-    assert len(watson.frames) == 3
-    assert isinstance(watson.frames, Frames)
-
-    frame = watson.frames.get_by_index(0)
-    assert isinstance(frame, Frame)
-    assert frame.id == '0'
-    assert frame.project == 'project0'
-    assert frame.start == arrow.get(0)
-    assert frame.stop == arrow.get(10)
-
-    frame = watson.frames.get_by_index(1)
-    assert isinstance(frame, Frame)
-    assert frame.id == '1'
-    assert frame.project == 'project1'
-    assert frame.start == arrow.get(10)
-    assert frame.stop == arrow.get(20)
-    assert frame.tags == ['A', 'B', 'C']
-
-    frame = watson.frames.get_by_index(2)
-    assert isinstance(frame, Frame)
-    assert frame.id == '2'
-    assert frame.project == 'project2'
-    assert frame.start == arrow.get(20)
-    assert frame.stop == arrow.get(30)
-    assert frame.tags == ['D', 'E', 'F']
-    assert frame.updated_at == arrow.get(30)
-
-
-def test_frames_from_frames(watson):
-    frames_instance = Frames((
-        ('0', 'project0',  0, 10),
-        ('1', 'project1', 10, 20, ['A', 'B', 'C'])
-    ))
-    watson.frames = frames_instance
-
-    assert len(watson.frames) == 2
-    assert isinstance(watson.frames, Frames)
-    assert watson.frames is frames_instance
 
 
 def test_frames_get_by_index(watson):
