@@ -29,17 +29,10 @@ class ConfigurationError(WatsonError, configparser.Error):
 class Watson(object):
     def __init__(self, **kwargs):
         """
-        :param frames: If given, should be a sequence of frames or a
-                       frames.Frames instance.
-
-                       If a sequence is given, each item may either be a
-                       frames.Frame instance or a sequence of frame values,
-                       with at least these 4 items:
-
-                           (id, project, start, stop)
-
-                       If not given, the value is extracted from the frames
-                       file.
+        :param frames: If given, should be a list representating the
+                        frames.
+                        If not given, the value is extracted
+                        from the frames file.
         :type frames: list
 
         :param current: If given, should be a dict representating the
@@ -185,10 +178,7 @@ class Watson(object):
 
     @frames.setter
     def frames(self, frames):
-        if isinstance(frames, Frames):
-            self._frames = frames
-        else:
-            self._frames = Frames(frames)
+        self._frames = Frames(frames)
 
     @property
     def current(self):
