@@ -1,13 +1,19 @@
 -r requirements.txt
 
 # Docs
-mkdocs
+mkdocs<0.15.0
+
+# Release
+wheel
+twine
 
 # Tests
 flake8
 # mock>1.0.1 requires setuptools>17
 mock<=1.0.1
+py
 pytest
 pytest-datafiles
+pytest-mock
 pytest-runner
 tox

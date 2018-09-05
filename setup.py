@@ -32,7 +32,7 @@ def parse_requirements(requirements, ignore=('setuptools',)):
             pkg = line.strip()
             if pkg not in ignore:
                 packages.add(pkg)
-        return packages
+        return tuple(packages)
 
 
 setup(
@@ -66,8 +66,9 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Topic :: Office/Business",
         "Topic :: Utilities",
     ],

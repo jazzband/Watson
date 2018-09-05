@@ -1,6 +1,6 @@
 .. image:: https://tailordev.github.io/Watson/img/logo-watson-600px.png
 
-|Build Status| |PyPI Downloads Per Month| |PyPI Latest Version| |Requires.io|
+|Build Status| |PyPI Latest Version| |Requires.io|
 
 Watson is here to help you manage your time. You want to know how
 much time you are spending on your projects? You want to generate a nice
@@ -79,8 +79,6 @@ details.
 
 .. |Build Status| image:: https://travis-ci.org/TailorDev/Watson.svg?branch=master
    :target: https://travis-ci.org/TailorDev/Watson
-.. |PyPI Downloads Per Month| image:: https://img.shields.io/pypi/dm/td-watson.svg
-   :target: https://pypi.python.org/pypi/td-watson
 .. |PyPI Latest Version| image:: https://img.shields.io/pypi/v/td-watson.svg
    :target: https://pypi.python.org/pypi/td-watson
 .. |Requires.io| image:: https://requires.io/github/TailorDev/Watson/requirements.svg?branch=master

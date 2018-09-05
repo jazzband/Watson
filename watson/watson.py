@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
 
-import os
+import datetime
+from functools import reduce
 import json
+import operator
+import os
+import uuid
 
 try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
-
 import arrow
 import click
 import requests
 
 from .config import ConfigParser
 from .frames import Frames
+from .utils import deduplicate, make_json_writer, safe_save, sorted_groupby
 from .version import version as __version__  # noqa
 
 
@@ -21,20 +25,20 @@ class WatsonError(RuntimeError):
     pass
 
 
-class ConfigurationError(WatsonError, configparser.Error):
+class ConfigurationError(configparser.Error, WatsonError):
     pass
 
 
 class Watson(object):
     def __init__(self, **kwargs):
         """
-        :param frames: If given, should be a list representating the
+        :param frames: If given, should be a list representing the
                         frames.
                         If not given, the value is extracted
                         from the frames file.
         :type frames: list
 
-        :param current: If given, should be a dict representating the
+        :param current: If given, should be a dict representing the
                         current frame.
                         If not given, the value is extracted
                         from the state file.
@@ -86,11 +90,11 @@ class Watson(object):
                 return type()
             else:
                 raise WatsonError(
-                    "Invalid JSON file {}: {}".format(filename, e)
+                    u"Invalid JSON file {}: {}".format(filename, e)
                 )
         except Exception as e:
             raise WatsonError(
-                "Unexpected error while loading JSON file {}: {}".format(
+                u"Unexpected error while loading JSON file {}: {}".format(
                     filename, e
                 )
             )
@@ -115,7 +119,7 @@ class Watson(object):
                 config.read(self.config_file)
             except configparser.Error as e:
                 raise ConfigurationError(
-                    "Cannot parse config file: {}".format(e))
+                    u"Cannot parse config file: {}".format(e))
 
             self._config = config
 
@@ -148,24 +152,22 @@ class Watson(object):
                 else:
                     current = {}
 
-                with open(self.state_file, 'w+') as f:
-                    json.dump(current, f, indent=1, ensure_ascii=False)
+                safe_save(self.state_file, make_json_writer(lambda: current))
+                self._old_state = current
 
             if self._frames is not None and self._frames.changed:
-                with open(self.frames_file, 'w+') as f:
-                    json.dump(self.frames.dump(), f, indent=1,
-                              ensure_ascii=False)
+                safe_save(self.frames_file,
+                          make_json_writer(self.frames.dump))
 
             if self._config_changed:
-                with open(self.config_file, 'w+') as f:
-                    self.config.write(f)
+                safe_save(self.config_file, self.config.write)
 
             if self._last_sync is not None:
-                with open(self.last_sync_file, 'w+') as f:
-                    json.dump(self._format_date(self.last_sync), f)
+                safe_save(self.last_sync_file,
+                          make_json_writer(self._format_date, self.last_sync))
         except OSError as e:
             raise WatsonError(
-                "Impossible to write {}: {}".format(e.filename, e)
+                u"Impossible to write {}: {}".format(e.filename, e)
             )
 
     @property
@@ -238,18 +240,34 @@ class Watson(object):
     def is_started(self):
         return bool(self.current)
 
-    def start(self, project, tags=None):
+    def add(self, project, from_date, to_date, tags):
+        if not project:
+            raise WatsonError("No project given.")
+        if from_date > to_date:
+            raise WatsonError("Task can not start before it ends.")
+
+        default_tags = self.config.getlist('default_tags', project)
+        tags = (tags or []) + default_tags
+
+        frame = self.frames.add(project, from_date, to_date, tags=tags)
+        return frame
+
+    def start(self, project, tags=None, restart=False):
         if not project:
             raise WatsonError("No project given.")
 
         if self.is_started:
             raise WatsonError(
-                "Project {} is already started.".format(
+                u"Project {} is already started.".format(
                     self.current['project']
                 )
             )
 
-        self.current = {'project': project, 'tags': tags}
+        default_tags = self.config.getlist('default_tags', project)
+        if not restart:
+            tags = (tags or []) + default_tags
+
+        self.current = {'project': project, 'tags': deduplicate(tags)}
         return self.current
 
     def stop(self):
@@ -292,7 +310,7 @@ class Watson(object):
         token = config.get('backend', 'token')
 
         if dest and token:
-            dest = "{}/{}/".format(
+            dest = u"{}/{}/".format(
                 dest.rstrip('/'),
                 route.strip('/')
             )
@@ -322,11 +340,11 @@ class Watson(object):
                 raise WatsonError("Unable to reach the server.")
             except AssertionError:
                 raise WatsonError(
-                    "An error occured with the remote "
+                    u"An error occurred with the remote "
                     "server: {}".format(response.json())
                 )
 
-        return self._remote_projects
+        return self._remote_projects['projects']
 
     def pull(self):
         dest, headers = self._get_request_info('frames')
@@ -340,27 +358,20 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                "An error occured with the remote "
+                u"An error occurred with the remote "
                 "server: {}".format(response.json())
             )
 
         frames = response.json() or ()
 
         for frame in frames:
-            try:
-                # Try to find the project name, as the API returns an URL
-                project = next(
-                    p['name'] for p in self._get_remote_projects()
-                    if p['url'] == frame['project']
-                )
-            except StopIteration:
-                raise WatsonError(
-                    "Received frame with invalid project from the server "
-                    "(id: {})".format(frame['project']['id'])
-                )
-
-            self.frames[frame['id']] = (project, frame['start'], frame['stop'],
-                                        frame['tags'])
+            frame_id = uuid.UUID(frame['id']).hex
+            self.frames[frame_id] = (
+                frame['project'],
+                frame['start_at'],
+                frame['end_at'],
+                frame['tags']
+            )
 
         return frames
 
@@ -371,25 +382,11 @@ class Watson(object):
 
         for frame in self.frames:
             if last_pull > frame.updated_at > self.last_sync:
-                try:
-                    # Find the url of the project
-                    project = next(
-                        p['url'] for p in self._get_remote_projects()
-                        if p['name'] == frame.project
-                    )
-                except StopIteration:
-                    raise WatsonError(
-                        "The project {} does not exists on the remote server, "
-                        "please create it or edit the frame (id: {})".format(
-                            frame.project, frame.id
-                        )
-                    )
-
                 frames.append({
-                    'id': frame.id,
-                    'start': str(frame.start),
-                    'stop': str(frame.stop),
-                    'project': project,
+                    'id': uuid.UUID(frame.id).urn,
+                    'start_at': str(frame.start.to('utc')),
+                    'end_at': str(frame.stop.to('utc')),
+                    'project': frame.project,
                     'tags': frame.tags
                 })
 
@@ -400,8 +397,11 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                "An error occured with the remote "
-                "server: {}".format(response.json())
+                u"An error occurred with the remote server (status: {}). "
+                u"Response was:\n{}".format(
+                    response.status_code,
+                    response.text
+                )
             )
 
         return frames
@@ -426,3 +426,114 @@ class Watson(object):
                 merging.append(conflict_frame)
 
         return conflicting, merging
+
+    def report(self, from_, to, current=None, projects=None, tags=None,
+               year=None, month=None, week=None, day=None, luna=None,
+               all=None):
+        for start_time in (_ for _ in [day, week, month, year, luna, all]
+                           if _ is not None):
+            from_ = start_time
+
+        if from_ > to:
+            raise WatsonError("'from' must be anterior to 'to'")
+
+        if tags is None:
+            tags = []
+
+        if self.current:
+            if current or (current is None and
+                           self.config.getboolean(
+                               'options', 'report_current')):
+                cur = self.current
+                self.frames.add(cur['project'], cur['start'], arrow.utcnow(),
+                                cur['tags'], id="current")
+
+        span = self.frames.span(from_, to)
+
+        frames_by_project = sorted_groupby(
+            self.frames.filter(
+                projects=projects or None, tags=tags or None, span=span
+            ),
+            operator.attrgetter('project')
+        )
+
+        total = datetime.timedelta()
+
+        report = {
+             'timespan': {
+                 'from': str(span.start),
+                 'to': str(span.stop),
+             },
+             'projects': []
+         }
+
+        for project, frames in frames_by_project:
+            frames = tuple(frames)
+            delta = reduce(
+                operator.add,
+                (f.stop - f.start for f in frames),
+                datetime.timedelta()
+            )
+            total += delta
+
+            project_report = {
+                'name': project,
+                'time': delta.total_seconds(),
+                'tags': []
+            }
+
+            tags_to_print = sorted(
+                set(tag for frame in frames for tag in frame.tags
+                    if tag in tags or not tags)
+            )
+
+            for tag in tags_to_print:
+                delta = reduce(
+                    operator.add,
+                    (f.stop - f.start for f in frames if tag in f.tags),
+                    datetime.timedelta()
+                )
+
+                project_report['tags'].append({
+                    'name': tag,
+                    'time': delta.total_seconds()
+                })
+
+            report['projects'].append(project_report)
+
+        report['time'] = total.total_seconds()
+        return report
+
+    def rename_project(self, old_project, new_project):
+        """Rename a project in all affected frames."""
+        if old_project not in self.projects:
+            raise ValueError(u'Project "%s" does not exist' % old_project)
+
+        updated_at = arrow.utcnow()
+        # rename project
+        for frame in self.frames:
+            if frame.project == old_project:
+                self.frames[frame.id] = frame._replace(
+                    project=new_project,
+                    updated_at=updated_at
+                )
+
+        self.frames.changed = True
+        self.save()
+
+    def rename_tag(self, old_tag, new_tag):
+        """Rename a tag in all affected frames."""
+        if old_tag not in self.tags:
+            raise ValueError(u'Tag "%s" does not exist' % old_tag)
+
+        updated_at = arrow.utcnow()
+        # rename tag
+        for frame in self.frames:
+            if old_tag in frame.tags:
+                self.frames[frame.id] = frame._replace(
+                    tags=[new_tag if t == old_tag else t for t in frame.tags],
+                    updated_at=updated_at
+                )
+
+        self.frames.changed = True
+        self.save()

@@ -3,6 +3,55 @@
 This document records all notable changes to Watson. This project adheres to
 [Semantic Versioning](http://semver.org/).
 
+## 1.6.0 (2018-04-23)
+
+* Added: for report and log, allow specifying a timeperiod of "all"
+* Added: option for log and report command to (not) output via pager
+* Added: --json option to log command
+* Added: optional flags to filter status call
+* Fixed: change message when frame is removed
+* Fixed: cli output when on tags on `stop` and `remove`
+* Fixed: Bash completion with latest additions to command options
+* Fixed: CLI output spacing if a frame has no tags
+* Fixed: frame modification time when renaming projects and tags (#181)
+* Fixed: don't print space before tags if there are no tags (#179)
+* Fixed: match log daily heading format to elsewhere
+* Fixed: set max versions for pytest and arrow for keeping support for Python 2.7 and 3.3
+
+## 1.5.2 (2017-08-02)
+
+* Fixed: Follow up on the `config` command fix (#161)
+
+## 1.5.1 (2017-08-01)
+
+* Fix the `config` command (#158)
+
+## 1.5.0 (2017-07-31)
+
+* Added: the `report` command now supports JSON output (#102)
+* Updated: the `sync` command is now compatible with the new crick.io backend
+  API (#152)
+* Updated: Python 3.6 is now officially supported (#150)
+* Fixed: catch error when user wants to edit config but file does not exist yet
+  (#154)
+
+## 1.4.0 (2016-11-01)
+
+* Added: Watson now has a `rename` command (#74).
+* Added: the `report` and `log` commands now have new command line and
+  config file options to (not) include the current frame in the output (#123).
+* Added: the `report` and `log` commands now have new command line options to
+  set the timespan to the current year, month, week or day (#130 via #124).
+* Added: you can now set default tags for selected projects in the
+  config file (#113).
+* Added: Zsh completion support (#96)
+* Added: document installation via homebrew on OS X (#121)
+* Updated: when saving the Watson frames, state or config file, the most recent
+  previous version of the file is kept as a back up (#120).
+* Fixed: bash completion of projects and tags with spaces in them (#122).
+* Fixed: if saving the Watson frames, state or config file fails for any
+  reason, the original is kept (and not wiped as before) (#120).
+
 ## 1.3.2 (2016-03-01)
 
 * Added: document installation for Arch Linux

@@ -1,8 +1,17 @@
+include CHANGELOG.md
+include CONTRIBUTING.md
+include LICENSE
+include Makefile
+include mkdocs.yml
 include README.md
-include LICENCE
-include tox.ini
-include requirements.txt
 include requirements-dev.txt
+include requirements.txt
+include tox.ini
 include watson.completion
-recursive-include tests *
+include watson.zsh-completion
+
+recursive-include docs *.css *.gif *.md *.png *.svg
 recursive-include scripts *
+recursive-include tests *.py resources/*
+
+recursive-exclude tests *.pyc

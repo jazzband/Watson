@@ -2,10 +2,10 @@
 
 ## The configuration file
 
-Watson configuration and data are stored inside your user's application folder. Depending on your system, the default path might be:
+Watson configuration and data are stored inside your user's application folder. Depending on your system, the default path is likely:
 
 * **MacOSX**: `~/Library/Application Support/watson/config`
-* **Windows**: `C:\Users\<user>\AppData\Local\watson\config`
+* **Windows**: `%appdata%\watson\config`, which usually expands to `C:\Users\<user>\AppData\Roaming\watson\config`
 * **Linux**: `~/.config/watson/config`
 
 The configuration file is a typical [python configuration (INI) file](https://docs.python.org/3.4/library/configparser.html#supported-ini-file-structure), that looks like:
@@ -58,7 +58,7 @@ empty string value here =
 _This example configuration file has been taken from the [official python documentation](https://docs.python.org/3.4/library/configparser.html#supported-ini-file-structure)._
 
 
-## Edition
+## Editing
 
 If you want to edit your configuration, the best is to use the [`config`](./commands/#config) command.
 
@@ -98,6 +98,25 @@ To authenticate watson as an API client, once generated, you will need to set up
 
 ### Options
 
+#### `options.log_current`
+
+If `true`, the output of the `log` command will include the currently running
+frame (if any) by default. The option can be overridden on the command line
+with the `-c/-C` resp. `--current/--no-current` flags.
+
+#### `options.pager`
+
+If `true` (or not set), the output of the `log` and `report` command will be
+run through a pager by default. The option can be overridden on the command
+line with the `-g/-G` or `--pager/--no-pager` flags. If other commands output
+in colour, but `log` or `report` do not, try disabling the pager.
+
+#### `options.report_current`
+
+If `true`, the output of the `report` command will include the currently
+running frame (if any) by default. The option can be overridden on the
+command line with the `-c/-C` resp. `--current/--no-current` flags.
+
 #### `options.stop_on_start`
 
 If `true`, starting a new project will stop running projects:
@@ -130,6 +149,52 @@ Globally configure how `dates` should be formatted. All [python's `strftime` dir
 
 Globally configure how `time` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
 
+### Default tags
+
+Tags can be automatically added for selected projects. This is convenient when
+the same tags are always attached to a particular project.
+
+These automatically attached tags are defined in the `[default_tags]` section
+of the configuration. Each option in that section is a project to which
+tags should be attached. The entries should follow the pattern: `project = tag1 tag2`.
+
+You can set default tags for a project from the command line:
+
+```
+$ watson config default_tags.python101 'teaching python'
+```
+
+This corresponds to the following configuration file snippets:
+
+```ini
+[default_tags]
+python101 = teaching python
+```
+
+With these default tags set, the tags "teaching" and "python" will
+automatically be attached to the project "python101":
+
+```
+$ watson start python101
+Starting project python101 [teaching, python] at 19:27
+
+$ watson start python101 +lecture
+Starting project python101 [lecture, teaching, python] at 19:28
+```
+
+Default tags can contain space characters when written in between quotes:
+
+```
+$ watson config default_tags.voyager2 'nasa "space mission"'
+```
+
+Or in the configuration file:
+
+```ini
+[default_tags]
+voyager2 = nasa 'space mission'
+```
+
 ## Sample configuration file
 
 A basic configuration file looks like the following:
@@ -144,8 +209,11 @@ token = yourapitoken
 [options]
 stop_on_start = true
 stop_on_restart = false
-date_format = '%Y.%m.%d'
-time_format = '%H:%M:%S%z'
+date_format = %Y.%m.%d
+time_format = %H:%M:%S%z
+log_current = false
+pager = true
+report_current = false
 ```
 
 ## Application folder

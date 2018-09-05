@@ -63,7 +63,9 @@ index. You can get the id of a frame with the `watson log` command.
 If no id or index is given, the frame defaults to the current frame or the
 last recorded frame, if no project is currently running.
 
-The `$EDITOR` environment variable is used to detect your editor.
+The editor used is determined by the `VISUAL` or `EDITOR` environment
+variables (in that order) and defaults to `notepad` on Windows systems and
+to `vim`, `nano` or `vi` (first one found) on all other systems.
 
 ### Options
 
@@ -120,6 +122,16 @@ By default, the sessions from the last 7 days are printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
+You can also use special shortcut options for easier timespan control:
+`--day` sets the log timespan to the current day (beginning at 00:00h)
+and `--year`, `--month` and `--week` to the current year, month or week
+respectively.
+The shortcut `--luna` sets the timespan to the current moon cycle with
+the last full moon marking the start of the cycle.
+
+If you are outputting to the terminal, you can selectively enable a pager
+through the `--pager` option.
+
 You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the log.
@@ -157,10 +169,19 @@ Example:
 
 Flag | Help
 -----|-----
+`-c, --current / -C, --no-current` | (Don't) include currently running frame in output.
 `-f, --from DATE` | The date from when the log should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
+`-y, --year` | Reports activity for the current year.
+`-m, --month` | Reports activity for the current month.
+`-l, --luna` | Reports activity for the current moon cycle.
+`-w, --week` | Reports activity for the current week.
+`-d, --day` | Reports activity for the current day.
+`-a, --all` | Reports all activities.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-j, --json` | Format the log in JSON instead of plain text
+`-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
 
 ## `merge`
@@ -270,6 +291,28 @@ Flag | Help
 `-f, --force` | Don't ask for confirmation.
 `--help` | Show this message and exit.
 
+## `rename`
+
+```bash
+Usage:  watson rename [OPTIONS] TYPE OLD_NAME NEW_NAME
+```
+
+Rename a project or tag.
+
+Example:
+
+
+    $ watson rename project read-python-intro learn-python
+    Renamed project "read-python-intro" to "learn-python"
+    $ watson rename tag company-meeting meeting
+    Renamed tag "company-meeting" to "meeting"
+
+### Options
+
+Flag | Help
+-----|-----
+`--help` | Show this message and exit.
+
 ## `report`
 
 ```bash
@@ -278,17 +321,29 @@ Usage:  watson report [OPTIONS]
 
 Display a report of the time spent on each project.
 
-If a project is given, the time spent on this project
-is printed. Else, print the total for each root
-project.
+If a project is given, the time spent on this project is printed.
+Else, print the total for each root project.
 
 By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
+You can also use special shortcut options for easier timespan control:
+`--day` sets the report timespan to the current day (beginning at 00:00h)
+and `--year`, `--month` and `--week` to the current year, month or week
+respectively.
+The shortcut `--luna` sets the timespan to the current moon cycle with
+the last full moon marking the start of the cycle.
+
 You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the report.
+
+If you are outputting to the terminal, you can selectively enable a pager
+through the `--pager` option.
+
+You can change the output format for the report from *plain text* to *JSON*
+by using the `--json` option.
 
 Example:
 
@@ -331,15 +386,49 @@ Example:
             [reactor   8h 35m 50s]
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
+    
+    $ watson report --json
+    {
+        "projects": [
+            {
+                "name": "watson",
+                "tags": [
+                    {
+                        "name": "export",
+                        "time": 530.0
+                    },
+                    {
+                        "name": "report",
+                        "time": 530.0
+                    }
+                ],
+                "time": 530.0
+            }
+        ],
+        "time": 530.0,
+        "timespan": {
+            "from": "2016-02-21T00:00:00-08:00",
+            "to": "2016-02-28T23:59:59.999999-08:00"
+        }
+    }
 
 ### Options
 
 Flag | Help
 -----|-----
+`-c, --current / -C, --no-current` | (Don't) include currently running frame in report.
 `-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
+`-y, --year` | Reports activity for the current year.
+`-m, --month` | Reports activity for the current month.
+`-l, --luna` | Reports activity for the current moon cycle.
+`-w, --week` | Reports activity for the current week.
+`-d, --day` | Reports activity for the current day.
+`-a, --all` | Reports all activities.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-j, --json` | Format the report in JSON instead of plain text
+`-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
 
 ## `restart`
@@ -396,7 +485,7 @@ If there is already a running project and the configuration option
 `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
 `yes`), it is stopped before the new project is started.
 
-Example :
+Example:
 
 
     $ watson start apollo11 +module +brakes
@@ -436,6 +525,9 @@ Example:
 
 Flag | Help
 -----|-----
+`-p, --project` | only output project
+`-t, --tags` | only show tags
+`-e, --elapsed` | only show time elapsed
 `--help` | Show this message and exit.
 
 ## `stop`

@@ -3,6 +3,7 @@
 
 # ~~~ LIST OF COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 _watson_commands=(
+  'add:Add a frame for a project that was not tracked live.'
   'cancel:Cancel the last call to the start command.'
   'config:Get and set configuration options.'
   'edit:Edit a frame.'
@@ -10,6 +11,7 @@ _watson_commands=(
   'help:Display help information'
   'log:Display each recorded session during the...'
   'merge:Perform a merge of the existing frames with a...'
+  'rename:Rename a project or tag.'
   'projects:Display the list of all the existing...'
   'remove:Remove a frame.'
   'report:Display a report of the time spent on each...'
@@ -26,7 +28,7 @@ _watson_commands=(
 if [[ -n "$WATSON_DIR" ]]; then
   _watson_frame_file=${WATSON_DIR}/frames
 elif [[ "$OSTYPE" =~ "^darwin" ]]; then
-  _watson_frame_file=${HOME}/Library/Application Support/frames
+  _watson_frame_file="${HOME}/Library/Application Support/watson/frames"
 else
   _watson_frame_file=${HOME}/.config/watson/frames
 fi
@@ -102,6 +104,16 @@ _watson() {
         (cancel|help|projects|restart|status|stop|sync|tags)
           _arguments : '--help'
           ;;
+        (add)
+          _arguments -A '-*' : \
+            ': :_watson_projects' \
+            '*: :_watson_plus_tags' \
+            '(--from -f)'{-f,--from}'[start date and time (YYYY-MM-DD H:M:S)]' \
+               ':date (YYYY-MM-DD H:M:S):' \
+            '(--to -t)'{-t,--to}'[end date and time (YYYY-MM-DD H:M:S)]' \
+               ':date (YYYY-MM-DD H:M:S):' \
+            '--help'
+          ;;
         (start)
           _arguments -A '-*' : \
             ': :_watson_projects' \
@@ -125,6 +137,7 @@ _watson() {
             '*'{-T,--tag}'[only for the given tag]: :_watson_tags' \
             '(--from -f)'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
             '(--to -t)'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
+            '(--all -a)'{-a,--all}'[output all frames]:' \
             '--help'
           ;;
         (merge)
@@ -132,6 +145,12 @@ _watson() {
             '--help' \
             {-f,--force} \
             ': :_files'
+          ;;
+        (rename)
+          _arguments : \
+            '*'{project}'[rename given project]: :_watson_projects' \
+            '*'{tag}'[rename given tag]: :_watson_tags' \
+            '--help'
           ;;
       esac
       ;;
