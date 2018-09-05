@@ -96,7 +96,7 @@ def get_frame_from_argument(watson, arg):
     try:
         index = int(arg)
         if index < 0:
-            return watson.frames.get_by_index(index)
+            return watson.frames[index]
     except IndexError:
         raise click.ClickException(
             style('error', "No frame found for index {}.".format(arg))

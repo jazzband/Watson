@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import itertools
 import json
 
 try:
@@ -277,15 +276,14 @@ class Watson(object):
         """
         Return the list of all the existing projects, sorted by name.
         """
-        return sorted(set(self.frames.get_column('project')))
+        return sorted(set(self.frames['project']))
 
     @property
     def tags(self):
         """
         Return the list of the tags, sorted by name.
         """
-        return sorted(
-            set(itertools.chain.from_iterable(self.frames.get_column('tags'))))
+        return sorted(set(tag for tags in self.frames['tags'] for tag in tags))
 
     def _get_request_info(self, route):
         config = self.config
@@ -371,7 +369,7 @@ class Watson(object):
 
         frames = []
 
-        for frame in self.frames.values():
+        for frame in self.frames:
             if last_pull > frame.updated_at > self.last_sync:
                 try:
                     # Find the url of the project
@@ -414,7 +412,7 @@ class Watson(object):
         conflicting = []
         merging = []
 
-        for conflict_frame in conflict_file_frames.values():
+        for conflict_frame in conflict_file_frames:
             try:
                 original_frame = self.frames[conflict_frame.id]
 
