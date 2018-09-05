@@ -33,6 +33,7 @@ class Frame(namedtuple('Frame', HEADERS)):
 
         return super(Frame, cls).__new__(
             cls, start, stop, project, id, tags, updated_at, message
+        )
 
     def dump(self):
         start = self.start.to('utc').timestamp
