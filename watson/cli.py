@@ -966,5 +966,6 @@ def merge(watson, frames_with_conflict, force):
         original_frames.add(project, start, stop, tags=tags,
                             updated_at=updated_at, message=message, id=id)
 
+    watson.frames = original_frames
     watson.frames.changed = True
     watson.save()
