@@ -75,8 +75,6 @@ class Span(object):
 class Frames(OrderedDict):
     def __init__(self, frames=None):
         super(Frames, self).__init__()
-        self._keys = list(self.keys())
-
         for frame in frames or []:
             # convert from old format with project @ idx 2 and ID @ idx 3
             if not isinstance(frame[2], (int, float)):
@@ -95,21 +93,12 @@ class Frames(OrderedDict):
         else:
             frame = self.new_frame(*value[:6], id=key)
 
-        if key not in self:
-            self._keys.append(key)
-
         super(Frames, self).__setitem__(key, frame)
         self.changed = True
 
     def __delitem__(self, key):
         super(Frames, self).__delitem__(key)
-        self._keys.remove(key)
         self.changed = True
-
-    def move_to_end(self, key, last=True):
-        super(Frames, self).move_to_end(key, last)
-        self._keys.remove(key)
-        self._keys.insert(len(self._keys) if last else 0, key)
 
     def add(self, *args, **kwargs):
         frame = self.new_frame(*args, **kwargs)
@@ -134,7 +123,8 @@ class Frames(OrderedDict):
                 yield frame
 
     def get_by_index(self, index):
-        return self[self._keys[index]]
+        key = list(self.keys())[index]
+        return self[key]
 
     def get_column(self, col):
         index = FIELDS.index(col)
