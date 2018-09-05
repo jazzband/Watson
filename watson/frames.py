@@ -118,8 +118,8 @@ class Frames(OrderedDict):
     def filter(self, projects=None, tags=None, span=None):
         for frame in self.values():
             if ((projects is None or frame.project in projects) and
-                    (tags is None or set(frame.tags).intersection(tags)) and
-                    (span is None or frame in span)):
+                (tags is None or any(tag in frame.tags for tag in tags)) and
+                (span is None or frame in span)):
                 yield frame
 
     def get_by_index(self, index):
