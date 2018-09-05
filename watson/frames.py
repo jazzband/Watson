@@ -96,7 +96,7 @@ class Frames(OrderedDict):
         try:
             return super(Frames, self).__getitem__(id)
         except KeyError:
-            for key in reversed(self._keys):
+            for key in self._keys:
                 if key.startswith(id):
                     return super(Frames, self).__getitem__(key)
             else:

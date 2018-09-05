@@ -330,7 +330,7 @@ def test_frames_get_by_id(watson):
     assert frame.project == 'project1'
 
     frame = watson.frames['abc']
-    assert frame.project == 'project1'
+    assert frame.project == 'project0'
     frame = watson.frames['def']
     assert frame.project == 'project2'
 
