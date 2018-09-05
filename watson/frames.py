@@ -92,16 +92,6 @@ class Frames(OrderedDict):
 
         self.changed = False
 
-    def __getitem__(self, id):
-        try:
-            return super(Frames, self).__getitem__(id)
-        except KeyError:
-            for key in self._keys:
-                if key.startswith(id):
-                    return super(Frames, self).__getitem__(key)
-            else:
-                raise KeyError("Frame with id {} not found.".format(id))
-
     def __setitem__(self, key, value):
         if isinstance(value, Frame):
             frame = self.new_frame(value.project, value.start, value.stop,
