@@ -99,24 +99,32 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags, restart=False):
+def _start(watson, project, tags, restart=False, from_=None):
     """
     Start project with given list of tags and save status.
     """
     current = watson.start(project, tags, restart=restart)
+    if from_:
+        # modify the current frame with optional start time instead of "now"
+        watson.current = dict(start=from_, project=project, tags=tags)
+        current = watson.current
+
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
         style('time', "{:HH:mm}".format(current['start']))
     ))
+
     watson.save()
 
 
 @cli.command()
+@click.option('-f', '--from', 'from_', required=False, type=Date,
+              help="Date and time of start time of the task if not now.")
 @click.argument('args', nargs=-1)
 @click.pass_obj
 @click.pass_context
-def start(ctx, watson, args):
+def start(ctx, watson, from_, args):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -143,7 +151,7 @@ def start(ctx, watson, args):
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
 
-    _start(watson, project, tags)
+    _start(watson, project, tags, from_=from_)
 
 
 @cli.command()
@@ -171,10 +179,12 @@ def stop(watson):
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
               help="(Don't) Stop an already running project.")
+@click.option('-f', '--from', 'from_', required=False, type=Date,
+              help="Date and time of start time of the task if not now.")
 @click.argument('frame', default='-1')
 @click.pass_obj
 @click.pass_context
-def restart(ctx, watson, frame, stop_):
+def restart(ctx, watson, frame, stop_, from_):
     """
     Restart monitoring time for a previously stopped project.
 
@@ -222,7 +232,7 @@ def restart(ctx, watson, frame, stop_):
 
     frame = get_frame_from_argument(watson, frame)
 
-    _start(watson, frame.project, frame.tags, restart=True)
+    _start(watson, frame.project, frame.tags, restart=True, from_=from_)
 
 
 @cli.command()
