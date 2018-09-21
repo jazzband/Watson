@@ -143,10 +143,10 @@ class Frames(object):
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
 
-    def filter(self, projects=None, tags=None, span=None):
+    def filter(self, projects=None, tags=None, span=None, exclude_projects=False):
         return (
             frame for frame in self._rows
-            if (projects is None or frame.project in projects) and
+            if (projects is None or ((frame.project in projects) != exclude_projects)) and
                (tags is None or any(tag in frame.tags for tag in tags)) and
                (span is None or frame in span)
         )
