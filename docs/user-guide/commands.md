@@ -179,7 +179,9 @@ Flag | Help
 `-d, --day` | Reports activity for the current day.
 `-a, --all` | Reports all activities.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
+`-P, --exclude-projects` | Exclude projects given by --project option.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-e, --exclude-tags` | Exclude tags given by --tag option
 `-j, --json` | Format the log in JSON instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
@@ -426,7 +428,9 @@ Flag | Help
 `-d, --day` | Reports activity for the current day.
 `-a, --all` | Reports all activities.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
+`-P, --exclude-projects` | Exclude projects given by --project option.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-e, --exclude-tags` | Exclude tags given by --tag option
 `-j, --json` | Format the report in JSON instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
