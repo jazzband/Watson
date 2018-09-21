@@ -362,8 +362,8 @@ _SHORTCUT_OPTIONS_VALUES = {
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
-def report(watson, current, from_, to, projects, tags, year, month,
-           week, day, luna, all, format_json, pager, exclude_projects, exclude_tags):
+def report(watson, current, from_, to, projects, tags, year, month, week, day,
+           luna, all, format_json, pager, exclude_projects, exclude_tags):
     """
     Display a report of the time spent on each project.
 
@@ -461,7 +461,8 @@ def report(watson, current, from_, to, projects, tags, year, month,
     try:
         report = watson.report(from_, to, current, projects, tags,
                                year=year, month=month, week=week, day=day,
-                               luna=luna, all=all, exclude_projects=exclude_projects,
+                               luna=luna, all=all,
+                               exclude_projects=exclude_projects,
                                exclude_tags=exclude_tags)
     except watson.WatsonError as e:
         raise click.ClickException(e)
@@ -650,7 +651,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
         projects=projects or None, tags=tags or None, span=span,
-        exclude_projects=exclude_projects or False, exclude_tags=exclude_tags or False
+        exclude_projects=exclude_projects or False,
+        exclude_tags=exclude_tags or False
     )
 
     if format_json:

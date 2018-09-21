@@ -194,6 +194,7 @@ def test_frames_with_empty_given_state(config_dir, mock):
     mock.patch('%s.open' % builtins, mock.mock_open(read_data=content))
     assert len(watson.frames) == 0
 
+
 def test_frames_filter(watson):
     samples = (
         ('foo', ('A')),
@@ -212,7 +213,8 @@ def test_frames_filter(watson):
         len += 1
     assert len == 2
 
-    not_foo_projects = watson.frames.filter(projects=('foo'), exclude_projects=True)
+    not_foo_projects = watson.frames.filter(projects=('foo'),
+                                            exclude_projects=True)
     len = 0
     for frame in not_foo_projects:
         assert frame.project != 'foo'
@@ -233,7 +235,8 @@ def test_frames_filter(watson):
         len += 1
     assert len == 2
 
-    foo_not_A = watson.frames.filter(projects=('foo'), tags=('A'), exclude_tags=True)
+    foo_not_A = watson.frames.filter(projects=('foo'), tags=('A'),
+                                     exclude_tags=True)
     len = 0
     for frame in foo_not_A:
         assert frame.tags != 'A'
@@ -241,7 +244,8 @@ def test_frames_filter(watson):
         len += 1
     assert len == 1
 
-    not_foo_A = watson.frames.filter(projects=('foo'), tags=('A'), exclude_projects=True)
+    not_foo_A = watson.frames.filter(projects=('foo'), tags=('A'),
+                                     exclude_projects=True)
     len = 0
     for frame in not_foo_A:
         assert frame.tags == 'A'
@@ -249,7 +253,9 @@ def test_frames_filter(watson):
         len += 1
     assert len == 2
 
-    not_foo_not_A = watson.frames.filter(projects=('foo'), tags=('A'), exclude_projects=True, exclude_tags=True)
+    not_foo_not_A = watson.frames.filter(projects=('foo'), tags=('A'),
+                                         exclude_projects=True,
+                                         exclude_tags=True)
     len = 0
     for frame in not_foo_not_A:
         assert frame.tags != 'A'
