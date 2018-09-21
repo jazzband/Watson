@@ -428,7 +428,7 @@ class Watson(object):
 
     def report(self, from_, to, current=None, projects=None, tags=None,
                year=None, month=None, week=None, day=None, luna=None,
-               all=None):
+               all=None, exclude_projects=False, exclude_tags=False):
         for start_time in (_ for _ in [day, week, month, year, luna, all]
                            if _ is not None):
             from_ = start_time
@@ -451,7 +451,8 @@ class Watson(object):
 
         frames_by_project = sorted_groupby(
             self.frames.filter(
-                projects=projects or None, tags=tags or None, span=span
+                projects=projects or None, tags=tags or None, span=span,
+                exclude_projects=exclude_projects, exclude_tags=exclude_tags
             ),
             operator.attrgetter('project')
         )
@@ -483,7 +484,7 @@ class Watson(object):
 
             tags_to_print = sorted(
                 set(tag for frame in frames for tag in frame.tags
-                    if tag in tags or not tags)
+                    if ((tag in tags) != exclude_tags) or not tags)
             )
 
             for tag in tags_to_print:

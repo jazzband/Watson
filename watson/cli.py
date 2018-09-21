@@ -349,17 +349,21 @@ _SHORTCUT_OPTIONS_VALUES = {
 @click.option('-p', '--project', 'projects', multiple=True,
               help="Reports activity only for the given project. You can add "
               "other projects by using this option several times.")
+@click.option('-P', '--exclude-projects', 'exclude_projects', is_flag=True,
+              help="Exclude projects given by --project option.")
 @click.option('-T', '--tag', 'tags', multiple=True,
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-e', '--exclude-tags', 'exclude_tags', is_flag=True,
+              help="Exclude tags given by --tag option")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the report in JSON instead of plain text")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 def report(watson, current, from_, to, projects, tags, year, month,
-           week, day, luna, all, format_json, pager):
+           week, day, luna, all, format_json, pager, exclude_projects, exclude_tags):
     """
     Display a report of the time spent on each project.
 
@@ -457,7 +461,8 @@ def report(watson, current, from_, to, projects, tags, year, month,
     try:
         report = watson.report(from_, to, current, projects, tags,
                                year=year, month=month, week=week, day=day,
-                               luna=luna, all=all)
+                               luna=luna, all=all, exclude_projects=exclude_projects,
+                               exclude_tags=exclude_tags)
     except watson.WatsonError as e:
         raise click.ClickException(e)
 
