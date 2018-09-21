@@ -134,7 +134,9 @@ _watson() {
         (log|report)
           _arguments : \
             '*'{-p,--project}'[only for the given project]: :_watson_projects' \
+            '(-P --exclude-projects)'{--exclude-projects -P}'[exclude projects]:' \
             '*'{-T,--tag}'[only for the given tag]: :_watson_tags' \
+            '(-e --exclude-tags)'{--exclude-tags -e}'[exclude tags]:' \
             '(--from -f)'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
             '(--to -t)'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
             '(--all -a)'{-a,--all}'[output all frames]:' \
