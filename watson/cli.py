@@ -563,17 +563,21 @@ def report(watson, current, from_, to, projects, tags, year, month,
 @click.option('-p', '--project', 'projects', multiple=True,
               help="Logs activity only for the given project. You can add "
               "other projects by using this option several times.")
+@click.option('-P', '--exclude-projects', 'exclude_projects', is_flag=True,
+              help="Exclude projects given by --project option.")
 @click.option('-T', '--tag', 'tags', multiple=True,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-e', '--exclude-tags', 'exclude_tags', is_flag=True,
+              help="Exclude tags given by --tag option")
 @click.option('-j', '--json', 'format_json', is_flag=True,
               help="Format the log in JSON instead of plain text")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        luna, all, format_json, pager):
+        luna, all, format_json, pager, exclude_projects, exclude_tags):
     """
     Display each recorded session during the given timespan.
 
@@ -640,7 +644,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
 
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
-        projects=projects or None, tags=tags or None, span=span
+        projects=projects or None, tags=tags or None, span=span,
+        exclude_projects=exclude_projects or False, exclude_tags=exclude_tags or False
     )
 
     if format_json:
