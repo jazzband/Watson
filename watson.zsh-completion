@@ -42,7 +42,7 @@ _watson_get_projects() {
   if ( [[ ${+_watson_project_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
-    _watson_project_list=($(_call_program watson-projects watson projects))
+    _watson_project_list=("${(f)$(_call_program watson-projects watson projects)}")
     _store_cache $cacheid _watson_project_list
   fi;
 }
@@ -54,7 +54,7 @@ _watson_get_tags() {
   if ( [[ ${+_watson_tag_list} -eq 0 ]] || _cache_invalid $cacheid ) \
             && ! _retrieve_cache $cacheid;
   then
-    _watson_tag_list=($(_call_program watson-tags watson tags))
+    _watson_tag_list=("${(f)$(_call_program watson-tags watson tags)}")
     _store_cache $cacheid _watson_tag_list
   fi;
 }
