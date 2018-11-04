@@ -6,6 +6,28 @@
     $ make docs-->
 
 # Commands
+## `add`
+
+```bash
+Usage:  watson add [OPTIONS] [ARGS]...
+```
+
+Add time for project with tag(s) that was not tracked live.
+
+Example:
+
+
+    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \
+     programming +addfeature
+
+### Options
+
+Flag | Help
+-----|-----
+`-f, --from DATE` | Date and time of start of tracked activity  [required]
+`-t, --to DATE` | Date and time of end of tracked activity  [required]
+`--help` | Show this message and exit.
+
 ## `cancel`
 
 ```bash
@@ -182,6 +204,7 @@ Flag | Help
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the log in JSON instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
+`-D, --daily TEXT` | View output aggregated by day.
 `--help` | Show this message and exit.
 
 ## `merge`
@@ -345,6 +368,10 @@ through the `--pager` option.
 You can change the output format for the report from *plain text* to *JSON*
 by using the `--json` option.
 
+Reporting by day can be created by using the `--daily` or `-D` flag. Note that
+reporting by day is mutually exclusive from reporting with *JSON*. Only
+one or the other option can be selected (if chosen at all).
+
 Example:
 
 
@@ -429,6 +456,7 @@ Flag | Help
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the report in JSON instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
+`-D, --daily` | View output aggregated by day.
 `--help` | Show this message and exit.
 
 ## `restart`
