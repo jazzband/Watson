@@ -368,9 +368,9 @@ through the `--pager` option.
 You can change the output format for the report from *plain text* to *JSON*
 by using the `--json` option.
 
-Reporting by day can be created by using the `--daily` or `-D` flag. Note that
-reporting by day is mutually exclusive from reporting with *JSON*. Only
-one or the other option can be selected (if chosen at all).
+Reporting by day can be created by using the `--daily` or `-D` flag.
+Note that reporting by day is mutually exclusive from reporting with
+*JSON*. Only one or the other option can be selected (if chosen at all).
 
 Example:
 
