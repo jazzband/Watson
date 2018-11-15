@@ -269,7 +269,7 @@ def status(watson, project, tags, elapsed):
     Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
     """
     if not watson.is_started:
-        click.echo("No project started")
+        click.echo("No project started.")
         return
 
     current = watson.current
