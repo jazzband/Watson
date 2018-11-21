@@ -354,16 +354,13 @@ _SHORTCUT_OPTIONS_VALUES = {
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.option('-j', '--json', 'format_json', cls=MutuallyExclusiveOption,
-              is_flag=True, mutually_exclusive=['daily'],
+              is_flag=True,
               help="Format the report in JSON instead of plain text")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
-@click.option('-D', '--daily', cls=MutuallyExclusiveOption, is_flag=True,
-              mutually_exclusive=['json'],
-              help="View output aggregated by day.")
 @click.pass_obj
 def report(watson, current, from_, to, projects, tags, year, month,
-           week, day, luna, all, format_json, pager, daily, generated=False):
+           week, day, luna, all, format_json, pager, aggregated=False):
     """
     Display a report of the time spent on each project.
 
@@ -390,10 +387,6 @@ def report(watson, current, from_, to, projects, tags, year, month,
 
     You can change the output format for the report from *plain text* to *JSON*
     by using the `--json` option.
-
-    Reporting by day can be created by using the `--daily` or `-D` flag.
-    Note that reporting by day is mutually exclusive from reporting with
-    *JSON*. Only one or the other option can be selected (if chosen at all).
 
     Example:
 
@@ -463,135 +456,221 @@ def report(watson, current, from_, to, projects, tags, year, month,
     }
     """
 
-    # if the report is a daily report, add whitespace using this
-    # daily tab which will be prepended to the project name
-    if daily:
+    # if the report is an aggregate report, add whitespace using this
+    # aggregate tab which will be prepended to the project name
+    if aggregated:
         tab = '  '
     else:
         tab = ''
 
-    # if daily flag is present and the the generated flag is not true
-    # then this is a user generated report request, not a report request
-    # invoked from the `generate_aggregate` function, so:
-    if daily and not generated:
-        generate_aggregate(watson, current, from_, to, projects, tags, year,
-                           month, week, day, luna, all, format_json, pager)
+    try:
+        report = watson.report(from_, to, current, projects, tags,
+                               year=year, month=month, week=week, day=day,
+                               luna=luna, all=all)
+    except watson.WatsonError as e:
+        raise click.ClickException(e)
+
+    if format_json and not aggregated:
+        click.echo(json.dumps(report, indent=4, sort_keys=True))
+        return
+    elif format_json and aggregated:
+        return report
+
+    lines = []
+    # use the pager, or print directly to the terminal
+    if pager or (pager is None and
+                 watson.config.getboolean('options', 'pager', True)):
+
+        def _print(line):
+            lines.append(line)
+
+        def _final_print(lines):
+            click.echo_via_pager(u'\n'.join(lines))
+    elif aggregated:
+
+        def _print(line):
+            lines.append(line)
+
+        def _final_print(lines):
+            pass
     else:
-        try:
-            report = watson.report(from_, to, current, projects, tags,
-                                   year=year, month=month, week=week, day=day,
-                                   luna=luna, all=all)
-        except watson.WatsonError as e:
-            raise click.ClickException(e)
 
-        if format_json:
-            click.echo(json.dumps(report, indent=4, sort_keys=True))
-            return
+        def _print(line):
+            click.echo(line)
 
-        lines = []
-        # use the pager, or print directly to the terminal
-        if pager or (pager is None and
-                     watson.config.getboolean('options', 'pager', True)):
+        def _final_print(lines):
+            pass
 
-            def _print(line):
-                lines.append(line)
+    # handle special title formatting for aggregate reports
+    if aggregated:
+        _print(u'{} - {}'.format(
+            style('date', '{:ddd DD MMMM YYYY}'.format(
+                arrow.get(report['timespan']['from'])
+            )),
+            style('time', '{}'.format(format_timedelta(
+                datetime.timedelta(seconds=report['time'])
+            )))
+        ))
 
-            def _final_print(lines):
-                click.echo_via_pager(u'\n'.join(lines))
-        else:
-
-            def _print(line):
-                click.echo(line)
-
-            def _final_print(lines):
-                pass
-
-        # handle special title formatting for daily aggregate reports
-        if daily:
-            _print(u'{} - {}'.format(
-                style('date', '{:ddd DD MMMM YYYY}'.format(
-                    arrow.get(report['timespan']['from'])
-                )),
-                style('time', '{}'.format(format_timedelta(
-                    datetime.timedelta(seconds=report['time'])
-                )))
+    else:
+        _print(u'{} -> {}\n'.format(
+            style('date', '{:ddd DD MMMM YYYY}'.format(
+                arrow.get(report['timespan']['from'])
+            )),
+            style('date', '{:ddd DD MMMM YYYY}'.format(
+                arrow.get(report['timespan']['to'])
             ))
+        ))
 
-        else:
-            _print(u'{} -> {}\n'.format(
-                style('date', '{:ddd DD MMMM YYYY}'.format(
-                    arrow.get(report['timespan']['from'])
-                )),
-                style('date', '{:ddd DD MMMM YYYY}'.format(
-                    arrow.get(report['timespan']['to'])
+    projects = report['projects']
+
+    for project in projects:
+        _print(u'{tab}{project} - {time}'.format(
+            tab=tab,
+            time=style('time', format_timedelta(
+                datetime.timedelta(seconds=project['time'])
+            )),
+            project=style('project', project['name'])
+        ))
+
+        tags = project['tags']
+        if tags:
+            longest_tag = max(len(tag) for tag in tags or [''])
+
+            for tag in tags:
+                _print(u'\t[{tag} {time}]'.format(
+                    time=style('time', '{:>11}'.format(format_timedelta(
+                        datetime.timedelta(seconds=tag['time'])
+                    ))),
+                    tag=style('tag', u'{:<{}}'.format(
+                        tag['name'], longest_tag
+                    )),
                 ))
-            ))
+        _print("")
 
-        projects = report['projects']
+    # only show total time at the bottom for a project if it is not
+    # an aggregate report and there is greater than 1 project
+    if len(projects) > 1 and not aggregated:
+        _print('Total: {}'.format(
+            style('time', '{}'.format(format_timedelta(
+                datetime.timedelta(seconds=report['time'])
+            )))
+        ))
 
-        for project in projects:
-            _print(u'{tab}{project} - {time}'.format(
-                tab=tab,
-                time=style('time', format_timedelta(
-                    datetime.timedelta(seconds=project['time'])
-                )),
-                project=style('project', project['name'])
-            ))
-
-            tags = project['tags']
-            if tags:
-                longest_tag = max(len(tag) for tag in tags or [''])
-
-                for tag in tags:
-                    _print(u'\t[{tag} {time}]'.format(
-                        time=style('time', '{:>11}'.format(format_timedelta(
-                            datetime.timedelta(seconds=tag['time'])
-                        ))),
-                        tag=style('tag', u'{:<{}}'.format(
-                            tag['name'], longest_tag
-                        )),
-                    ))
-            _print("")
-
-        # only show total time at the bottom for a project if it is not
-        # a daily report and there is greater than 1 project
-        if len(projects) > 1 and not daily:
-            _print('Total: {}'.format(
-                style('time', '{}'.format(format_timedelta(
-                    datetime.timedelta(seconds=report['time'])
-                )))
-            ))
-
-        # if this is a report invoked from `generate_aggregate`
-        # return the lines
-        if generated:
-            return lines
-        else:
-            _final_print(lines)
+    # if this is a report invoked from `aggregate`
+    # return the lines
+    if aggregated:
+        return lines
+    else:
+        _final_print(lines)
 
 
+@cli.command()
+@click.option('-c/-C', '--current/--no-current', 'current', default=None,
+              help="(Don't) include currently running frame in report.")
+@click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
+              default=arrow.now().replace(days=-7),
+              mutually_exclusive=_SHORTCUT_OPTIONS,
+              help="The date from when the report should start. Defaults "
+              "to seven days ago.")
+@click.option('-t', '--to', cls=MutuallyExclusiveOption, type=Date,
+              default=arrow.now(),
+              mutually_exclusive=_SHORTCUT_OPTIONS,
+              help="The date at which the report should stop (inclusive). "
+              "Defaults to tomorrow.")
+@click.option('-p', '--project', 'projects', multiple=True,
+              help="Reports activity only for the given project. You can add "
+              "other projects by using this option several times.")
+@click.option('-T', '--tag', 'tags', multiple=True,
+              help="Reports activity only for frames containing the given "
+              "tag. You can add several tags by using this option multiple "
+              "times")
+@click.option('-j', '--json', 'format_json', cls=MutuallyExclusiveOption,
+              is_flag=True,
+              help="Format the report in JSON instead of plain text")
+@click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
+              help="(Don't) view output through a pager.")
+@click.pass_obj
 @click.pass_context
-def generate_aggregate(ctx, watson, current, from_, to, projects, tags, year,
-                       month, week, day, luna, all, format_json, pager):
+def aggregate(ctx, watson, current, from_, to, projects, tags,
+              format_json, pager):
+    """
+    Display a report of the time spent on each project aggregated by day.
 
+    If a project is given, the time spent on this project is printed.
+    Else, print the total for each root project.
+
+    By default, the time spent the last 7 days is printed. This timespan
+    can be controlled with the `--from` and `--to` arguments. The dates
+    must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+
+    You can limit the report to a project or a tag using the `--project` and
+    `--tag` options. They can be specified several times each to add multiple
+    projects or tags to the report.
+
+    If you are outputting to the terminal, you can selectively enable a pager
+    through the `--pager` option.
+
+    You can change the output format for the report from *plain text* to *JSON*
+    by using the `--json` option.
+
+    Example:
+
+    \b
+    $ watson aggregate
+    Wed 14 November 2018 - 5h 42m 22s
+      watson - 5h 42m 22s
+            [features     34m 06s]
+            [docs  5h 08m 16s]
+    \b
+    Thu 15 November 2018 - 00s
+    \b
+    Fri 16 November 2018 - 00s
+    \b
+    Sat 17 November 2018 - 00s
+    \b
+    Sun 18 November 2018 - 00s
+    \b
+    Mon 19 November 2018 - 5h 58m 52s
+      watson - 5h 58m 52s
+            [features  1h 12m 03s]
+            [docs  4h 46m 49s]
+    \b
+    Tue 20 November 2018 - 2h 50m 35s
+      watson - 2h 50m 35s
+            [features     15m 17s]
+            [docs  1h 37m 43s]
+            [website     57m 35s]
+    \b
+    Wed 21 November 2018 - 01m 17s
+      watson - 01m 17s
+            [docs     01m 17s]
+    """
     delta = (to - from_).days
     lines = []
 
     for i in range(delta + 1):
         offset = datetime.timedelta(days=i)
         from_offset = from_ + offset
-        output = ctx.invoke(report, from_=from_offset, to=from_offset,
-                            daily=True, generated=True)
+        output = ctx.invoke(report, current=current, from_=from_offset,
+                            to=from_offset, projects=projects, tags=tags,
+                            format_json=format_json, pager=pager,
+                            aggregated=True)
 
-        # if there is no activity for the day, append a newline
-        # this ensures even spacing throughout the report
-        if (len(output)) == 1:
-            output[0] += '\n'
+        if format_json:
+            lines.append(output)
+        else:
+            # if there is no activity for the day, append a newline
+            # this ensures even spacing throughout the report
+            if (len(output)) == 1:
+                output[0] += '\n'
 
-        lines.append(u'\n'.join(output))
+            lines.append(u'\n'.join(output))
 
-    if pager or (pager is None and
-                 watson.config.getboolean('options', 'pager', True)):
+    if format_json:
+        click.echo(json.dumps(lines, indent=4, sort_keys=True))
+    elif pager or (pager is None and
+                   watson.config.getboolean('options', 'pager', True)):
         click.echo_via_pager(u'\n\n'.join(lines))
     else:
         click.echo(u'\n\n'.join(lines))

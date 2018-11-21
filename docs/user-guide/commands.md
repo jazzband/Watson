@@ -28,6 +28,76 @@ Flag | Help
 `-t, --to DATE` | Date and time of end of tracked activity  [required]
 `--help` | Show this message and exit.
 
+## `aggregate`
+
+```bash
+Usage:  watson aggregate [OPTIONS]
+```
+
+Display a report of the time spent on each project aggregated by day.
+
+If a project is given, the time spent on this project is printed.
+Else, print the total for each root project.
+
+By default, the time spent the last 7 days is printed. This timespan
+can be controlled with the `--from` and `--to` arguments. The dates
+must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+
+You can limit the report to a project or a tag using the `--project` and
+`--tag` options. They can be specified several times each to add multiple
+projects or tags to the report.
+
+If you are outputting to the terminal, you can selectively enable a pager
+through the `--pager` option.
+
+You can change the output format for the report from *plain text* to *JSON*
+by using the `--json` option.
+
+Example:
+
+
+    $ watson aggregate
+    Wed 14 November 2018 - 5h 42m 22s
+      watson - 5h 42m 22s
+            [features     34m 06s]
+            [docs  5h 08m 16s]
+    
+    Thu 15 November 2018 - 00s
+    
+    Fri 16 November 2018 - 00s
+    
+    Sat 17 November 2018 - 00s
+    
+    Sun 18 November 2018 - 00s
+    
+    Mon 19 November 2018 - 5h 58m 52s
+      watson - 5h 58m 52s
+            [features  1h 12m 03s]
+            [docs  4h 46m 49s]
+    
+    Tue 20 November 2018 - 2h 50m 35s
+      watson - 2h 50m 35s
+            [features     15m 17s]
+            [docs  1h 37m 43s]
+            [website     57m 35s]
+    
+    Wed 21 November 2018 - 01m 17s
+      watson - 01m 17s
+            [docs     01m 17s]
+
+### Options
+
+Flag | Help
+-----|-----
+`-c, --current / -C, --no-current` | (Don't) include currently running frame in report.
+`-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
+`-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
+`-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
+`-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`-j, --json` | Format the report in JSON instead of plain text
+`-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
+`--help` | Show this message and exit.
+
 ## `cancel`
 
 ```bash
@@ -368,10 +438,6 @@ through the `--pager` option.
 You can change the output format for the report from *plain text* to *JSON*
 by using the `--json` option.
 
-Reporting by day can be created by using the `--daily` or `-D` flag.
-Note that reporting by day is mutually exclusive from reporting with
-*JSON*. Only one or the other option can be selected (if chosen at all).
-
 Example:
 
 
@@ -456,7 +522,6 @@ Flag | Help
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the report in JSON instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
-`-D, --daily` | View output aggregated by day.
 `--help` | Show this message and exit.
 
 ## `restart`
