@@ -140,10 +140,12 @@ def _start(watson, project, tags, restart=False):
 
 
 @cli.command()
+@click.option('-s', '--seamless', 'seamless_', is_flag=True, default=False,
+              help="Help text needed")
 @click.argument('args', nargs=-1)
 @click.pass_obj
 @click.pass_context
-def start(ctx, watson, args):
+def start(ctx, watson, args, seamless_=False):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
