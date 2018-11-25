@@ -126,11 +126,11 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags, restart=False):
+def _start(watson, project, tags, restart=False, seamless=False):
     """
     Start project with given list of tags and save status.
     """
-    current = watson.start(project, tags, restart=restart)
+    current = watson.start(project, tags, restart=restart, seamless=seamless)
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
@@ -140,10 +140,12 @@ def _start(watson, project, tags, restart=False):
 
 
 @cli.command()
+@click.option('-s', '--seamless', 'seamless_', is_flag=True, default=False,
+              help="Set start time to stop time of previous project")
 @click.argument('args', nargs=-1)
 @click.pass_obj
 @click.pass_context
-def start(ctx, watson, args):
+def start(ctx, watson, args, seamless_=False):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -153,10 +155,13 @@ def start(ctx, watson, args):
     `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
     `yes`), it is stopped before the new project is started.
 
+    If the '--seamless' flag is given, the start time of the new project is set
+    to the stop time of the most recently stopped project.
+
     Example:
 
     \b
-    $ watson start apollo11 +module +brakes
+    $ watson start apollo11 +module +brakes --seamless
     Starting project apollo11 [module, brakes] at 16:34
     """
     project = ' '.join(
@@ -170,7 +175,7 @@ def start(ctx, watson, args):
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
 
-    _start(watson, project, tags)
+    _start(watson, project, tags, seamless=seamless_)
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
