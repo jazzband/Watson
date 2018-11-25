@@ -68,7 +68,26 @@ class DateParamType(click.ParamType):
             return date
 
 
+class TimeParamType(click.ParamType):
+    name = 'time'
+
+    def convert(self, value, param, ctx):
+        if isinstance(value, arrow.Arrow):
+            return value
+
+        try:
+            local_tz = tz.tzlocal()
+            cur_date = arrow.now().date().isoformat()
+            cur_time = '{date}T{time}'.format(date=cur_date, time=value)
+            return arrow.get(cur_time).replace(tzinfo=local_tz)
+        except arrow.parser.ParserError:
+            errmsg = ('Could not parse time. '
+                      'Please specify in HH:MM(:SS)? format.')
+            raise WatsonCliError(errmsg)
+
+
 Date = DateParamType()
+Time = TimeParamType()
 
 
 @click.group()
@@ -155,7 +174,7 @@ def start(ctx, watson, args):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
-@click.option('--at', 'at_', default=arrow.now(),
+@click.option('--at', 'at_', type=Time, default=arrow.now(),
               help='Stop frame at this time. Must be in HH:MM(:SS)? format.')
 @click.pass_obj
 def stop(watson, at_):
@@ -172,12 +191,6 @@ def stop(watson, at_):
     $ watson stop --at 13:37
     Stopping project apollo11, started a minute ago, at 30 minutes ago. (id: e9ccd52) # noqa: E501
     """
-    if isinstance(at_, str):
-        local_tz = tz.tzlocal()
-        cur_date = arrow.now().date().isoformat()
-        cur_time = '{date}T{time}'.format(date=cur_date, time=at_)
-        at_ = arrow.get(cur_time).replace(tzinfo=local_tz)
-
     frame = watson.stop(stop_at=at_)
     click.echo(u"Stopping project {}{}, started {}, at {}. (id: {})".format(
         style('project', frame.project),
