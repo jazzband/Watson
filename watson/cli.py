@@ -154,9 +154,11 @@ def start(ctx, watson, args):
     _start(watson, project, tags)
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
+@click.option('--at', 'at_', default=arrow.now(),
+              help="Help text needed")
 @click.pass_obj
-def stop(watson):
+def stop(watson, at_):
     """
     Stop monitoring time for the current project.
 
