@@ -168,12 +168,19 @@ def stop(watson, at_):
     $ watson stop
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
     """
-    frame = watson.stop()
-    click.echo(u"Stopping project {}{}, started {}. (id: {})".format(
+    if isinstance(at_, str):
+        local_tz = tz.tzlocal()
+        cur_date = arrow.now().date().isoformat()
+        cur_time = '{date}T{time}'.format(date=cur_date, time=at_)
+        at_ = arrow.get(cur_time).replace(tzinfo=local_tz)
+
+    frame = watson.stop(stop_at=at_)
+    click.echo(u"Stopping project {}{}, started {}, at {}. (id: {})".format(
         style('project', frame.project),
         (" " if frame.tags else "") + style('tags', frame.tags),
         style('time', frame.start.humanize()),
-        style('short_id', frame.id)
+        style('time', frame.stop.humanize()),
+        style('short_id', frame.id),
     ))
     watson.save()
 

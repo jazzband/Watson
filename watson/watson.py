@@ -268,13 +268,26 @@ class Watson(object):
         self.current = {'project': project, 'tags': deduplicate(tags)}
         return self.current
 
-    def stop(self):
+    def stop(self, stop_at=None):
         if not self.is_started:
             raise WatsonError("No project started.")
 
         old = self.current
+
+        if stop_at is None:
+            # One cannot use `arrow.now()` as default argument. Default
+            # arguments are evaluated when a function is defined, not when its
+            # called. Since there might be huge delays between defining this
+            # stop function and calling it, the value of `stop_at` could be
+            # outdated if defined using a default argument.
+            stop_at = arrow.now()
+        if old['start'] > stop_at:
+            raise ValueError('Task cannot end before it starts.')
+        if stop_at > arrow.now():
+            raise ValueError('Task cannot end in the future.')
+
         frame = self.frames.add(
-            old['project'], old['start'], arrow.now(), tags=old['tags']
+            old['project'], old['start'], stop_at, tags=old['tags']
         )
         self.current = None
 
