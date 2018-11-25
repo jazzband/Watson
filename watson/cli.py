@@ -126,11 +126,11 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags, restart=False):
+def _start(watson, project, tags, restart=False, seamless=False):
     """
     Start project with given list of tags and save status.
     """
-    current = watson.start(project, tags, restart=restart)
+    current = watson.start(project, tags, restart=restart, seamless=seamless)
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
@@ -172,7 +172,7 @@ def start(ctx, watson, args, seamless_=False):
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
 
-    _start(watson, project, tags)
+    _start(watson, project, tags, seamless=seamless_)
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
