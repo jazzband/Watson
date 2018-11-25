@@ -577,16 +577,20 @@ If there is already a running project and the configuration option
 `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
 `yes`), it is stopped before the new project is started.
 
+If the '--no-gap' flag is given, the start time of the new project is set
+to the stop time of the most recently stopped project.
+
 Example:
 
 
-    $ watson start apollo11 +module +brakes
+    $ watson start apollo11 +module +brakes --no-gap
     Starting project apollo11 [module, brakes] at 16:34
 
 ### Options
 
 Flag | Help
 -----|-----
+`-g, --gap / -G, --no-gap` | (Don't) leave gap between end time of previous project and start time of the current.
 `--help` | Show this message and exit.
 
 ## `status`
@@ -630,16 +634,21 @@ Usage:  watson stop [OPTIONS]
 
 Stop monitoring time for the current project.
 
+If '--at' option is given, the provided stopping time is used. The
+specified time must be after the begin of the to be ended frame and must
+not be in the future.
+
 Example:
 
 
-    $ watson stop
-    Stopping project apollo11, started a minute ago. (id: e7ccd52)
+    $ watson stop --at 13:37
+    Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52)
 
 ### Options
 
 Flag | Help
 -----|-----
+`--at TIME` | Stop frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.
 `--help` | Show this message and exit.
 
 ## `sync`

@@ -5,6 +5,7 @@ import itertools
 import json
 import operator
 import os
+import re
 
 from dateutil import tz
 from functools import reduce
@@ -68,7 +69,33 @@ class DateParamType(click.ParamType):
             return date
 
 
+class TimeParamType(click.ParamType):
+    name = 'time'
+
+    def convert(self, value, param, ctx):
+        if isinstance(value, arrow.Arrow):
+            return value
+
+        date_pattern = r'\d{4}-\d\d-\d\d'
+        time_pattern = r'\d\d:\d\d(:\d\d)?'
+
+        if re.match('^{time_pat}$'.format(time_pat=time_pattern), value):
+            cur_date = arrow.now().date().isoformat()
+            cur_time = '{date}T{time}'.format(date=cur_date, time=value)
+        elif re.match('^{date_pat}T{time_pat}'.format(
+                date_pat=date_pattern, time_pat=time_pattern), value):
+            cur_time = value
+        else:
+            errmsg = ('Could not parse time.'
+                      'Please specify in (YYYY-MM-DDT)?HH:MM(:SS)? format.')
+            raise WatsonCliError(errmsg)
+
+        local_tz = tz.tzlocal()
+        return arrow.get(cur_time).replace(tzinfo=local_tz)
+
+
 Date = DateParamType()
+Time = TimeParamType()
 
 
 @click.group()
@@ -107,11 +134,11 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags, restart=False):
+def _start(watson, project, tags, restart=False, gap=True):
     """
     Start project with given list of tags and save status.
     """
-    current = watson.start(project, tags, restart=restart)
+    current = watson.start(project, tags, restart=restart, gap=gap)
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
@@ -121,10 +148,13 @@ def _start(watson, project, tags, restart=False):
 
 
 @cli.command()
+@click.option('-g/-G', '--gap/--no-gap', 'gap_', is_flag=True, default=True,
+              help=("(Don't) leave gap between end time of previous project "
+                    "and start time of the current."))
 @click.argument('args', nargs=-1)
 @click.pass_obj
 @click.pass_context
-def start(ctx, watson, args):
+def start(ctx, watson, args, gap_=True):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -134,10 +164,13 @@ def start(ctx, watson, args):
     `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
     `yes`), it is stopped before the new project is started.
 
+    If the '--no-gap' flag is given, the start time of the new project is set
+    to the stop time of the most recently stopped project.
+
     Example:
 
     \b
-    $ watson start apollo11 +module +brakes
+    $ watson start apollo11 +module +brakes --no-gap
     Starting project apollo11 [module, brakes] at 16:34
     """
     project = ' '.join(
@@ -147,31 +180,46 @@ def start(ctx, watson, args):
     # Parse all the tags
     tags = parse_tags(args)
 
+    if project and watson.is_started and not gap_:
+        current = watson.current
+        errmsg = ("Project {} is already started and '--no-gap' is passed. "
+                  "Please stop manually.")
+        raise _watson.WatsonError(errmsg.format(current['project']))
+
     if (project and watson.is_started and
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
 
-    _start(watson, project, tags)
+    _start(watson, project, tags, gap=gap_)
 
 
-@cli.command()
+@cli.command(context_settings={'ignore_unknown_options': True})
+@click.option('--at', 'at_', type=Time, default=None,
+              help=('Stop frame at this time. Must be in '
+                    '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.pass_obj
-def stop(watson):
+def stop(watson, at_):
     """
     Stop monitoring time for the current project.
+
+    If '--at' option is given, the provided stopping time is used. The
+    specified time must be after the begin of the to be ended frame and must
+    not be in the future.
 
     Example:
 
     \b
-    $ watson stop
-    Stopping project apollo11, started a minute ago. (id: e7ccd52)
+    $ watson stop --at 13:37
+    Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52) # noqa: E501
     """
-    frame = watson.stop()
-    click.echo(u"Stopping project {}{}, started {}. (id: {})".format(
+    frame = watson.stop(stop_at=at_)
+    output_str = u"Stopping project {}{}, started {} and stopped {}. (id: {})"
+    click.echo(output_str.format(
         style('project', frame.project),
         (" " if frame.tags else "") + style('tags', frame.tags),
         style('time', frame.start.humanize()),
-        style('short_id', frame.id)
+        style('time', frame.stop.humanize()),
+        style('short_id', frame.id),
     ))
     watson.save()
 
