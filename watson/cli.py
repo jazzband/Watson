@@ -156,17 +156,21 @@ def start(ctx, watson, args):
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('--at', 'at_', default=arrow.now(),
-              help="Help text needed")
+              help='Stop frame at this time. Must be in HH:MM(:SS)? format.')
 @click.pass_obj
 def stop(watson, at_):
     """
     Stop monitoring time for the current project.
 
+    If '--at' option is given, the provided stopping time is used. The
+    specified time must be after the begin of the to be ended frame and must
+    not be in the future.
+
     Example:
 
     \b
-    $ watson stop
-    Stopping project apollo11, started a minute ago. (id: e7ccd52)
+    $ watson stop --at 13:37
+    Stopping project apollo11, started a minute ago, at 30 minutes ago. (id: e9ccd52) # noqa: E501
     """
     if isinstance(at_, str):
         local_tz = tz.tzlocal()
