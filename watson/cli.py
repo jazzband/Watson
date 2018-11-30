@@ -721,8 +721,6 @@ def aggregate(ctx, watson, current, from_, to, projects, tags,
               help="Format the log in JSON instead of plain text")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
-@click.option('-D', '--daily', 'pager', default=None,
-              help="View output aggregated by day.")
 @click.pass_obj
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
         luna, all, format_json, pager):

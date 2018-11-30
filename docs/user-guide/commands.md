@@ -274,7 +274,6 @@ Flag | Help
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format the log in JSON instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
-`-D, --daily TEXT` | View output aggregated by day.
 `--help` | Show this message and exit.
 
 ## `merge`
