@@ -100,6 +100,17 @@ Make sure that your .zshrc enables compinit:
 
     autoload -Uz compinit && compinit
 
+#### Fish
+
+If you use fish, you can copy or symlink the file `watson.fish` from the source distribution to `~/.config/fish/completions/watson.fish`.
+You may need to make the completions directory as it is not created by default.
+
+Once this is done, re-source your fish config:
+  `source ~/.config/fish/config.fish`
+
+You will now have command completion for fish, including the completion of known projects, tags, and frames.
+
+
 
 ## Getting started
 
