@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Unit tests for the 'utils' module."""
 
+import arrow
 import functools
 import os
 import datetime
@@ -13,8 +14,8 @@ except ImportError:
 import pytest
 from dateutil.tz import tzutc
 
-from watson.utils import (get_start_time_for_period, make_json_writer,
-                          safe_save, parse_tags, PY2)
+from watson.utils import (apply_weekday_offset, get_start_time_for_period,
+                          make_json_writer, safe_save, parse_tags, PY2)
 from . import mock_datetime
 
 
@@ -39,6 +40,23 @@ _dt = functools.partial(datetime.datetime, tzinfo=tzutc())
 def test_get_start_time_for_period(now, mode, start_time):
     with mock_datetime(now, datetime):
         assert get_start_time_for_period(mode).datetime == start_time
+
+
+@pytest.mark.parametrize("monday_start, week_start, new_start", [
+    ("2018 12 3", "monday", "2018 12 3"),
+    ("2018 12 3", "tuesday", "2018 12 4"),
+    ("2018 12 3", "wednesday", "2018 12 5"),
+    ("2018 12 3", "thursday", "2018 12 6"),
+    ("2018 12 3", "friday", "2018 11 30"),
+    ("2018 12 3", "saturday", "2018 12 1"),
+    ("2018 12 3", "sunday", "2018 12 2"),
+    ("2018 12 3", "typo", "2018 12 3"),
+])
+def test_apply_weekday_offset(monday_start, week_start, new_start):
+    with mock_datetime(_dt(2018, 12, 6), datetime):
+        original_start = arrow.get(monday_start, "YYYY MM D")
+        result = arrow.get(new_start, "YYYY MM D")
+        assert apply_weekday_offset(original_start, week_start) == result
 
 
 def test_make_json_writer():
