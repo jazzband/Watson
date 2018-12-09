@@ -14,9 +14,9 @@ import click
 
 from . import watson as _watson
 from .frames import Frame
-from .utils import (format_timedelta, get_frame_from_argument,
-                    get_start_time_for_period, options, safe_save,
-                    sorted_groupby, style, parse_tags)
+from .utils import (apply_weekday_offset, format_timedelta,
+                    get_frame_from_argument, get_start_time_for_period,
+                    options, safe_save, sorted_groupby, style, parse_tags)
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -57,6 +57,13 @@ class DateParamType(click.ParamType):
             # expected by the user, so that midnight is midnight in the local
             # timezone, not in UTC. Cf issue #16.
             date.tzinfo = tz.tzlocal()
+
+            # Add an offset to match the week beginning specified in the
+            # configuration
+            if param.name == "week":
+                week_start = ctx.obj.config.get("options", "week_start")
+                date = apply_weekday_offset(
+                    start_time=date, week_start=week_start)
             return date
 
 
