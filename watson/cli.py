@@ -5,6 +5,7 @@ import itertools
 import json
 import operator
 import os
+import re
 
 from dateutil import tz
 from functools import reduce
@@ -75,15 +76,22 @@ class TimeParamType(click.ParamType):
         if isinstance(value, arrow.Arrow):
             return value
 
-        try:
-            local_tz = tz.tzlocal()
+        date_pattern = '\d{4}-\d\d-\d\d'  # noqa: W605
+        time_pattern = '\d\d:\d\d(:\d\d)?'  # noqa: W605
+
+        if re.match('^{time_pat}$'.format(time_pat=time_pattern), value):
             cur_date = arrow.now().date().isoformat()
             cur_time = '{date}T{time}'.format(date=cur_date, time=value)
-            return arrow.get(cur_time).replace(tzinfo=local_tz)
-        except arrow.parser.ParserError:
-            errmsg = ('Could not parse time. '
-                      'Please specify in HH:MM(:SS)? format.')
+        elif re.match('^{date_pat}T{time_pat}'.format(
+                date_pat=date_pattern, time_pat=time_pattern), value):
+            cur_time = value
+        else:
+            errmsg = ('Could not parse time.'
+                      'Please specify in (YYYY-MM-DDT)?HH:MM(:SS)? format.')
             raise WatsonCliError(errmsg)
+
+        local_tz = tz.tzlocal()
+        return arrow.get(cur_time).replace(tzinfo=local_tz)
 
 
 Date = DateParamType()
@@ -180,7 +188,8 @@ def start(ctx, watson, args, seamless_=False):
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('--at', 'at_', type=Time, default=None,
-              help='Stop frame at this time. Must be in HH:MM(:SS)? format.')
+              help=('Stop frame at this time. Must be in '
+                    '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.pass_obj
 def stop(watson, at_):
     """
