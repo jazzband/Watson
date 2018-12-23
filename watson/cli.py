@@ -179,6 +179,11 @@ def start(ctx, watson, args, seamless_=False):
     # Parse all the tags
     tags = parse_tags(args)
 
+    if project and watson.is_started and seamless_:
+        errmsg = ''.join(("Project {} is already started and '--seamless' is ",
+                          "passed. Please stop manually."))
+        raise _watson.WatsonError(errmsg.format(project))
+
     if (project and watson.is_started and
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
