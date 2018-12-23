@@ -179,7 +179,7 @@ def start(ctx, watson, args, seamless_=False):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
-@click.option('--at', 'at_', type=Time, default=arrow.now(),
+@click.option('--at', 'at_', type=Time, default=None,
               help='Stop frame at this time. Must be in HH:MM(:SS)? format.')
 @click.pass_obj
 def stop(watson, at_):
