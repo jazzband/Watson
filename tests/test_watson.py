@@ -313,6 +313,24 @@ def test_stop_no_project(watson):
         watson.stop()
 
 
+def test_stop_started_project_at(watson):
+    watson.start('foo')
+    now = arrow.now()
+
+    with pytest.raises(ValueError):
+        time_str = '1970-01-01T00:00'
+        time_obj = arrow.get(time_str)
+        watson.stop(stop_at=time_obj)
+
+    with pytest.raises(ValueError):
+        time_str = '2999-31-12T23:59'
+        time_obj = arrow.get(time_str)
+        watson.stop(stop_at=time_obj)
+
+    watson.stop(stop_at=now)
+    assert watson.frames[-1].stop == now
+
+
 # cancel
 
 def test_cancel_started_project(watson):
