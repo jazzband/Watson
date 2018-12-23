@@ -271,6 +271,15 @@ my project = A B
     assert watson.current['tags'] == ['C', 'D', 'A', 'B']
 
 
+def test_start_seamless(mock, watson):
+
+    watson.start('foo')
+    watson.stop()
+    watson.start('bar', seamless=True)
+
+    assert watson.frames[-1].stop == watson.current['start']
+
+
 # stop
 
 def test_stop_started_project(watson):
