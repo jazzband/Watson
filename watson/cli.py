@@ -61,7 +61,8 @@ class DateParamType(click.ParamType):
             # Add an offset to match the week beginning specified in the
             # configuration
             if param.name == "week":
-                week_start = ctx.obj.config.get("options", "week_start")
+                week_start = ctx.obj.config.get(
+                    "options", "week_start", "monday")
                 date = apply_weekday_offset(
                     start_time=date, week_start=week_start)
             return date
