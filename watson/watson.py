@@ -250,7 +250,7 @@ class Watson(object):
         frame = self.frames.add(project, from_date, to_date, tags=tags)
         return frame
 
-    def start(self, project, tags=None, restart=False, seamless=False):
+    def start(self, project, tags=None, restart=False, gap=True):
         if not project:
             raise WatsonError("No project given.")
 
@@ -266,7 +266,7 @@ class Watson(object):
             tags = (tags or []) + default_tags
 
         new_frame = {'project': project, 'tags': deduplicate(tags)}
-        if seamless:
+        if not gap:
             stop_of_prev_frame = self.frames[-1].stop
             new_frame['start'] = stop_of_prev_frame
         self.current = new_frame

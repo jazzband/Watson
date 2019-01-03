@@ -271,11 +271,11 @@ my project = A B
     assert watson.current['tags'] == ['C', 'D', 'A', 'B']
 
 
-def test_start_seamless(mock, watson):
+def test_start_nogap(mock, watson):
 
     watson.start('foo')
     watson.stop()
-    watson.start('bar', seamless=True)
+    watson.start('bar', gap=False)
 
     assert watson.frames[-1].stop == watson.current['start']
 
