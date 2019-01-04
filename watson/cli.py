@@ -149,7 +149,8 @@ def _start(watson, project, tags, restart=False, gap=True):
 
 @cli.command()
 @click.option('-g/-G', '--gap/--no-gap', 'gap_', is_flag=True, default=True,
-              help="Set start time to stop time of previous project")
+              help=("(Don't) leave gap between end time of previous project "
+                    "and start time of the current."))
 @click.argument('args', nargs=-1)
 @click.pass_obj
 @click.pass_context
