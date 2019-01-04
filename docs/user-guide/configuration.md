@@ -149,6 +149,13 @@ Globally configure how `dates` should be formatted. All [python's `strftime` dir
 
 Globally configure how `time` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
 
+#### `options.week_start`
+
+Globally configure which day corresponds to the start of a week. Allowable
+values are `monday` (default), `tuesday`, `wednesday`, `thursday`, `friday`,
+ `saturday`, and `sunday`.
+
+
 ### Default tags
 
 Tags can be automatically added for selected projects. This is convenient when
@@ -211,6 +218,7 @@ stop_on_start = true
 stop_on_restart = false
 date_format = %Y.%m.%d
 time_format = %H:%M:%S%z
+week_start = monday
 log_current = false
 pager = true
 report_current = false

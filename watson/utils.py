@@ -161,6 +161,23 @@ def get_start_time_for_period(period):
     return start_time
 
 
+def apply_weekday_offset(start_time, week_start):
+    """
+    Apply the offset required to move the start date `start_time` of a week
+    starting on Monday to that of a week starting on `week_start`.
+    """
+    weekdays = dict(zip(
+        ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday",
+         "sunday"], range(0, 7)))
+
+    new_start = week_start.lower()
+    if new_start not in weekdays:
+        return start_time
+    now = datetime.datetime.now()
+    offset = weekdays[new_start] - 7 * (weekdays[new_start] > now.weekday())
+    return start_time.replace(days=offset)
+
+
 def make_json_writer(func, *args, **kwargs):
     """
     Return a function that receives a file-like object and writes the return
