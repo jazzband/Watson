@@ -244,7 +244,7 @@ class Watson(object):
         if not project:
             raise WatsonError("No project given.")
         if from_date > to_date:
-            raise WatsonError("Task can not start before it ends.")
+            raise WatsonError("Task cannot end before it starts.")
 
         default_tags = self.config.getlist('default_tags', project)
         tags = (tags or []) + default_tags

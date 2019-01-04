@@ -282,7 +282,7 @@ def status(watson, project, tags, elapsed):
     Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
     """
     if not watson.is_started:
-        click.echo("No project started")
+        click.echo("No project started.")
         return
 
     current = watson.current
@@ -910,7 +910,7 @@ def edit(watson, id):
             #  raise ValueException
             if not watson.is_started and start > stop:
                 raise ValueError(
-                    "Tasks start date needs to occur before end date.")
+                    "Task cannot end before it starts.")
             # break out of while loop and continue execution of
             #  the edit function normally
             break
@@ -920,7 +920,7 @@ def edit(watson, id):
         except KeyError:
             click.echo(
                 "The edited frame must contain the project, \
-                start and stop keys.", err=True)
+                start, and stop keys.", err=True)
         # we reach here if exception was thrown, wait for user
         #  to acknowledge the error before looping in while and
         #  showing user the editor again
