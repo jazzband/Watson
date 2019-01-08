@@ -642,7 +642,7 @@ Example:
 
 
     $ watson stop --at 13:37
-    Stopping project apollo11, started a minute ago, at 30 minutes ago. (id: e9ccd52) # noqa: E501
+    Stopping project apollo11, started a minute ago, at 30 minutes ago. (id: e9ccd52)
 
 ### Options
 
