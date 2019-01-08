@@ -76,8 +76,8 @@ class TimeParamType(click.ParamType):
         if isinstance(value, arrow.Arrow):
             return value
 
-        date_pattern = '\d{4}-\d\d-\d\d'  # noqa: W605
-        time_pattern = '\d\d:\d\d(:\d\d)?'  # noqa: W605
+        date_pattern = r'\d{4}-\d\d-\d\d'
+        time_pattern = r'\d\d:\d\d(:\d\d)?'
 
         if re.match('^{time_pat}$'.format(time_pat=time_pattern), value):
             cur_date = arrow.now().date().isoformat()
