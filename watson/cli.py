@@ -181,9 +181,10 @@ def start(ctx, watson, args, gap_=True):
     tags = parse_tags(args)
 
     if project and watson.is_started and not gap_:
-        errmsg = ''.join(("Project {} is already started and '--no-gap' is ",
-                          "passed. Please stop manually."))
-        raise _watson.WatsonError(errmsg.format(project))
+        current = watson.current
+        errmsg = ("Project {} is already started and '--no-gap' is passed. "
+                  "Please stop manually.")
+        raise _watson.WatsonError(errmsg.format(current['project']))
 
     if (project and watson.is_started and
             watson.config.getboolean('options', 'stop_on_start')):
