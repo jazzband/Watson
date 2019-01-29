@@ -53,7 +53,10 @@ class DateParamType(click.ParamType):
 
     def convert(self, value, param, ctx):
         if value:
-            date = arrow.get(value)
+            try:
+                date = arrow.get(value)
+            except arrow.parser.ParserError as e:
+                raise click.UsageError(str(e))
             # When we parse a date, we want to parse it in the timezone
             # expected by the user, so that midnight is midnight in the local
             # timezone, not in UTC. Cf issue #16.
