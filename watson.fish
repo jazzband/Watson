@@ -1,5 +1,5 @@
 # copy this into ~/.config/fish/completions/ to enable autocomplete for the watson time tracker
-#
+
 function __fish_watson_needs_sub -d "provides a list of sub commands"
   set cmd (commandline -opc)
   if [ (count $cmd) -eq 1 -a $cmd[1] = 'watson' ]
@@ -19,12 +19,61 @@ function __fish_watson_using_command -d "determine if watson is using the passed
   return 1
 end
 
+function __fish_watson_set_cache_vars -d "set vars used for caches"
+  if test -n "$WATSON_DIR"
+    set -g _watson_dir $WATSON_DIR
+  else
+    # TODO: set dir for Darwin (not sure how to do regex in fish) #
+    set -g _watson_dir "$HOME/.config/watson"
+  end
+  set -g _watson_frame_file "$_watson_dir/frames"
+  set -g _watson_projects_cache "$_watson_dir/projects_cache"
+  set -g _watson_tags_cache "$_watson_dir/tags_cache"
+  set -g _watson_frames_cache "$_watson_dir/frames_cache"
+end
+
+function __get_date_num -d "return last modified time of file"
+	date -r $argv[1] +%s
+end
+
+function __fish_watson_check_if_refresh_cache -d "see if cache file needs refreshing"
+  if begin not test -e $argv[1];
+    or test (__get_date_num $_watson_frame_file) \
+    -gt (__get_date_num $argv[1]); end
+    return 1
+  else
+    return 0
+  end
+end
+
 function __fish_watson_get_projects -d "return a list of projects"
-  command watson projects
+  __fish_watson_set_cache_vars
+  __fish_watson_check_if_refresh_cache $_watson_projects_cache
+  if test $status -eq 1
+    command watson projects | tee $_watson_projects_cache
+  else
+    cat $_watson_projects_cache
+  end
 end
 
 function __fish_watson_get_tags -d "return a list of tags"
-  command watson tags
+  __fish_watson_set_cache_vars
+  __fish_watson_check_if_refresh_cache $_watson_tags_cache
+  if test $status -eq 1
+    command watson tags | tee $_watson_tags_cache
+  else
+    cat $_watson_tags_cache
+  end
+end
+
+function __fish_watson_get_frames -d "return a list of frames" #TODO, use watson logs to get more info
+  __fish_watson_set_cache_vars
+  __fish_watson_check_if_refresh_cache $_watson_frames_cache
+  if test $status -eq 1
+    command watson frames | tee $_watson_frames_cache
+  else
+    cat $_watson_frames_cache
+  end
 end
 
 function __fish_watson_has_project -d "determine if watson is using a passed command and if it has a project"
@@ -49,10 +98,6 @@ function __fish_watson_has_from -d "determine if watson is using a passed comman
     end
   end
   return 1
-end
-
-function __fish_watson_get_frames -d "return a list of frames" #TODO, use watson logs to get more info
-  command watson frames
 end
 
 function __fish_watson_needs_project -d "check if we need a project"
