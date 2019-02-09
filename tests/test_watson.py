@@ -348,13 +348,14 @@ def test_stop_started_project_without_tags(watson):
 
 
 def test_stop_started_project_without_message(watson):
+    """Test stopping watson without adding a message."""
     watson.start('foo')
     watson.stop()
 
     assert watson.current == {}
     assert watson.is_started is False
     assert len(watson.frames) == 1
-    frame = watson.frames.get_by_index(0)
+    frame = watson.frames[0]
     assert frame.project == 'foo'
     assert frame.message is None
 
