@@ -361,6 +361,7 @@ def test_stop_started_project_without_message(watson):
 
 
 def test_stop_started_project_with_message(watson):
+    """Test stopping watson when adding a message."""
     watson.start('foo')
     watson._current['message'] = "My hovercraft is full of eels"
     watson.stop()
@@ -368,7 +369,7 @@ def test_stop_started_project_with_message(watson):
     assert watson.current == {}
     assert watson.is_started is False
     assert len(watson.frames) == 1
-    frame = watson.frames.get_by_index(0)
+    frame = watson.frames[0]
     assert frame.project == 'foo'
     assert frame.message == "My hovercraft is full of eels"
 
