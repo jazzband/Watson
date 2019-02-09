@@ -162,7 +162,7 @@ def test_frames_with_message(mocker, watson):
         [3601, 3610, 'foo', 'abcdefg', ['A', 'B', 'C'], 3650,
          "My hovercraft is full of eels"]
     ])
-    
+
     mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=content))
     assert len(watson.frames) == 1
     frame = watson.frames['abcdefg']
