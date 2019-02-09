@@ -432,17 +432,18 @@ def test_save_current_without_tags(mock, watson, json_mock):
     assert dump_args['ensure_ascii'] is False
 
 
-def test_save_empty_current(config_dir, mock, json_mock):
+def test_save_empty_current(config_dir, mocker, json_mock):
     watson = Watson(current={}, config_dir=config_dir)
 
-    mock.patch('%s.open' % builtins, mock.mock_open())
+    mocker.patch('%s.open' % builtins, mocker.mock_open())
 
     watson.current = {'project': 'foo', 'start': 4000}
     watson.save()
 
     assert json_mock.call_count == 1
     result = json_mock.call_args[0][0]
-    assert result == {'project': 'foo', 'start': 4000, 'tags': []}
+    assert result == {'project': 'foo', 'start': 4000,
+                      'tags': [], 'message': None}
 
     watson.current = {}
     watson.save()
