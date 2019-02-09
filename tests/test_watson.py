@@ -156,21 +156,22 @@ def test_frames_without_tags(mock, watson):
     assert watson.frames[0].tags == []
 
 
-def test_frames_with_message(mock, watson):
+def test_frames_with_message(mocker, watson):
+    """Test loading frames with messages."""
     content = json.dumps([
-        ['abcdefg', 'foo', 0, 10, ['A', 'B', 'C'], 30,
+        [3601, 3610, 'foo', 'abcdefg', ['A', 'B', 'C'], 3650,
          "My hovercraft is full of eels"]
     ])
-
-    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
-        assert len(watson.frames) == 1
-        frame = watson.frames['abcdefg']
-        assert frame.id == 'abcdefg'
-        assert frame.project == 'foo'
-        assert frame.start == arrow.get(0)
-        assert frame.stop == arrow.get(10)
-        assert frame.tags == ['A', 'B', 'C']
-        assert frame.message == "My hovercraft is full of eels"
+    
+    mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=content))
+    assert len(watson.frames) == 1
+    frame = watson.frames['abcdefg']
+    assert frame.id == 'abcdefg'
+    assert frame.project == 'foo'
+    assert frame.start == arrow.get(3601)
+    assert frame.stop == arrow.get(3610)
+    assert frame.tags == ['A', 'B', 'C']
+    assert frame.message == "My hovercraft is full of eels"
 
 
 def test_frames_without_message(mock, watson):
