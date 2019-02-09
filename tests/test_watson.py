@@ -174,33 +174,34 @@ def test_frames_with_message(mocker, watson):
     assert frame.message == "My hovercraft is full of eels"
 
 
-def test_frames_without_message(mock, watson):
+def test_frames_without_message(mocker, watson):
+    """Test loading frames without messages."""
     content = json.dumps([
-        ['abcdefg', 'foo', 0, 10],
-        ['hijklmn', 'foo', 10, 20, ['A', 'B', 'C']],
-        ['opqrstu', 'foo', 20, 30, ['A', 'B', 'C'], 30]
+        [3601, 3610, 'foo', 'abcdefg'],
+        [3611, 3620, 'foo', 'hijklmn', ['A', 'B', 'C']],
+        [3621, 3630, 'foo', 'opqrstu', ['A', 'B', 'C'], 3630]
     ])
 
-    with mock.patch('%s.open' % builtins, mock.mock_open(read_data=content)):
-        assert len(watson.frames) == 3
-        frame = watson.frames['abcdefg']
-        assert frame.id == 'abcdefg'
-        assert frame.project == 'foo'
-        assert frame.start == arrow.get(0)
-        assert frame.stop == arrow.get(10)
-        assert frame.tags == []
-        assert frame.message is None
+    mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=content))
+    assert len(watson.frames) == 3
+    frame = watson.frames['abcdefg']
+    assert frame.id == 'abcdefg'
+    assert frame.project == 'foo'
+    assert frame.start == arrow.get(3601)
+    assert frame.stop == arrow.get(3610)
+    assert frame.tags == []
+    assert frame.message is None
 
-        frame = watson.frames['hijklmn']
-        assert frame.id == 'hijklmn'
-        assert frame.tags == ['A', 'B', 'C']
-        assert frame.message is None
+    frame = watson.frames['hijklmn']
+    assert frame.id == 'hijklmn'
+    assert frame.tags == ['A', 'B', 'C']
+    assert frame.message is None
 
-        frame = watson.frames['opqrstu']
-        assert frame.id == 'opqrstu'
-        assert frame.tags == ['A', 'B', 'C']
-        assert frame.updated_at == arrow.get(30)
-        assert frame.message is None
+    frame = watson.frames['opqrstu']
+    assert frame.id == 'opqrstu'
+    assert frame.tags == ['A', 'B', 'C']
+    assert frame.updated_at == arrow.get(3630)
+    assert frame.message is None
 
 
 def test_frames_with_empty_file(mock, watson):
