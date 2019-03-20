@@ -197,8 +197,12 @@ def start(ctx, watson, args, gap_=True):
 @click.option('--at', 'at_', type=Time, default=None,
               help=('Stop frame at this time. Must be in '
                     '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
+@click.option('-m', '--message', 'message', default=None,
+              help=('Save given log message with the project frame.'))
+@click.option('-r', '--roti', 'roti', type=click.IntRange(0, 5), default=None,
+              help=('Save the indication on Return On Time Invested. Must be bewteen 0 and 5.'))
 @click.pass_obj
-def stop(watson, at_):
+def stop(watson, at_, message, roti):
     """
     Stop monitoring time for the current project.
 
@@ -206,13 +210,19 @@ def stop(watson, at_):
     specified time must be after the begin of the to be ended frame and must
     not be in the future.
 
+    You can optionally pass a log message to be saved with the frame via
+    the ``-m/--message`` option.
+
     Example:
 
     \b
-    $ watson stop --at 13:37
+    $ watson stop --at 13:37 -m 'Made awesome stuff' -r 4
     Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52) # noqa: E501
     """
-    frame = watson.stop(stop_at=at_)
+    if roti is not None:
+        tags = [u'roti{}'.format(roti)]
+        
+    frame = watson.stop(stop_at=at_, message=message, tags=tags)
     output_str = u"Stopping project {}{}, started {} and stopped {}. (id: {})"
     click.echo(output_str.format(
         style('project', frame.project),
@@ -602,6 +612,12 @@ def report(watson, current, from_, to, projects, tags, year, month,
                         tag['name'], longest_tag
                     )),
                 ))
+
+        messages = project['messages']
+        if messages:
+            for message in messages:
+                _print(u'\t> {message}'.format(message=message))
+
         _print("")
 
     # only show total time at the bottom for a project if it is not
@@ -1068,6 +1084,7 @@ def edit(watson, id):
         'start': frame.start.format(datetime_format),
         'project': frame.project,
         'tags': frame.tags,
+        'message': frame.message or '',
     }
 
     if id:
@@ -1095,6 +1112,7 @@ def edit(watson, id):
                 tzinfo=local_tz).to('utc')
             stop = arrow.get(data['stop'], datetime_format).replace(
                 tzinfo=local_tz).to('utc') if id else None
+            message = data.get('message')
             # if start time of the project is not before end time
             #  raise ValueException
             if not watson.is_started and start > stop:
@@ -1120,9 +1138,10 @@ def edit(watson, id):
 
     # we reach this when we break out of the while loop above
     if id:
-        watson.frames[id] = (project, start, stop, tags)
+        updated_at = arrow.utcnow()
+        watson.frames[id] = Frame(start, stop, project, id, tags=tags, message=message)
     else:
-        watson.current = dict(start=start, project=project, tags=tags)
+        watson.current = dict(start=start, project=project, tags=tags, message=message)
 
     watson.save()
     click.echo(
@@ -1377,7 +1396,8 @@ def merge(watson, frames_with_conflict, force):
             'project': original_frame.project,
             'start': original_frame.start.format(date_format),
             'stop': original_frame.stop.format(date_format),
-            'tags': original_frame.tags
+            'tags': original_frame.tags,
+            'message': original_frame.message,
         }
         click.echo("frame {}:".format(style('short_id', original_frame.id)))
         click.echo(u"{}".format('\n'.join('<' + line for line in json.dumps(
@@ -1409,7 +1429,8 @@ def merge(watson, frames_with_conflict, force):
             'project': conflict_frame_copy.project,
             'start': conflict_frame_copy.start.format(date_format),
             'stop': conflict_frame_copy.stop.format(date_format),
-            'tags': conflict_frame_copy.tags
+            'tags': conflict_frame_copy.tags,
+            'message': conflict_frame_copy.message,
         }
         click.echo("{}".format('\n'.join('>' + line for line in json.dumps(
             conflict_frame_data, indent=4, ensure_ascii=False).splitlines())))
@@ -1423,9 +1444,9 @@ def merge(watson, frames_with_conflict, force):
 
     # merge in any non-conflicting frames
     for frame in merging:
-        start, stop, project, id, tags, updated_at = frame.dump()
+        start, stop, project, id, tags, updated_at = frame.dump(), message
         original_frames.add(project, start, stop, tags=tags, id=id,
-                            updated_at=updated_at)
+                            updated_at=updated_at, message=message)
 
     watson.frames = original_frames
     watson.frames.changed = True

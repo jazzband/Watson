@@ -147,6 +147,7 @@ class Watson(object):
                         'project': self.current['project'],
                         'start': self._format_date(self.current['start']),
                         'tags': self.current['tags'],
+                        'message': self.current['message'],
                     }
                 else:
                     current = {}
@@ -208,7 +209,8 @@ class Watson(object):
         self._current = {
             'project': value['project'],
             'start': start,
-            'tags': value.get('tags') or []
+            'tags': value.get('tags') or [],
+            'message': value.get('message'),
         }
 
         if self._old_state is None:
@@ -272,7 +274,7 @@ class Watson(object):
         self.current = new_frame
         return self.current
 
-    def stop(self, stop_at=None):
+    def stop(self, stop_at=None, message=None, tags=None):
         if not self.is_started:
             raise WatsonError("No project started.")
 
@@ -290,8 +292,11 @@ class Watson(object):
         if stop_at > arrow.now():
             raise ValueError('Task cannot end in the future.')
 
+        if tags is not None:
+            tags = old['tags'] + tags
+
         frame = self.frames.add(
-            old['project'], old['start'], stop_at, tags=old['tags']
+            old['project'], old['start'], stop_at, tags=tags, message=message
         )
         self.current = None
 
@@ -495,7 +500,8 @@ class Watson(object):
             project_report = {
                 'name': project,
                 'time': delta.total_seconds(),
-                'tags': []
+                'tags': [],
+                'messages': [],
             }
 
             tags_to_print = sorted(
@@ -514,6 +520,10 @@ class Watson(object):
                     'name': tag,
                     'time': delta.total_seconds()
                 })
+
+            for frame in frames:
+                if frame.message:
+                    project_report['messages'].append(frame.message)
 
             report['projects'].append(project_report)
 
