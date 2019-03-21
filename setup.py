@@ -39,6 +39,7 @@ setup(
     name='td-watson',
     version=pkg['version'],
     description='A wonderful CLI to track your time!',
+    url="https://github.com/TailorDev/Watson",
     packages=['watson'],
     author='TailorDev',
     author_email='contact@tailordev.fr',
