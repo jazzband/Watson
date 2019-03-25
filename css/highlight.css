@@ -1,80 +1,109 @@
 /*
-Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine (@thingsinjars)
+This is the GitHub theme for highlight.js
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
 */
 
 .hljs {
   display: block;
   overflow-x: auto;
-  color: #000;
+  padding: 0.5em;
+  color: #333;
   -webkit-text-size-adjust: none;
 }
 
 .hljs-comment,
-.hljs-quote {
-  color: #408080;
+.diff .hljs-header,
+.hljs-javadoc {
+  color: #998;
   font-style: italic;
 }
 
 .hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-subst {
-  color: #954121;
+.css .rule .hljs-keyword,
+.hljs-winutils,
+.nginx .hljs-title,
+.hljs-subst,
+.hljs-request,
+.hljs-status {
+  color: #333;
+  font-weight: bold;
 }
 
-.hljs-number {
-  color: #40a070;
+.hljs-number,
+.hljs-hexcolor,
+.ruby .hljs-constant {
+  color: #008080;
 }
 
 .hljs-string,
-.hljs-doctag {
-  color: #219161;
+.hljs-tag .hljs-value,
+.hljs-phpdoc,
+.hljs-dartdoc,
+.tex .hljs-formula {
+  color: #d14;
 }
 
-.hljs-selector-id,
-.hljs-selector-class,
-.hljs-section,
-.hljs-type {
-  color: #19469d;
+.hljs-title,
+.hljs-id,
+.scss .hljs-preprocessor {
+  color: #900;
+  font-weight: bold;
 }
 
-.hljs-params {
-  color: #00f;
+.hljs-list .hljs-keyword,
+.hljs-subst {
+  font-weight: normal;
 }
 
-.hljs-title {
+.hljs-class .hljs-title,
+.hljs-type,
+.vhdl .hljs-literal,
+.tex .hljs-command {
   color: #458;
   font-weight: bold;
 }
 
 .hljs-tag,
-.hljs-name,
-.hljs-attribute {
+.hljs-tag .hljs-title,
+.hljs-rule .hljs-property,
+.django .hljs-tag .hljs-keyword {
   color: #000080;
   font-weight: normal;
 }
 
+.hljs-attribute,
 .hljs-variable,
-.hljs-template-variable {
+.lisp .hljs-body,
+.hljs-name {
   color: #008080;
 }
 
-.hljs-regexp,
-.hljs-link {
-  color: #b68;
+.hljs-regexp {
+  color: #009926;
 }
 
 .hljs-symbol,
-.hljs-bullet {
+.ruby .hljs-symbol .hljs-string,
+.lisp .hljs-keyword,
+.clojure .hljs-keyword,
+.scheme .hljs-keyword,
+.tex .hljs-special,
+.hljs-prompt {
   color: #990073;
 }
 
-.hljs-built_in,
-.hljs-builtin-name {
+.hljs-built_in {
   color: #0086b3;
 }
 
-.hljs-meta {
+.hljs-preprocessor,
+.hljs-pragma,
+.hljs-pi,
+.hljs-doctype,
+.hljs-shebang,
+.hljs-cdata {
   color: #999;
   font-weight: bold;
 }
@@ -87,10 +116,10 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
   background: #dfd;
 }
 
-.hljs-emphasis {
-  font-style: italic;
+.diff .hljs-change {
+  background: #0086b3;
 }
 
-.hljs-strong {
-  font-weight: bold;
+.hljs-chunk {
+  color: #aaa;
 }
