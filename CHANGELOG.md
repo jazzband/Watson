@@ -7,17 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Removed
-
-- Python 3.3 support (#210).
+## [1.7.0] - 2019-03-25
 
 ### Added
 
+- New `add` command (#202)
+- Add lunar start time options to the `report` and `log` commands (#215)
+- Aggregate reports by day (#231)
+- Fish shell completion (#239)
+- Add support for first day of the week configuration in reports and logs (#240)
 - Python 3.7 support (#241)
+- Add `start --no-gap` and `stop --at` options (#254)
+
+### Changed
+
+- The `edit` command now checks data consistency (#203)
+- Current state saving is now improve when using Watson as a library (#214)
+- Prevent calling `get_start_time_for_period` multiple times (#219)
 
 ### Fixed
 
 - Improved support for UTF-8 with Python 2 (#211)
+- Zsh completion for tags and projects with spaces in their names (#227)
+- Typos in commands output (#230, #235)
+- Project URL of the project in PyPI (#260)
+
+### Removed
+
+- Python 3.3 support (#210).
 
 ## [1.6.0] - 2018-04-23
 
@@ -174,7 +191,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
-[unreleased]: https://github.com/tailordev/watson/compare/1.6.0...HEAD
+[unreleased]: https://github.com/tailordev/watson/compare/1.7.0...HEAD
+[1.7.0]: https://github.com/tailordev/watson/compare/1.6.0...1.7.0
 [1.6.0]: https://github.com/tailordev/watson/compare/1.5.2...1.6.0
 [1.5.2]: https://github.com/tailordev/watson/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/tailordev/watson/compare/1.5.0...1.5.1
