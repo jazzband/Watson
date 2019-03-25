@@ -1,104 +1,176 @@
-# Release Notes
+# Release notes
 
-This document records all notable changes to Watson. This project adheres to
-[Semantic Versioning](http://semver.org/).
+All notable changes to this project will be documented in this file.
 
-## 1.6.0 (2018-04-23)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-* Added: for report and log, allow specifying a timeperiod of "all"
-* Added: option for log and report command to (not) output via pager
-* Added: --json option to log command
-* Added: optional flags to filter status call
-* Fixed: change message when frame is removed
-* Fixed: cli output when on tags on `stop` and `remove`
-* Fixed: Bash completion with latest additions to command options
-* Fixed: CLI output spacing if a frame has no tags
-* Fixed: frame modification time when renaming projects and tags (#181)
-* Fixed: don't print space before tags if there are no tags (#179)
-* Fixed: match log daily heading format to elsewhere
-* Fixed: set max versions for pytest and arrow for keeping support for Python 2.7 and 3.3
+## [1.6.0] - 2018-04-23
 
-## 1.5.2 (2017-08-02)
+### Added
 
-* Fixed: Follow up on the `config` command fix (#161)
+- For `report` and `log`, allow specifying a timeperiod of "all"
+- Option for log and report command to (not) output via pager
+- `--json` option to log command
+- Optional flags to filter status call
 
-## 1.5.1 (2017-08-01)
+### Fixed
 
-* Fix the `config` command (#158)
+- Change message when frame is removed
+- CLI output when on tags on `stop` and `remove`
+- Bash completion with latest additions to command options
+- CLI output spacing if a frame has no tags
+- Frame modification time when renaming projects and tags (#181)
+- Don't print space before tags if there are no tags (#179)
+- Match log daily heading format to elsewhere
+- Set max versions for pytest and arrow for keeping support for Python 2.7 and
+  3.3
 
-## 1.5.0 (2017-07-31)
+## [1.5.2] - 2017-08-02
 
-* Added: the `report` command now supports JSON output (#102)
-* Updated: the `sync` command is now compatible with the new crick.io backend
-  API (#152)
-* Updated: Python 3.6 is now officially supported (#150)
-* Fixed: catch error when user wants to edit config but file does not exist yet
-  (#154)
+### Fixed
 
-## 1.4.0 (2016-11-01)
+- Follow up on the `config` command fix (#161)
 
-* Added: Watson now has a `rename` command (#74).
-* Added: the `report` and `log` commands now have new command line and
-  config file options to (not) include the current frame in the output (#123).
-* Added: the `report` and `log` commands now have new command line options to
-  set the timespan to the current year, month, week or day (#130 via #124).
-* Added: you can now set default tags for selected projects in the
-  config file (#113).
-* Added: Zsh completion support (#96)
-* Added: document installation via homebrew on OS X (#121)
-* Updated: when saving the Watson frames, state or config file, the most recent
-  previous version of the file is kept as a back up (#120).
-* Fixed: bash completion of projects and tags with spaces in them (#122).
-* Fixed: if saving the Watson frames, state or config file fails for any
-  reason, the original is kept (and not wiped as before) (#120).
+## [1.5.1] - 2017-08-01
 
-## 1.3.2 (2016-03-01)
+### Fixed
 
-* Added: document installation for Arch Linux
-* Added: improve frame selection by position
-* Fixed: improve error handling
-* Fixed: remove unnecessary dependencies for a stand alone installation
-* Fixed: specify correct source directory for flake8 and pytest (tox test
-suite)
+- Fix the `config` command (#158)
 
-## 1.3.1 (2016-02-11)
+## [1.5.0] - 2017-07-31
 
-* Fix packaging error with PyPI
+### Added
 
-## 1.3.0 (2016-02-11)
+- The `report` command now supports JSON output (#102)
 
-* Add a complete browsable documentation
-* Add Watson's brand new logo!
-* Add support for Watson's directory override via the WATSON_DIR environment variable
+### Changed
 
-## 1.2.0 (2016-01-22)
+- The `sync` command is now compatible with the new crick.io backend API (#152)
+- Python 3.6 is now officially supported (#150)
 
-* Added: Watson now has a `restart` command
-* Added: Watson now has a `merge` command
-* Added: Watson can now stop running project when starting a new one (optional)
-* Added: there is a wrapper for `RawConfigParser` to make option access more convenient
-* Updated: the `edit` command now defaults to the running frame if any (else defaults to the last one)
-* Updated: the `log` command now has a daily total time summary
-* Fixed: unicode issues with cjk characters
-* Fixed: edition summary is now converted to local time
+### Fixed
 
-## 1.1.0 (2015-10-21)
+- Catch error when user wants to edit config but file does not exist yet (#154)
 
-* Added: configurable date and time to output of `status` command (#33)
-* Added: support for Bash-completion (#1)
-* Added: new `frames` command that displays all frame IDs
-* Fixed: set id if not provided (#30)
+## [1.4.0] - 2016-11-01
 
-## 1.0.2 (2015-10-09)
+### Added
 
-* Fix a bug where the last frame could not be deleted
-* Improve installation instructions
-* Add an explanation to remove all the frames
+- Watson now has a `rename` command (#74).
+- The `report` and `log` commands now have new command line and config file
+  options to (not) include the current frame in the output (#123).
+- The `report` and `log` commands now have new command line options to set the
+  timespan to the current year, month, week or day (#130 via #124).
+- You can now set default tags for selected projects in the config file (#113).
+- Zsh completion support (#96)
+- Document installation via homebrew on OS X (#121)
 
-## 1.0.1 (2015-09-17)
+### Changed
 
-* Fix packaging error with PyPI
+- When saving the Watson frames, state or config file, the most recent previous
+  version of the file is kept as a back up (#120).
 
-## 1.0.0 (2015-09-17)
+### Fixed
 
-* First stable version
+- Bash completion of projects and tags with spaces in them (#122).
+- If saving the Watson frames, state or config file fails for any reason, the
+  original is kept (and not wiped as before) (#120).
+
+## [1.3.2] - 2016-03-01
+
+### Added
+
+- Document installation for Arch Linux
+- Improve frame selection by position
+
+### Fixed
+
+- Improve error handling
+- Remove unnecessary dependencies for a stand alone installation
+- Specify correct source directory for flake8 and pytest (tox test suite)
+
+## [1.3.1] - 2016-02-11
+
+### Fixed
+
+- Packaging issue with PyPI
+
+## [1.3.0] - 2016-02-11
+
+### Added
+
+- A complete browsable documentation
+- Watson's brand new logo!
+- Support for Watson's directory override via the WATSON_DIR environment variable
+
+## [1.2.0] - 2016-01-22
+
+### Added
+
+- Watson now has a `restart` command
+- Watson now has a `merge` command
+- Watson can now stop running project when starting a new one (optional)
+- There is a wrapper for `RawConfigParser` to make option access more convenient
+
+### Updated
+
+- The `edit` command now defaults to the running frame if any (else defaults to
+  the last one)
+- The `log` command now has a daily total time summary
+
+### Fixed
+
+- Unicode issues with cjk characters
+- Edition summary is now converted to local time
+
+## [1.1.0] - 2015-10-21
+
+### Added
+
+- Configurable date and time to output of `status` command (#33)
+- Support for Bash-completion (#1)
+- New `frames` command that displays all frame IDs
+
+### Fixed
+
+- Set id if not provided (#30)
+
+## [1.0.2] - 2015-10-09
+
+### Added
+
+- Add documentation to remove all the frames
+
+### Changed
+
+- Improve installation instructions
+
+### Fixed
+
+- The last frame could not be deleted
+
+## [1.0.1] - 2015-09-17
+
+### Fixed
+
+- Packaging erissueror with PyPI
+
+## [1.0.0] - 2015-09-17
+
+First stable public release 🎉
+
+[unreleased]: https://github.com/tailordev/watson/compare/1.6.0...HEAD
+[1.6.0]: https://github.com/tailordev/watson/compare/1.5.2...1.6.0
+[1.5.2]: https://github.com/tailordev/watson/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/tailordev/watson/compare/1.5.0...1.5.1
+[1.5.0]: https://github.com/tailordev/watson/compare/1.4.0...1.5.0
+[1.4.0]: https://github.com/tailordev/watson/compare/1.3.2...1.4.0
+[1.3.2]: https://github.com/tailordev/watson/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/tailordev/watson/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/tailordev/watson/compare/1.2.0...1.3.0
+[1.2.0]: https://github.com/tailordev/watson/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/tailordev/watson/compare/1.0.2...1.1.0
+[1.0.2]: https://github.com/tailordev/watson/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/tailordev/watson/compare/1.0.0...1.0.1
+[1.0.0]: https://github.com/tailordev/watson/releases/tag/1.0.0
