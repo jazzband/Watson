@@ -4,6 +4,7 @@
 # ~~~ LIST OF COMMANDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 _watson_commands=(
   'add:Add a frame for a project that was not tracked live.'
+  'aggregate: Display a report of the time spent on each project aggregated...'
   'cancel:Cancel the last call to the start command.'
   'config:Get and set configuration options.'
   'edit:Edit a frame.'
@@ -11,9 +12,9 @@ _watson_commands=(
   'help:Display help information'
   'log:Display each recorded session during the...'
   'merge:Perform a merge of the existing frames with a...'
-  'rename:Rename a project or tag.'
   'projects:Display the list of all the existing...'
   'remove:Remove a frame.'
+  'rename:Rename a project or tag.'
   'report:Display a report of the time spent on each...'
   'restart:Restart monitoring time for a previously...'
   'start:Start monitoring time for the given project.'
@@ -101,7 +102,7 @@ _watson() {
   case "$state" in
     (args)
       case $words[1] in
-        (cancel|help|projects|restart|status|stop|sync|tags)
+        (cancel|frames|help|projects|sync|tags)
           _arguments : '--help'
           ;;
         (add)
@@ -118,6 +119,13 @@ _watson() {
           _arguments -A '-*' : \
             ': :_watson_projects' \
             '*: :_watson_plus_tags' \
+            '(--gap -g)'{-g,--gap}'[leave gap after previous project]:' \
+            '(--no-gap -G)'{-G,--no-gap}'[set start time to end time of previous project]:' \
+            '--help'
+          ;;
+        (stop)
+          _arguments : \
+            '--at [stop time (YYYY-MM-DDT)?HH:MM(:SS)]:' \
             '--help'
           ;;
         (edit)
@@ -125,10 +133,24 @@ _watson() {
             ': :_watson_frames' \
             '--help'
           ;;
+        (restart)
+          _arguments -A '-*' : \
+            ': :_watson_frames' \
+            '(--stop -s)'{-s,--stop}'[stop already running project]:' \
+            '(--no-stop -S)'{-S,--no-stop}'[do not stop already running project]:' \
+            '--help'
+          ;;
         (remove)
           _arguments : \
-            '-f[Dont ask for confirmation]' \
+            '(--force -f)'{-f,--force}'[Dont ask for confirmation]' \
             ': :_watson_frames' \
+            '--help'
+          ;;
+        (status)
+          _arguments : \
+            '(--project -p)'{-p,--project}'[only output projects]' \
+            '(--tag -t)'{-t,--tag}'[only output tags]' \
+            '(--elapsed -e)'{-e,--elapsed}'[only output time elapsed]' \
             '--help'
           ;;
         (log|report)
@@ -138,12 +160,40 @@ _watson() {
             '(--from -f)'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
             '(--to -t)'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
             '(--all -a)'{-a,--all}'[output all frames]:' \
+            '(--current -c)'{-c,--current}'[include currently running frame]:' \
+            '(--no-current -C)'{-C,--no-current}'[exclude currently running frame]:' \
+            '(--year -y)'{-y,--year}'[activity of current year]:' \
+            '(--month -m)'{-m,--month}'[activity of current month]:' \
+            '(--luna -l)'{-l,--luna}'[activity of current luna]:' \
+            '(--week -w)'{-w,--week}'[activity of current week]:' \
+            '(--day -d)'{-d,--day}'[activity of current day]:' \
+            '(--json -j)'{-j,--json}'[output in JSON format]:' \
+            '(--pager -g)'{-g,--pager}'[view through pager]:' \
+            '(--no-pager -G)'{-G,--no-pager}'[avoid using pager]:' \
+            '--help'
+          ;;
+        (aggregate)
+          _arguments : \
+            '*'{-p,--project}'[only for the given project]: :_watson_projects' \
+            '*'{-T,--tag}'[only for the given tag]: :_watson_tags' \
+            '(--from -f)'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
+            '(--to -t)'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
+            '(--current -c)'{-c,--current}'[include currently running frame]:' \
+            '(--no-current -C)'{-C,--no-current}'[exclude currently running frame]:' \
+            '(--json -j)'{-j,--json}'[output in JSON format]:' \
+            '(--pager -g)'{-g,--pager}'[view through pager]:' \
+            '(--no-pager -G)'{-G,--no-pager}'[avoid using pager]:' \
+            '--help'
+          ;;
+        (config)
+          _arguments : \
+            '(--edit -e)'{-e,--edit}'[edit config file]:' \
             '--help'
           ;;
         (merge)
           _arguments : \
             '--help' \
-            {-f,--force} \
+            '(--force -f)'{-f,--force}'[perform automatic merge]:' \
             ': :_files'
           ;;
         (rename)
