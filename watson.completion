@@ -91,6 +91,9 @@ _watson_complete () {
               tags="$(watson tags | sed -e 's/ /\\\\ /g')"
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
+            *)
+              COMPREPLY=($(compgen -W $'project\ntag' -- ${cur}))
+              ;;
           esac
           ;;
         restart)
@@ -116,6 +119,10 @@ _watson_complete () {
         status)
           COMPREPLY=($(compgen -W "-e --elapsed -p --project -t --tags" -- ${cur}))
           ;;
+        stop)
+          if [[ $COMP_CWORD -eq 2 ]]; then
+            COMPREPLY=($(compgen -W "--at" -- ${cur}))
+          fi
       esac
       ;;
   esac
