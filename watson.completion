@@ -116,6 +116,10 @@ _watson_complete () {
         status)
           COMPREPLY=($(compgen -W "-e --elapsed -p --project -t --tags" -- ${cur}))
           ;;
+        stop)
+          if [[ $COMP_CWORD -eq 2 ]]; then
+            COMPREPLY=($(compgen -W "--at" -- ${cur}))
+          fi
       esac
       ;;
   esac
