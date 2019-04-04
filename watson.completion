@@ -108,7 +108,13 @@ _watson_complete () {
           ;;
         start)
           local IFS=$'\n'
-          if [[ $COMP_CWORD -eq 2 ]]; then
+          prev="${COMP_WORDS[COMP_CWORD-1]}"
+          if [[ $prev == '-g' || $prev == '--gap' || $prev == '-G' || $prev == '--no-gap' ]]; then
+            prev_is_option="true"
+          else
+            prev_is_option="false"
+          fi
+          if [[ $COMP_CWORD -eq 2 || ($COMP_CWORD -eq 3 && $prev_is_option == "true") ]]; then
             projects="$(watson projects | sed -e 's/ /\\\\ /g')"
             COMPREPLY=($(compgen -W "$projects" -- ${cur}))
           else
