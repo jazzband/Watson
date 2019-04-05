@@ -5,7 +5,7 @@
 _watson_complete () {
   local cur cmd commands frames projects tags
 
-  commands='add cancel config edit frames help log merge projects remove rename report restart start status stop sync tags'
+  commands='add aggregate cancel config edit frames help log merge projects remove rename report restart start status stop sync tags'
 
   cur=${COMP_WORDS[COMP_CWORD]}
   cmd=${COMP_WORDS[1]}
@@ -35,6 +35,29 @@ _watson_complete () {
             local IFS=$'\n'
             tags="$(watson tags | sed -e 's/ /\\\\ /g' | awk '$0="+"$0')"
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))            
+          fi
+          ;;
+        aggregate)
+          local long_options="--current --no-current --from --to --project --tag --json --pager --no-pager"
+          local prev="${COMP_WORDS[COMP_CWORD-1]}"
+          local pprev="${COMP_WORDS[COMP_CWORD-2]}"
+          if [[ "${prev}" == '-p' || "${prev}" == '--project' || "${prev}" == '-T' || "${prev}" == '--tag' ]]; then
+            case ${prev} in
+              -p|--project)
+                local IFS=$'\n'
+                projects="$(watson projects | sed -e 's/ /\\\\ /g')"
+                COMPREPLY=($(compgen -W "$projects" -- ${cur}))
+                ;;
+              -T|--tag)
+                local IFS=$'\n'
+                tags="$(watson tags | sed -e 's/ /\\\\ /g')"
+                COMPREPLY=($(compgen -W "$tags" -- ${cur}))
+                ;;
+            esac
+          elif [[ $COMP_CWORD -eq 2 && ${cur:0:1} == '-' ]]; then
+            COMPREPLY=($(compgen -W "$long_options" -- "${cur}"))
+          elif [[ ($pprev == '-p' || $pprev == '--project' || $pprev == '-T' || $pprev == '--tag') && ${cur:0:1} == '-' ]]; then
+            COMPREPLY=($(compgen -W "$long_options" -- "${cur}"))
           fi
           ;;
         config)
