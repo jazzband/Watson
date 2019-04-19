@@ -23,27 +23,27 @@ except NameError:
     text_type = str
 
 
-def confirm_project(watson, project, confirm_new_project):
-    # https://github.com/TailorDev/Watson/issues/191 - for project
-    if watson.config.getboolean('options',
-                                'confirm_new_project') or confirm_new_project:
-        if project not in watson.projects:
-            msg = "Project '%s' does not exist yet. Create it?" % project
-            if not click.confirm(msg, err=True):
-                click.echo("Aborting operation.", err=True)
-                sys.exit(1)
+def confirm_project(project, projects):
+    """
+    Ask user to confirm creation of a new project
+    Returns True on accept and raises click.exceptions.Abort on reject
+    """
+    if project not in projects:
+        msg = "Project '%s' does not exist yet. Create it?" % project
+        click.confirm(msg, abort=True)
+    return True
 
 
-def confirm_tags(watson, tags, confirm_new_tag):
-    # https://github.com/TailorDev/Watson/issues/191 - for tags
-    if watson.config.getboolean('options',
-                                'confirm_new_tag') or confirm_new_tag:
-        for tag in tags:
-            if tag not in watson.tags:
-                msg = "Tag '%s' does not exist yet. Create it?" % tag
-                if not click.confirm(msg, err=True):
-                    click.echo("Aborting operation.", err=True)
-                    sys.exit(1)
+def confirm_tags(tags, watson_tags):
+    """
+    Ask user to confirm creation of a new tag
+    Returns True on accept and raises click.exceptions.Abort on reject
+    """
+    for tag in tags:
+        if tag not in watson_tags:
+            msg = "Tag '%s' does not exist yet. Create it?" % tag
+            click.confirm(msg, abort=True)
+    return True
 
 
 def style(name, element):
