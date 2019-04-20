@@ -186,14 +186,16 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
     )
 
     # Confirm creation of new project if that option is set
-    if watson.config.getboolean('options', 'confirm_new_project') or confirm_new_project:
+    if (watson.config.getboolean('options', 'confirm_new_project') or
+            confirm_new_project):
         confirm_project(project, watson.projects)
 
     # Parse all the tags
     tags = parse_tags(args)
 
     # Confirm creation of new tag(s) if that option is set
-    if watson.config.getboolean('options', 'confirm_new_tag') or confirm_new_tag:
+    if (watson.config.getboolean('options', 'confirm_new_tag') or
+            confirm_new_tag):
         confirm_tags(tags, watson.tags)
 
     if project and watson.is_started and not gap_:
@@ -1031,14 +1033,16 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     )
 
     # Confirm creation of new project if that option is set
-    if watson.config.getboolean('options', 'confirm_new_project') or confirm_new_project:
+    if (watson.config.getboolean('options', 'confirm_new_project') or
+            confirm_new_project):
         confirm_project(project, watson.projects)
 
     # Parse all the tags
     tags = parse_tags(args)
 
     # Confirm creation of new tag(s) if that option is set
-    if watson.config.getboolean('options', 'confirm_new_tag') or confirm_new_tag:
+    if (watson.config.getboolean('options', 'confirm_new_tag') or
+            confirm_new_tag):
         confirm_tags(tags, watson.tags)
 
     # add a new frame, call watson save to update state files
@@ -1123,11 +1127,13 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
             data = json.loads(output)
             project = data['project']
             # Confirm creation of new project if that option is set
-            if watson.config.getboolean('options', 'confirm_new_project') or confirm_new_project:
+            if (watson.config.getboolean('options', 'confirm_new_project') or
+                    confirm_new_project):
                 confirm_project(project, watson.projects)
             tags = data['tags']
             # Confirm creation of new tag(s) if that option is set
-            if watson.config.getboolean('options', 'confirm_new_tag') or confirm_new_tag:
+            if (watson.config.getboolean('options', 'confirm_new_tag') or
+                    confirm_new_tag):
                 confirm_tags(tags, watson.tags)
             start = arrow.get(data['start'], datetime_format).replace(
                 tzinfo=local_tz).to('utc')
