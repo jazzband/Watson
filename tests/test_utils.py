@@ -10,13 +10,14 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 import pytest
-from unittest.mock import patch
 from click.exceptions import Abort
 from dateutil.tz import tzutc
 
-import watson
 from watson.utils import (apply_weekday_offset, get_start_time_for_period,
                           make_json_writer, safe_save, parse_tags, PY2,
                           confirm_project, confirm_tags)
@@ -197,8 +198,8 @@ def test_confirm_project_accept_returns_true(confirm):
 def test_confirm_project_reject_raises_abort(confirm):
     project = 'baz'
     projects = ['foo', 'bar']
-    with pytest.raises(Abort) as e:
-            confirm_project(project, projects)
+    with pytest.raises(Abort):
+        confirm_project(project, projects)
 
 
 def test_confirm_tags_existing_tag_returns_true():
@@ -218,5 +219,5 @@ def test_confirm_tags_accept_returns_true(confirm):
 def test_confirm_tags_reject_raises_abort(confirm):
     tags = ['c']
     watson_tags = ['a', 'b']
-    with pytest.raises(Abort) as e:
-            confirm_project(tags, watson_tags)
+    with pytest.raises(Abort):
+        confirm_project(tags, watson_tags)
