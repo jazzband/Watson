@@ -12,10 +12,14 @@ except ImportError:
     from io import StringIO
 
 import pytest
+from unittest.mock import patch
+from click.exceptions import Abort
 from dateutil.tz import tzutc
 
+import watson
 from watson.utils import (apply_weekday_offset, get_start_time_for_period,
-                          make_json_writer, safe_save, parse_tags, PY2)
+                          make_json_writer, safe_save, parse_tags, PY2,
+                          confirm_project, confirm_tags)
 from . import mock_datetime
 
 
@@ -174,3 +178,45 @@ def test_safe_save_with_exception(config_dir):
 def test_parse_tags(args, parsed_tags):
     tags = parse_tags(args)
     assert tags == parsed_tags
+
+
+def test_confirm_project_existing_project_returns_true():
+    project = 'foo'
+    projects = ['foo', 'bar']
+    assert confirm_project(project, projects)
+
+
+@patch('click.confirm', return_value=True)
+def test_confirm_project_accept_returns_true(confirm):
+    project = 'baz'
+    projects = ['foo', 'bar']
+    assert confirm_project(project, projects)
+
+
+@patch('watson.utils.click.confirm', side_effect=Abort)
+def test_confirm_project_reject_raises_abort(confirm):
+    project = 'baz'
+    projects = ['foo', 'bar']
+    with pytest.raises(Abort) as e:
+            confirm_project(project, projects)
+
+
+def test_confirm_tags_existing_tag_returns_true():
+    tags = ['a']
+    watson_tags = ['a', 'b']
+    assert confirm_tags(tags, watson_tags)
+
+
+@patch('watson.utils.click.confirm', return_value=True)
+def test_confirm_tags_accept_returns_true(confirm):
+    tags = ['c']
+    watson_tags = ['a', 'b']
+    assert confirm_tags(tags, watson_tags)
+
+
+@patch('watson.utils.click.confirm', side_effect=Abort)
+def test_confirm_tags_reject_raises_abort(confirm):
+    tags = ['c']
+    watson_tags = ['a', 'b']
+    with pytest.raises(Abort) as e:
+            confirm_project(tags, watson_tags)
