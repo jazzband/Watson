@@ -15,10 +15,18 @@ import click
 
 from . import watson as _watson
 from .frames import Frame
-from .utils import (apply_weekday_offset, format_timedelta,
-                    get_frame_from_argument, get_start_time_for_period,
-                    options, safe_save, sorted_groupby, style, parse_tags,
-                    confirm_project, confirm_tags)
+from .utils import (
+    apply_weekday_offset,
+    confirm_project,
+    confirm_tags,
+    format_timedelta,
+    get_frame_from_argument,
+    get_start_time_for_period,
+    options, safe_save,
+    sorted_groupby,
+    style,
+    parse_tags,
+)
 
 
 class MutuallyExclusiveOption(click.Option):

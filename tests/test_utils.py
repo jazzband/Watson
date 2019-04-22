@@ -18,9 +18,16 @@ import pytest
 from click.exceptions import Abort
 from dateutil.tz import tzutc
 
-from watson.utils import (apply_weekday_offset, get_start_time_for_period,
-                          make_json_writer, safe_save, parse_tags, PY2,
-                          confirm_project, confirm_tags)
+from watson.utils import (
+    apply_weekday_offset,
+    confirm_project,
+    confirm_tags,
+    get_start_time_for_period,
+    make_json_writer,
+    safe_save,
+    parse_tags,
+    PY2,
+)
 from . import mock_datetime
 
 
@@ -183,23 +190,23 @@ def test_parse_tags(args, parsed_tags):
 
 def test_confirm_project_existing_project_returns_true():
     project = 'foo'
-    projects = ['foo', 'bar']
-    assert confirm_project(project, projects)
+    watson_projects = ['foo', 'bar']
+    assert confirm_project(project, watson_projects)
 
 
 @patch('click.confirm', return_value=True)
 def test_confirm_project_accept_returns_true(confirm):
     project = 'baz'
-    projects = ['foo', 'bar']
-    assert confirm_project(project, projects)
+    watson_projects = ['foo', 'bar']
+    assert confirm_project(project, watson_projects)
 
 
 @patch('watson.utils.click.confirm', side_effect=Abort)
 def test_confirm_project_reject_raises_abort(confirm):
     project = 'baz'
-    projects = ['foo', 'bar']
+    watson_projects = ['foo', 'bar']
     with pytest.raises(Abort):
-        confirm_project(project, projects)
+        confirm_project(project, watson_projects)
 
 
 def test_confirm_tags_existing_tag_returns_true():
@@ -208,14 +215,14 @@ def test_confirm_tags_existing_tag_returns_true():
     assert confirm_tags(tags, watson_tags)
 
 
-@patch('watson.utils.click.confirm', return_value=True)
+@patch('click.confirm', return_value=True)
 def test_confirm_tags_accept_returns_true(confirm):
     tags = ['c']
     watson_tags = ['a', 'b']
     assert confirm_tags(tags, watson_tags)
 
 
-@patch('watson.utils.click.confirm', side_effect=Abort)
+@patch('click.confirm', side_effect=Abort)
 def test_confirm_tags_reject_raises_abort(confirm):
     tags = ['c']
     watson_tags = ['a', 'b']
