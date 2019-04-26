@@ -164,9 +164,9 @@ def _start(watson, project, tags, restart=False, gap=True):
               help=("(Don't) leave gap between end time of previous project "
                     "and start time of the current."))
 @click.argument('args', nargs=-1)
-@click.option('--confirm-new-project', is_flag=True, default=False,
+@click.option('-c', '--confirm-new-project', is_flag=True, default=False,
               help="Confirm addition of new project.")
-@click.option('--confirm-new-tag', is_flag=True, default=False,
+@click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
 @click.pass_obj
 @click.pass_context
