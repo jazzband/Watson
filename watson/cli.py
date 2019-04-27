@@ -124,6 +124,12 @@ def catch_watson_error(func):
     return wrapper
 
 
+def get_projects(ctx, args, incomplete):
+    """Function to return all existing projects."""
+    watson = _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
+    return (prjct for prjct in watson.projects if prjct.startswith(incomplete))
+
+
 @click.group(cls=DYMGroup)
 @click.version_option(version=_watson.__version__, prog_name='Watson')
 @click.pass_context
@@ -453,7 +459,8 @@ _SHORTCUT_OPTIONS_VALUES = {
               flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'luna', 'year'],
               help='Reports all activities.')
-@click.option('-p', '--project', 'projects', multiple=True,
+@click.option('-p', '--project', 'projects', autocompletion=get_projects,
+              multiple=True,
               help="Reports activity only for the given project. You can add "
               "other projects by using this option several times.")
 @click.option('-T', '--tag', 'tags', multiple=True,
@@ -717,7 +724,8 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
-@click.option('-p', '--project', 'projects', multiple=True,
+@click.option('-p', '--project', 'projects', autocompletion=get_projects,
+              multiple=True,
               help="Reports activity only for the given project. You can add "
               "other projects by using this option several times.")
 @click.option('-T', '--tag', 'tags', multiple=True,
@@ -881,7 +889,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'year'],
               help='Reports all activities.')
-@click.option('-p', '--project', 'projects', multiple=True,
+@click.option('-p', '--project', 'projects', autocompletion=get_projects,
+              multiple=True,
               help="Logs activity only for the given project. You can add "
               "other projects by using this option several times.")
 @click.option('-T', '--tag', 'tags', multiple=True,
