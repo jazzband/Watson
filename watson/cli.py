@@ -1020,9 +1020,9 @@ def frames(watson):
               help="Date and time of start of tracked activity")
 @click.option('-t', '--to', required=True, type=Date,
               help="Date and time of end of tracked activity")
-@click.option('--confirm-new-project', is_flag=True, default=False,
+@click.option('-c', '--confirm-new-project', is_flag=True, default=False,
               help="Confirm addition of new project.")
-@click.option('--confirm-new-tag', is_flag=True, default=False,
+@click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
 @click.pass_obj
 def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
@@ -1068,9 +1068,9 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
-@click.option('--confirm-new-project', is_flag=True, default=False,
+@click.option('-c', '--confirm-new-project', is_flag=True, default=False,
               help="Confirm addition of new project.")
-@click.option('--confirm-new-tag', is_flag=True, default=False,
+@click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
 @click.argument('id', required=False)
 @click.pass_obj
