@@ -489,7 +489,7 @@ _SHORTCUT_OPTIONS_VALUES = {
 @catch_watson_error
 def report(watson, current, from_, to, projects, tags, ignore_projects,
            ignore_tags, year, month, week, day, luna, all, output_format,
-           pager, aggregated=False):
+           pager, aggregated=False, include_partial_frames=False):
     """
     Display a report of the time spent on each project.
 
@@ -606,7 +606,8 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     report = watson.report(from_, to, current, projects, tags,
                            ignore_projects, ignore_tags,
                            year=year, month=month, week=week, day=day,
-                           luna=luna, all=all)
+                           luna=luna, all=all,
+                           include_partial_frames=include_partial_frames)
 
     if 'json' in output_format and not aggregated:
         click.echo(json.dumps(report, indent=4, sort_keys=True,
@@ -825,7 +826,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
         output = ctx.invoke(report, current=current, from_=from_offset,
                             to=from_offset, projects=projects, tags=tags,
                             output_format=output_format,
-                            pager=pager, aggregated=True)
+                            pager=pager, aggregated=True,
+                            include_partial_frames=True)
 
         if 'json' in output_format:
             lines.append(output)
