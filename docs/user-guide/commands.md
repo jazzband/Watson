@@ -26,8 +26,8 @@ Flag | Help
 -----|-----
 `-f, --from DATE` | Date and time of start of tracked activity  [required]
 `-t, --to DATE` | Date and time of end of tracked activity  [required]
-`--confirm-new-project` | Confirm addition of new project.
-`--confirm-new-tag` | Confirm creation of new tag.
+`-c, --confirm-new-project` | Confirm addition of new project.
+`-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.
 
 ## `aggregate`
@@ -165,8 +165,8 @@ to `vim`, `nano` or `vi` (first one found) on all other systems.
 
 Flag | Help
 -----|-----
-`--confirm-new-project` | Confirm addition of new project.
-`--confirm-new-tag` | Confirm creation of new tag.
+`-c, --confirm-new-project` | Confirm addition of new project.
+`-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.
 
 ## `frames`
@@ -595,8 +595,8 @@ Example:
 Flag | Help
 -----|-----
 `-g, --gap / -G, --no-gap` | (Don't) leave gap between end time of previous project and start time of the current.
-`--confirm-new-project` | Confirm addition of new project.
-`--confirm-new-tag` | Confirm creation of new tag.
+`-c, --confirm-new-project` | Confirm addition of new project.
+`-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.
 
 ## `status`
