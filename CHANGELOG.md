@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for first day of the week configuration in reports and logs (#240)
 - Python 3.7 support (#241)
 - Add `start --no-gap` and `stop --at` options (#254)
-- `--confirm-new-project` and `--confirm-new-tag` options to `start`, `add`, `edit` commands (#275)
+- Add `--confirm-new-project` and `--confirm-new-tag` options to `start`, `add` and `edit` commands (#275)
 
 ### Changed
 
