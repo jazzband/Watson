@@ -15,9 +15,18 @@ import click
 
 from . import watson as _watson
 from .frames import Frame
-from .utils import (apply_weekday_offset, format_timedelta,
-                    get_frame_from_argument, get_start_time_for_period,
-                    options, safe_save, sorted_groupby, style, parse_tags)
+from .utils import (
+    apply_weekday_offset,
+    confirm_project,
+    confirm_tags,
+    format_timedelta,
+    get_frame_from_argument,
+    get_start_time_for_period,
+    options, safe_save,
+    sorted_groupby,
+    style,
+    parse_tags,
+)
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -155,9 +164,13 @@ def _start(watson, project, tags, restart=False, gap=True):
               help=("(Don't) leave gap between end time of previous project "
                     "and start time of the current."))
 @click.argument('args', nargs=-1)
+@click.option('-c', '--confirm-new-project', is_flag=True, default=False,
+              help="Confirm addition of new project.")
+@click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
+              help="Confirm creation of new tag.")
 @click.pass_obj
 @click.pass_context
-def start(ctx, watson, args, gap_=True):
+def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -180,8 +193,18 @@ def start(ctx, watson, args, gap_=True):
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
 
+    # Confirm creation of new project if that option is set
+    if (watson.config.getboolean('options', 'confirm_new_project') or
+            confirm_new_project):
+        confirm_project(project, watson.projects)
+
     # Parse all the tags
     tags = parse_tags(args)
+
+    # Confirm creation of new tag(s) if that option is set
+    if (watson.config.getboolean('options', 'confirm_new_tag') or
+            confirm_new_tag):
+        confirm_tags(tags, watson.tags)
 
     if project and watson.is_started and not gap_:
         current = watson.current
@@ -997,8 +1020,12 @@ def frames(watson):
               help="Date and time of start of tracked activity")
 @click.option('-t', '--to', required=True, type=Date,
               help="Date and time of end of tracked activity")
+@click.option('-c', '--confirm-new-project', is_flag=True, default=False,
+              help="Confirm addition of new project.")
+@click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
+              help="Confirm creation of new tag.")
 @click.pass_obj
-def add(watson, args, from_, to):
+def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     """
     Add time for project with tag(s) that was not tracked live.
 
@@ -1013,8 +1040,18 @@ def add(watson, args, from_, to):
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
 
+    # Confirm creation of new project if that option is set
+    if (watson.config.getboolean('options', 'confirm_new_project') or
+            confirm_new_project):
+        confirm_project(project, watson.projects)
+
     # Parse all the tags
     tags = parse_tags(args)
+
+    # Confirm creation of new tag(s) if that option is set
+    if (watson.config.getboolean('options', 'confirm_new_tag') or
+            confirm_new_tag):
+        confirm_tags(tags, watson.tags)
 
     # add a new frame, call watson save to update state files
     frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to)
@@ -1031,9 +1068,13 @@ def add(watson, args, from_, to):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
+@click.option('-c', '--confirm-new-project', is_flag=True, default=False,
+              help="Confirm addition of new project.")
+@click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
+              help="Confirm creation of new tag.")
 @click.argument('id', required=False)
 @click.pass_obj
-def edit(watson, id):
+def edit(watson, confirm_new_project, confirm_new_tag, id):
     """
     Edit a frame.
 
@@ -1093,7 +1134,15 @@ def edit(watson, id):
         try:
             data = json.loads(output)
             project = data['project']
+            # Confirm creation of new project if that option is set
+            if (watson.config.getboolean('options', 'confirm_new_project') or
+                    confirm_new_project):
+                confirm_project(project, watson.projects)
             tags = data['tags']
+            # Confirm creation of new tag(s) if that option is set
+            if (watson.config.getboolean('options', 'confirm_new_tag') or
+                    confirm_new_tag):
+                confirm_tags(tags, watson.tags)
             start = arrow.get(data['start'], datetime_format).replace(
                 tzinfo=local_tz).to('utc')
             stop = arrow.get(data['stop'], datetime_format).replace(

@@ -23,6 +23,29 @@ except NameError:
     text_type = str
 
 
+def confirm_project(project, watson_projects):
+    """
+    Ask user to confirm creation of a new project
+    Returns True on accept and raises click.exceptions.Abort on reject
+    """
+    if project not in watson_projects:
+        msg = "Project '%s' does not exist yet. Create it?" % project
+        click.confirm(msg, abort=True)
+    return True
+
+
+def confirm_tags(tags, watson_tags):
+    """
+    Ask user to confirm creation of new tags (each separately)
+    Returns True if all accepted and raises click.exceptions.Abort on reject
+    """
+    for tag in tags:
+        if tag not in watson_tags:
+            msg = "Tag '%s' does not exist yet. Create it?" % tag
+            click.confirm(msg, abort=True)
+    return True
+
+
 def style(name, element):
     def _style_tags(tags):
         if not tags:

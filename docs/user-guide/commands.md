@@ -26,6 +26,8 @@ Flag | Help
 -----|-----
 `-f, --from DATE` | Date and time of start of tracked activity  [required]
 `-t, --to DATE` | Date and time of end of tracked activity  [required]
+`-c, --confirm-new-project` | Confirm addition of new project.
+`-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.
 
 ## `aggregate`
@@ -163,6 +165,8 @@ to `vim`, `nano` or `vi` (first one found) on all other systems.
 
 Flag | Help
 -----|-----
+`-c, --confirm-new-project` | Confirm addition of new project.
+`-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.
 
 ## `frames`
@@ -591,6 +595,8 @@ Example:
 Flag | Help
 -----|-----
 `-g, --gap / -G, --no-gap` | (Don't) leave gap between end time of previous project and start time of the current.
+`-c, --confirm-new-project` | Confirm addition of new project.
+`-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.
 
 ## `status`
@@ -642,7 +648,7 @@ Example:
 
 
     $ watson stop --at 13:37
-    Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52)
+    Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52) # noqa: E501
 
 ### Options
 
