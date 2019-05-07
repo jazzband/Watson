@@ -127,22 +127,26 @@ def catch_watson_error(func):
 def get_projects(ctx, args, incomplete):
     """Function to return all existing projects."""
     watson = get_watson_instance()
-    return (prjct for prjct in watson.projects if prjct.startswith(incomplete))
+    for cur_project in watson.projects:
+        if cur_project.startswith(incomplete):
+            yield cur_project
 
 
 def get_tags(ctx, args, incomplete):
     """Function to return all existing tags."""
     watson = get_watson_instance()
-    return (tag for tag in watson.tags if tag.startswith(incomplete))
+    for cur_tag in watson.tags:
+        if cur_tag.startswith(incomplete):
+            yield cur_tag
 
 
 def get_frames(ctx, args, incomplete):
     """Function to return all existing frames."""
     watson = get_watson_instance()
-    return (frame.id
-            for frame in watson.frames
-            if frame.id.startswith(incomplete)
-            )
+    for cur_frame in watson.frames:
+        yield_candidate = cur_frame.id
+        if yield_candidate.startswith(incomplete):
+            yield yield_candidate
 
 
 def get_watson_instance():
