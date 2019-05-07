@@ -132,6 +132,13 @@ def get_projects(ctx, args, incomplete):
             yield cur_project
 
 
+def get_rename_types(ctx, args, incomplete):
+    """Function to return all current rename types."""
+    for cur_type in 'project', 'tag':
+        if cur_type.startswith(incomplete):
+            yield cur_type
+
+
 def get_tags(ctx, args, incomplete):
     """Function to return all existing tags."""
     watson = get_watson_instance()
@@ -1634,7 +1641,8 @@ def merge(watson, frames_with_conflict, force):
 
 
 @cli.command()
-@click.argument('rename_type', required=True, metavar='TYPE')
+@click.argument('rename_type', required=True, metavar='TYPE',
+                autocompletion=get_rename_types)
 @click.argument('old_name', required=True)
 @click.argument('new_name', required=True)
 @click.pass_obj
