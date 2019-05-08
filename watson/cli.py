@@ -132,6 +132,26 @@ def get_projects(ctx, args, incomplete):
             yield cur_project
 
 
+def get_rename_name(ctx, args, incomplete):
+    """
+    Function to find matching names for renaming.
+
+    Depending on the specified rename_type, its either a project or a tag. This
+    function takes care of this distinction and returns the appropriate names.
+
+    If the passed in type is unknown, e.g. due to a typo, an empty completion
+    is generated.
+    """
+
+    in_type = ctx.params['rename_type']
+    if in_type == 'project':
+        return get_projects(ctx, args, incomplete)
+    elif in_type == 'tag':
+        return get_tags(ctx, args, incomplete)
+
+    return []
+
+
 def get_rename_types(ctx, args, incomplete):
     """Function to return all current rename types."""
     for cur_type in 'project', 'tag':
@@ -1643,8 +1663,8 @@ def merge(watson, frames_with_conflict, force):
 @cli.command()
 @click.argument('rename_type', required=True, metavar='TYPE',
                 autocompletion=get_rename_types)
-@click.argument('old_name', required=True)
-@click.argument('new_name', required=True)
+@click.argument('old_name', required=True, autocompletion=get_rename_name)
+@click.argument('new_name', required=True, autocompletion=get_rename_name)
 @click.pass_obj
 @catch_watson_error
 def rename(watson, rename_type, old_name, new_name):
