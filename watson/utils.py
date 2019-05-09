@@ -1,3 +1,5 @@
+import collections as co
+import csv
 import datetime
 import itertools
 import json
@@ -6,6 +8,10 @@ import os
 import shutil
 import sys
 import tempfile
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 import click
 import arrow
@@ -282,3 +288,112 @@ def parse_tags(values_list):
         ))
         for i, w in enumerate(values_list) if w.startswith('+')
     ))))  # pile of pancakes !
+
+
+def frames_to_json(frames):
+    """
+    Transform a sequence of frames into a JSON-formatted string.
+
+    Each frame object has an equivalent pair name/value in the JSON string,
+    except for 'updated_at', which is not included.
+
+    .. seealso:: :class:`Frame`
+    """
+    log = [
+        co.OrderedDict([
+            ('id', frame.id),
+            ('start', frame.start.isoformat()),
+            ('stop', frame.stop.isoformat()),
+            ('project', frame.project),
+            ('tags', frame.tags),
+        ])
+        for frame in frames
+    ]
+    return json.dumps(log, indent=4, sort_keys=True)
+
+
+def frames_to_csv(frames):
+    """
+    Transform a sequence of frames into a CSV-formatted string.
+
+    Each frame object has an equivalent pair name/value in the CSV string,
+    except for 'updated_at', which is not included.
+
+    .. seealso:: :class:`Frame`
+    """
+    entries = [
+        co.OrderedDict([
+            ('id', frame.id[:7]),
+            ('start', frame.start.format('YYYY-MM-DD HH:mm:ss')),
+            ('stop', frame.stop.format('YYYY-MM-DD HH:mm:ss')),
+            ('project', frame.project),
+            ('tags', ', '.join(frame.tags)),
+        ])
+        for frame in frames
+    ]
+    return build_csv(entries)
+
+
+def build_csv(entries):
+    """
+    Creates a CSV string from a list of dict objects.
+
+    The dictionary keys of the first item in the list are used as the header
+    row for the built CSV. All item's keys are supposed to be identical.
+    """
+    if entries:
+        header = entries[0].keys()
+    else:
+        return ''
+    memfile = StringIO()
+    writer = csv.DictWriter(memfile, header)
+    writer.writeheader()
+    writer.writerows(entries)
+    output = memfile.getvalue()
+    memfile.close()
+    return output
+
+
+def flatten_report_for_csv(report):
+    """
+    Flattens the data structure returned by `watson.report()` for a csv export.
+
+    Dates are formatted in a way that Excel (default csv module dialect) can
+    handle them (i.e. YYYY-MM-DD HH:mm:ss).
+
+    The result is a list of dictionaries where each element can contain two
+    different things:
+
+    1. The total `time` spent in a project during the report interval. In this
+       case, the `tag` value will be empty.
+    2. The partial `time` spent in a tag and project during the report
+       interval. In this case, the `tag` value will contain a tag associated
+       with the project.
+
+    The sum of all elements where `tag` is empty corresponds to the total time
+    of the report.
+    """
+    result = []
+    datetime_from = arrow.get(
+            report['timespan']['from']
+    ).format('YYYY-MM-DD HH:mm:ss')
+    datetime_to = arrow.get(
+            report['timespan']['to']
+    ).format('YYYY-MM-DD HH:mm:ss')
+    for project in report['projects']:
+        result.append({
+            'from': datetime_from,
+            'to': datetime_to,
+            'project': project['name'],
+            'tag': '',
+            'time': project['time']
+        })
+        for tag in project['tags']:
+            result.append({
+                'from': datetime_from,
+                'to': datetime_to,
+                'project': project['name'],
+                'tag': tag['name'],
+                'time': tag['time']
+            })
+    return result
