@@ -17,15 +17,16 @@ Add time for project with tag(s) that was not tracked live.
 Example:
 
 
-    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \
-     programming +addfeature
+    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" <project> +<tag>
+    $ watson add --from "07:00"               --to "09:00"               <project> +<tag>
+    $ watson add --from "2018-03-20 07:00"    --to "09:00"               <project> +<tag>
 
 ### Options
 
 Flag | Help
 -----|-----
-`-f, --from DATE` | Date and time of start of tracked activity  [required]
-`-t, --to DATE` | Date and time of end of tracked activity  [required]
+`-f, --from TEXT` | Date and time of start of tracked activity. If date is omitted todays date is used.  [required]
+`-t, --to TEXT` | Date and time of end of tracked activity. If date is omitted todays date is used.  [required]
 `-c, --confirm-new-project` | Confirm addition of new project.
 `-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.

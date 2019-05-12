@@ -1049,8 +1049,9 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     Example:
 
     \b
-    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \\
-     programming +addfeature
+    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" <project> +<tag>
+    $ watson add --from "07:00"               --to "09:00"               <project> +<tag>
+    $ watson add --from "2018-03-20 07:00"    --to "09:00"               <project> +<tag>
     """
     # parse project name from args
     project = ' '.join(
