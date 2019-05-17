@@ -124,6 +124,54 @@ def catch_watson_error(func):
     return wrapper
 
 
+def get_project_or_task_completion(ctx, args, incomplete):
+    """Function to autocomplete either organisations or tasks, depending on the
+       shape of the current argument."""
+
+    assert isinstance(incomplete, str)
+
+    def get_incomplete_tag(args, incomplete):
+        """Get incomplete tag from command line string."""
+        cmd_line = ' '.join(args + [incomplete])
+        found_tags = parse_tags(cmd_line)
+        return found_tags[-1] if found_tags else ''
+
+    def fix_broken_tag_parsing(incomplete_tag):
+        """
+        Remove spaces from parsed tag
+
+        The function `parse_tags` inserts a space after each character. In
+        order to obtain the actual command line part, the space needs to be
+        removed.
+        """
+        return ''.join(char for char in incomplete_tag.split(' '))
+
+    def prepend_plus(tag_suggestions):
+        """
+        Prepend '+' to each tag suggestion.
+
+        For the `watson` targeted with the function
+        get_project_or_task_completion, a leading plus in front of a tag is
+        expected. The get_tags() suggestion generation does not include those
+        as it targets other subcommands.
+
+        In order to not destroy the current tag stub, the plus must be
+        pretended.
+        """
+        for cur_suggestion in tag_suggestions:
+            yield '+{cur_suggestion}'.format(cur_suggestion=cur_suggestion)
+
+    project_is_completed = any(tok.startswith('+')
+                               for tok in args + [incomplete])
+    if project_is_completed:
+        incomplete_tag = get_incomplete_tag(args, incomplete)
+        fixed_incomplete_tag = fix_broken_tag_parsing(incomplete_tag)
+        tag_suggestions = get_tags(ctx, args, fixed_incomplete_tag)
+        return prepend_plus(tag_suggestions)
+    else:
+        return get_projects(ctx, args, incomplete)
+
+
 def get_projects(ctx, args, incomplete):
     """Function to return all existing projects."""
     watson = get_watson_instance()
@@ -233,7 +281,8 @@ def _start(watson, project, tags, restart=False, gap=True):
 @click.option('-g/-G', '--gap/--no-gap', 'gap_', is_flag=True, default=True,
               help=("(Don't) leave gap between end time of previous project "
                     "and start time of the current."))
-@click.argument('args', nargs=-1)
+@click.argument('args', nargs=-1,
+                autocompletion=get_project_or_task_completion)
 @click.option('-c', '--confirm-new-project', is_flag=True, default=False,
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
@@ -1183,7 +1232,8 @@ def frames(watson):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
-@click.argument('args', nargs=-1)
+@click.argument('args', nargs=-1,
+                autocompletion=get_project_or_task_completion)
 @click.option('-f', '--from', 'from_', required=True, type=Date,
               help="Date and time of start of tracked activity")
 @click.option('-t', '--to', required=True, type=Date,
