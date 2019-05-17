@@ -1074,7 +1074,8 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     # check if <from> and <to> are time without a date, if yes
     # convert to todays datetime
     if isDateTime(from_) and isDateTime(to):
-        pass
+        from_ = arrow.get(from_).replace(tzinfo='local')
+        to = arrow.get(to).replace(tzinfo='local')
     elif isDateTime(from_) and isTime(to):
         from_ = arrow.get(from_).replace(tzinfo='local')
         to = getMergedDateTime(from_.floor("day"), to)        

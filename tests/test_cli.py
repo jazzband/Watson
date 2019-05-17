@@ -66,6 +66,33 @@ def test_from_date_time(setup):
         assert date in output["stop"]
         assert to_time in output["stop"]
 
+# test for watson add <project> --from "yyyy-mm-dd hh:mm" --to ""yyyy-mm-dd hh:mm"
+def test_date_time(setup):
+    runner = CliRunner()
+
+    test_data = [("2016-03-24", "07:32", "08:54"),
+                 ("2017-04-28", "14:00", "17:31")]
+
+    project = "test_date_time"
+
+    for data in test_data:
+        date = data[0]
+        from_time = data[1]
+        to_time = data[2]
+
+        result = runner.invoke(cli.cli, ["add", project, '--from' , "{} {}".format(date, from_time), '--to', "{} {}".format(date, to_time)])
+
+        # as watson log -a crashes, I use -f <date>
+        result = runner.invoke(cli.cli, ["log", "-f", date, "-j"])
+        runner.invoke(cli.cli, ["log"])
+        output = json.loads(result.output)[0]
+
+        assert output["project"] == project
+        assert date in output["start"]
+        assert from_time in output["start"]
+        assert date in output["stop"]
+        assert to_time in output["stop"]
+
 def test_format_not_supported(setup):
     runner = CliRunner()
 
