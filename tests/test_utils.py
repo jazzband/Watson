@@ -27,6 +27,10 @@ from watson.utils import (
     safe_save,
     parse_tags,
     PY2,
+    isTime,
+    isDateTime,
+    getDateTimeToday,
+    getMergedDateTime
 )
 from . import mock_datetime
 
@@ -228,3 +232,49 @@ def test_confirm_tags_reject_raises_abort(confirm):
     watson_tags = ['a', 'b']
     with pytest.raises(Abort):
         confirm_project(tags, watson_tags)
+
+
+@pytest.mark.parametrize("date_time_string, result", [
+    ("2018-05-28 7:00", False),
+    ("2018-05.28 7:00", False),
+    ("7:00", True),
+    ("17:00", True),
+    ("117:00", False),
+    ("117", False),
+])
+def test_isTime(date_time_string, result):
+    assert isTime(date_time_string) == result
+
+
+@pytest.mark.parametrize("date_time_string, result", [
+    ("2018-05-28 7:00", True),
+    ("2018-05-28 07:00", True),
+    ("2018-05-28 127:00", False),
+    ("2018-05-f 7:00", False),
+    ("2018-05-28 7.00", False),
+    ("7:00", False),
+])
+def test_isDateTime(date_time_string, result):
+    assert isDateTime(date_time_string) == result
+
+
+@pytest.mark.parametrize("date_time, time_string", [
+    ("2014-04-01", "07:00"),
+    ("2014-04-01", "17:00"),
+])
+def test_getMergedDateTime(date_time, time_string):
+    result = arrow.get("{} {}".format(date_time, time_string), 'YYYY-MM-DD HH:mm')
+    date = arrow.get(date_time, 'YYYY-MM-DD')
+    assert getMergedDateTime(date, time_string) == result
+
+
+@pytest.mark.parametrize("time_string", [
+    ("07:00"),
+    ("17:00"),
+    ("09:05"),
+    ("13:37"),
+])
+def test_getDateTimeToday(time_string):
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    result = arrow.get("{} {}".format(today, time_string), 'YYYY-MM-DD HH:mm').replace(tzinfo='local')
+    assert getDateTimeToday(time_string) == result

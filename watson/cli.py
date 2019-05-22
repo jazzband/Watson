@@ -26,6 +26,10 @@ from .utils import (
     sorted_groupby,
     style,
     parse_tags,
+    isTime,
+    isDateTime,
+    getDateTimeToday,
+    getMergedDateTime
 )
 
 
@@ -1012,22 +1016,6 @@ def frames(watson):
     """
     for frame in watson.frames:
         click.echo(style('short_id', frame.id))
-
-def isTime(date_time_string):
-    match = re.search("^\d{1,2}:\d{1,2}$", date_time_string)
-    return match != None
-
-def isDateTime(date_time_string):
-    match = re.search("^\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}$", date_time_string)
-    return match != None
-
-def getDateTimeToday(time_string):
-    date_today = arrow.now().floor("day")
-    return getMergedDateTime(date_today, time_string)
-
-def getMergedDateTime(date_time, time_string):
-    hours, minutes = time_string.split(":")
-    return date_time.shift(hours=int(hours), minutes=int(minutes))
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('args', nargs=-1)
