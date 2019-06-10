@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update zsh shell completion (#264)
 
+### Removed
+
+- Python 3.4 support (#286).
+
 ## [1.7.0] - 2019-03-25
 
 ### Added
