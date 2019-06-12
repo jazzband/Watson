@@ -26,6 +26,10 @@ from .utils import (
     sorted_groupby,
     style,
     parse_tags,
+    isTime,
+    isDateTime,
+    getDateTimeToday,
+    getMergedDateTime
 )
 
 
@@ -1013,13 +1017,14 @@ def frames(watson):
     for frame in watson.frames:
         click.echo(style('short_id', frame.id))
 
-
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('args', nargs=-1)
-@click.option('-f', '--from', 'from_', required=True, type=Date,
-              help="Date and time of start of tracked activity")
-@click.option('-t', '--to', required=True, type=Date,
-              help="Date and time of end of tracked activity")
+@click.option('-f', '--from', 'from_', required=True, 
+              help="Date and time of start of tracked activity. "
+              "If date is omitted todays date is used.")
+@click.option('-t', '--to', required=True,
+              help="Date and time of end of tracked activity. "
+              "If date is omitted todays date is used.")
 @click.option('-c', '--confirm-new-project', is_flag=True, default=False,
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
@@ -1032,8 +1037,9 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     Example:
 
     \b
-    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \\
-     programming +addfeature
+    $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" <project> +<tag>
+    $ watson add --from "07:00"               --to "09:00"               <project> +<tag>
+    $ watson add --from "2018-03-20 07:00"    --to "09:00"               <project> +<tag>
     """
     # parse project name from args
     project = ' '.join(
@@ -1052,6 +1058,25 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     if (watson.config.getboolean('options', 'confirm_new_tag') or
             confirm_new_tag):
         confirm_tags(tags, watson.tags)
+
+    # check if <from> and <to> are time without a date, if yes
+    # convert to todays datetime
+    if isDateTime(from_) and isDateTime(to):
+        from_ = arrow.get(from_).replace(tzinfo='local')
+        to = arrow.get(to).replace(tzinfo='local')
+    elif isDateTime(from_) and isTime(to):
+        from_ = arrow.get(from_).replace(tzinfo='local')
+        to = getMergedDateTime(from_.floor("day"), to)        
+    elif isTime(from_) and isTime(to):
+        from_ = getDateTimeToday(from_)
+        to = getDateTimeToday(to)
+    else:
+        raise click.ClickException(
+            style('error', "Format not supported\n"
+                  "Usage:\n"
+                  "watson add --from \"hh:mm\"            --to \"hh:mm\"\n"
+                  "watson add --from \"yyyy-mm-dd hh:mm\" --to \"hh:mm\"\n"
+                  "watson add --from \"yyyy-mm-dd hh:mm\" --to \"yyyy-mm-dd hh:mm\"\n"))
 
     # add a new frame, call watson save to update state files
     frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to)
