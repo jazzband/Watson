@@ -52,8 +52,10 @@ projects or tags to the report.
 If you are outputting to the terminal, you can selectively enable a pager
 through the `--pager` option.
 
-You can change the output format for the report from *plain text* to *JSON*
-by using the `--json` option.
+You can change the output format from *plain text* to *JSON* using the
+`--json` option or to *CSV* using the `--csv` option. Only one  of these
+two options can be used at once.
+
 
 Example:
 
@@ -86,6 +88,21 @@ Example:
     Wed 21 November 2018 - 01m 17s
       watson - 01m 17s
             [docs     01m 17s]
+    
+    $ watson aggregate --csv
+    from,to,project,tag,time
+    2018-11-14 00:00:00,2018-11-14 23:59:59,watson,,20542.0
+    2018-11-14 00:00:00,2018-11-14 23:59:59,watson,features,2046.0
+    2018-11-14 00:00:00,2018-11-14 23:59:59,watson,docs,18496.0
+    2018-11-19 00:00:00,2018-11-19 23:59:59,watson,,21532.0
+    2018-11-19 00:00:00,2018-11-19 23:59:59,watson,features,4323.0
+    2018-11-19 00:00:00,2018-11-19 23:59:59,watson,docs,17209.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,,10235.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,features,917.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,docs,5863.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,website,3455.0
+    2018-11-21 00:00:00,2018-11-21 23:59:59,watson,,77.0
+    2018-11-21 00:00:00,2018-11-21 23:59:59,watson,docs,77.0
 
 ### Options
 
@@ -96,7 +113,8 @@ Flag | Help
 `-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`-j, --json` | Format the report in JSON instead of plain text
+`-j, --json` | Format output in JSON instead of plain text
+`-s, --csv` | Format output in CSV instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
 
@@ -232,6 +250,10 @@ You can limit the log to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
 projects or tags to the log.
 
+You can change the output format from *plain text* to *JSON* using the
+`--json` option or to *CSV* using the `--csv` option. Only one  of these
+two options can be used at once.
+
 Example:
 
 
@@ -260,6 +282,14 @@ Example:
     Wednesday 16 April 2014 (5h 19m 18s)
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
+    
+    $ watson log --from 2014-04-16 --to 2014-04-17 --csv
+    id,start,stop,project,tags
+    a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission"
+    5e91316,2014-04-17 10:19,2014-04-17 12:59,hubble,"camera, transmission"
+    761dd51,2014-04-17 14:42,2014-04-17 15:54,voyager1,antenna
+    02cb269,2014-04-16 09:53,2014-04-16 12:43,apollo11,wheels
+    1070ddb,2014-04-16 13:48,2014-04-16 16:17,voyager1,"antenna, sensors"
 
 ### Options
 
@@ -276,7 +306,8 @@ Flag | Help
 `-a, --all` | Reports all activities.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`-j, --json` | Format the log in JSON instead of plain text
+`-j, --json` | Format output in JSON instead of plain text
+`-s, --csv` | Format output in CSV instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
 
@@ -439,7 +470,8 @@ If you are outputting to the terminal, you can selectively enable a pager
 through the `--pager` option.
 
 You can change the output format for the report from *plain text* to *JSON*
-by using the `--json` option.
+using the `--json` option or to *CSV* using the `--csv` option. Only one
+of these two options can be used at once.
 
 Example:
 
@@ -507,6 +539,15 @@ Example:
             "to": "2016-02-28T23:59:59.999999-08:00"
         }
     }
+    
+    $ watson report --from 2014-04-01 --to 2014-04-30 --project apollo11 --csv
+    from,to,project,tag,time
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,,48140.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,brakes,28421.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,module,27701.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,reactor,30950.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,steering,38017.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,wheels,36695.0
 
 ### Options
 
@@ -523,7 +564,8 @@ Flag | Help
 `-a, --all` | Reports all activities.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`-j, --json` | Format the report in JSON instead of plain text
+`-j, --json` | Format output in JSON instead of plain text
+`-s, --csv` | Format output in CSV instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
 `--help` | Show this message and exit.
 

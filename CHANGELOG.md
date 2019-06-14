@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add CSV output format support for `report`, `log` and `aggregate` commands
+  using the `--csv/-s` command line option flag (#281).
+
 ### Fixed
 
-- Update zsh shell completion (#264)
+- Update zsh shell completion (#264).
 
 ### Removed
 

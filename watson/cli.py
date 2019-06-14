@@ -17,9 +17,13 @@ from . import watson as _watson
 from .frames import Frame
 from .utils import (
     apply_weekday_offset,
+    build_csv,
     confirm_project,
     confirm_tags,
+    flatten_report_for_csv,
     format_timedelta,
+    frames_to_csv,
+    frames_to_json,
     get_frame_from_argument,
     get_start_time_for_period,
     options, safe_save,
@@ -35,17 +39,24 @@ class MutuallyExclusiveOption(click.Option):
         super(MutuallyExclusiveOption, self).__init__(*args, **kwargs)
 
     def handle_parse_result(self, ctx, opts, args):
-        if self.mutually_exclusive.intersection(opts) and self.name in opts:
-            raise click.UsageError(
-                '`--{name}` is mutually exclusive with the following options: '
-                '{options}'.format(name=self.name.replace('_', ''),
-                                   options=', '
-                                   .join(['`--{}`'.format(_) for _ in
-                                         self.mutually_exclusive]))
-            )
-
+        if self.name in opts:
+            if self.mutually_exclusive.intersection(opts):
+                self._raise_exclusive_error()
+            if self.multiple and len(set(opts[self.name])) > 1:
+                self._raise_exclusive_error()
         return super(MutuallyExclusiveOption, self).handle_parse_result(
             ctx, opts, args
+        )
+
+    def _raise_exclusive_error(self):
+        # Use self.opts[-1] instead of self.name to handle options with a
+        # different internal name.
+        self.mutually_exclusive.add(self.opts[-1].strip('-'))
+        raise click.UsageError(
+            'The following options are mutually exclusive: '
+            '{options}'.format(options=', '
+                               .join(['`--{}`'.format(_) for _ in
+                                     self.mutually_exclusive]))
         )
 
 
@@ -435,14 +446,24 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('-j', '--json', 'format_json', cls=MutuallyExclusiveOption,
-              is_flag=True,
-              help="Format the report in JSON instead of plain text")
+@click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='json', mutually_exclusive=['csv'],
+              multiple=True,
+              help="Format output in JSON instead of plain text")
+@click.option('-s', '--csv', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='csv', mutually_exclusive=['json'],
+              multiple=True,
+              help="Format output in CSV instead of plain text")
+@click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='plain', mutually_exclusive=['json', 'csv'],
+              multiple=True, default=True, hidden=True,
+              help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 def report(watson, current, from_, to, projects, tags, year, month,
-           week, day, luna, all, format_json, pager, aggregated=False):
+           week, day, luna, all, output_format, pager,
+           aggregated=False):
     """
     Display a report of the time spent on each project.
 
@@ -468,7 +489,8 @@ def report(watson, current, from_, to, projects, tags, year, month,
     through the `--pager` option.
 
     You can change the output format for the report from *plain text* to *JSON*
-    by using the `--json` option.
+    using the `--json` option or to *CSV* using the `--csv` option. Only one
+    of these two options can be used at once.
 
     Example:
 
@@ -536,6 +558,15 @@ def report(watson, current, from_, to, projects, tags, year, month,
             "to": "2016-02-28T23:59:59.999999-08:00"
         }
     }
+    \b
+    $ watson report --from 2014-04-01 --to 2014-04-30 --project apollo11 --csv
+    from,to,project,tag,time
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,,48140.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,brakes,28421.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,module,27701.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,reactor,30950.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,steering,38017.0
+    2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,wheels,36695.0
     """
 
     # if the report is an aggregate report, add whitespace using this
@@ -552,10 +583,13 @@ def report(watson, current, from_, to, projects, tags, year, month,
     except watson.WatsonError as e:
         raise click.ClickException(e)
 
-    if format_json and not aggregated:
+    if 'json' in output_format and not aggregated:
         click.echo(json.dumps(report, indent=4, sort_keys=True))
         return
-    elif format_json and aggregated:
+    elif 'csv' in output_format and not aggregated:
+        click.echo(build_csv(flatten_report_for_csv(report)))
+        return
+    elif 'plain' not in output_format and aggregated:
         return report
 
     lines = []
@@ -667,15 +701,24 @@ def report(watson, current, from_, to, projects, tags, year, month,
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('-j', '--json', 'format_json', cls=MutuallyExclusiveOption,
-              is_flag=True,
-              help="Format the report in JSON instead of plain text")
+@click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='json', mutually_exclusive=['csv'],
+              multiple=True,
+              help="Format output in JSON instead of plain text")
+@click.option('-s', '--csv', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='csv', mutually_exclusive=['json'],
+              multiple=True,
+              help="Format output in CSV instead of plain text")
+@click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='plain', mutually_exclusive=['json', 'csv'],
+              multiple=True, default=True, hidden=True,
+              help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 @click.pass_context
-def aggregate(ctx, watson, current, from_, to, projects, tags,
-              format_json, pager):
+def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
+              pager):
     """
     Display a report of the time spent on each project aggregated by day.
 
@@ -693,8 +736,10 @@ def aggregate(ctx, watson, current, from_, to, projects, tags,
     If you are outputting to the terminal, you can selectively enable a pager
     through the `--pager` option.
 
-    You can change the output format for the report from *plain text* to *JSON*
-    by using the `--json` option.
+    You can change the output format from *plain text* to *JSON* using the
+    `--json` option or to *CSV* using the `--csv` option. Only one  of these
+    two options can be used at once.
+
 
     Example:
 
@@ -727,6 +772,21 @@ def aggregate(ctx, watson, current, from_, to, projects, tags,
     Wed 21 November 2018 - 01m 17s
       watson - 01m 17s
             [docs     01m 17s]
+    \b
+    $ watson aggregate --csv
+    from,to,project,tag,time
+    2018-11-14 00:00:00,2018-11-14 23:59:59,watson,,20542.0
+    2018-11-14 00:00:00,2018-11-14 23:59:59,watson,features,2046.0
+    2018-11-14 00:00:00,2018-11-14 23:59:59,watson,docs,18496.0
+    2018-11-19 00:00:00,2018-11-19 23:59:59,watson,,21532.0
+    2018-11-19 00:00:00,2018-11-19 23:59:59,watson,features,4323.0
+    2018-11-19 00:00:00,2018-11-19 23:59:59,watson,docs,17209.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,,10235.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,features,917.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,docs,5863.0
+    2018-11-20 00:00:00,2018-11-20 23:59:59,watson,website,3455.0
+    2018-11-21 00:00:00,2018-11-21 23:59:59,watson,,77.0
+    2018-11-21 00:00:00,2018-11-21 23:59:59,watson,docs,77.0
     """
     delta = (to - from_).days
     lines = []
@@ -736,11 +796,13 @@ def aggregate(ctx, watson, current, from_, to, projects, tags,
         from_offset = from_ + offset
         output = ctx.invoke(report, current=current, from_=from_offset,
                             to=from_offset, projects=projects, tags=tags,
-                            format_json=format_json, pager=pager,
-                            aggregated=True)
+                            output_format=output_format,
+                            pager=pager, aggregated=True)
 
-        if format_json:
+        if 'json' in output_format:
             lines.append(output)
+        elif 'csv' in output_format:
+            lines.extend(flatten_report_for_csv(output))
         else:
             # if there is no activity for the day, append a newline
             # this ensures even spacing throughout the report
@@ -749,8 +811,10 @@ def aggregate(ctx, watson, current, from_, to, projects, tags,
 
             lines.append(u'\n'.join(output))
 
-    if format_json:
+    if 'json' in output_format:
         click.echo(json.dumps(lines, indent=4, sort_keys=True))
+    elif 'csv' in output_format:
+        click.echo(build_csv(lines))
     elif pager or (pager is None and
                    watson.config.getboolean('options', 'pager', True)):
         click.echo_via_pager(u'\n\n'.join(lines))
@@ -799,13 +863,23 @@ def aggregate(ctx, watson, current, from_, to, projects, tags,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('-j', '--json', 'format_json', is_flag=True,
-              help="Format the log in JSON instead of plain text")
+@click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='json', mutually_exclusive=['csv'],
+              multiple=True,
+              help="Format output in JSON instead of plain text")
+@click.option('-s', '--csv', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='csv', mutually_exclusive=['json'],
+              multiple=True,
+              help="Format output in CSV instead of plain text")
+@click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
+              flag_value='plain', mutually_exclusive=['json', 'csv'],
+              multiple=True, default=True, hidden=True,
+              help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        luna, all, format_json, pager):
+        luna, all, output_format, pager):
     """
     Display each recorded session during the given timespan.
 
@@ -826,6 +900,10 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     You can limit the log to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
     projects or tags to the log.
+
+    You can change the output format from *plain text* to *JSON* using the
+    `--json` option or to *CSV* using the `--csv` option. Only one  of these
+    two options can be used at once.
 
     Example:
 
@@ -855,6 +933,14 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     Wednesday 16 April 2014 (5h 19m 18s)
             02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
+    \b
+    $ watson log --from 2014-04-16 --to 2014-04-17 --csv
+    id,start,stop,project,tags
+    a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission"
+    5e91316,2014-04-17 10:19,2014-04-17 12:59,hubble,"camera, transmission"
+    761dd51,2014-04-17 14:42,2014-04-17 15:54,voyager1,antenna
+    02cb269,2014-04-16 09:53,2014-04-16 12:43,apollo11,wheels
+    1070ddb,2014-04-16 13:48,2014-04-16 16:17,voyager1,"antenna, sensors"
     """  # noqa
     for start_time in (_ for _ in [day, week, month, luna, year, all]
                        if _ is not None):
@@ -875,18 +961,12 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
         projects=projects or None, tags=tags or None, span=span
     )
 
-    if format_json:
-        log = [
-            {
-                'id': frame.id,
-                'start': frame.start.isoformat(),
-                'stop': frame.stop.isoformat(),
-                'project': frame.project,
-                'tags': frame.tags,
-            }
-            for frame in filtered_frames
-        ]
-        click.echo(json.dumps(log, indent=4, sort_keys=True))
+    if 'json' in output_format:
+        click.echo(frames_to_json(filtered_frames))
+        return
+
+    if 'csv' in output_format:
+        click.echo(frames_to_csv(filtered_frames))
         return
 
     frames_by_day = sorted_groupby(
