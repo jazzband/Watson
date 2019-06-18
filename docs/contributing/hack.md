@@ -20,7 +20,7 @@ Ready to contribute? Here's how to set up *Watson* for local development.
         $ cd Watson
         $ make env
 
-    The Python version used will be the one accesible using the `python`
+    The Python version used will be the one accessible using the `python`
     command in your shell.
 
     To use a different Python version, define the `PYTHON` shell variable.
