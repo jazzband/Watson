@@ -462,9 +462,10 @@ respectively.
 The shortcut `--luna` sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.
 
-You can limit the report to a project or a tag using the `--project` and
-`--tag` options. They can be specified several times each to add multiple
-projects or tags to the report.
+You can limit the report to a project or a tag using the `--project`,
+`--tag`, `--ignore-project` and `--ignore-tag` options. They can be
+specified several times each to add or ignore multiple projects or
+tags to the report.
 
 If you are outputting to the terminal, you can selectively enable a pager
 through the `--pager` option.
@@ -564,6 +565,8 @@ Flag | Help
 `-a, --all` | Reports all activities.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`--ignore-project TEXT` | Reports activity for all project but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored
+`--ignore-tag TEXT` | Reports activity for all tags but the given ones. You can ignore several tags by using the option multiple times. Any given tag will be ignored
 `-j, --json` | Format output in JSON instead of plain text
 `-s, --csv` | Format output in CSV instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
