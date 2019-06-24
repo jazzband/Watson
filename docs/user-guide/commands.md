@@ -565,7 +565,7 @@ Flag | Help
 `-a, --all` | Reports all activities.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
-`--ignore-project TEXT` | Reports activity for all project but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored
+`--ignore-project TEXT` | Reports activity for all projects but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored
 `--ignore-tag TEXT` | Reports activity for all tags but the given ones. You can ignore several tags by using the option multiple times. Any given tag will be ignored
 `-j, --json` | Format output in JSON instead of plain text
 `-s, --csv` | Format output in CSV instead of plain text

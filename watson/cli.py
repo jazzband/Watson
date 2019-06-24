@@ -446,7 +446,7 @@ _SHORTCUT_OPTIONS_VALUES = {
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.option('--ignore-project', 'ignore_projects', multiple=True,
-              help="Reports activity for all project but the given ones. You "
+              help="Reports activity for all projects but the given ones. You "
               "can ignore several projects by using the option multiple times. "
               "Any given project will be ignored")
 @click.option('--ignore-tag', 'ignore_tags', multiple=True,
