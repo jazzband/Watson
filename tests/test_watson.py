@@ -771,6 +771,29 @@ def test_report(watson):
     assert len(report['projects'][0]['tags']) == 1
     assert report['projects'][0]['tags'][0]['name'] == 'B'
 
+    watson.start('baz', tags=['D'])
+    watson.stop()
+
+    report = watson.report(arrow.now(), arrow.now(), projects=["foo"])
+    assert len(report['projects']) == 1
+
+    report = watson.report(arrow.now(), arrow.now(), ignore_projects=["bar"])
+    assert len(report['projects']) == 2
+
+    report = watson.report(arrow.now(), arrow.now(), tags=["A"])
+    assert len(report['projects']) == 1
+
+    report = watson.report(arrow.now(), arrow.now(), ignore_tags=["D"])
+    assert len(report['projects']) == 2
+
+    with pytest.raises(WatsonError):
+        watson.report(
+            arrow.now(), arrow.now(), projects=["foo"], ignore_projects=["foo"]
+        )
+
+    with pytest.raises(WatsonError):
+        watson.report(arrow.now(), arrow.now(), tags=["A"], ignore_tags=["A"])
+
 
 # renaming project updates frame last_updated time
 def test_rename_project_with_time(mock, watson):
@@ -863,3 +886,16 @@ def test_add_failure(mock, watson):
     with pytest.raises(WatsonError):
         watson.add(project="test_project", tags=['fuu', 'bar'],
                    from_date=7000, to_date=6000)
+
+
+def test_validate_report_options(mock, watson):
+    assert not watson._validate_report_options(["project_foo"], None)
+    assert not watson._validate_report_options(None, ["project_foo"])
+    assert watson._validate_report_options(["project_foo"], ["project_foo"])
+    assert not watson._validate_report_options(["project_foo"],
+                                               ["project_bar"])
+    assert watson._validate_report_options(["project_foo", "project_bar"],
+                                           ["project_foo"])
+    assert watson._validate_report_options(["project_foo", "project_bar"],
+                                           ["project_foo", "project_bar"])
+    assert not watson._validate_report_options(None, None)
