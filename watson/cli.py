@@ -81,7 +81,6 @@ class DateParamType(click.ParamType):
             # expected by the user, so that midnight is midnight in the local
             # timezone, not in UTC. Cf issue #16.
             date.tzinfo = tz.tzlocal()
-
             # Add an offset to match the week beginning specified in the
             # configuration
             if param.name == "week":
@@ -446,6 +445,14 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('--ignore-project', 'ignore_projects', multiple=True,
+              help="Reports activity for all project but the given ones. You "
+              "can ignore several projects by using the option multiple times. "
+              "Any given project will be ignored")
+@click.option('--ignore-tag', 'ignore_tags', multiple=True,
+              help="Reports activity for all tags but the given ones. You can "
+              "ignore several tags by using the option multiple times. Any "
+              "given tag will be ignored")
 @click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='json', mutually_exclusive=['csv'],
               multiple=True,
@@ -461,9 +468,9 @@ _SHORTCUT_OPTIONS_VALUES = {
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
-def report(watson, current, from_, to, projects, tags, year, month,
-           week, day, luna, all, output_format, pager,
-           aggregated=False):
+def report(watson, current, from_, to, projects, tags, ignore_projects,
+           ignore_tags, year, month, week, day, luna, all, output_format,
+           pager, aggregated=False):
     """
     Display a report of the time spent on each project.
 
@@ -481,9 +488,10 @@ def report(watson, current, from_, to, projects, tags, year, month,
     The shortcut `--luna` sets the timespan to the current moon cycle with
     the last full moon marking the start of the cycle.
 
-    You can limit the report to a project or a tag using the `--project` and
-    `--tag` options. They can be specified several times each to add multiple
-    projects or tags to the report.
+    You can limit the report to a project or a tag using the `--project`,
+    `--tag`, `--ignore-project` and `--ignore-tag` options. They can be
+    specified several times each to add or ignore multiple projects or
+    tags to the report.
 
     If you are outputting to the terminal, you can selectively enable a pager
     through the `--pager` option.
@@ -578,10 +586,11 @@ def report(watson, current, from_, to, projects, tags, year, month,
 
     try:
         report = watson.report(from_, to, current, projects, tags,
+                               ignore_projects, ignore_tags,
                                year=year, month=month, week=week, day=day,
                                luna=luna, all=all)
-    except watson.WatsonError as e:
-        raise click.ClickException(e)
+    except _watson.WatsonError as e:
+        raise click.ClickException(e.message)
 
     if 'json' in output_format and not aggregated:
         click.echo(json.dumps(report, indent=4, sort_keys=True))
