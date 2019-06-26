@@ -154,9 +154,11 @@ class Frames(object):
         return (
             frame for frame in self._rows
             if (projects is None or frame.project in projects) and
-               (ignore_projects is None or frame.project not in ignore_projects) and
+               (ignore_projects is None
+                   or frame.project not in ignore_projects) and
                (tags is None or any(tag in frame.tags for tag in tags)) and
-               (ignore_tags is None or any(tag not in frame.tags for tag in ignore_tags)) and
+               (ignore_tags is None
+                   or any(tag not in frame.tags for tag in ignore_tags)) and
                (span is None or frame in span)
         )
 

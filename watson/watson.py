@@ -444,7 +444,8 @@ class Watson(object):
         return conflicting, merging
 
     def _validate_report_options(self, filtrate, ignored):
-        return bool(filtrate and ignored and set(filtrate).intersection(set(ignored)))
+        return bool(
+            filtrate and ignored and set(filtrate).intersection(set(ignored)))
 
     def report(self, from_, to, current=None, projects=None, tags=None,
                ignore_projects=None, ignore_tags=None, year=None,
