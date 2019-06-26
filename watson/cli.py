@@ -447,8 +447,8 @@ _SHORTCUT_OPTIONS_VALUES = {
               "times")
 @click.option('--ignore-project', 'ignore_projects', multiple=True,
               help="Reports activity for all projects but the given ones. You "
-              "can ignore several projects by using the option multiple times. "
-              "Any given project will be ignored")
+              "can ignore several projects by using the option multiple "
+              "times. Any given project will be ignored")
 @click.option('--ignore-tag', 'ignore_tags', multiple=True,
               help="Reports activity for all tags but the given ones. You can "
               "ignore several tags by using the option multiple times. Any "
