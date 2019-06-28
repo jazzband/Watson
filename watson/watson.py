@@ -456,7 +456,7 @@ class Watson(object):
 
         if self._validate_report_options(projects, ignore_projects):
             raise WatsonError(
-                "given projects can't be ignore at the same time")
+                "given projects can't be ignored at the same time")
 
         if self._validate_report_options(tags, ignore_tags):
             raise WatsonError("given tags can't be ignored at the same time")
