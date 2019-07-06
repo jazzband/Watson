@@ -889,13 +889,13 @@ def test_add_failure(mock, watson):
 
 
 def test_validate_report_options(mock, watson):
-    assert not watson._validate_report_options(["project_foo"], None)
-    assert not watson._validate_report_options(None, ["project_foo"])
-    assert watson._validate_report_options(["project_foo"], ["project_foo"])
+    assert watson._validate_report_options(["project_foo"], None)
+    assert watson._validate_report_options(None, ["project_foo"])
     assert not watson._validate_report_options(["project_foo"],
-                                               ["project_bar"])
-    assert watson._validate_report_options(["project_foo", "project_bar"],
-                                           ["project_foo"])
-    assert watson._validate_report_options(["project_foo", "project_bar"],
-                                           ["project_foo", "project_bar"])
-    assert not watson._validate_report_options(None, None)
+                                               ["project_foo"])
+    assert watson._validate_report_options(["project_foo"], ["project_bar"])
+    assert not watson._validate_report_options(["project_foo", "project_bar"],
+                                               ["project_foo"])
+    assert not watson._validate_report_options(["project_foo", "project_bar"],
+                                               ["project_foo", "project_bar"])
+    assert watson._validate_report_options(None, None)
