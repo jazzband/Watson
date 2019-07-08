@@ -85,7 +85,6 @@ complete -f -c watson -n '__fish_watson_needs_sub' -a cancel -d "Cancel the last
 complete -f -c watson -n '__fish_watson_needs_sub' -a frames -d "Display the list of all frame IDs"
 complete -f -c watson -n '__fish_watson_needs_sub' -a help -d "Display help information"
 complete -f -c watson -n '__fish_watson_needs_sub' -a projects -d "Display the list of projects"
-complete -f -c watson -n '__fish_watson_needs_sub' -a stop -d " Stop monitoring time for the current project"
 complete -f -c watson -n '__fish_watson_needs_sub' -a sync -d "sync your work with $url"
 complete -f -c watson -n '__fish_watson_needs_sub' -a tags -d "Display the list of tags"
 
@@ -93,6 +92,8 @@ complete -f -c watson -n '__fish_watson_needs_sub' -a tags -d "Display the list 
 complete -f -c watson -n '__fish_watson_needs_sub' -a add -d "Add time for project with tag(s) that was not tracked live"
 complete -f -c watson -n '__fish_watson_using_command add' -s f -l from -d "Start date for add"
 complete -f -c watson -n '__fish_watson_has_from add' -s t -l to -d "end date for add"
+complete -f -c watson -n '__fish_watson_has_from add' -s c -l confirm-new-project -d "Confirm addition of new project"
+complete -f -c watson -n '__fish_watson_has_from add' -s b -l confirm-new-tag -d "Confirm addition of new tag"
 
 # aggregate
 complete -f -c watson -n '__fish_watson_needs_sub' -a aggregate -d "Display a report of the time spent on each project aggregated by day"
@@ -123,6 +124,7 @@ complete -f -c watson -n '__fish_watson_using_command log' -s f -l from -d "Star
 complete -f -c watson -n '__fish_watson_has_from log' -s t -l to -d "end date for log"
 complete -f -c watson -n '__fish_watson_using_command log' -s y -l year -d "show the last year"
 complete -f -c watson -n '__fish_watson_using_command log' -s m -l month -d "show the last month"
+complete -f -c watson -n '__fish_watson_using_command log' -s l -l luna -d "show the last lunar cycle"
 complete -f -c watson -n '__fish_watson_using_command log' -s w -l week -d "show week-to-day"
 complete -f -c watson -n '__fish_watson_using_command log' -s d -l day -d "show today"
 complete -f -c watson -n '__fish_watson_using_command log' -s a -l all -d "show all"
@@ -154,6 +156,7 @@ complete -f -c watson -n '__fish_watson_using_command report' -s f -l from -d "S
 complete -f -c watson -n '__fish_watson_has_from report' -s t -l to -d "end date for report"
 complete -f -c watson -n '__fish_watson_using_command report' -s y -l year -d "show the last year"
 complete -f -c watson -n '__fish_watson_using_command report' -s m -l month -d "show the last month"
+complete -f -c watson -n '__fish_watson_using_command report' -s l -l luna -d "show the last lunar cycle"
 complete -f -c watson -n '__fish_watson_using_command report' -s w -l week -d "show week-to-day"
 complete -f -c watson -n '__fish_watson_using_command report' -s d -l day -d "show today"
 complete -f -c watson -n '__fish_watson_using_command report' -s a -l all -d "show all"
@@ -180,3 +183,7 @@ complete -f -c watson -n '__fish_watson_needs_sub' -a status -d "Display when th
 complete -f -c watson -n '__fish_watson_using_command status' -s p -l project -d "only show project"
 complete -f -c watson -n '__fish_watson_using_command status' -s t -l tags -d "only show tags"
 complete -f -c watson -n '__fish_watson_using_command status' -s e -l elapsed -d "only show elapsed time"
+
+# stop
+complete -f -c watson -n '__fish_watson_needs_sub' -a stop -d "Stop monitoring time for the current project"
+complete -f -c watson -n '__fish_watson_using_command stop' -l at -d "Stop frame at this time (YYYY-MM-DDT)?HH:MM(:SS)?"
