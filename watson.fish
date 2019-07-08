@@ -103,6 +103,7 @@ complete -f -c watson -n '__fish_watson_has_from aggregate' -s t -l to -d "end d
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s p -l project -d "restrict to project" -a "(__fish_watson_get_projects)"
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s T -l tag -d "restrict to tag" -a "(__fish_watson_get_tags)"
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s j -l json -d "output json"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s s -l csv -d "output csv"
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s g -l pager -d "view through pager"
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s G -l no-pager -d "don't vew through pager"
 
@@ -128,6 +129,7 @@ complete -f -c watson -n '__fish_watson_using_command log' -s a -l all -d "show 
 complete -f -c watson -n '__fish_watson_using_command log' -s p -l project -d "restrict to project" -a "(__fish_watson_get_projects)"
 complete -f -c watson -n '__fish_watson_using_command log' -s T -l tag -d "restrict to tag" -a "(__fish_watson_get_tags)"
 complete -f -c watson -n '__fish_watson_using_command log' -s j -l json -d "output json"
+complete -f -c watson -n '__fish_watson_using_command log' -s s -l csv -d "output csv"
 complete -f -c watson -n '__fish_watson_using_command log' -s g -l pager -d "view through pager"
 complete -f -c watson -n '__fish_watson_using_command log' -s G -l no-pager -d "don't vew through pager"
 
@@ -158,6 +160,7 @@ complete -f -c watson -n '__fish_watson_using_command report' -s a -l all -d "sh
 complete -f -c watson -n '__fish_watson_using_command report' -s p -l project -d "restrict to project" -a "(__fish_watson_get_projects)"
 complete -f -c watson -n '__fish_watson_using_command report' -s T -l tag -d "restrict to tag" -a "(__fish_watson_get_tags)"
 complete -f -c watson -n '__fish_watson_using_command report' -s j -l json -d "output json"
+complete -f -c watson -n '__fish_watson_using_command report' -s s -l csv -d "output csv"
 complete -f -c watson -n '__fish_watson_using_command report' -s g -l pager -d "view through pager"
 complete -f -c watson -n '__fish_watson_using_command report' -s G -l no-pager -d "don't vew through pager"
 
