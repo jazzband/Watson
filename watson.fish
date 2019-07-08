@@ -89,6 +89,18 @@ complete -f -c watson -n '__fish_watson_needs_sub' -a projects -d "Display the l
 complete -f -c watson -n '__fish_watson_needs_sub' -a tags -d "Display the list of tags"
 complete -f -c watson -n '__fish_watson_needs_sub' -a sync -d "sync your work with $url"
 
+# aggregate
+complete -f -c watson -n '__fish_watson_needs_sub' -a aggregate -d "Display a report of the time spent on each project aggregated by day."
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s c -l current -d "include the running frame"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s C -l no-current -d "exclude the running frame (default)"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s f -l from -d "Start date for aggregate"
+complete -f -c watson -n '__fish_watson_has_from aggregate' -s t -l to -d "end date for aggregate"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s p -l project -d "restrict to project" -a "(__fish_watson_get_projects)"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s T -l tag -d "restrict to tag" -a "(__fish_watson_get_tags)"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s j -l json -d "output json"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s g -l pager -d "view through pager"
+complete -f -c watson -n '__fish_watson_using_command aggregate' -s G -l no-pager -d "don't vew through pager"
+
 # config
 complete -f -c watson -n '__fish_watson_needs_sub' -a config -d "Get and set configuration options"
 complete -f -c watson -n '__fish_watson_using_command config' -s e -l edit -d "Edit the config with an editor"
