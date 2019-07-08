@@ -89,6 +89,11 @@ complete -f -c watson -n '__fish_watson_needs_sub' -a projects -d "Display the l
 complete -f -c watson -n '__fish_watson_needs_sub' -a tags -d "Display the list of tags"
 complete -f -c watson -n '__fish_watson_needs_sub' -a sync -d "sync your work with $url"
 
+# add
+complete -f -c watson -n '__fish_watson_needs_sub' -a add -d "Add time for project with tag(s) that was not tracked live."
+complete -f -c watson -n '__fish_watson_using_command add' -s f -l from -d "Start date for add"
+complete -f -c watson -n '__fish_watson_has_from add' -s t -l to -d "end date for add"
+
 # aggregate
 complete -f -c watson -n '__fish_watson_needs_sub' -a aggregate -d "Display a report of the time spent on each project aggregated by day."
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s c -l current -d "include the running frame"
