@@ -82,20 +82,20 @@ end
 
 # ungrouped
 complete -f -c watson -n '__fish_watson_needs_sub' -a cancel -d "Cancel the last start command"
-complete -f -c watson -n '__fish_watson_needs_sub' -a stop -d " Stop monitoring time for the current project"
 complete -f -c watson -n '__fish_watson_needs_sub' -a frames -d "Display the list of all frame IDs"
 complete -f -c watson -n '__fish_watson_needs_sub' -a help -d "Display help information"
 complete -f -c watson -n '__fish_watson_needs_sub' -a projects -d "Display the list of projects"
-complete -f -c watson -n '__fish_watson_needs_sub' -a tags -d "Display the list of tags"
+complete -f -c watson -n '__fish_watson_needs_sub' -a stop -d " Stop monitoring time for the current project"
 complete -f -c watson -n '__fish_watson_needs_sub' -a sync -d "sync your work with $url"
+complete -f -c watson -n '__fish_watson_needs_sub' -a tags -d "Display the list of tags"
 
 # add
-complete -f -c watson -n '__fish_watson_needs_sub' -a add -d "Add time for project with tag(s) that was not tracked live."
+complete -f -c watson -n '__fish_watson_needs_sub' -a add -d "Add time for project with tag(s) that was not tracked live"
 complete -f -c watson -n '__fish_watson_using_command add' -s f -l from -d "Start date for add"
 complete -f -c watson -n '__fish_watson_has_from add' -s t -l to -d "end date for add"
 
 # aggregate
-complete -f -c watson -n '__fish_watson_needs_sub' -a aggregate -d "Display a report of the time spent on each project aggregated by day."
+complete -f -c watson -n '__fish_watson_needs_sub' -a aggregate -d "Display a report of the time spent on each project aggregated by day"
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s c -l current -d "include the running frame"
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s C -l no-current -d "exclude the running frame (default)"
 complete -f -c watson -n '__fish_watson_using_command aggregate' -s f -l from -d "Start date for aggregate"
@@ -161,6 +161,7 @@ complete -f -c watson -n '__fish_watson_using_command report' -s j -l json -d "o
 complete -f -c watson -n '__fish_watson_using_command report' -s g -l pager -d "view through pager"
 complete -f -c watson -n '__fish_watson_using_command report' -s G -l no-pager -d "don't vew through pager"
 
+# restart
 complete -f -c watson -n '__fish_watson_needs_sub' -a restart -d "Restart monitoring time for a stopped project"
 complete -f -c watson -n '__fish_watson_using_command restart' -s s -l stop -d "stop running project"
 complete -f -c watson -n '__fish_watson_using_command restart' -s S -l no-stop -d "do not stop running project"
