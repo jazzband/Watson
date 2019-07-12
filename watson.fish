@@ -92,8 +92,8 @@ complete -f -c watson -n '__fish_watson_needs_sub' -a tags -d "Display the list 
 complete -f -c watson -n '__fish_watson_needs_sub' -a add -d "Add time for project with tag(s) that was not tracked live"
 complete -f -c watson -n '__fish_watson_using_command add' -s f -l from -d "Start date for add"
 complete -f -c watson -n '__fish_watson_has_from add' -s t -l to -d "end date for add"
-complete -f -c watson -n '__fish_watson_has_from add' -s c -l confirm-new-project -d "Confirm addition of new project"
-complete -f -c watson -n '__fish_watson_has_from add' -s b -l confirm-new-tag -d "Confirm addition of new tag"
+complete -f -c watson -n '__fish_watson_using_command add' -s c -l confirm-new-project -d "Confirm addition of new project"
+complete -f -c watson -n '__fish_watson_using_command add' -s b -l confirm-new-tag -d "Confirm addition of new tag"
 
 # aggregate
 complete -f -c watson -n '__fish_watson_needs_sub' -a aggregate -d "Display a report of the time spent on each project aggregated by day"
