@@ -443,18 +443,26 @@ class Watson(object):
 
         return conflicting, merging
 
+    def _validate_report_options(self, filtrate, ignored):
+        return not bool(
+            filtrate and ignored and set(filtrate).intersection(set(ignored)))
+
     def report(self, from_, to, current=None, projects=None, tags=None,
-               year=None, month=None, week=None, day=None, luna=None,
-               all=None):
+               ignore_projects=None, ignore_tags=None, year=None,
+               month=None, week=None, day=None, luna=None, all=None):
         for start_time in (_ for _ in [day, week, month, year, luna, all]
                            if _ is not None):
             from_ = start_time
 
+        if not self._validate_report_options(projects, ignore_projects):
+            raise WatsonError(
+                "given projects can't be ignored at the same time")
+
+        if not self._validate_report_options(tags, ignore_tags):
+            raise WatsonError("given tags can't be ignored at the same time")
+
         if from_ > to:
             raise WatsonError("'from' must be anterior to 'to'")
-
-        if tags is None:
-            tags = []
 
         if self.current:
             if current or (current is None and
@@ -468,7 +476,10 @@ class Watson(object):
 
         frames_by_project = sorted_groupby(
             self.frames.filter(
-                projects=projects or None, tags=tags or None, span=span
+                projects=projects or None, tags=tags or None,
+                ignore_projects=ignore_projects or None,
+                ignore_tags=ignore_tags or None,
+                span=span
             ),
             operator.attrgetter('project')
         )
@@ -497,6 +508,9 @@ class Watson(object):
                 'time': delta.total_seconds(),
                 'tags': []
             }
+
+            if tags is None:
+                tags = []
 
             tags_to_print = sorted(
                 set(tag for frame in frames for tag in frame.tags
