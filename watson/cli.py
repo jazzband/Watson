@@ -378,7 +378,7 @@ def status(watson, project, tags, elapsed, elapsedminutes):
 
     if elapsedminutes:
         click.echo(u"{}".format(
-            style('time',str(int((arrow.utcnow() - current['start']).seconds/60)))
+            style('time', str(int((arrow.utcnow() - current['start']).seconds / 60)))
         ))
         return
 
