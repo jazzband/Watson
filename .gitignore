@@ -39,4 +39,3 @@ pip-log.txt
 *.sublime-workspace
 *.swp
 *.sw[po]
-data
