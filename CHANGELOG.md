@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Update zsh shell completion (#264).
+- Fix fatal AttributeError using Arrow 0.14.5 (#300)
 
 ### Removed
 

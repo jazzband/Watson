@@ -405,7 +405,7 @@ _SHORTCUT_OPTIONS_VALUES = {
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in report.")
 @click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
-              default=arrow.now().replace(days=-7),
+              default=arrow.now().shift(days=-7),
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date from when the report should start. Defaults "
               "to seven days ago.")
@@ -694,7 +694,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in report.")
 @click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
-              default=arrow.now().replace(days=-7),
+              default=arrow.now().shift(days=-7),
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date from when the report should start. Defaults "
               "to seven days ago.")
@@ -835,7 +835,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in output.")
 @click.option('-f', '--from', 'from_', type=Date,
-              default=arrow.now().replace(days=-7),
+              default=arrow.now().shift(days=-7),
               help="The date from when the log should start. Defaults "
               "to seven days ago.")
 @click.option('-t', '--to', type=Date, default=arrow.now(),

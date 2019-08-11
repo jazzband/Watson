@@ -174,7 +174,7 @@ def get_start_time_for_period(period):
     if period == 'day':
         start_time = arrow.Arrow(year, month, day)
     elif period == 'week':
-        start_time = arrow.Arrow.fromdate(now.replace(days=-weekday).date())
+        start_time = arrow.Arrow.fromdate(now.shift(days=-weekday).date())
     elif period == 'month':
         start_time = arrow.Arrow(year, month, 1)
     elif period == 'luna':
@@ -204,7 +204,7 @@ def apply_weekday_offset(start_time, week_start):
         return start_time
     now = datetime.datetime.now()
     offset = weekdays[new_start] - 7 * (weekdays[new_start] > now.weekday())
-    return start_time.replace(days=offset)
+    return start_time.shift(days=offset)
 
 
 def make_json_writer(func, *args, **kwargs):
