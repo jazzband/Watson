@@ -2,12 +2,12 @@
 
 ## Overview
 
-Watson is here to help you monitoring your time. You want to know how
+Watson is here to help you monitor your time. You want to know how
 much time you are spending on your projects? You want to generate a nice
 report for your client? Watson is here for you.
 
 Tell Watson when you start working on a task with the `start` command.
-Then, when you are done with this task, stop the timer with the `stop`
+Then, when you are done, stop the timer with the `stop`
 command. This will create what we call a **frame**. That's pretty much
 everything you need to know to start using Watson.
 
