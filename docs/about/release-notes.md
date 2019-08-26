@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2019-08-26
+
+### Added
+
+- Add CSV output format support for `report`, `log` and `aggregate` commands
+  using the `--csv/-s` command line option flag (#281).
+
+### Fixed
+
+- Update zsh shell completion (#264).
+- Fix fatal AttributeError using Arrow 0.14.5 (#300)
+
+### Removed
+
+- Python 3.4 support (#286).
+
 ## [1.7.0] - 2019-03-25
 
 ### Added
@@ -189,6 +205,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
+[1.8.0]: https://github.com/tailordev/watson/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/tailordev/watson/compare/1.6.0...1.7.0
 [1.6.0]: https://github.com/tailordev/watson/compare/1.5.2...1.6.0
 [1.5.2]: https://github.com/tailordev/watson/compare/1.5.1...1.5.2
