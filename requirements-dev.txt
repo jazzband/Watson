@@ -1,7 +1,8 @@
 -r requirements.txt
 
 # Docs
-mkdocs<0.15.0
+mkdocs
+mkdocs-bootswatch
 
 # Release
 wheel
