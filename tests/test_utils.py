@@ -34,9 +34,11 @@ from watson.utils import (
     safe_save,
     parse_tags,
     PY2,
+    format_timedelta,
+    format_timedelta_decimal
 )
 from . import mock_datetime
-
+from watson.watson import ConfigParser
 
 _dt = functools.partial(datetime.datetime, tzinfo=tzutc())
 
@@ -339,3 +341,55 @@ def test_flatten_report_for_csv(watson):
     assert result[2]['project'] == 'foo'
     assert result[2]['tag'] == 'B'
     assert result[2]['time'] == (4 + 2) * 3600
+
+
+# format_timedelta
+
+def test_format_timedelta(watson):
+    watson.config = ConfigParser()  # use all default values
+    testcases = [
+        (datetime.timedelta(days=3), "72h 00m 00s"),
+        (datetime.timedelta(), "00s"),
+        (datetime.timedelta(seconds=1, milliseconds=999), "01s"),
+        (datetime.timedelta(seconds=1, milliseconds=1001), "02s"),
+        (datetime.timedelta(hours=4, minutes=48, seconds=2), "4h 48m 02s"),
+        (datetime.timedelta(minutes=-4), "-04m 00s"),
+    ]
+    for case, expected in testcases:
+        assert format_timedelta(watson, case) == expected
+
+
+def test_format_timedelta_decimal(watson):
+    config = ConfigParser()
+    config.add_section('options')
+    config.set('options', 'format_as_decimal', 'yes')
+    watson.config = config
+    testcases = [
+        (datetime.timedelta(days=3), "72.00h"),
+        (datetime.timedelta(), "0.00h"),
+        (datetime.timedelta(seconds=17, milliseconds=999), "0.00h"),
+        (datetime.timedelta(hours=4, minutes=48, seconds=2), "4.80h"),
+        (datetime.timedelta(seconds=17), "0.00h"),
+        (datetime.timedelta(seconds=18), "0.01h"),
+        (datetime.timedelta(minutes=-4), "-0.07h"),
+        (datetime.timedelta(minutes=-40), "-0.67h"),
+    ]
+    for case, expected in testcases:
+        assert format_timedelta_decimal(watson, case) == expected
+
+    # do the same (and additional) tests with increased precision
+    config.set('options', 'decimal_precision', 5)
+
+    testcases_with_precision = [
+        (datetime.timedelta(days=3), "72.00000h"),
+        (datetime.timedelta(), "0.00000h"),
+        (datetime.timedelta(seconds=17, milliseconds=999), "0.00472h"),
+        (datetime.timedelta(seconds=17), "0.00472h"),
+        (datetime.timedelta(hours=4, minutes=48, seconds=2), "4.80056h"),
+        (datetime.timedelta(seconds=18), "0.00500h"),
+        (datetime.timedelta(minutes=-4), "-0.06667h"),
+        (datetime.timedelta(minutes=-40), "-0.66667h"),
+        (datetime.timedelta(seconds=1), "0.00028h"),
+    ]
+    for case, expected in testcases_with_precision:
+        assert format_timedelta_decimal(watson, case) == expected
