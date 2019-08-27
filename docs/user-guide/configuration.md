@@ -88,36 +88,48 @@ $ watson config -e
 
 At this time there is no official backend for Watson. We are working on it. But in a near future, you will be able to synchronize Watson with a public (or your private) repository via the [`sync`](./commands.md#sync) command. To configure your repository please set up the `[backend]` section.
 
-#### `backend.url`
+#### `backend.url` (default: empty)
 
 This is the API root url of your repository, e.g. `https://my.server.com/api/`
 
-#### `backend.token`
+#### `backend.token` (default: empty)
 
 To authenticate watson as an API client, once generated, you will need to set up your API token in your configuration, e.g. `7e329263e329`.
 
 ### Options
 
-#### `options.log_current`
+#### `options.confirm_new_project` (default: `false`)
+
+If `true`, the user will be asked for confirmation before creating a new project. The option can be overriden in the command line with `--confirm-new-project` flag.
+
+#### `options.confirm_new_tag` (default: `false`)
+
+If `true`, the user will be asked for confirmation before creating a new tag. The option can be overriden in the command line with `--confirm-new-tag` flag.
+
+#### `options.date_format` (default: `%Y.%m.%d`)
+
+Globally configure how `dates` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
+
+#### `options.log_current` (default: `false`)
 
 If `true`, the output of the `log` command will include the currently running
 frame (if any) by default. The option can be overridden on the command line
 with the `-c/-C` resp. `--current/--no-current` flags.
 
-#### `options.pager`
+#### `options.pager` (default: `true`)
 
-If `true` (or not set), the output of the `log` and `report` command will be
+If `true`, the output of the `log` and `report` command will be
 run through a pager by default. The option can be overridden on the command
 line with the `-g/-G` or `--pager/--no-pager` flags. If other commands output
 in colour, but `log` or `report` do not, try disabling the pager.
 
-#### `options.report_current`
+#### `options.report_current` (default: `false`)
 
 If `true`, the output of the `report` command will include the currently
 running frame (if any) by default. The option can be overridden on the
 command line with the `-c/-C` resp. `--current/--no-current` flags.
 
-#### `options.stop_on_start`
+#### `options.stop_on_start` (default: `false`)
 
 If `true`, starting a new project will stop running projects:
 
@@ -137,22 +149,18 @@ Stopping project jayce [wheeled, warriors], started 2 minutes ago. (id: 967965f)
 Starting project voyager2 [reactor, module] at 11:18
 ```
 
-#### `options.stop_on_restart`
+#### `options.stop_on_restart` (default: `false`)
 
 Similar to the `options.stop_on_start` option, but for the [`restart`](./commands.md#restart) command.
 
-#### `options.date_format`
-
-Globally configure how `dates` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
-
-#### `options.time_format`
+#### `options.time_format` (default: `%H:%M:%S%z`)
 
 Globally configure how `time` should be formatted. All [python's `strftime` directives](http://strftime.org) are supported.
 
-#### `options.week_start`
+#### `options.week_start` (default: `monday`)
 
 Globally configure which day corresponds to the start of a week. Allowable
-values are `monday` (default), `tuesday`, `wednesday`, `thursday`, `friday`,
+values are `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
  `saturday`, and `sunday`.
 
 
