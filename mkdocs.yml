@@ -8,7 +8,7 @@ copyright: >
   Watson, by <a
   href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a>
   &amp; al. is released under the MIT License.
-pages:
+nav:
 - Home: 'index.md'
 - User Guide:
     - Commands: 'user-guide/commands.md'
