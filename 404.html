@@ -7,21 +7,21 @@
         
         <meta name="author" content="TailorDev">
         
-        <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Hack - Watson</title>
-        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="../../css/font-awesome.min.css" rel="stylesheet">
-        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="shortcut icon" href="/img/favicon.ico">
+        <title>Watson</title>
+        <link href="/css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/docco.min.css">
-        <link href="../../css/watson.css" rel="stylesheet">
+        <link href="/css/watson.css" rel="stylesheet">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        <script src="../../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="/js/jquery-1.10.2.min.js" defer></script>
+        <script src="/js/bootstrap-3.0.3.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
@@ -40,7 +40,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Watson</a>
+                    <a class="navbar-brand" href="/.">Watson</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -48,59 +48,59 @@
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
                             <li >
-                                <a href="../..">Home</a>
+                                <a href="/.">Home</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../user-guide/commands/">Commands</a>
+    <a href="/user-guide/commands/">Commands</a>
 </li>
                                     
 <li >
-    <a href="../../user-guide/configuration/">Configuration</a>
+    <a href="/user-guide/configuration/">Configuration</a>
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../how-to/">Howto</a>
-</li>
-                                    
-<li class="active">
-    <a href="./">Hack</a>
+    <a href="/contributing/how-to/">Howto</a>
 </li>
                                     
 <li >
-    <a href="../pr-guidelines/">Pull Request guidelines</a>
+    <a href="/contributing/hack/">Hack</a>
 </li>
                                     
 <li >
-    <a href="../coc/">Code of Conduct</a>
+    <a href="/contributing/pr-guidelines/">Pull Request guidelines</a>
 </li>
                                     
 <li >
-    <a href="../release-new-version/">Release a new version</a>
+    <a href="/contributing/coc/">Code of Conduct</a>
+</li>
+                                    
+<li >
+    <a href="/contributing/release-new-version/">Release a new version</a>
 </li>
                                 </ul>
                             </li>
                             <li >
-                                <a href="../../faq/">FAQ</a>
+                                <a href="/faq/">FAQ</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../about/license/">License</a>
+    <a href="/about/license/">License</a>
 </li>
                                     
 <li >
-    <a href="../../about/release-notes/">Release notes</a>
+    <a href="/about/release-notes/">Release notes</a>
 </li>
                                 </ul>
                             </li>
@@ -112,18 +112,8 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li >
-                                <a rel="next" href="../how-to/">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li >
-                                <a rel="prev" href="../pr-guidelines/">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
                             <li>
-                                <a href="https://github.com/TailorDev/Watson/edit/master/docs/contributing/hack.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/TailorDev/Watson/"><i class="fa fa-github"></i> GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -131,105 +121,15 @@
         </div>
 
         <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#hack">Hack</a></li>
-            <li><a href="#python-requirements">Python requirements</a></li>
-            <li><a href="#get-started">Get started!</a></li>
-            <li><a href="#run-the-tests">Run the tests</a></li>
-    </ul>
-</div></div>
-                <div class="col-md-9" role="main">
 
-<h1 id="hack">Hack</h1>
-<p>Ready to contribute? Here&rsquo;s how to set up <em>Watson</em> for local development.</p>
-<h2 id="python-requirements">Python requirements</h2>
-<ul>
-<li>Python (2/3) interpreter installed</li>
-<li><code>pip</code> tool to install package dependencies</li>
-<li><code>virtualenv</code> tool to create virtual environments</li>
-</ul>
-<h2 id="get-started">Get started!</h2>
-<ol>
-<li>
-<p>Fork the <a href="https://github.com/TailorDev/Watson/">Watson repository</a> on GitHub.</p>
-</li>
-<li>
-<p>Clone your fork locally:</p>
-<pre><code>$ git clone git@github.com:your_name_here/Watson.git
-</code></pre>
-</li>
-<li>
-<p>Create a virtual environment:</p>
-<pre><code>$ cd Watson
-$ make env
-</code></pre>
-<p>The Python version used will be the one accessible using the <code>python</code>
-command in your shell.</p>
-<p>To use a different Python version, define the <code>PYTHON</code> shell variable.
-For example:</p>
-<pre><code>$ PYTHON=python3.5 make env
-</code></pre>
-</li>
-<li>
-<p>Install dependencies and deploy Watson inside the virtual environment:</p>
-<pre><code>$ source .venv/bin/activate
-(.venv) $ make install-dev
-</code></pre>
-</li>
-<li>
-<p>Create a branch for local development:</p>
-<pre><code>(.venv) $ git checkout -b name-of-your-bugfix-or-feature
-</code></pre>
-<p>Now you can make your changes locally.</p>
-<p><em>Notes:</em></p>
-<ul>
-<li>The files you need to edit to change watson&rsquo;s behavior are located in the
-  <code>watson/</code> subfolder.</li>
-<li>Every time you run <code>watson</code> inside the virtual environment, the source
-  code inside the <code>watson/</code> subfolder will be used.</li>
-<li>To avoid messing with your real Watson data, watson will use <code>data/</code> as
-  the <a href="../user-guide/configuration/#application-folder">application folder</a>
-  inside the virtual environment. You can run <code>watson projects</code> to check
-  that your real projects are not shown.</li>
-</ul>
-</li>
-<li>
-<p>When you&rsquo;re done making changes, check that your changes pass the tests
-    (see <a href="#run-the-tests">Run the tests</a>):</p>
-<pre><code>(.venv) $ tox
-</code></pre>
-</li>
-<li>
-<p>If you have added a new command or updated/fixed docstrings, please update
-    the documentation:</p>
-<pre><code>(.venv) $ make docs
-</code></pre>
-</li>
-<li>
-<p>Commit your changes and push your branch to GitHub:</p>
-<pre><code>$ git add .
-$ git commit -m "Your detailed description of your changes."
-$ git push -u origin name-of-your-bugfix-or-feature
-</code></pre>
-</li>
-<li>
-<p>After <a href="../pr-guidelines/">reading this</a>, submit a pull request through the
-    GitHub website.</p>
-</li>
-</ol>
-<p><a href="#run-the-tests"></a></p>
-<h2 id="run-the-tests">Run the tests</h2>
-<p>The tests use <a href="http://pytest.org/">pytest</a>. To run them with the default Python
-interpreter:</p>
-<pre><code>$ py.test -v tests/
-</code></pre>
-<p>To run the tests via <a href="http://tox.testrun.org/">tox</a> with all Python versions
-which are available on your system and are defined in the <code>tox.ini</code> file,
-simply run:</p>
-<pre><code>$ tox
-</code></pre>
-<p>This will also check the source code with <a href="http://flake8.pycqa.org">flake8</a>.</p></div>
+    <div class="row-fluid">
+      <div id="main-content" class="span12">
+        <h1 id="404-page-not-found" style="text-align: center">404</h1>
+        <p style="text-align: center"><strong>Page not found</strong></p>
+      </div>
+    </div>
+
+
         </div>
 
         <footer class="col-md-12">
@@ -239,11 +139,11 @@ simply run:</p>
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
         <script>
-            var base_url = "../..",
+            var base_url = "/",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="../../js/base.js" defer></script>
-        <script src="../../search/main.js" defer></script>
+        <script src="/js/base.js" defer></script>
+        <script src="/search/main.js" defer></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
     <div class="modal-dialog">

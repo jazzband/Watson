@@ -8,197 +8,172 @@
         <meta name="author" content="TailorDev">
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-
-	<title>Release notes - Watson</title>
-
+        <title>Release notes - Watson</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
-        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/docco.min.css">
         <link href="../../css/watson.css" rel="stylesheet">
-
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
     <body>
 
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
+            <div class="container">
 
-        <!-- Collapsed navigation -->
-        <div class="navbar-header">
-            <!-- Expander button -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Watson</a>
+                </div>
 
-            <!-- Main title -->
-            <a class="navbar-brand" href="../..">Watson</a>
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../user-guide/commands/">Commands</a>
+</li>
+                                    
+<li >
+    <a href="../../user-guide/configuration/">Configuration</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../contributing/how-to/">Howto</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/hack/">Hack</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/coc/">Code of Conduct</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/release-new-version/">Release a new version</a>
+</li>
+                                </ul>
+                            </li>
+                            <li >
+                                <a href="../../faq/">FAQ</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../license/">License</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Release notes</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../license/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="disabled">
+                                <a rel="prev" >
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/TailorDev/Watson/edit/master/docs/about/release-notes.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
-        <!-- Expanded navigation -->
-        <div class="navbar-collapse collapse">
-            <!-- Main navigation -->
-            <ul class="nav navbar-nav">
-            
-            
-                <li >
-                    <a href="../..">Home</a>
-                </li>
-            
-            
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../../user-guide/commands/">Commands</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../user-guide/configuration/">Configuration</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../../contributing/how-to/">Howto</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/hack/">Hack</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/coc/">Code of Conduct</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/release-new-version/">Release a new version</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../../faq/">FAQ</a>
-                </li>
-            
-            
-            
-                <li class="dropdown active">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../license/">License</a>
-                        </li>
-                    
-                        <li class="active">
-                            <a href="./">Release notes</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            </ul>
-
-            <!-- Search, Navigation and Repo links -->
-            <ul class="nav navbar-nav navbar-right">
-                <li >
-                    <a rel="next" href="../license/">
-                        <i class="fa fa-arrow-left"></i> Previous
-                    </a>
-                </li>
-                <li class="disabled">
-                    <a rel="prev" >
-                        Next <i class="fa fa-arrow-right"></i>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="https://github.com/TailorDev/Watson">
-                        
-                            <i class="fa fa-github"></i>
-                        
-                        GitHub
-                    </a>
-                </li>
-                
-            </ul>
-        </div>
-    </div>
-</div>
 
         <div class="container">
-            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-    
         <li class="main active"><a href="#release-notes">Release notes</a></li>
-        
+            <li><a href="#180-2019-08-26">1.8.0 - 2019-08-26</a></li>
             <li><a href="#170-2019-03-25">1.7.0 - 2019-03-25</a></li>
-        
             <li><a href="#160-2018-04-23">1.6.0 - 2018-04-23</a></li>
-        
             <li><a href="#152-2017-08-02">1.5.2 - 2017-08-02</a></li>
-        
             <li><a href="#151-2017-08-01">1.5.1 - 2017-08-01</a></li>
-        
             <li><a href="#150-2017-07-31">1.5.0 - 2017-07-31</a></li>
-        
             <li><a href="#140-2016-11-01">1.4.0 - 2016-11-01</a></li>
-        
             <li><a href="#132-2016-03-01">1.3.2 - 2016-03-01</a></li>
-        
             <li><a href="#131-2016-02-11">1.3.1 - 2016-02-11</a></li>
-        
             <li><a href="#130-2016-02-11">1.3.0 - 2016-02-11</a></li>
-        
             <li><a href="#120-2016-01-22">1.2.0 - 2016-01-22</a></li>
-        
             <li><a href="#110-2015-10-21">1.1.0 - 2015-10-21</a></li>
-        
             <li><a href="#102-2015-10-09">1.0.2 - 2015-10-09</a></li>
-        
             <li><a href="#101-2015-09-17">1.0.1 - 2015-09-17</a></li>
-        
             <li><a href="#100-2015-09-17">1.0.0 - 2015-09-17</a></li>
-        
-    
     </ul>
 </div></div>
-            <div class="col-md-9" role="main">
+                <div class="col-md-9" role="main">
 
 <h1 id="release-notes">Release notes</h1>
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="170-2019-03-25"><a href="https://github.com/tailordev/watson/compare/1.6.0...1.7.0">1.7.0</a> - 2019-03-25</h2>
+<h2 id="180-2019-08-26"><a href="https://github.com/tailordev/watson/compare/1.7.0...1.8.0">1.8.0</a> - 2019-08-26</h2>
 <h3 id="added">Added</h3>
+<ul>
+<li>Add CSV output format support for <code>report</code>, <code>log</code> and <code>aggregate</code> commands
+  using the <code>--csv/-s</code> command line option flag (#281).</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Update zsh shell completion (#264).</li>
+<li>Fix fatal AttributeError using Arrow 0.14.5 (#300)</li>
+</ul>
+<h3 id="removed">Removed</h3>
+<ul>
+<li>Python 3.4 support (#286).</li>
+</ul>
+<h2 id="170-2019-03-25"><a href="https://github.com/tailordev/watson/compare/1.6.0...1.7.0">1.7.0</a> - 2019-03-25</h2>
+<h3 id="added_1">Added</h3>
 <ul>
 <li>New <code>add</code> command (#202)</li>
 <li>Add lunar start time options to the <code>report</code> and <code>log</code> commands (#215)</li>
@@ -214,26 +189,26 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Current state saving is now improve when using Watson as a library (#214)</li>
 <li>Prevent calling <code>get_start_time_for_period</code> multiple times (#219)</li>
 </ul>
-<h3 id="fixed">Fixed</h3>
+<h3 id="fixed_1">Fixed</h3>
 <ul>
 <li>Improved support for UTF-8 with Python 2 (#211)</li>
 <li>Zsh completion for tags and projects with spaces in their names (#227)</li>
 <li>Typos in commands output (#230, #235)</li>
 <li>Project URL of the project in PyPI (#260)</li>
 </ul>
-<h3 id="removed">Removed</h3>
+<h3 id="removed_1">Removed</h3>
 <ul>
 <li>Python 3.3 support (#210).</li>
 </ul>
 <h2 id="160-2018-04-23"><a href="https://github.com/tailordev/watson/compare/1.5.2...1.6.0">1.6.0</a> - 2018-04-23</h2>
-<h3 id="added_1">Added</h3>
+<h3 id="added_2">Added</h3>
 <ul>
 <li>For <code>report</code> and <code>log</code>, allow specifying a timeperiod of &ldquo;all&rdquo;</li>
 <li>Option for log and report command to (not) output via pager</li>
 <li><code>--json</code> option to log command</li>
 <li>Optional flags to filter status call</li>
 </ul>
-<h3 id="fixed_1">Fixed</h3>
+<h3 id="fixed_2">Fixed</h3>
 <ul>
 <li>Change message when frame is removed</li>
 <li>CLI output when on tags on <code>stop</code> and <code>remove</code></li>
@@ -246,17 +221,17 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   3.3</li>
 </ul>
 <h2 id="152-2017-08-02"><a href="https://github.com/tailordev/watson/compare/1.5.1...1.5.2">1.5.2</a> - 2017-08-02</h2>
-<h3 id="fixed_2">Fixed</h3>
+<h3 id="fixed_3">Fixed</h3>
 <ul>
 <li>Follow up on the <code>config</code> command fix (#161)</li>
 </ul>
 <h2 id="151-2017-08-01"><a href="https://github.com/tailordev/watson/compare/1.5.0...1.5.1">1.5.1</a> - 2017-08-01</h2>
-<h3 id="fixed_3">Fixed</h3>
+<h3 id="fixed_4">Fixed</h3>
 <ul>
 <li>Fix the <code>config</code> command (#158)</li>
 </ul>
 <h2 id="150-2017-07-31"><a href="https://github.com/tailordev/watson/compare/1.4.0...1.5.0">1.5.0</a> - 2017-07-31</h2>
-<h3 id="added_2">Added</h3>
+<h3 id="added_3">Added</h3>
 <ul>
 <li>The <code>report</code> command now supports JSON output (#102)</li>
 </ul>
@@ -265,12 +240,12 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>The <code>sync</code> command is now compatible with the new crick.io backend API (#152)</li>
 <li>Python 3.6 is now officially supported (#150)</li>
 </ul>
-<h3 id="fixed_4">Fixed</h3>
+<h3 id="fixed_5">Fixed</h3>
 <ul>
 <li>Catch error when user wants to edit config but file does not exist yet (#154)</li>
 </ul>
 <h2 id="140-2016-11-01"><a href="https://github.com/tailordev/watson/compare/1.3.2...1.4.0">1.4.0</a> - 2016-11-01</h2>
-<h3 id="added_3">Added</h3>
+<h3 id="added_4">Added</h3>
 <ul>
 <li>Watson now has a <code>rename</code> command (#74).</li>
 <li>The <code>report</code> and <code>log</code> commands now have new command line and config file
@@ -286,38 +261,38 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>When saving the Watson frames, state or config file, the most recent previous
   version of the file is kept as a back up (#120).</li>
 </ul>
-<h3 id="fixed_5">Fixed</h3>
+<h3 id="fixed_6">Fixed</h3>
 <ul>
 <li>Bash completion of projects and tags with spaces in them (#122).</li>
 <li>If saving the Watson frames, state or config file fails for any reason, the
   original is kept (and not wiped as before) (#120).</li>
 </ul>
 <h2 id="132-2016-03-01"><a href="https://github.com/tailordev/watson/compare/1.3.1...1.3.2">1.3.2</a> - 2016-03-01</h2>
-<h3 id="added_4">Added</h3>
+<h3 id="added_5">Added</h3>
 <ul>
 <li>Document installation for Arch Linux</li>
 <li>Improve frame selection by position</li>
 </ul>
-<h3 id="fixed_6">Fixed</h3>
+<h3 id="fixed_7">Fixed</h3>
 <ul>
 <li>Improve error handling</li>
 <li>Remove unnecessary dependencies for a stand alone installation</li>
 <li>Specify correct source directory for flake8 and pytest (tox test suite)</li>
 </ul>
 <h2 id="131-2016-02-11"><a href="https://github.com/tailordev/watson/compare/1.3.0...1.3.1">1.3.1</a> - 2016-02-11</h2>
-<h3 id="fixed_7">Fixed</h3>
+<h3 id="fixed_8">Fixed</h3>
 <ul>
 <li>Packaging issue with PyPI</li>
 </ul>
 <h2 id="130-2016-02-11"><a href="https://github.com/tailordev/watson/compare/1.2.0...1.3.0">1.3.0</a> - 2016-02-11</h2>
-<h3 id="added_5">Added</h3>
+<h3 id="added_6">Added</h3>
 <ul>
 <li>A complete browsable documentation</li>
 <li>Watson&rsquo;s brand new logo!</li>
 <li>Support for Watson&rsquo;s directory override via the WATSON_DIR environment variable</li>
 </ul>
 <h2 id="120-2016-01-22"><a href="https://github.com/tailordev/watson/compare/1.1.0...1.2.0">1.2.0</a> - 2016-01-22</h2>
-<h3 id="added_6">Added</h3>
+<h3 id="added_7">Added</h3>
 <ul>
 <li>Watson now has a <code>restart</code> command</li>
 <li>Watson now has a <code>merge</code> command</li>
@@ -330,24 +305,24 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   the last one)</li>
 <li>The <code>log</code> command now has a daily total time summary</li>
 </ul>
-<h3 id="fixed_8">Fixed</h3>
+<h3 id="fixed_9">Fixed</h3>
 <ul>
 <li>Unicode issues with cjk characters</li>
 <li>Edition summary is now converted to local time</li>
 </ul>
 <h2 id="110-2015-10-21"><a href="https://github.com/tailordev/watson/compare/1.0.2...1.1.0">1.1.0</a> - 2015-10-21</h2>
-<h3 id="added_7">Added</h3>
+<h3 id="added_8">Added</h3>
 <ul>
 <li>Configurable date and time to output of <code>status</code> command (#33)</li>
 <li>Support for Bash-completion (#1)</li>
 <li>New <code>frames</code> command that displays all frame IDs</li>
 </ul>
-<h3 id="fixed_9">Fixed</h3>
+<h3 id="fixed_10">Fixed</h3>
 <ul>
 <li>Set id if not provided (#30)</li>
 </ul>
 <h2 id="102-2015-10-09"><a href="https://github.com/tailordev/watson/compare/1.0.1...1.0.2">1.0.2</a> - 2015-10-09</h2>
-<h3 id="added_8">Added</h3>
+<h3 id="added_9">Added</h3>
 <ul>
 <li>Add documentation to remove all the frames</li>
 </ul>
@@ -355,12 +330,12 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <ul>
 <li>Improve installation instructions</li>
 </ul>
-<h3 id="fixed_10">Fixed</h3>
+<h3 id="fixed_11">Fixed</h3>
 <ul>
 <li>The last frame could not be deleted</li>
 </ul>
 <h2 id="101-2015-09-17"><a href="https://github.com/tailordev/watson/compare/1.0.0...1.0.1">1.0.1</a> - 2015-09-17</h2>
-<h3 id="fixed_11">Fixed</h3>
+<h3 id="fixed_12">Fixed</h3>
 <ul>
 <li>Packaging erissueror with PyPI</li>
 </ul>
@@ -370,16 +345,80 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 
         <footer class="col-md-12">
             <hr>
-            
-                <center>Watson, by <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a> &amp; al. is released under the MIT License.
-</center>
-            
-            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+                <p>Watson, by <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a> &amp; al. is released under the MIT License.
+</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
 
-        <script src="../../js/jquery-1.10.2.min.js"></script>
-        <script src="../../js/bootstrap-3.0.3.min.js"></script>
-        <script src="../../js/highlight.pack.js"></script>
-        <script src="../../js/base.js"></script>
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
     </body>
 </html>

@@ -8,200 +8,154 @@
         <meta name="author" content="TailorDev">
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-
-	<title>Commands - Watson</title>
-
+        <title>Commands - Watson</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
-        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/docco.min.css">
         <link href="../../css/watson.css" rel="stylesheet">
-
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
     <body>
 
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
+            <div class="container">
 
-        <!-- Collapsed navigation -->
-        <div class="navbar-header">
-            <!-- Expander button -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Watson</a>
+                </div>
 
-            <!-- Main title -->
-            <a class="navbar-brand" href="../..">Watson</a>
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li class="active">
+    <a href="./">Commands</a>
+</li>
+                                    
+<li >
+    <a href="../configuration/">Configuration</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../contributing/how-to/">Howto</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/hack/">Hack</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/coc/">Code of Conduct</a>
+</li>
+                                    
+<li >
+    <a href="../../contributing/release-new-version/">Release a new version</a>
+</li>
+                                </ul>
+                            </li>
+                            <li >
+                                <a href="../../faq/">FAQ</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../about/license/">License</a>
+</li>
+                                    
+<li >
+    <a href="../../about/release-notes/">Release notes</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../..">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../configuration/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/TailorDev/Watson/edit/master/docs/user-guide/commands.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
-        <!-- Expanded navigation -->
-        <div class="navbar-collapse collapse">
-            <!-- Main navigation -->
-            <ul class="nav navbar-nav">
-            
-            
-                <li >
-                    <a href="../..">Home</a>
-                </li>
-            
-            
-            
-                <li class="dropdown active">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li class="active">
-                            <a href="./">Commands</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../configuration/">Configuration</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../../contributing/how-to/">Howto</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/hack/">Hack</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/pr-guidelines/">Pull Request guidelines</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/coc/">Code of Conduct</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../contributing/release-new-version/">Release a new version</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../../faq/">FAQ</a>
-                </li>
-            
-            
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../../about/license/">License</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../about/release-notes/">Release notes</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            </ul>
-
-            <!-- Search, Navigation and Repo links -->
-            <ul class="nav navbar-nav navbar-right">
-                <li >
-                    <a rel="next" href="../..">
-                        <i class="fa fa-arrow-left"></i> Previous
-                    </a>
-                </li>
-                <li >
-                    <a rel="prev" href="../configuration/">
-                        Next <i class="fa fa-arrow-right"></i>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="https://github.com/TailorDev/Watson">
-                        
-                            <i class="fa fa-github"></i>
-                        
-                        GitHub
-                    </a>
-                </li>
-                
-            </ul>
-        </div>
-    </div>
-</div>
 
         <div class="container">
-            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-    
         <li class="main active"><a href="#commands">Commands</a></li>
-        
             <li><a href="#add">add</a></li>
-        
             <li><a href="#aggregate">aggregate</a></li>
-        
             <li><a href="#cancel">cancel</a></li>
-        
             <li><a href="#config">config</a></li>
-        
             <li><a href="#edit">edit</a></li>
-        
             <li><a href="#frames">frames</a></li>
-        
             <li><a href="#help">help</a></li>
-        
             <li><a href="#log">log</a></li>
-        
             <li><a href="#merge">merge</a></li>
-        
             <li><a href="#projects">projects</a></li>
-        
             <li><a href="#remove">remove</a></li>
-        
             <li><a href="#rename">rename</a></li>
-        
             <li><a href="#report">report</a></li>
-        
             <li><a href="#restart">restart</a></li>
-        
             <li><a href="#start">start</a></li>
-        
             <li><a href="#status">status</a></li>
-        
             <li><a href="#stop">stop</a></li>
-        
             <li><a href="#sync">sync</a></li>
-        
             <li><a href="#tags">tags</a></li>
-        
-    
     </ul>
 </div></div>
-            <div class="col-md-9" role="main">
+                <div class="col-md-9" role="main">
 
 <!-- 
     This document has been automatically generated.
@@ -238,6 +192,14 @@
 <td>Date and time of end of tracked activity  [required]</td>
 </tr>
 <tr>
+<td><code>-c, --confirm-new-project</code></td>
+<td>Confirm addition of new project.</td>
+</tr>
+<tr>
+<td><code>-b, --confirm-new-tag</code></td>
+<td>Confirm creation of new tag.</td>
+</tr>
+<tr>
 <td><code>--help</code></td>
 <td>Show this message and exit.</td>
 </tr>
@@ -258,8 +220,9 @@ must have the format <code>YEAR-MONTH-DAY</code>, like: <code>2014-05-19</code>.
 projects or tags to the report.</p>
 <p>If you are outputting to the terminal, you can selectively enable a pager
 through the <code>--pager</code> option.</p>
-<p>You can change the output format for the report from <em>plain text</em> to <em>JSON</em>
-by using the <code>--json</code> option.</p>
+<p>You can change the output format from <em>plain text</em> to <em>JSON</em> using the
+<code>--json</code> option or to <em>CSV</em> using the <code>--csv</code> option. Only one  of these
+two options can be used at once.</p>
 <p>Example:</p>
 <pre><code>$ watson aggregate
 Wed 14 November 2018 - 5h 42m 22s
@@ -289,6 +252,21 @@ Tue 20 November 2018 - 2h 50m 35s
 Wed 21 November 2018 - 01m 17s
   watson - 01m 17s
         [docs     01m 17s]
+
+$ watson aggregate --csv
+from,to,project,tag,time
+2018-11-14 00:00:00,2018-11-14 23:59:59,watson,,20542.0
+2018-11-14 00:00:00,2018-11-14 23:59:59,watson,features,2046.0
+2018-11-14 00:00:00,2018-11-14 23:59:59,watson,docs,18496.0
+2018-11-19 00:00:00,2018-11-19 23:59:59,watson,,21532.0
+2018-11-19 00:00:00,2018-11-19 23:59:59,watson,features,4323.0
+2018-11-19 00:00:00,2018-11-19 23:59:59,watson,docs,17209.0
+2018-11-20 00:00:00,2018-11-20 23:59:59,watson,,10235.0
+2018-11-20 00:00:00,2018-11-20 23:59:59,watson,features,917.0
+2018-11-20 00:00:00,2018-11-20 23:59:59,watson,docs,5863.0
+2018-11-20 00:00:00,2018-11-20 23:59:59,watson,website,3455.0
+2018-11-21 00:00:00,2018-11-21 23:59:59,watson,,77.0
+2018-11-21 00:00:00,2018-11-21 23:59:59,watson,docs,77.0
 </code></pre>
 <h3 id="options_1">Options</h3>
 <table>
@@ -321,7 +299,11 @@ Wed 21 November 2018 - 01m 17s
 </tr>
 <tr>
 <td><code>-j, --json</code></td>
-<td>Format the report in JSON instead of plain text</td>
+<td>Format output in JSON instead of plain text</td>
+</tr>
+<tr>
+<td><code>-s, --csv</code></td>
+<td>Format output in CSV instead of plain text</td>
 </tr>
 <tr>
 <td><code>-g, --pager / -G, --no-pager</code></td>
@@ -409,6 +391,14 @@ to <code>vim</code>, <code>nano</code> or <code>vi</code> (first one found) on a
 </thead>
 <tbody>
 <tr>
+<td><code>-c, --confirm-new-project</code></td>
+<td>Confirm addition of new project.</td>
+</tr>
+<tr>
+<td><code>-b, --confirm-new-tag</code></td>
+<td>Confirm creation of new tag.</td>
+</tr>
+<tr>
 <td><code>--help</code></td>
 <td>Show this message and exit.</td>
 </tr>
@@ -480,6 +470,9 @@ through the <code>--pager</code> option.</p>
 <p>You can limit the log to a project or a tag using the <code>--project</code> and
 <code>--tag</code> options. They can be specified several times each to add multiple
 projects or tags to the log.</p>
+<p>You can change the output format from <em>plain text</em> to <em>JSON</em> using the
+<code>--json</code> option or to <em>CSV</em> using the <code>--csv</code> option. Only one  of these
+two options can be used at once.</p>
 <p>Example:</p>
 <pre><code>$ watson log --project voyager2 --project apollo11
 Thursday 08 May 2015 (56m 33s)
@@ -506,6 +499,14 @@ Thursday 17 April 2014 (4h 19m 13s)
 Wednesday 16 April 2014 (5h 19m 18s)
         02cb269  09:53 to 12:43   2h 50m 07s  apollo11  [wheels]
         1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
+
+$ watson log --from 2014-04-16 --to 2014-04-17 --csv
+id,start,stop,project,tags
+a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission"
+5e91316,2014-04-17 10:19,2014-04-17 12:59,hubble,"camera, transmission"
+761dd51,2014-04-17 14:42,2014-04-17 15:54,voyager1,antenna
+02cb269,2014-04-16 09:53,2014-04-16 12:43,apollo11,wheels
+1070ddb,2014-04-16 13:48,2014-04-16 16:17,voyager1,"antenna, sensors"
 </code></pre>
 <h3 id="options_7">Options</h3>
 <table>
@@ -562,7 +563,11 @@ Wednesday 16 April 2014 (5h 19m 18s)
 </tr>
 <tr>
 <td><code>-j, --json</code></td>
-<td>Format the log in JSON instead of plain text</td>
+<td>Format output in JSON instead of plain text</td>
+</tr>
+<tr>
+<td><code>-s, --csv</code></td>
+<td>Format output in CSV instead of plain text</td>
 </tr>
 <tr>
 <td><code>-g, --pager / -G, --no-pager</code></td>
@@ -736,13 +741,15 @@ and <code>--year</code>, <code>--month</code> and <code>--week</code> to the cur
 respectively.
 The shortcut <code>--luna</code> sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.</p>
-<p>You can limit the report to a project or a tag using the <code>--project</code> and
-<code>--tag</code> options. They can be specified several times each to add multiple
-projects or tags to the report.</p>
+<p>You can limit the report to a project or a tag using the <code>--project</code>,
+<code>--tag</code>, <code>--ignore-project</code> and <code>--ignore-tag</code> options. They can be
+specified several times each to add or ignore multiple projects or
+tags to the report.</p>
 <p>If you are outputting to the terminal, you can selectively enable a pager
 through the <code>--pager</code> option.</p>
 <p>You can change the output format for the report from <em>plain text</em> to <em>JSON</em>
-by using the <code>--json</code> option.</p>
+using the <code>--json</code> option or to <em>CSV</em> using the <code>--csv</code> option. Only one
+of these two options can be used at once.</p>
 <p>Example:</p>
 <pre><code>$ watson report
 Mon 05 May 2014 -&gt; Mon 12 May 2014
@@ -807,6 +814,15 @@ $ watson report --json
         "to": "2016-02-28T23:59:59.999999-08:00"
     }
 }
+
+$ watson report --from 2014-04-01 --to 2014-04-30 --project apollo11 --csv
+from,to,project,tag,time
+2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,,48140.0
+2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,brakes,28421.0
+2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,module,27701.0
+2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,reactor,30950.0
+2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,steering,38017.0
+2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,wheels,36695.0
 </code></pre>
 <h3 id="options_12">Options</h3>
 <table>
@@ -862,8 +878,20 @@ $ watson report --json
 <td>Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times</td>
 </tr>
 <tr>
+<td><code>--ignore-project TEXT</code></td>
+<td>Reports activity for all projects but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored</td>
+</tr>
+<tr>
+<td><code>--ignore-tag TEXT</code></td>
+<td>Reports activity for all tags but the given ones. You can ignore several tags by using the option multiple times. Any given tag will be ignored</td>
+</tr>
+<tr>
 <td><code>-j, --json</code></td>
-<td>Format the report in JSON instead of plain text</td>
+<td>Format output in JSON instead of plain text</td>
+</tr>
+<tr>
+<td><code>-s, --csv</code></td>
+<td>Format output in CSV instead of plain text</td>
 </tr>
 <tr>
 <td><code>-g, --pager / -G, --no-pager</code></td>
@@ -949,6 +977,14 @@ Starting project apollo11 [module, brakes] at 16:34
 <td>(Don&rsquo;t) leave gap between end time of previous project and start time of the current.</td>
 </tr>
 <tr>
+<td><code>-c, --confirm-new-project</code></td>
+<td>Confirm addition of new project.</td>
+</tr>
+<tr>
+<td><code>-b, --confirm-new-tag</code></td>
+<td>Confirm creation of new tag.</td>
+</tr>
+<tr>
 <td><code>--help</code></td>
 <td>Show this message and exit.</td>
 </tr>
@@ -1009,7 +1045,7 @@ specified time must be after the begin of the to be ended frame and must
 not be in the future.</p>
 <p>Example:</p>
 <pre><code>$ watson stop --at 13:37
-Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52)
+Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52) # noqa: E501
 </code></pre>
 <h3 id="options_16">Options</h3>
 <table>
@@ -1098,16 +1134,80 @@ wheels
 
         <footer class="col-md-12">
             <hr>
-            
-                <center>Watson, by <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a> &amp; al. is released under the MIT License.
-</center>
-            
-            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+                <p>Watson, by <a href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a> &amp; al. is released under the MIT License.
+</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
 
-        <script src="../../js/jquery-1.10.2.min.js"></script>
-        <script src="../../js/bootstrap-3.0.3.min.js"></script>
-        <script src="../../js/highlight.pack.js"></script>
-        <script src="../../js/base.js"></script>
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
     </body>
 </html>
