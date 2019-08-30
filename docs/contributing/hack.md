@@ -33,6 +33,8 @@ Ready to contribute? Here's how to set up *Watson* for local development.
         $ source .venv/bin/activate
         (.venv) $ make install-dev
 
+    If you are using fish shell, source `.venv/bin/activate.fish` instead.
+
 5. Create a branch for local development:
 
         (.venv) $ git checkout -b name-of-your-bugfix-or-feature
