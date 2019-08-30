@@ -35,7 +35,6 @@ from watson.utils import (
     safe_save,
     sorted_groupby,
     parse_tags,
-    PY2,
     json_arrow_encoder,
 )
 from . import mock_datetime
@@ -107,8 +106,6 @@ def test_make_json_writer_with_unicode():
     writer = make_json_writer(lambda: {u'ùñï©ôð€': u'εvεrywhεrε'})
     writer(fp)
     expected = u'{\n "ùñï©ôð€": "εvεrywhεrε"\n}'
-    if PY2:
-        expected = expected.encode('utf-8')
     assert fp.getvalue() == expected
 
 

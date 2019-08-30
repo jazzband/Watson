@@ -10,15 +10,11 @@ import requests
 
 from watson import Watson, WatsonError
 from watson.watson import ConfigParser, ConfigurationError
-from watson.utils import PY2
 
 from . import mock_read, TEST_FIXTURE_DIR
 
 
-if not PY2:
-    builtins = 'builtins'
-else:
-    builtins = '__builtin__'
+builtins = 'builtins'
 
 
 @pytest.fixture

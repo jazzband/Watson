@@ -6,7 +6,6 @@ import json
 import operator
 import os
 import shutil
-import sys
 import tempfile
 
 try:
@@ -22,10 +21,6 @@ from .fullmoon import get_last_full_moon
 
 from click.exceptions import UsageError
 
-PY2 = sys.version_info[0] == 2
-
-if not PY2:
-    from builtins import TypeError, isinstance
 
 try:
     text_type = (str, unicode)
@@ -226,10 +221,6 @@ def make_json_writer(func, *args, **kwargs):
     """
     def writer(f):
         dump = json.dumps(func(*args, **kwargs), indent=1, ensure_ascii=False)
-        if PY2:
-            # in Python, json.dumps with ensure_ascii=False can return
-            # unicode, but we need to write bytes in the file
-            dump = dump.encode('utf-8')
         f.write(dump)
     return writer
 
