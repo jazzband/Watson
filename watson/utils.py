@@ -8,6 +8,7 @@ import os
 import shutil
 import sys
 import tempfile
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -84,11 +85,15 @@ def style(name, element):
         return fmt(element)
 
 
-def format_timedelta(delta):
+def format_timedelta(watson, delta):
     """
     Return a string roughly representing a timedelta.
     """
     seconds = int(delta.total_seconds())
+
+    if watson.config.getboolean('options', 'format_as_decimal'):
+        return format_timedelta_decimal(watson, delta)
+
     neg = seconds < 0
     seconds = abs(seconds)
     total = seconds
@@ -107,6 +112,12 @@ def format_timedelta(delta):
     stems.append('{:02}s'.format(seconds))
 
     return ('-' if neg else '') + ' '.join(stems)
+
+
+def format_timedelta_decimal(watson, delta):
+    seconds = int(delta.total_seconds())
+    prec = watson.config.getint('options', 'decimal_precision', 2)
+    return '{:.{prec}f}h'.format(operator.truediv(seconds, 3600), prec=prec)
 
 
 def sorted_groupby(iterator, key, reverse=False):
