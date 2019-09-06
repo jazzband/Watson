@@ -1,18 +1,12 @@
 """Unit tests for the 'autocompletion' module."""
 
 import json
-import os
-import py
 import pytest
 
 from watson import Watson
+from .conftest import TEST_FIXTURE_DIR
 
 
-TEST_FIXTURE_DIR = py.path.local(
-    os.path.dirname(
-        os.path.realpath(__file__)
-        )
-    ) / 'resources'
 AUTOCOMPLETION_FRAMES_PATH = TEST_FIXTURE_DIR / 'frames-with-conflict'
 AUTOCOMPLETION_FRAMES = pytest.mark.datafiles(AUTOCOMPLETION_FRAMES_PATH)
 
