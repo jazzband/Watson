@@ -35,7 +35,7 @@ def confirm_project(project, watson_projects):
     Returns True on accept and raises click.exceptions.Abort on reject
     """
     if project not in watson_projects:
-        msg = "Project '%s' does not exist yet. Create it?" % project
+        msg = "Project '%s' does not exist yet. Create it?" % style('project', project)
         click.confirm(msg, abort=True)
     return True
 
@@ -47,7 +47,7 @@ def confirm_tags(tags, watson_tags):
     """
     for tag in tags:
         if tag not in watson_tags:
-            msg = "Tag '%s' does not exist yet. Create it?" % tag
+            msg = "Tag '%s' does not exist yet. Create it?" % style('tag', tag)
             click.confirm(msg, abort=True)
     return True
 
