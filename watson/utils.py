@@ -32,6 +32,8 @@ except NameError:
 def confirm_project(project, watson_projects):
     """
     Ask user to confirm creation of a new project
+    'project' must be a string
+    'watson_projects' must be an interable.
     Returns True on accept and raises click.exceptions.Abort on reject
     """
     if project not in watson_projects:
@@ -44,6 +46,7 @@ def confirm_project(project, watson_projects):
 def confirm_tags(tags, watson_tags):
     """
     Ask user to confirm creation of new tags (each separately)
+    Both 'tags' and 'watson_tags" must be iterables.
     Returns True if all accepted and raises click.exceptions.Abort on reject
     """
     for tag in tags:
