@@ -35,7 +35,8 @@ def confirm_project(project, watson_projects):
     Returns True on accept and raises click.exceptions.Abort on reject
     """
     if project not in watson_projects:
-        msg = "Project '%s' does not exist yet. Create it?" % style('project', project)
+        msg = ("Project '%s' does not exist yet. Create it?"
+               % style('project', project))
         click.confirm(msg, abort=True)
     return True
 
