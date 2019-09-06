@@ -96,7 +96,12 @@ def get_tags(ctx, args, incomplete):
 
 
 def get_frames(ctx, args, incomplete):
-    """Function to return all existing frames."""
+    """
+    Return all matching frame IDs
+
+    This function returns all frame IDs that match the given prefix in a
+    generator. If no ID matches the prefix, it returns the empty generator.
+    """
     watson = get_watson_instance()
     for cur_frame in watson.frames:
         yield_candidate = cur_frame.id
