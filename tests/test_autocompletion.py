@@ -7,7 +7,7 @@ from watson import Watson
 from .conftest import TEST_FIXTURE_DIR
 
 
-AUTOCOMPLETION_FRAMES_PATH = TEST_FIXTURE_DIR / 'frames-with-conflict'
+AUTOCOMPLETION_FRAMES_PATH = TEST_FIXTURE_DIR / 'frames-for-autocompletion'
 AUTOCOMPLETION_FRAMES = pytest.mark.datafiles(AUTOCOMPLETION_FRAMES_PATH)
 
 
