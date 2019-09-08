@@ -41,14 +41,14 @@ Start tracking your activity via:
 
   $ watson start world-domination +cats
 
-With this command, you have started a new **frame** for the *world-domination* project with the *cats* tag. That's it.
+With this command, you have started a new **frame** for the *world-domination* project with the *cat* tag. That's it.
 
 Now stop tracking you world domination plan via:
 
 .. code:: bash
 
   $ watson stop
-  Project world-domination [cats] started 8 minutes ago (2016.01.27 13:00:28+0100)
+  Project world-domination [cat] started 8 minutes ago (2016.01.27 13:00:28+0100)
 
 You can log your latest working sessions (aka **frames**) thanks to the ``log`` command:
 
@@ -56,7 +56,7 @@ You can log your latest working sessions (aka **frames**) thanks to the ``log`` 
 
   $ watson log
   Tuesday 26 January 2016 (8m 32s)
-        ffb2a4c  13:00 to 13:08      08m 32s   world-domination  [cats]
+        ffb2a4c  13:00 to 13:08      08m 32s   world-domination  [cat]
 
 Please note that, as `the report command <https://tailordev.github.io/Watson/user-guide/commands/#report>`_, the ``log`` command comes with projects, tags and dates filtering.
 
