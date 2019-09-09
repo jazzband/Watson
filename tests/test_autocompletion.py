@@ -7,6 +7,7 @@ import shutil
 
 from watson.autocompletion import (
     get_frames,
+    get_projects,
 )
 from .conftest import TEST_FIXTURE_DIR
 
@@ -56,3 +57,36 @@ def test_existing_frame_prefix(datafiles, monkeypatch):
     frame_ids = set(get_frames(None, None, prefix))
     assert len(frame_ids) == 2
     assert all(cur_frame_id.startswith(prefix) for cur_frame_id in frame_ids)
+
+
+@AUTOCOMPLETION_FRAMES
+def test_empty_project_prefix(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = ''
+    projects = list(get_projects(None, None, prefix))
+    assert len(projects) == 5
+
+
+@AUTOCOMPLETION_FRAMES
+def test_not_existing_project_prefix(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = 'NOT-EXISTING-PREFIX'
+    projects = set(get_projects(None, None, prefix))
+    assert projects == set()
+
+
+@AUTOCOMPLETION_FRAMES
+def test_existing_project_prefix(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = 'project3'
+    projects = set(get_projects(None, None, prefix))
+    assert len(projects) == 2
+    assert all(cur_project.startswith(prefix) for cur_project in projects)
+
+
+@AUTOCOMPLETION_FRAMES
+def test_get_projects_returns_distinct(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = ''
+    completion_list = list(get_projects(None, None, prefix))
+    assert sorted(set(completion_list)) == sorted(completion_list)
