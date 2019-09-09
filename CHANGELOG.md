@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- stylize prompt to create new project or tag (#310).
+- Stylize prompt to create new project or tag (#310).
 
 ## [1.8.0] - 2019-08-26
 
