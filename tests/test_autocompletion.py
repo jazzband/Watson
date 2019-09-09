@@ -8,6 +8,7 @@ import shutil
 from watson.autocompletion import (
     get_frames,
     get_projects,
+    get_rename_types,
 )
 from .conftest import TEST_FIXTURE_DIR
 
@@ -89,4 +90,37 @@ def test_get_projects_returns_distinct(datafiles, monkeypatch):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
     completion_list = list(get_projects(None, None, prefix))
+    assert sorted(set(completion_list)) == sorted(completion_list)
+
+
+@AUTOCOMPLETION_FRAMES
+def test_empty_rename_type_prefix(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = ''
+    rename_types = list(get_rename_types(None, None, prefix))
+    assert sorted(rename_types) == ['project', 'tag']
+
+
+@AUTOCOMPLETION_FRAMES
+def test_not_existing_rename_type_prefix(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = 'NOT-EXISTING-PREFIX'
+    rename_types = set(get_rename_types(None, None, prefix))
+    assert rename_types == set()
+
+
+@AUTOCOMPLETION_FRAMES
+def test_existing_rename_type_prefix(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = 'ta'
+    rename_types = list(get_rename_types(None, None, prefix))
+    assert rename_types == ['tag']
+    assert all(cur_type.startswith(prefix) for cur_type in rename_types)
+
+
+@AUTOCOMPLETION_FRAMES
+def test_get_rename_type_returns_distinct(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    prefix = ''
+    completion_list = list(get_rename_types(None, None, prefix))
     assert sorted(set(completion_list)) == sorted(completion_list)
