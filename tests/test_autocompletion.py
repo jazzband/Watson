@@ -1,14 +1,27 @@
 """Unit tests for the 'autocompletion' module."""
 
 import json
+import os
 import pytest
+import shutil
 
 from watson import Watson
+from watson.autocompletion import (
+    get_frames,
+)
 from .conftest import TEST_FIXTURE_DIR
 
 
 AUTOCOMPLETION_FRAMES_PATH = TEST_FIXTURE_DIR / 'frames-for-autocompletion'
 AUTOCOMPLETION_FRAMES = pytest.mark.datafiles(AUTOCOMPLETION_FRAMES_PATH)
+
+
+def prepare_sysenv_for_testing(config_dirname, monkeypatch):
+    shutil.copy(
+        os.path.join(str(config_dirname), "frames-for-autocompletion"),
+        os.path.join(str(config_dirname), "frames"),
+        )
+    monkeypatch.setenv('WATSON_DIR', str(config_dirname))
 
 
 @pytest.fixture
@@ -28,3 +41,10 @@ def watson(config_dir, frames_file):
 def test_watson(watson):
     projects = set(cur_frame[2] for cur_frame in watson.frames.dump())
     assert projects == set(('foo', 'bar'))
+
+
+@AUTOCOMPLETION_FRAMES
+def test_get_frames(datafiles, monkeypatch):
+    prepare_sysenv_for_testing(datafiles, monkeypatch)
+    frames = set(get_frames(None, None, ''))
+    assert {"1", "2", "3"} == frames
