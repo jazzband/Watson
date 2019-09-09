@@ -25,5 +25,6 @@ def prepare_sysenv_for_testing(config_dirname, monkeypatch):
 @AUTOCOMPLETION_FRAMES
 def test_get_frames(datafiles, monkeypatch):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
-    frames = set(get_frames(None, None, ''))
-    assert {"1", "2", "3"} == frames
+
+    all_frames = set(get_frames(None, None, ''))
+    assert len(all_frames) == 10
