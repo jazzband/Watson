@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Stylize prompt to create new project or tag (#310).
+
 ## [1.8.0] - 2019-08-26
 
 ### Added
 
 - Add CSV output format support for `report`, `log` and `aggregate` commands
   using the `--csv/-s` command line option flag (#281).
+- Add `start --confirm-new-project` and `start --confirm-new-tag` options and
+  corresponding options to configuration (#275).
 
 ### Fixed
 

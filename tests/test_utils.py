@@ -234,7 +234,7 @@ def test_confirm_tags_reject_raises_abort(confirm):
     tags = ['c']
     watson_tags = ['a', 'b']
     with pytest.raises(Abort):
-        confirm_project(tags, watson_tags)
+        confirm_project(tags[0], watson_tags)
 
 
 # build_csv

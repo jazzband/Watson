@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add CSV output format support for `report`, `log` and `aggregate` commands
   using the `--csv/-s` command line option flag (#281).
+- Add `start --confirm-new-project` and `start --confirm-new-tag` options and
+  corresponding options to configuration (#275).
 
 ### Fixed
 
