@@ -76,27 +76,23 @@ def test_completion_of_nonexisting_prefix(
 
 
 @AUTOCOMPLETION_FRAMES
-def test_existing_frame_prefix(datafiles, monkeypatch):
+@pytest.mark.parametrize('func_to_test, prefix, n_expected_vals', [
+    (get_frames, 'f4f7', 2),
+    (get_projects, 'project3', 2),
+    (get_rename_types, 'ta', 1),
+])
+def test_completion_of_existing_prefix(
+    datafiles,
+    monkeypatch,
+    func_to_test,
+    prefix,
+    n_expected_vals,
+):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = 'f4f7'
-    frame_ids = set(get_frames(None, None, prefix))
-    assert len(frame_ids) == 2
-    assert all(cur_frame_id.startswith(prefix) for cur_frame_id in frame_ids)
+    ret_set = set(func_to_test(None, None, prefix))
+    assert len(ret_set) == n_expected_vals
+    assert all(cur_elem.startswith(prefix) for cur_elem in ret_set)
 
 
 @AUTOCOMPLETION_FRAMES
-def test_existing_project_prefix(datafiles, monkeypatch):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = 'project3'
-    projects = set(get_projects(None, None, prefix))
-    assert len(projects) == 2
-    assert all(cur_project.startswith(prefix) for cur_project in projects)
-
-
-@AUTOCOMPLETION_FRAMES
-def test_existing_rename_type_prefix(datafiles, monkeypatch):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = 'ta'
-    rename_types = list(get_rename_types(None, None, prefix))
-    assert rename_types == ['tag']
-    assert all(cur_type.startswith(prefix) for cur_type in rename_types)
