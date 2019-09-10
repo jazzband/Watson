@@ -8,6 +8,7 @@ import shutil
 from watson.autocompletion import (
     get_frames,
     get_projects,
+    get_rename_name,
     get_rename_types,
     get_tags,
 )
@@ -18,6 +19,11 @@ AUTOCOMPLETION_FRAMES_PATH = TEST_FIXTURE_DIR / 'frames-for-autocompletion'
 AUTOCOMPLETION_FRAMES = pytest.mark.datafiles(AUTOCOMPLETION_FRAMES_PATH)
 with open(str(AUTOCOMPLETION_FRAMES_PATH)) as fh:
     N_FRAMES = len(json.load(fh))
+
+
+class CTXDummy():
+    def __init__(self, rename_type):
+        self.params = {"rename_type": rename_type}
 
 
 def prepare_sysenv_for_testing(config_dirname, monkeypatch):
@@ -32,6 +38,8 @@ def prepare_sysenv_for_testing(config_dirname, monkeypatch):
 @pytest.mark.parametrize('func_to_test, ctx', [
     (get_frames, None),
     (get_projects, None),
+    (get_rename_name, CTXDummy("project")),
+    (get_rename_name, CTXDummy("tag")),
     (get_rename_types, None),
     (get_tags, None),
 ])
@@ -51,6 +59,8 @@ def test_if_returned_values_are_distinct(
 @pytest.mark.parametrize('func_to_test, n_expected_returns, ctx', [
     (get_frames, N_FRAMES, None),
     (get_projects, 5, None),
+    (get_rename_name, 5, CTXDummy("project")),
+    (get_rename_name, 3, CTXDummy("tag")),
     (get_rename_types, 2, None),
     (get_tags, 3, None),
 ])
@@ -71,6 +81,8 @@ def test_if_empty_prefix_returns_everything(
 @pytest.mark.parametrize('func_to_test, ctx', [
     (get_frames, None),
     (get_projects, None),
+    (get_rename_name, CTXDummy("project")),
+    (get_rename_name, CTXDummy("tag")),
     (get_rename_types, None),
     (get_tags, None),
 ])
@@ -90,6 +102,8 @@ def test_completion_of_nonexisting_prefix(
 @pytest.mark.parametrize('func_to_test, prefix, n_expected_vals, ctx', [
     (get_frames, 'f4f7', 2, None),
     (get_projects, 'project3', 2, None),
+    (get_rename_name, 'project3', 2, CTXDummy("project")),
+    (get_rename_name, 'tag', 3, CTXDummy("tag")),
     (get_rename_types, 'ta', 1, None),
     (get_tags, 'tag', 3, None),
 ])
