@@ -9,6 +9,7 @@ from watson.autocompletion import (
     get_frames,
     get_projects,
     get_rename_types,
+    get_tags,
 )
 from .conftest import TEST_FIXTURE_DIR
 
@@ -32,6 +33,7 @@ def prepare_sysenv_for_testing(config_dirname, monkeypatch):
     get_frames,
     get_projects,
     get_rename_types,
+    get_tags,
 ])
 def test_if_returned_values_are_distinct(datafiles, monkeypatch, func_to_test):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
@@ -45,6 +47,7 @@ def test_if_returned_values_are_distinct(datafiles, monkeypatch, func_to_test):
     (get_frames, N_FRAMES),
     (get_projects, 5),
     (get_rename_types, 2),
+    (get_tags, 3),
 ])
 def test_if_empty_prefix_returns_everything(
     datafiles,
@@ -63,6 +66,7 @@ def test_if_empty_prefix_returns_everything(
     get_frames,
     get_projects,
     get_rename_types,
+    get_tags,
 ])
 def test_completion_of_nonexisting_prefix(
     datafiles,
@@ -80,6 +84,7 @@ def test_completion_of_nonexisting_prefix(
     (get_frames, 'f4f7', 2),
     (get_projects, 'project3', 2),
     (get_rename_types, 'ta', 1),
+    (get_tags, 'tag', 3),
 ])
 def test_completion_of_existing_prefix(
     datafiles,
