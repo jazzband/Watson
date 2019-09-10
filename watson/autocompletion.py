@@ -53,7 +53,7 @@ def get_project_or_task_completion(ctx, args, incomplete):
 
 
 def get_projects(ctx, args, incomplete):
-    """Function to return all existing projects."""
+    """Function to return all projects matching the prefix."""
     watson = get_watson_instance()
     for cur_project in watson.projects:
         if cur_project.startswith(incomplete):
@@ -62,10 +62,11 @@ def get_projects(ctx, args, incomplete):
 
 def get_rename_name(ctx, args, incomplete):
     """
-    Function to find matching names for renaming.
+    Function to return all projects or tasks matching the prefix
 
-    Depending on the specified rename_type, its either a project or a tag. This
-    function takes care of this distinction and returns the appropriate names.
+    Depending on the specified rename_type, either a list of projects or a list
+    of tasks must be returned. This function takes care of this distinction and
+    returns the appropriate names.
 
     If the passed in type is unknown, e.g. due to a typo, an empty completion
     is generated.
@@ -81,14 +82,14 @@ def get_rename_name(ctx, args, incomplete):
 
 
 def get_rename_types(ctx, args, incomplete):
-    """Function to return all current rename types."""
+    """Function to return all rename types matching the prefix."""
     for cur_type in 'project', 'tag':
         if cur_type.startswith(incomplete):
             yield cur_type
 
 
 def get_tags(ctx, args, incomplete):
-    """Function to return all existing tags."""
+    """Function to return all tags matching the prefix."""
     watson = get_watson_instance()
     for cur_tag in watson.tags:
         if cur_tag.startswith(incomplete):
