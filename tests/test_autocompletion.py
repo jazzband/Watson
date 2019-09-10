@@ -95,4 +95,18 @@ def test_completion_of_existing_prefix(
 
 
 @AUTOCOMPLETION_FRAMES
+@pytest.mark.parametrize('func_to_test, prefix, expected_vals', [
+    (get_rename_types, "", ["project", "tag"]),
+    (get_rename_types, "t", ["tag"]),
+    (get_rename_types, "p", ["project"]),
+])
+def test_for_known_completion_values(
+    datafiles,
+    monkeypatch,
+    func_to_test,
+    prefix,
+    expected_vals
+):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
+    ret_list = list(func_to_test(None, None, prefix))
+    assert ret_list == expected_vals
