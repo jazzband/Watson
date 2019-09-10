@@ -51,7 +51,7 @@ def test_if_returned_values_are_distinct(
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
-    ret_list = list(func_to_test(ctx, None, prefix))
+    ret_list = list(func_to_test(ctx, [], prefix))
     assert sorted(ret_list) == sorted(set(ret_list))
 
 
@@ -73,7 +73,7 @@ def test_if_empty_prefix_returns_everything(
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
-    completed_vals = set(func_to_test(ctx, None, prefix))
+    completed_vals = set(func_to_test(ctx, [], prefix))
     assert len(completed_vals) == n_expected_returns
 
 
@@ -94,7 +94,7 @@ def test_completion_of_nonexisting_prefix(
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = 'NOT-EXISTING-PREFIX'
-    ret_list = list(func_to_test(ctx, None, prefix))
+    ret_list = list(func_to_test(ctx, [], prefix))
     assert not ret_list
 
 
@@ -116,7 +116,7 @@ def test_completion_of_existing_prefix(
     ctx,
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
-    ret_set = set(func_to_test(ctx, None, prefix))
+    ret_set = set(func_to_test(ctx, [], prefix))
     assert len(ret_set) == n_expected_vals
     assert all(cur_elem.startswith(prefix) for cur_elem in ret_set)
 
@@ -135,5 +135,5 @@ def test_for_known_completion_values(
     expected_vals
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
-    ret_list = list(func_to_test(None, None, prefix))
+    ret_list = list(func_to_test(None, [], prefix))
     assert ret_list == expected_vals
