@@ -75,7 +75,7 @@ class DateParamType(click.ParamType):
         if value:
             try:
                 date = arrow.get(value)
-            except arrow.parser.ParserError as e:
+            except (ValueError, TypeError) as e:
                 raise click.UsageError(str(e))
             # When we parse a date, we want to parse it in the timezone
             # expected by the user, so that midnight is midnight in the local
@@ -630,7 +630,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     if aggregated:
         _print(u'{} - {}'.format(
             style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report['timespan']['from'])
+                report['timespan']['from']
             )),
             style('time', '{}'.format(format_timedelta(
                 datetime.timedelta(seconds=report['time'])
@@ -640,10 +640,10 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     else:
         _print(u'{} -> {}\n'.format(
             style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report['timespan']['from'])
+                report['timespan']['from']
             )),
             style('date', '{:ddd DD MMMM YYYY}'.format(
-                arrow.get(report['timespan']['to'])
+                report['timespan']['to']
             ))
         ))
 
@@ -1244,7 +1244,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
             # break out of while loop and continue execution of
             #  the edit function normally
             break
-        except (ValueError, RuntimeError) as e:
+        except (ValueError, TypeError, RuntimeError) as e:
             click.echo(u"Error while parsing inputted values: {}".format(e),
                        err=True)
         except KeyError:

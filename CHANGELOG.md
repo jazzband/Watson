@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Improve Arrow 0.15.0 support after changes in `arrow.get()` behavior (#296)
+
 ### Fixed
 
 - Stylize prompt to create new project or tag (#310).

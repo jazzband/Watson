@@ -378,12 +378,8 @@ def flatten_report_for_csv(report):
     of the report.
     """
     result = []
-    datetime_from = arrow.get(
-            report['timespan']['from']
-    ).format('YYYY-MM-DD HH:mm:ss')
-    datetime_to = arrow.get(
-            report['timespan']['to']
-    ).format('YYYY-MM-DD HH:mm:ss')
+    datetime_from = report['timespan']['from'].format('YYYY-MM-DD HH:mm:ss')
+    datetime_to = report['timespan']['to'].format('YYYY-MM-DD HH:mm:ss')
     for project in report['projects']:
         result.append({
             'from': datetime_from,
