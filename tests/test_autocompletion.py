@@ -59,11 +59,20 @@ def test_if_empty_prefix_returns_everything(
 
 
 @AUTOCOMPLETION_FRAMES
-def test_not_existing_frame_prefix(datafiles, monkeypatch):
+@pytest.mark.parametrize('func_to_test', [
+    get_frames,
+    get_projects,
+    get_rename_types,
+])
+def test_completion_of_nonexisting_prefix(
+    datafiles,
+    monkeypatch,
+    func_to_test
+):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = 'NOT-EXISTING-PREFIX'
-    frame_ids = set(get_frames(None, None, prefix))
-    assert frame_ids == set()
+    ret_list = list(func_to_test(None, None, prefix))
+    assert not ret_list
 
 
 @AUTOCOMPLETION_FRAMES
@@ -76,28 +85,12 @@ def test_existing_frame_prefix(datafiles, monkeypatch):
 
 
 @AUTOCOMPLETION_FRAMES
-def test_not_existing_project_prefix(datafiles, monkeypatch):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = 'NOT-EXISTING-PREFIX'
-    projects = set(get_projects(None, None, prefix))
-    assert projects == set()
-
-
-@AUTOCOMPLETION_FRAMES
 def test_existing_project_prefix(datafiles, monkeypatch):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = 'project3'
     projects = set(get_projects(None, None, prefix))
     assert len(projects) == 2
     assert all(cur_project.startswith(prefix) for cur_project in projects)
-
-
-@AUTOCOMPLETION_FRAMES
-def test_not_existing_rename_type_prefix(datafiles, monkeypatch):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = 'NOT-EXISTING-PREFIX'
-    rename_types = set(get_rename_types(None, None, prefix))
-    assert rename_types == set()
 
 
 @AUTOCOMPLETION_FRAMES
