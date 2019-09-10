@@ -1,7 +1,4 @@
-from .utils import (
-    get_watson_instance,
-    parse_tags,
-)
+from .utils import get_watson_instance, parse_tags
 
 
 def get_project_or_task_completion(ctx, args, incomplete):
@@ -12,9 +9,9 @@ def get_project_or_task_completion(ctx, args, incomplete):
 
     def get_incomplete_tag(args, incomplete):
         """Get incomplete tag from command line string."""
-        cmd_line = ' '.join(args + [incomplete])
+        cmd_line = " ".join(args + [incomplete])
         found_tags = parse_tags(cmd_line)
-        return found_tags[-1] if found_tags else ''
+        return found_tags[-1] if found_tags else ""
 
     def fix_broken_tag_parsing(incomplete_tag):
         """
@@ -24,7 +21,7 @@ def get_project_or_task_completion(ctx, args, incomplete):
         order to obtain the actual command line part, the space needs to be
         removed.
         """
-        return ''.join(char for char in incomplete_tag.split(' '))
+        return "".join(char for char in incomplete_tag.split(" "))
 
     def prepend_plus(tag_suggestions):
         """
@@ -39,10 +36,11 @@ def get_project_or_task_completion(ctx, args, incomplete):
         pretended.
         """
         for cur_suggestion in tag_suggestions:
-            yield '+{cur_suggestion}'.format(cur_suggestion=cur_suggestion)
+            yield "+{cur_suggestion}".format(cur_suggestion=cur_suggestion)
 
-    project_is_completed = any(tok.startswith('+')
-                               for tok in args + [incomplete])
+    project_is_completed = any(
+        tok.startswith("+") for tok in args + [incomplete]
+    )
     if project_is_completed:
         incomplete_tag = get_incomplete_tag(args, incomplete)
         fixed_incomplete_tag = fix_broken_tag_parsing(incomplete_tag)
@@ -72,10 +70,10 @@ def get_rename_name(ctx, args, incomplete):
     is generated.
     """
 
-    in_type = ctx.params['rename_type']
-    if in_type == 'project':
+    in_type = ctx.params["rename_type"]
+    if in_type == "project":
         return get_projects(ctx, args, incomplete)
-    elif in_type == 'tag':
+    elif in_type == "tag":
         return get_tags(ctx, args, incomplete)
 
     return []
@@ -83,7 +81,7 @@ def get_rename_name(ctx, args, incomplete):
 
 def get_rename_types(ctx, args, incomplete):
     """Function to return all rename types matching the prefix."""
-    for cur_type in 'project', 'tag':
+    for cur_type in "project", "tag":
         if cur_type.startswith(incomplete):
             yield cur_type
 
