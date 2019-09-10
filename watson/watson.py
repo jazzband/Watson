@@ -13,7 +13,6 @@ except ImportError:
     import ConfigParser as configparser
 import arrow
 import click
-import requests
 
 from .config import ConfigParser
 from .frames import Frames
@@ -344,6 +343,8 @@ class Watson(object):
         return dest, headers
 
     def _get_remote_projects(self):
+        # import when required in order to reduce watson response time (#312)
+        import requests
         if not hasattr(self, '_remote_projects'):
             dest, headers = self._get_request_info('projects')
 
@@ -363,6 +364,7 @@ class Watson(object):
         return self._remote_projects['projects']
 
     def pull(self):
+        import requests
         dest, headers = self._get_request_info('frames')
 
         try:
@@ -392,6 +394,7 @@ class Watson(object):
         return frames
 
     def push(self, last_pull):
+        import requests
         dest, headers = self._get_request_info('frames/bulk')
 
         frames = []
