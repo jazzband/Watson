@@ -29,62 +29,69 @@ def prepare_sysenv_for_testing(config_dirname, monkeypatch):
 
 
 @AUTOCOMPLETION_FRAMES
-@pytest.mark.parametrize('func_to_test', [
-    get_frames,
-    get_projects,
-    get_rename_types,
-    get_tags,
+@pytest.mark.parametrize('func_to_test, ctx', [
+    (get_frames, None),
+    (get_projects, None),
+    (get_rename_types, None),
+    (get_tags, None),
 ])
-def test_if_returned_values_are_distinct(datafiles, monkeypatch, func_to_test):
+def test_if_returned_values_are_distinct(
+    datafiles,
+    monkeypatch,
+    func_to_test,
+    ctx,
+):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
-    ret_list = list(func_to_test(None, None, prefix))
+    ret_list = list(func_to_test(ctx, None, prefix))
     assert sorted(ret_list) == sorted(set(ret_list))
 
 
 @AUTOCOMPLETION_FRAMES
-@pytest.mark.parametrize('func_to_test, n_expected_returns', [
-    (get_frames, N_FRAMES),
-    (get_projects, 5),
-    (get_rename_types, 2),
-    (get_tags, 3),
+@pytest.mark.parametrize('func_to_test, n_expected_returns, ctx', [
+    (get_frames, N_FRAMES, None),
+    (get_projects, 5, None),
+    (get_rename_types, 2, None),
+    (get_tags, 3, None),
 ])
 def test_if_empty_prefix_returns_everything(
     datafiles,
     monkeypatch,
     func_to_test,
     n_expected_returns,
+    ctx,
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
-    completed_vals = set(func_to_test(None, None, prefix))
+    completed_vals = set(func_to_test(ctx, None, prefix))
     assert len(completed_vals) == n_expected_returns
 
 
 @AUTOCOMPLETION_FRAMES
-@pytest.mark.parametrize('func_to_test', [
-    get_frames,
-    get_projects,
-    get_rename_types,
-    get_tags,
+@pytest.mark.parametrize('func_to_test, ctx', [
+    (get_frames, None),
+    (get_projects, None),
+    (get_rename_types, None),
+    (get_tags, None),
 ])
 def test_completion_of_nonexisting_prefix(
     datafiles,
     monkeypatch,
-    func_to_test
+    func_to_test,
+    ctx,
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = 'NOT-EXISTING-PREFIX'
-    ret_list = list(func_to_test(None, None, prefix))
+    ret_list = list(func_to_test(ctx, None, prefix))
     assert not ret_list
 
 
 @AUTOCOMPLETION_FRAMES
-@pytest.mark.parametrize('func_to_test, prefix, n_expected_vals', [
-    (get_frames, 'f4f7', 2),
-    (get_projects, 'project3', 2),
-    (get_rename_types, 'ta', 1),
-    (get_tags, 'tag', 3),
+@pytest.mark.parametrize('func_to_test, prefix, n_expected_vals, ctx', [
+    (get_frames, 'f4f7', 2, None),
+    (get_projects, 'project3', 2, None),
+    (get_rename_types, 'ta', 1, None),
+    (get_tags, 'tag', 3, None),
 ])
 def test_completion_of_existing_prefix(
     datafiles,
@@ -92,9 +99,10 @@ def test_completion_of_existing_prefix(
     func_to_test,
     prefix,
     n_expected_vals,
+    ctx,
 ):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
-    ret_set = set(func_to_test(None, None, prefix))
+    ret_set = set(func_to_test(ctx, None, prefix))
     assert len(ret_set) == n_expected_vals
     assert all(cur_elem.startswith(prefix) for cur_elem in ret_set)
 
