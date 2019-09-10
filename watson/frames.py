@@ -15,17 +15,17 @@ class Frame(namedtuple('Frame', HEADERS)):
 
             if not isinstance(stop, arrow.Arrow):
                 stop = arrow.get(stop)
-        except RuntimeError as e:
+
+            if updated_at is None:
+                updated_at = arrow.utcnow()
+            elif not isinstance(updated_at, arrow.Arrow):
+                updated_at = arrow.get(updated_at)
+        except (ValueError, TypeError) as e:
             from .watson import WatsonError
             raise WatsonError(u"Error converting date: {}".format(e))
 
         start = start.to('local')
         stop = stop.to('local')
-
-        if updated_at is None:
-            updated_at = arrow.utcnow()
-        elif not isinstance(updated_at, arrow.Arrow):
-            updated_at = arrow.get(updated_at)
 
         if tags is None:
             tags = []

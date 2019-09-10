@@ -99,9 +99,11 @@ class Watson(object):
             )
 
     def _parse_date(self, date):
+        """Returns Arrow object from timestamp."""
         return arrow.Arrow.utcfromtimestamp(date).to('local')
 
     def _format_date(self, date):
+        """Returns timestamp from string timestamp or Arrow object."""
         if not isinstance(date, arrow.Arrow):
             date = arrow.get(date)
 
@@ -494,8 +496,8 @@ class Watson(object):
 
         report = {
              'timespan': {
-                 'from': str(span.start),
-                 'to': str(span.stop),
+                 'from': span.start,
+                 'to': span.stop,
              },
              'projects': []
          }
