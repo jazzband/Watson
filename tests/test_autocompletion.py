@@ -26,11 +26,16 @@ def prepare_sysenv_for_testing(config_dirname, monkeypatch):
 
 
 @AUTOCOMPLETION_FRAMES
-def test_get_frames_returns_distinct(datafiles, monkeypatch):
+@pytest.mark.parametrize('func_to_test', [
+    get_frames,
+    get_projects,
+    get_rename_types,
+])
+def test_if_returned_values_are_distinct(datafiles, monkeypatch, func_to_test):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
-    frame_id_list = list(get_frames(None, None, prefix))
-    assert sorted(set(frame_id_list)) == sorted(frame_id_list)
+    ret_list = list(func_to_test(None, None, prefix))
+    assert sorted(ret_list) == sorted(set(ret_list))
 
 
 @AUTOCOMPLETION_FRAMES
@@ -86,14 +91,6 @@ def test_existing_project_prefix(datafiles, monkeypatch):
 
 
 @AUTOCOMPLETION_FRAMES
-def test_get_projects_returns_distinct(datafiles, monkeypatch):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = ''
-    completion_list = list(get_projects(None, None, prefix))
-    assert sorted(set(completion_list)) == sorted(completion_list)
-
-
-@AUTOCOMPLETION_FRAMES
 def test_empty_rename_type_prefix(datafiles, monkeypatch):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
@@ -116,11 +113,3 @@ def test_existing_rename_type_prefix(datafiles, monkeypatch):
     rename_types = list(get_rename_types(None, None, prefix))
     assert rename_types == ['tag']
     assert all(cur_type.startswith(prefix) for cur_type in rename_types)
-
-
-@AUTOCOMPLETION_FRAMES
-def test_get_rename_type_returns_distinct(datafiles, monkeypatch):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = ''
-    completion_list = list(get_rename_types(None, None, prefix))
-    assert sorted(set(completion_list)) == sorted(completion_list)
