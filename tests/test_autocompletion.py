@@ -15,6 +15,8 @@ from .conftest import TEST_FIXTURE_DIR
 
 AUTOCOMPLETION_FRAMES_PATH = TEST_FIXTURE_DIR / 'frames-for-autocompletion'
 AUTOCOMPLETION_FRAMES = pytest.mark.datafiles(AUTOCOMPLETION_FRAMES_PATH)
+with open(str(AUTOCOMPLETION_FRAMES_PATH)) as fh:
+    N_FRAMES = len(json.load(fh))
 
 
 def prepare_sysenv_for_testing(config_dirname, monkeypatch):
@@ -39,13 +41,21 @@ def test_if_returned_values_are_distinct(datafiles, monkeypatch, func_to_test):
 
 
 @AUTOCOMPLETION_FRAMES
-def test_complete_empty_frame_prefix(datafiles, monkeypatch):
+@pytest.mark.parametrize('func_to_test, n_expected_returns', [
+    (get_frames, N_FRAMES),
+    (get_projects, 5),
+    (get_rename_types, 2),
+])
+def test_if_empty_prefix_returns_everything(
+    datafiles,
+    monkeypatch,
+    func_to_test,
+    n_expected_returns,
+):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ''
-    with open(str(AUTOCOMPLETION_FRAMES_PATH)) as fh:
-        n_frames = len(json.load(fh))
-    frame_ids = set(get_frames(None, None, prefix))
-    assert len(frame_ids) == n_frames
+    completed_vals = set(func_to_test(None, None, prefix))
+    assert len(completed_vals) == n_expected_returns
 
 
 @AUTOCOMPLETION_FRAMES
@@ -66,14 +76,6 @@ def test_existing_frame_prefix(datafiles, monkeypatch):
 
 
 @AUTOCOMPLETION_FRAMES
-def test_empty_project_prefix(datafiles, monkeypatch):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = ''
-    projects = list(get_projects(None, None, prefix))
-    assert len(projects) == 5
-
-
-@AUTOCOMPLETION_FRAMES
 def test_not_existing_project_prefix(datafiles, monkeypatch):
     prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = 'NOT-EXISTING-PREFIX'
@@ -88,14 +90,6 @@ def test_existing_project_prefix(datafiles, monkeypatch):
     projects = set(get_projects(None, None, prefix))
     assert len(projects) == 2
     assert all(cur_project.startswith(prefix) for cur_project in projects)
-
-
-@AUTOCOMPLETION_FRAMES
-def test_empty_rename_type_prefix(datafiles, monkeypatch):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
-    prefix = ''
-    rename_types = list(get_rename_types(None, None, prefix))
-    assert sorted(rename_types) == ['project', 'tag']
 
 
 @AUTOCOMPLETION_FRAMES
