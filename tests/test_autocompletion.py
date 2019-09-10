@@ -41,6 +41,7 @@ def prepare_sysenv_for_testing(config_dirname, monkeypatch):
     "func_to_test, ctx, args",
     [
         (get_frames, None, []),
+        (get_project_or_task_completion, None, ["project1", "+tag1"]),
         (get_project_or_task_completion, None, []),
         (get_projects, None, []),
         (get_rename_name, CTXDummy("project"), []),
@@ -63,6 +64,7 @@ def test_if_returned_values_are_distinct(
     "func_to_test, n_expected_returns, ctx, args",
     [
         (get_frames, N_FRAMES, None, []),
+        (get_project_or_task_completion, 3, None, ["project1", "+"]),
         (get_project_or_task_completion, 5, None, []),
         (get_projects, 5, None, []),
         (get_rename_name, 5, CTXDummy("project"), []),
@@ -85,6 +87,8 @@ def test_if_empty_prefix_returns_everything(
     "func_to_test, ctx, args",
     [
         (get_frames, None, []),
+        (get_project_or_task_completion, None, ["project1", "+"]),
+        (get_project_or_task_completion, None, ["project1", "+tag1", "+"]),
         (get_project_or_task_completion, None, []),
         (get_projects, None, []),
         (get_rename_name, CTXDummy("project"), []),
@@ -107,6 +111,14 @@ def test_completion_of_nonexisting_prefix(
     "func_to_test, prefix, n_expected_vals, ctx, args",
     [
         (get_frames, "f4f7", 2, None, []),
+        (
+            get_project_or_task_completion,
+            "+tag",
+            3,
+            None,
+            ["project1", "+tag3"],
+        ),
+        (get_project_or_task_completion, "+tag", 3, None, ["project1"]),
         (get_project_or_task_completion, "project3", 2, None, []),
         (get_projects, "project3", 2, None, []),
         (get_rename_name, "project3", 2, CTXDummy("project"), []),
