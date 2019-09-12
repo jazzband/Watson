@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Stylize prompt to create new project or tag (#310).
+- Aggregate calculates wrong time if used with `--current` (#293)
 
 ## [1.8.0] - 2019-08-26
 

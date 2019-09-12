@@ -467,13 +467,13 @@ class Watson(object):
         if from_ > to:
             raise WatsonError("'from' must be anterior to 'to'")
 
-        if self.current:
-            if current or (current is None and
-                           self.config.getboolean(
-                               'options', 'report_current')):
-                cur = self.current
-                self.frames.add(cur['project'], cur['start'], arrow.utcnow(),
-                                cur['tags'], id="current")
+        if current is None:
+            current = self.config.getboolean('options', 'report_current')
+
+        if self.current and current:
+            cur = self.current
+            self.frames.add(cur['project'], cur['start'], arrow.utcnow(),
+                            cur['tags'], id="current")
 
         span = self.frames.span(from_, to)
 
@@ -486,6 +486,9 @@ class Watson(object):
             ),
             operator.attrgetter('project')
         )
+
+        if self.current and current:
+            del self.frames['current']
 
         total = datetime.timedelta()
 
