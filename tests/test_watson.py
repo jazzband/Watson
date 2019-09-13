@@ -795,6 +795,33 @@ def test_report(watson):
         watson.report(arrow.now(), arrow.now(), tags=["A"], ignore_tags=["A"])
 
 
+def test_report_current(config_dir):
+    watson = Watson(
+        current={'project': 'foo', 'start': arrow.now().shift(hours=-1)},
+        config_dir=config_dir
+    )
+
+    _ = watson.report(
+        arrow.now(), arrow.now(), current=True, projects=['foo']
+    )
+    report = watson.report(
+        arrow.now(), arrow.now(), current=True, projects=['foo']
+    )
+    assert len(report['projects']) == 1
+    assert report['projects'][0]['name'] == 'foo'
+    assert report['projects'][0]['time'] == pytest.approx(3600, rel=1e-2)
+
+    report = watson.report(
+        arrow.now(), arrow.now(), current=False, projects=['foo']
+    )
+    assert len(report['projects']) == 0
+
+    report = watson.report(
+        arrow.now(), arrow.now(), projects=['foo']
+    )
+    assert len(report['projects']) == 0
+
+
 # renaming project updates frame last_updated time
 def test_rename_project_with_time(mock, watson):
     """
