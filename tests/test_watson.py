@@ -194,6 +194,47 @@ def test_frames_with_empty_given_state(config_dir, mock):
     mock.patch('%s.open' % builtins, mock.mock_open(read_data=content))
     assert len(watson.frames) == 0
 
+def test_frames_filter(watson):
+    samples = (
+        ('foo', ('A')),
+        ('bar', ('A')),
+        ('foo', ('B')),
+        ('lol', ('B')),
+        ('bar', ('A'))
+    )
+    for name, tags in samples:
+        watson.frames.add(name, 4000, 4000, tags)
+
+    foo_projects = list(watson.frames.filter(projects=('foo')))
+    assert all(frame.project == 'foo' for frame in foo_projects)
+    assert len(foo_projects) == 2
+
+    not_foo_projects = list(watson.frames.filter(ignore_projects=('foo')))
+    assert all(frame.project != 'foo' for frame in not_foo_projects)
+    assert len(not_foo_projects) == 3
+
+    A_tags = list(watson.frames.filter(tags=('A')))
+    assert all(frame.tags == 'A' for frame in A_tags)
+    assert len(A_tags) == 3
+
+    not_A_tags = list(watson.frames.filter(ignore_tags=('A')))
+    assert all(frame.tags != 'A' for frame in not_A_tags)
+    assert len(not_A_tags) == 2
+
+    foo_not_A = list(watson.frames.filter(projects=('foo'), ignore_tags=('A')))
+    assert all(frame.tags != 'A' for frame in foo_not_A)
+    assert all(frame.project == 'foo' for frame in foo_not_A)
+    assert len(foo_not_A) == 1
+
+    not_foo_A = list(watson.frames.filter(ignore_projects=('foo'), tags=('A')))
+    assert all(frame.tags == 'A' for frame in not_foo_A)
+    assert all(frame.project != 'foo' for frame in not_foo_A)
+    assert len(not_foo_A) == 2
+
+    not_foo_not_A = list(watson.frames.filter(ignore_projects=('foo'), ignore_tags=('A')))
+    assert all(frame.tags != 'A' for frame in not_foo_not_A)
+    assert all(frame.project != 'foo' for frame in not_foo_not_A)
+    assert len(not_foo_not_A) == 1
 
 # config
 
