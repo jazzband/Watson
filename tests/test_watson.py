@@ -317,7 +317,7 @@ def test_stop_started_project_at(watson):
     watson.start('foo')
     now = arrow.now()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(WatsonError):
         time_str = '1970-01-01T00:00'
         time_obj = arrow.get(time_str)
         watson.stop(stop_at=time_obj)
