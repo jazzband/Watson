@@ -7,13 +7,13 @@ from watson.config import ConfigParser
 from . import mock_read
 
 
-def test_config_get(mock, watson):
+def test_config_get(mocker, watson):
     content = u"""
 [backend]
 url = foo
 token =
     """
-    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, 'read', mock_read(content))
     config = watson.config
     assert config.get('backend', 'url') == 'foo'
     assert config.get('backend', 'token') == ''
@@ -23,7 +23,7 @@ token =
     assert config.get('option', 'spamm', 'eggs') == 'eggs'
 
 
-def test_config_getboolean(mock, watson):
+def test_config_getboolean(mocker, watson):
     content = u"""
 [options]
 flag1 = 1
@@ -33,7 +33,7 @@ flag4 = yes
 flag5 = false
 flag6 =
     """
-    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, 'read', mock_read(content))
     config = watson.config
     assert config.getboolean('options', 'flag1') is True
     assert config.getboolean('options', 'flag1', False) is True
@@ -47,14 +47,14 @@ flag6 =
     assert config.getboolean('options', 'missing', True) is True
 
 
-def test_config_getint(mock, watson):
+def test_config_getint(mocker, watson):
     content = u"""
 [options]
 value1 = 42
 value2 = spamm
 value3 =
     """
-    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, 'read', mock_read(content))
     config = watson.config
     assert config.getint('options', 'value1') == 42
     assert config.getint('options', 'value1', 666) == 42
@@ -71,7 +71,7 @@ value3 =
         config.getint('options', 'value3')
 
 
-def test_config_getfloat(mock, watson):
+def test_config_getfloat(mocker, watson):
     content = u"""
 [options]
 value1 = 3.14
@@ -80,7 +80,7 @@ value3 = spamm
 value4 =
     """
 
-    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, 'read', mock_read(content))
     config = watson.config
     assert config.getfloat('options', 'value1') == 3.14
     assert config.getfloat('options', 'value1', 6.66) == 3.14
@@ -98,7 +98,7 @@ value4 =
         config.getfloat('options', 'value4')
 
 
-def test_config_getlist(mock, watson):
+def test_config_getlist(mocker, watson):
     content = u"""
 # empty lines in option values (including the first one) are discarded
 [options]
@@ -121,7 +121,7 @@ value5 = one
    two #three
    four # five
 """
-    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, 'read', mock_read(content))
     gl = watson.config.getlist
     assert gl('options', 'value1') == ['one', 'two three', 'four',
                                        'five six']
