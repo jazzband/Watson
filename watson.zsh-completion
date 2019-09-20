@@ -156,7 +156,9 @@ _watson() {
         (log|report)
           _arguments : \
             '*'{-p,--project}'[only for the given project]: :_watson_projects' \
+            '*'{-I,--ignore-project}'[all but the given project]: :_watson_projects' \
             '*'{-T,--tag}'[only for the given tag]: :_watson_tags' \
+            '*'{-i,--ignore-tag}'[all but the given tag]: :_watson_tags' \
             '(--from -f)'{-f,--from}'[start date]:date (YYYY-MM-DD):' \
             '(--to -t)'{-t,--to}'[end date]:date (YYYY-MM-DD):' \
             '(--all -a)'{-a,--all}'[output all frames]:' \

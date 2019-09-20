@@ -58,7 +58,7 @@ _watson_complete () {
               COMPREPLY=($(compgen -W "$tags" -- ${cur}))
               ;;
             *)
-              COMPREPLY=($(compgen -W "-a -c -C -d -f -g -G -j -m -p -t -T -w -y --all --current --no-current --pager --no-pager --from --to --project --tag --day --week --month --year --luna --json" -- ${cur})) ;;
+              COMPREPLY=($(compgen -W "-a -c -C -d -f -g -G -j -m -p -t -T -w -y -i -I --all --current --no-current --pager --no-pager --from --to --project --tag --day --week --month --year --luna --json --ignore-project --ignore-tag" -- ${cur})) ;;
           esac
           ;;
         merge)

@@ -445,11 +445,11 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('--ignore-project', 'ignore_projects', multiple=True,
+@click.option('-I', '--ignore-project', 'ignore_projects', multiple=True,
               help="Reports activity for all projects but the given ones. You "
               "can ignore several projects by using the option multiple "
               "times. Any given project will be ignored")
-@click.option('--ignore-tag', 'ignore_tags', multiple=True,
+@click.option('-i', '--ignore-tag', 'ignore_tags', multiple=True,
               help="Reports activity for all tags but the given ones. You can "
               "ignore several tags by using the option multiple times. Any "
               "given tag will be ignored")
