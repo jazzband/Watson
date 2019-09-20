@@ -194,6 +194,7 @@ def test_frames_with_empty_given_state(config_dir, mock):
     mock.patch('%s.open' % builtins, mock.mock_open(read_data=content))
     assert len(watson.frames) == 0
 
+
 def test_frames_filter(watson):
     samples = (
         ('foo', ('A')),
@@ -221,20 +222,24 @@ def test_frames_filter(watson):
     assert all(frame.tags != 'A' for frame in not_A_tags)
     assert len(not_A_tags) == 2
 
-    foo_not_A = list(watson.frames.filter(projects=('foo'), ignore_tags=('A')))
+    foo_not_A = list(
+        watson.frames.filter(projects=('foo'), ignore_tags=('A')))
     assert all(frame.tags != 'A' for frame in foo_not_A)
     assert all(frame.project == 'foo' for frame in foo_not_A)
     assert len(foo_not_A) == 1
 
-    not_foo_A = list(watson.frames.filter(ignore_projects=('foo'), tags=('A')))
+    not_foo_A = list(
+        watson.frames.filter(ignore_projects=('foo'), tags=('A')))
     assert all(frame.tags == 'A' for frame in not_foo_A)
     assert all(frame.project != 'foo' for frame in not_foo_A)
     assert len(not_foo_A) == 2
 
-    not_foo_not_A = list(watson.frames.filter(ignore_projects=('foo'), ignore_tags=('A')))
+    not_foo_not_A = list(
+        watson.frames.filter(ignore_projects=('foo'), ignore_tags=('A')))
     assert all(frame.tags != 'A' for frame in not_foo_not_A)
     assert all(frame.project != 'foo' for frame in not_foo_not_A)
     assert len(not_foo_not_A) == 1
+
 
 # config
 
@@ -964,10 +969,10 @@ def test_validate_ignore_options():
     assert Watson.validate_ignore_options(["project_foo"], None)
     assert Watson.validate_ignore_options(None, ["project_foo"])
     assert not Watson.validate_ignore_options(["project_foo"],
-                                               ["project_foo"])
+                                              ["project_foo"])
     assert Watson.validate_ignore_options(["project_foo"], ["project_bar"])
     assert not Watson.validate_ignore_options(["project_foo", "project_bar"],
-                                               ["project_foo"])
+                                              ["project_foo"])
     assert not Watson.validate_ignore_options(["project_foo", "project_bar"],
-                                               ["project_foo", "project_bar"])
+                                              ["project_foo", "project_bar"])
     assert Watson.validate_ignore_options(None, None)
