@@ -1341,11 +1341,8 @@ def config(context, key, value, edit):
     wconfig = watson.config
 
     if edit:
-        try:
-            with open(watson.config_file) as fp:
-                rawconfig = fp.read()
-        except (IOError, OSError):
-            rawconfig = ''
+        with open(watson.config_file) as fp:
+            rawconfig = fp.read()
 
         newconfig = click.edit(text=rawconfig, extension='.ini')
 

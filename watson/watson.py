@@ -6,6 +6,8 @@ import json
 import operator
 import os
 import uuid
+from pathlib import Path
+import textwrap
 
 try:
     import configparser
@@ -115,6 +117,7 @@ class Watson(object):
         Return Watson's config as a ConfigParser object.
         """
         if not self._config:
+            self._check_default_config()
             try:
                 config = ConfigParser()
                 config.read(self.config_file)
@@ -133,6 +136,30 @@ class Watson(object):
         """
         self._config = value
         self._config_changed = True
+
+    def _check_default_config(self):
+        if Path(self.config_file).exists():
+            return
+        Path(self.config_file).write_text(textwrap.dedent("""
+            [backend]
+            # url =
+            # token = yourapitoken
+
+            [options]
+            confirm_new_project = false
+            confirm_new_tag = false
+            date_format = %Y.%m.%d
+            log_current = false
+            pager = true
+            report_current = false
+            stop_on_start = false
+            stop_on_restart = false
+            time_format = %H:%M:%S%z
+            week_start = monday
+
+            [default_tags]
+            # some_project = some_tag1 some_tag2
+        """).strip())
 
     def save(self):
         """
