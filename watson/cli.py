@@ -12,6 +12,7 @@ from functools import reduce
 
 import arrow
 import click
+from click_didyoumean import DYMGroup
 
 from . import watson as _watson
 from .frames import Frame
@@ -120,7 +121,7 @@ Date = DateParamType()
 Time = TimeParamType()
 
 
-@click.group()
+@click.group(cls=DYMGroup)
 @click.version_option(version=_watson.__version__, prog_name='Watson')
 @click.pass_context
 def cli(ctx):
