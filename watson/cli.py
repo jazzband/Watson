@@ -967,6 +967,14 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
+    if not _watson.Watson.validate_ignore_options(projects, ignore_projects):
+        raise click.ClickException(
+            "given projects can't be ignored at the same time")
+
+    if not _watson.Watson.validate_ignore_options(tags, ignore_tags):
+        raise click.ClickException(
+            "given tags can't be ignored at the same time")
+
     if watson.current:
         if current or (current is None and
                        watson.config.getboolean('options', 'log_current')):

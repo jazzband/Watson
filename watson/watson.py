@@ -446,7 +446,8 @@ class Watson(object):
 
         return conflicting, merging
 
-    def _validate_report_options(self, filtrate, ignored):
+    @staticmethod
+    def validate_ignore_options(filtrate, ignored):
         return not bool(
             filtrate and ignored and set(filtrate).intersection(set(ignored)))
 
@@ -457,11 +458,11 @@ class Watson(object):
                            if _ is not None):
             from_ = start_time
 
-        if not self._validate_report_options(projects, ignore_projects):
+        if not Watson.validate_ignore_options(projects, ignore_projects):
             raise WatsonError(
                 "given projects can't be ignored at the same time")
 
-        if not self._validate_report_options(tags, ignore_tags):
+        if not Watson.validate_ignore_options(tags, ignore_tags):
             raise WatsonError("given tags can't be ignored at the same time")
 
         if from_ > to:

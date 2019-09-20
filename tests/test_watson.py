@@ -956,14 +956,18 @@ def test_add_failure(mock, watson):
                    from_date=7000, to_date=6000)
 
 
-def test_validate_report_options(mock, watson):
-    assert watson._validate_report_options(["project_foo"], None)
-    assert watson._validate_report_options(None, ["project_foo"])
-    assert not watson._validate_report_options(["project_foo"],
+def test_validate_ignore_options():
+    """
+    validate_ignore_options returns true if both list do not
+    share items
+    """
+    assert Watson.validate_ignore_options(["project_foo"], None)
+    assert Watson.validate_ignore_options(None, ["project_foo"])
+    assert not Watson.validate_ignore_options(["project_foo"],
                                                ["project_foo"])
-    assert watson._validate_report_options(["project_foo"], ["project_bar"])
-    assert not watson._validate_report_options(["project_foo", "project_bar"],
+    assert Watson.validate_ignore_options(["project_foo"], ["project_bar"])
+    assert not Watson.validate_ignore_options(["project_foo", "project_bar"],
                                                ["project_foo"])
-    assert not watson._validate_report_options(["project_foo", "project_bar"],
+    assert not Watson.validate_ignore_options(["project_foo", "project_bar"],
                                                ["project_foo", "project_bar"])
-    assert watson._validate_report_options(None, None)
+    assert Watson.validate_ignore_options(None, None)
