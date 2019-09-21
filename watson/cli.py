@@ -489,7 +489,7 @@ _SHORTCUT_OPTIONS_VALUES = {
 @catch_watson_error
 def report(watson, current, from_, to, projects, tags, ignore_projects,
            ignore_tags, year, month, week, day, luna, all, output_format,
-           pager, aggregated=False, include_partial_frames=False):
+           pager, aggregated=False, include_partial_frames=True):
     """
     Display a report of the time spent on each project.
 
