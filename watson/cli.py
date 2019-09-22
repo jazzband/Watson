@@ -203,7 +203,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
     if not project:
-        raise _watson.WatsonError("No project given.")
+        raise click.ClickException("No project given.")
 
     # Confirm creation of new project if that option is set
     if (watson.config.getboolean('options', 'confirm_new_project') or
@@ -1131,7 +1131,7 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
         itertools.takewhile(lambda s: not s.startswith('+'), args)
     )
     if not project:
-        raise _watson.WatsonError("No project given.")
+        raise click.ClickException("No project given.")
 
     # Confirm creation of new project if that option is set
     if (watson.config.getboolean('options', 'confirm_new_project') or

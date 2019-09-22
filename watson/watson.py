@@ -252,9 +252,6 @@ class Watson(object):
         return frame
 
     def start(self, project, tags=None, restart=False, gap=True):
-        if not project:
-            raise WatsonError("No project given.")
-
         if self.is_started:
             raise WatsonError(
                 u"Project {} is already started.".format(
