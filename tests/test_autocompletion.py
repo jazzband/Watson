@@ -21,6 +21,10 @@ AUTOCOMPLETION_FRAMES_PATH = TEST_FIXTURE_DIR / "frames-for-autocompletion"
 AUTOCOMPLETION_FRAMES = pytest.mark.datafiles(AUTOCOMPLETION_FRAMES_PATH)
 with open(str(AUTOCOMPLETION_FRAMES_PATH)) as fh:
     N_FRAMES = len(json.load(fh))
+N_PROJECTS = 5
+N_TASKS = 3
+N_VARIATIONS_OF_PROJECT3 = 2
+N_FRAME_IDS_FOR_PREFIX = 2
 
 
 class CTXDummy:
@@ -64,13 +68,13 @@ def test_if_returned_values_are_distinct(
     "func_to_test, n_expected_returns, ctx, args",
     [
         (get_frames, N_FRAMES, None, []),
-        (get_project_or_task_completion, 3, None, ["project1", "+"]),
-        (get_project_or_task_completion, 5, None, []),
-        (get_projects, 5, None, []),
-        (get_rename_name, 5, CTXDummy("project"), []),
-        (get_rename_name, 3, CTXDummy("tag"), []),
+        (get_project_or_task_completion, N_TASKS, None, ["project1", "+"]),
+        (get_project_or_task_completion, N_PROJECTS, None, []),
+        (get_projects, N_PROJECTS, None, []),
+        (get_rename_name, N_PROJECTS, CTXDummy("project"), []),
+        (get_rename_name, N_TASKS, CTXDummy("tag"), []),
         (get_rename_types, 2, None, []),
-        (get_tags, 3, None, []),
+        (get_tags, N_TASKS, None, []),
     ],
 )
 def test_if_empty_prefix_returns_everything(
@@ -110,21 +114,33 @@ def test_completion_of_nonexisting_prefix(
 @pytest.mark.parametrize(
     "func_to_test, prefix, n_expected_vals, ctx, args",
     [
-        (get_frames, "f4f7", 2, None, []),
+        (get_frames, "f4f7", N_FRAME_IDS_FOR_PREFIX, None, []),
         (
             get_project_or_task_completion,
             "+tag",
-            3,
+            N_TASKS,
             None,
             ["project1", "+tag3"],
         ),
-        (get_project_or_task_completion, "+tag", 3, None, ["project1"]),
-        (get_project_or_task_completion, "project3", 2, None, []),
-        (get_projects, "project3", 2, None, []),
-        (get_rename_name, "project3", 2, CTXDummy("project"), []),
-        (get_rename_name, "tag", 3, CTXDummy("tag"), []),
+        (get_project_or_task_completion, "+tag", N_TASKS, None, ["project1"]),
+        (
+            get_project_or_task_completion,
+            "project3",
+            N_VARIATIONS_OF_PROJECT3,
+            None,
+            [],
+        ),
+        (get_projects, "project3", N_VARIATIONS_OF_PROJECT3, None, []),
+        (
+            get_rename_name,
+            "project3",
+            N_VARIATIONS_OF_PROJECT3,
+            CTXDummy("project"),
+            [],
+        ),
+        (get_rename_name, "tag", N_TASKS, CTXDummy("tag"), []),
         (get_rename_types, "ta", 1, None, []),
-        (get_tags, "tag", 3, None, []),
+        (get_tags, "tag", N_TASKS, None, []),
     ],
 )
 def test_completion_of_existing_prefix(
