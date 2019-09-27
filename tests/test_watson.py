@@ -795,29 +795,29 @@ def test_report(watson):
         watson.report(arrow.now(), arrow.now(), tags=["A"], ignore_tags=["A"])
 
 
-def test_report_current(config_dir):
+def test_report_current(mock, config_dir):
+    mock.patch('arrow.utcnow', return_value=arrow.get(5000))
+
     watson = Watson(
-        current={'project': 'foo', 'start': arrow.now().shift(hours=-1)},
+        current={'project': 'foo', 'start': 4000},
         config_dir=config_dir
     )
 
-    _ = watson.report(
-        arrow.now(), arrow.now(), current=True, projects=['foo']
-    )
-    report = watson.report(
-        arrow.now(), arrow.now(), current=True, projects=['foo']
-    )
+    for _ in range(2):
+        report = watson.report(
+            arrow.utcnow(), arrow.utcnow(), current=True, projects=['foo']
+        )
     assert len(report['projects']) == 1
     assert report['projects'][0]['name'] == 'foo'
-    assert report['projects'][0]['time'] == pytest.approx(3600, rel=1e-2)
+    assert report['projects'][0]['time'] == pytest.approx(1000)
 
     report = watson.report(
-        arrow.now(), arrow.now(), current=False, projects=['foo']
+        arrow.utcnow(), arrow.utcnow(), current=False, projects=['foo']
     )
     assert len(report['projects']) == 0
 
     report = watson.report(
-        arrow.now(), arrow.now(), projects=['foo']
+        arrow.utcnow(), arrow.utcnow(), projects=['foo']
     )
     assert len(report['projects']) == 0
 
