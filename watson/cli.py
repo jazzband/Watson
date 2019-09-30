@@ -8,7 +8,7 @@ import os
 import re
 
 from dateutil import tz
-from functools import reduce
+from functools import reduce, wraps
 
 import arrow
 import click
@@ -52,20 +52,12 @@ class MutuallyExclusiveOption(click.Option):
         # Use self.opts[-1] instead of self.name to handle options with a
         # different internal name.
         self.mutually_exclusive.add(self.opts[-1].strip('-'))
-        raise click.UsageError(
-            'The following options are mutually exclusive: '
-            '{options}'.format(options=', '
-                               .join(['`--{}`'.format(_) for _ in
-                                     self.mutually_exclusive]))
-        )
-
-
-class WatsonCliError(click.ClickException):
-    def format_message(self):
-        return style('error', self.message)
-
-
-_watson.WatsonError = WatsonCliError
+        raise click.ClickException(
+            style(
+                'error',
+                'The following options are mutually exclusive: '
+                '{options}'.format(options=', '.join(
+                    ['`--{}`'.format(_) for _ in self.mutually_exclusive]))))
 
 
 class DateParamType(click.ParamType):
@@ -110,7 +102,7 @@ class TimeParamType(click.ParamType):
         else:
             errmsg = ('Could not parse time.'
                       'Please specify in (YYYY-MM-DDT)?HH:MM(:SS)? format.')
-            raise WatsonCliError(errmsg)
+            raise click.ClickException(style('error', errmsg))
 
         local_tz = tz.tzlocal()
         return arrow.get(cur_time).replace(tzinfo=local_tz)
@@ -118,6 +110,16 @@ class TimeParamType(click.ParamType):
 
 Date = DateParamType()
 Time = TimeParamType()
+
+
+def catch_watson_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except _watson.WatsonError as e:
+            raise click.ClickException(style('error', str(e)))
+    return wrapper
 
 
 @click.group()
@@ -180,6 +182,7 @@ def _start(watson, project, tags, restart=False, gap=True):
               help="Confirm creation of new tag.")
 @click.pass_obj
 @click.pass_context
+@catch_watson_error
 def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
     """
     Start monitoring time for the given project.
@@ -222,7 +225,11 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
         current = watson.current
         errmsg = ("Project '{}' is already started and '--no-gap' is passed. "
                   "Please stop manually.")
-        raise _watson.WatsonError(errmsg.format(current['project']))
+        raise click.ClickException(
+            style(
+                'error', errmsg.format(current['project'])
+            )
+        )
 
     if (project and watson.is_started and
             watson.config.getboolean('options', 'stop_on_start')):
@@ -236,6 +243,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
               help=('Stop frame at this time. Must be in '
                     '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.pass_obj
+@catch_watson_error
 def stop(watson, at_):
     """
     Stop monitoring time for the current project.
@@ -268,6 +276,7 @@ def stop(watson, at_):
 @click.argument('frame', default='-1')
 @click.pass_obj
 @click.pass_context
+@catch_watson_error
 def restart(ctx, watson, frame, stop_):
     """
     Restart monitoring time for a previously stopped project.
@@ -321,6 +330,7 @@ def restart(ctx, watson, frame, stop_):
 
 @cli.command()
 @click.pass_obj
+@catch_watson_error
 def cancel(watson):
     """
     Cancel the last call to the start command. The time will
@@ -342,6 +352,7 @@ def cancel(watson):
 @click.option('-e', '--elapsed', is_flag=True,
               help="only show time elapsed")
 @click.pass_obj
+@catch_watson_error
 def status(watson, project, tags, elapsed):
     """
     Display when the current project was started and the time spent since.
@@ -470,6 +481,7 @@ _SHORTCUT_OPTIONS_VALUES = {
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
+@catch_watson_error
 def report(watson, current, from_, to, projects, tags, ignore_projects,
            ignore_tags, year, month, week, day, luna, all, output_format,
            pager, aggregated=False):
@@ -586,13 +598,10 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     else:
         tab = ''
 
-    try:
-        report = watson.report(from_, to, current, projects, tags,
-                               ignore_projects, ignore_tags,
-                               year=year, month=month, week=week, day=day,
-                               luna=luna, all=all)
-    except _watson.WatsonError as e:
-        raise click.ClickException(e.message)
+    report = watson.report(from_, to, current, projects, tags,
+                           ignore_projects, ignore_tags,
+                           year=year, month=month, week=week, day=day,
+                           luna=luna, all=all)
 
     if 'json' in output_format and not aggregated:
         click.echo(json.dumps(report, indent=4, sort_keys=True))
@@ -728,6 +737,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 @click.pass_context
+@catch_watson_error
 def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               pager):
     """
@@ -889,6 +899,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
 @click.pass_obj
+@catch_watson_error
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
         luna, all, output_format, pager):
     """
@@ -1042,6 +1053,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
 
 @cli.command()
 @click.pass_obj
+@catch_watson_error
 def projects(watson):
     """
     Display the list of all the existing projects.
@@ -1061,6 +1073,7 @@ def projects(watson):
 
 @cli.command()
 @click.pass_obj
+@catch_watson_error
 def tags(watson):
     """
     Display the list of all the tags.
@@ -1088,6 +1101,7 @@ def tags(watson):
 
 @cli.command()
 @click.pass_obj
+@catch_watson_error
 def frames(watson):
     """
     Display the list of all frame IDs.
@@ -1116,6 +1130,7 @@ def frames(watson):
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
 @click.pass_obj
+@catch_watson_error
 def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     """
     Add time for project with tag(s) that was not tracked live.
@@ -1167,6 +1182,7 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Confirm creation of new tag.")
 @click.argument('id', required=False)
 @click.pass_obj
+@catch_watson_error
 def edit(watson, confirm_new_project, confirm_new_tag, id):
     """
     Edit a frame.
@@ -1253,8 +1269,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
                        err=True)
         except KeyError:
             click.echo(
-                "The edited frame must contain the project, \
-                start, and stop keys.", err=True)
+                "The edited frame must contain the project, "
+                "start, and stop keys.", err=True)
         # we reach here if exception was thrown, wait for user
         #  to acknowledge the error before looping in while and
         #  showing user the editor again
@@ -1293,6 +1309,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
 @click.option('-f', '--force', is_flag=True,
               help="Don't ask for confirmation.")
 @click.pass_obj
+@catch_watson_error
 def remove(watson, id, force):
     """
     Remove a frame. You can specify the frame either by id or by position
@@ -1325,6 +1342,7 @@ def remove(watson, id, force):
 @click.option('-e', '--edit', is_flag=True,
               help="Edit the configuration file with an editor.")
 @click.pass_context
+@catch_watson_error
 def config(context, key, value, edit):
     """
     Get and set configuration options.
@@ -1362,7 +1380,7 @@ def config(context, key, value, edit):
         except _watson.ConfigurationError as exc:
             watson.config = wconfig
             watson.save()
-            raise WatsonCliError(str(exc))
+            raise click.ClickException(style('error', str(exc)))
         return
 
     if not key:
@@ -1397,6 +1415,7 @@ def config(context, key, value, edit):
 
 @cli.command()
 @click.pass_obj
+@catch_watson_error
 def sync(watson):
     """
     Get the frames from the server and push the new ones.
@@ -1430,6 +1449,7 @@ def sync(watson):
               help="If specified, then the merge will automatically "
               "be performed.")
 @click.pass_obj
+@catch_watson_error
 def merge(watson, frames_with_conflict, force):
     """
     Perform a merge of the existing frames with a conflicting frames file.
@@ -1582,6 +1602,7 @@ def merge(watson, frames_with_conflict, force):
 @click.argument('old_name', required=True)
 @click.argument('new_name', required=True)
 @click.pass_obj
+@catch_watson_error
 def rename(watson, rename_type, old_name, new_name):
     """
     Rename a project or tag.
@@ -1596,25 +1617,17 @@ def rename(watson, rename_type, old_name, new_name):
 
     """
     if rename_type == 'tag':
-        try:
-            watson.rename_tag(old_name, new_name)
-        except ValueError as e:
-            raise click.ClickException(style('error', str(e)))
-        else:
-            click.echo(u'Renamed tag "{}" to "{}"'.format(
-                            style('tag', old_name),
-                            style('tag', new_name)
-                       ))
+        watson.rename_tag(old_name, new_name)
+        click.echo(u'Renamed tag "{}" to "{}"'.format(
+                        style('tag', old_name),
+                        style('tag', new_name)
+                   ))
     elif rename_type == 'project':
-        try:
-            watson.rename_project(old_name, new_name)
-        except ValueError as e:
-            raise click.ClickException(style('error', str(e)))
-        else:
-            click.echo(u'Renamed project "{}" to "{}"'.format(
-                            style('project', old_name),
-                            style('project', new_name)
-                       ))
+        watson.rename_project(old_name, new_name)
+        click.echo(u'Renamed project "{}" to "{}"'.format(
+                        style('project', old_name),
+                        style('project', new_name)
+                   ))
     else:
         raise click.ClickException(style(
             'error',
