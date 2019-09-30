@@ -287,9 +287,9 @@ class Watson(object):
             # outdated if defined using a default argument.
             stop_at = arrow.now()
         if old['start'] > stop_at:
-            raise ValueError('Task cannot end before it starts.')
+            raise WatsonError('Task cannot end before it starts.')
         if stop_at > arrow.now():
-            raise ValueError('Task cannot end in the future.')
+            raise WatsonError('Task cannot end in the future.')
 
         frame = self.frames.add(
             old['project'], old['start'], stop_at, tags=old['tags']
@@ -545,7 +545,7 @@ class Watson(object):
     def rename_project(self, old_project, new_project):
         """Rename a project in all affected frames."""
         if old_project not in self.projects:
-            raise ValueError(u'Project "%s" does not exist' % old_project)
+            raise WatsonError(u'Project "%s" does not exist' % old_project)
 
         updated_at = arrow.utcnow()
         # rename project
@@ -562,7 +562,7 @@ class Watson(object):
     def rename_tag(self, old_tag, new_tag):
         """Rename a tag in all affected frames."""
         if old_tag not in self.tags:
-            raise ValueError(u'Tag "%s" does not exist' % old_tag)
+            raise WatsonError(u'Tag "%s" does not exist' % old_tag)
 
         updated_at = arrow.utcnow()
         # rename tag
