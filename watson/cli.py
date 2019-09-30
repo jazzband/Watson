@@ -1265,8 +1265,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
                        err=True)
         except KeyError:
             click.echo(
-                "The edited frame must contain the project, \
-                start, and stop keys.", err=True)
+                "The edited frame must contain the project, "
+                "start, and stop keys.", err=True)
         # we reach here if exception was thrown, wait for user
         #  to acknowledge the error before looping in while and
         #  showing user the editor again
