@@ -12,6 +12,7 @@ from functools import reduce, wraps
 
 import arrow
 import click
+from click_didyoumean import DYMGroup
 
 from . import watson as _watson
 from .frames import Frame
@@ -122,7 +123,7 @@ def catch_watson_error(func):
     return wrapper
 
 
-@click.group()
+@click.group(cls=DYMGroup)
 @click.version_option(version=_watson.__version__, prog_name='Watson')
 @click.pass_context
 def cli(ctx):

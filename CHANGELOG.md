@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Improve Arrow 0.15.0 support after changes in `arrow.get()` behavior (#296)
+- Watson now suggests correct command if users make small typo (#318)
 
 ### Fixed
 
