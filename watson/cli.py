@@ -4,7 +4,6 @@ import datetime
 import itertools
 import json
 import operator
-import re
 
 from dateutil import tz
 from functools import reduce, wraps
@@ -70,15 +69,17 @@ class MutuallyExclusiveOption(click.Option):
                     ['`--{}`'.format(_) for _ in self.mutually_exclusive]))))
 
 
-class DateParamType(click.ParamType):
-    name = 'date'
+class DateTimeParamType(click.ParamType):
+    name = 'datetime'
 
     def convert(self, value, param, ctx):
         if value:
-            try:
-                date = arrow.get(value)
-            except (ValueError, TypeError) as e:
-                raise click.UsageError(str(e))
+            date = self._parse_multiformat(value)
+            if date is None:
+                raise click.UsageError(
+                    "Could not match value '{}' to any supported date format"
+                    .format(value)
+                )
             # When we parse a date, we want to parse it in the timezone
             # expected by the user, so that midnight is midnight in the local
             # timezone, not in UTC. Cf issue #16.
@@ -92,34 +93,26 @@ class DateParamType(click.ParamType):
                     start_time=date, week_start=week_start)
             return date
 
-
-class TimeParamType(click.ParamType):
-    name = 'time'
-
-    def convert(self, value, param, ctx):
-        if isinstance(value, arrow.Arrow):
-            return value
-
-        date_pattern = r'\d{4}-\d\d-\d\d'
-        time_pattern = r'\d\d:\d\d(:\d\d)?'
-
-        if re.match('^{time_pat}$'.format(time_pat=time_pattern), value):
-            cur_date = arrow.now().date().isoformat()
-            cur_time = '{date}T{time}'.format(date=cur_date, time=value)
-        elif re.match('^{date_pat}T{time_pat}'.format(
-                date_pat=date_pattern, time_pat=time_pattern), value):
-            cur_time = value
-        else:
-            errmsg = ('Could not parse time.'
-                      'Please specify in (YYYY-MM-DDT)?HH:MM(:SS)? format.')
-            raise click.ClickException(style('error', errmsg))
-
-        local_tz = tz.tzlocal()
-        return arrow.get(cur_time).replace(tzinfo=local_tz)
+    def _parse_multiformat(self, value):
+        date = None
+        for fmt in (None, 'HH:mm:ss', 'HH:mm'):
+            try:
+                if fmt is None:
+                    date = arrow.get(value)
+                else:
+                    date = arrow.get(value, fmt)
+                    date = arrow.now().replace(
+                        hour=date.hour,
+                        minute=date.minute,
+                        second=date.second
+                    )
+                break
+            except (ValueError, TypeError):
+                pass
+        return date
 
 
-Date = DateParamType()
-Time = TimeParamType()
+DateTime = DateTimeParamType()
 
 
 def catch_watson_error(func):
@@ -250,7 +243,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
-@click.option('--at', 'at_', type=Time, default=None,
+@click.option('--at', 'at_', type=DateTime, default=None,
               help=('Stop frame at this time. Must be in '
                     '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.pass_obj
@@ -428,37 +421,37 @@ _SHORTCUT_OPTIONS_VALUES = {
 @cli.command()
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in report.")
-@click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
-              default=arrow.now().shift(days=-7),
+@click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption,
+              type=DateTime, default=arrow.now().shift(days=-7),
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date from when the report should start. Defaults "
               "to seven days ago.")
-@click.option('-t', '--to', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-t', '--to', cls=MutuallyExclusiveOption, type=DateTime,
               default=arrow.now(),
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
-@click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-y', '--year', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['year'],
               mutually_exclusive=['day', 'week', 'luna', 'month', 'all'],
               help='Reports activity for the current year.')
-@click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-m', '--month', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['month'],
               mutually_exclusive=['day', 'week', 'luna', 'year', 'all'],
               help='Reports activity for the current month.')
-@click.option('-l', '--luna', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-l', '--luna', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['luna'],
               mutually_exclusive=['day', 'week', 'month', 'year', 'all'],
               help='Reports activity for the current moon cycle.')
-@click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-w', '--week', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['week'],
               mutually_exclusive=['day', 'month', 'luna', 'year', 'all'],
               help='Reports activity for the current week.')
-@click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-d', '--day', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['day'],
               mutually_exclusive=['week', 'month', 'luna', 'year', 'all'],
               help='Reports activity for the current day.')
-@click.option('-a', '--all', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-a', '--all', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'luna', 'year'],
               help='Reports all activities.')
@@ -717,12 +710,12 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 @cli.command()
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in report.")
-@click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption, type=Date,
-              default=arrow.now().shift(days=-7),
+@click.option('-f', '--from', 'from_', cls=MutuallyExclusiveOption,
+              type=DateTime, default=arrow.now().shift(days=-7),
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date from when the report should start. Defaults "
               "to seven days ago.")
-@click.option('-t', '--to', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-t', '--to', cls=MutuallyExclusiveOption, type=DateTime,
               default=arrow.now(),
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date at which the report should stop (inclusive). "
@@ -861,34 +854,34 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 @cli.command()
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in output.")
-@click.option('-f', '--from', 'from_', type=Date,
+@click.option('-f', '--from', 'from_', type=DateTime,
               default=arrow.now().shift(days=-7),
               help="The date from when the log should start. Defaults "
               "to seven days ago.")
-@click.option('-t', '--to', type=Date, default=arrow.now(),
+@click.option('-t', '--to', type=DateTime, default=arrow.now(),
               help="The date at which the log should stop (inclusive). "
               "Defaults to tomorrow.")
-@click.option('-y', '--year', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-y', '--year', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['year'],
               mutually_exclusive=['day', 'week', 'month', 'all'],
               help='Reports activity for the current year.')
-@click.option('-m', '--month', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-m', '--month', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['month'],
               mutually_exclusive=['day', 'week', 'year', 'all'],
               help='Reports activity for the current month.')
-@click.option('-l', '--luna', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-l', '--luna', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['luna'],
               mutually_exclusive=['day', 'week', 'month', 'year', 'all'],
               help='Reports activity for the current moon cycle.')
-@click.option('-w', '--week', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-w', '--week', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['week'],
               mutually_exclusive=['day', 'month', 'year', 'all'],
               help='Reports activity for the current week.')
-@click.option('-d', '--day', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-d', '--day', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['day'],
               mutually_exclusive=['week', 'month', 'year', 'all'],
               help='Reports activity for the current day.')
-@click.option('-a', '--all', cls=MutuallyExclusiveOption, type=Date,
+@click.option('-a', '--all', cls=MutuallyExclusiveOption, type=DateTime,
               flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'year'],
               help='Reports all activities.')
@@ -1138,9 +1131,9 @@ def frames(watson):
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('args', nargs=-1,
                 autocompletion=get_project_or_task_completion)
-@click.option('-f', '--from', 'from_', required=True, type=Date,
+@click.option('-f', '--from', 'from_', required=True, type=DateTime,
               help="Date and time of start of tracked activity")
-@click.option('-t', '--to', required=True, type=Date,
+@click.option('-t', '--to', required=True, type=DateTime,
               help="Date and time of end of tracked activity")
 @click.option('-c', '--confirm-new-project', is_flag=True, default=False,
               help="Confirm addition of new project.")

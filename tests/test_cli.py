@@ -2,8 +2,8 @@ import re
 import arrow
 from itertools import combinations
 from datetime import datetime, timedelta
-from dateutil.tz import tzlocal
 
+from dateutil.tz import tzlocal
 import pytest
 
 from watson import cli
@@ -32,6 +32,18 @@ VALID_DATES_DATA = [
     ('2018-04-10T12:30', '2018-04-10 12:30:00'),
     ('2018-04-10 12', '2018-04-10 12:00:00'),
     ('2018-04-10T12', '2018-04-10 12:00:00'),
+    (
+        '14:05:12',
+        arrow.now()
+        .replace(hour=14, minute=5, second=12)
+        .format('YYYY-MM-DD HH:mm:ss')
+    ),
+    (
+        '14:05',
+        arrow.now()
+        .replace(hour=14, minute=5, second=0)
+        .format('YYYY-MM-DD HH:mm:ss')
+    ),
 ]
 
 INVALID_DATES_DATA = [
@@ -49,9 +61,7 @@ INVALID_DATES_DATA = [
     ('tomorrow'),
     ('14:05:12.000'),  # Times alone are not allowed
     ('140512.000'),
-    ('14:05:12'),
     ('140512'),
-    ('14:05'),
     ('14.05'),
     ('2018-04-10T'),
     ('2018-04-10T12:30:43.'),
