@@ -32,15 +32,17 @@ class CTXDummy:
         self.params = {"rename_type": rename_type}
 
 
-def prepare_sysenv_for_testing(config_dirname, monkeypatch):
+@pytest.fixture
+def prepare_sysenv_for_testing(datafiles, monkeypatch):
     shutil.copy(
-        os.path.join(str(config_dirname), "frames-for-autocompletion"),
-        os.path.join(str(config_dirname), "frames"),
+        os.path.join(str(datafiles), "frames-for-autocompletion"),
+        os.path.join(str(datafiles), "frames"),
     )
-    monkeypatch.setenv("WATSON_DIR", str(config_dirname))
+    monkeypatch.setenv("WATSON_DIR", str(datafiles))
 
 
 @AUTOCOMPLETION_FRAMES
+@pytest.mark.usefixtures("prepare_sysenv_for_testing")
 @pytest.mark.parametrize(
     "func_to_test, ctx, args",
     [
@@ -54,16 +56,14 @@ def prepare_sysenv_for_testing(config_dirname, monkeypatch):
         (get_tags, None, []),
     ],
 )
-def test_if_returned_values_are_distinct(
-    datafiles, monkeypatch, func_to_test, ctx, args
-):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
+def test_if_returned_values_are_distinct(func_to_test, ctx, args):
     prefix = ""
     ret_list = list(func_to_test(ctx, args, prefix))
     assert sorted(ret_list) == sorted(set(ret_list))
 
 
 @AUTOCOMPLETION_FRAMES
+@pytest.mark.usefixtures("prepare_sysenv_for_testing")
 @pytest.mark.parametrize(
     "func_to_test, n_expected_returns, ctx, args",
     [
@@ -78,15 +78,15 @@ def test_if_returned_values_are_distinct(
     ],
 )
 def test_if_empty_prefix_returns_everything(
-    datafiles, monkeypatch, func_to_test, n_expected_returns, ctx, args
+    func_to_test, n_expected_returns, ctx, args
 ):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
     prefix = ""
     completed_vals = set(func_to_test(ctx, args, prefix))
     assert len(completed_vals) == n_expected_returns
 
 
 @AUTOCOMPLETION_FRAMES
+@pytest.mark.usefixtures("prepare_sysenv_for_testing")
 @pytest.mark.parametrize(
     "func_to_test, ctx, args",
     [
@@ -101,16 +101,14 @@ def test_if_empty_prefix_returns_everything(
         (get_tags, None, []),
     ],
 )
-def test_completion_of_nonexisting_prefix(
-    datafiles, monkeypatch, func_to_test, ctx, args
-):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
+def test_completion_of_nonexisting_prefix(func_to_test, ctx, args):
     prefix = "NOT-EXISTING-PREFIX"
     ret_list = list(func_to_test(ctx, args, prefix))
     assert not ret_list
 
 
 @AUTOCOMPLETION_FRAMES
+@pytest.mark.usefixtures("prepare_sysenv_for_testing")
 @pytest.mark.parametrize(
     "func_to_test, prefix, n_expected_vals, ctx, args",
     [
@@ -144,15 +142,15 @@ def test_completion_of_nonexisting_prefix(
     ],
 )
 def test_completion_of_existing_prefix(
-    datafiles, monkeypatch, func_to_test, prefix, n_expected_vals, ctx, args
+    func_to_test, prefix, n_expected_vals, ctx, args
 ):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
     ret_set = set(func_to_test(ctx, args, prefix))
     assert len(ret_set) == n_expected_vals
     assert all(cur_elem.startswith(prefix) for cur_elem in ret_set)
 
 
 @AUTOCOMPLETION_FRAMES
+@pytest.mark.usefixtures("prepare_sysenv_for_testing")
 @pytest.mark.parametrize(
     "func_to_test, prefix, expected_vals",
     [
@@ -161,9 +159,6 @@ def test_completion_of_existing_prefix(
         (get_rename_types, "p", ["project"]),
     ],
 )
-def test_for_known_completion_values(
-    datafiles, monkeypatch, func_to_test, prefix, expected_vals
-):
-    prepare_sysenv_for_testing(datafiles, monkeypatch)
+def test_for_known_completion_values(func_to_test, prefix, expected_vals):
     ret_list = list(func_to_test(None, [], prefix))
     assert ret_list == expected_vals
