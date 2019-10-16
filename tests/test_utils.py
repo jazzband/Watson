@@ -34,6 +34,7 @@ from watson.utils import (
     safe_save,
     parse_tags,
     PY2,
+    json_arrow_encoder,
 )
 from . import mock_datetime
 
@@ -339,3 +340,17 @@ def test_flatten_report_for_csv(watson):
     assert result[2]['project'] == 'foo'
     assert result[2]['tag'] == 'B'
     assert result[2]['time'] == (4 + 2) * 3600
+
+
+def test_json_arrow_encoder():
+    with pytest.raises(TypeError):
+        json_arrow_encoder(0)
+
+    with pytest.raises(TypeError):
+        json_arrow_encoder('foo')
+
+    with pytest.raises(TypeError):
+        json_arrow_encoder(None)
+
+    now = arrow.utcnow()
+    assert json_arrow_encoder(now) == now.for_json()
