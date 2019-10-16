@@ -8,7 +8,9 @@ import os
 import shutil
 import sys
 import tempfile
+
 from builtins import TypeError, isinstance
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -411,4 +413,4 @@ def json_arrow_encoder(obj):
     if isinstance(obj, arrow.Arrow):
         return obj.for_json()
 
-    raise TypeError(f"Object {obj} is not JSON serializable")
+    raise TypeError("Object {} is not JSON serializable".format(obj))
