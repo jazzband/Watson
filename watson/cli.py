@@ -31,6 +31,7 @@ from .utils import (
     sorted_groupby,
     style,
     parse_tags,
+    json_arrow_encoder,
 )
 
 
@@ -605,7 +606,8 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
                            luna=luna, all=all)
 
     if 'json' in output_format and not aggregated:
-        click.echo(json.dumps(report, indent=4, sort_keys=True))
+        click.echo(json.dumps(report, indent=4, sort_keys=True,
+                              default=json_arrow_encoder))
         return
     elif 'csv' in output_format and not aggregated:
         click.echo(build_csv(flatten_report_for_csv(report)))

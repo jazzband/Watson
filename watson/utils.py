@@ -8,6 +8,7 @@ import os
 import shutil
 import sys
 import tempfile
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -22,6 +23,8 @@ from click.exceptions import UsageError
 
 PY2 = sys.version_info[0] == 2
 
+if not PY2:
+    from builtins import TypeError, isinstance
 
 try:
     text_type = (str, unicode)
@@ -397,3 +400,18 @@ def flatten_report_for_csv(report):
                 'time': tag['time']
             })
     return result
+
+
+def json_arrow_encoder(obj):
+    """
+    Encodes Arrow objects for JSON output.
+    This function can be used with
+    `json.dumps(..., default=json_arrow_encoder)`, for example.
+    If the object is not an Arrow type, a TypeError is raised
+    :param obj: Object to encode
+    :return: JSON representation of Arrow object as defined by Arrow
+    """
+    if isinstance(obj, arrow.Arrow):
+        return obj.for_json()
+
+    raise TypeError("Object {} is not JSON serializable".format(obj))
