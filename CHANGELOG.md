@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stylize prompt to create new project or tag (#310).
 - Aggregate calculates wrong time if used with `--current` (#293)
 - The `start` command now correctly checks if project is empty (#322)
+- The `report` and `aggregate` commands with `--json` option now correctly
+  encode Arrow objects (#329)
 
 ## [1.8.0] - 2019-08-26
 
