@@ -9,8 +9,6 @@ import shutil
 import sys
 import tempfile
 
-from builtins import TypeError, isinstance
-
 try:
     from StringIO import StringIO
 except ImportError:
@@ -25,6 +23,8 @@ from click.exceptions import UsageError
 
 PY2 = sys.version_info[0] == 2
 
+if not PY2:
+    from builtins import TypeError, isinstance
 
 try:
     text_type = (str, unicode)
