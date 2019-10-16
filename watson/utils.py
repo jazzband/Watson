@@ -405,7 +405,8 @@ def flatten_report_for_csv(report):
 def json_arrow_encoder(obj):
     """
     Encodes Arrow objects for JSON output.
-    This function can be used with `json.dumps(..., default=json_arrow_encoder)`, for example.
+    This function can be used with
+    `json.dumps(..., default=json_arrow_encoder)`, for example.
     If the object is not an Arrow type, a TypeError is raised
     :param obj: Object to encode
     :return: JSON representation of Arrow object as defined by Arrow
