@@ -836,7 +836,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
             lines.append(u'\n'.join(output))
 
     if 'json' in output_format:
-        click.echo(json.dumps(lines, indent=4, sort_keys=True))
+        click.echo(json.dumps(lines, indent=4, sort_keys=True,
+                   default=json_arrow_encoder))
     elif 'csv' in output_format:
         click.echo(build_csv(lines))
     elif pager or (pager is None and
