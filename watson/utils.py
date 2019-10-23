@@ -33,6 +33,10 @@ except NameError:
     text_type = str
 
 
+def create_watson():
+    return _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
+
+
 def confirm_project(project, watson_projects):
     """
     Ask user to confirm creation of a new project
@@ -416,7 +420,3 @@ def json_arrow_encoder(obj):
         return obj.for_json()
 
     raise TypeError("Object {} is not JSON serializable".format(obj))
-
-
-def get_watson_instance():
-    return _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))

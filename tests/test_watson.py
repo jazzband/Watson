@@ -12,8 +12,7 @@ from watson import Watson, WatsonError
 from watson.watson import ConfigParser, ConfigurationError
 from watson.utils import PY2
 
-from . import mock_read
-from .conftest import TEST_FIXTURE_DIR
+from . import mock_read, TEST_FIXTURE_DIR
 
 
 if not PY2:

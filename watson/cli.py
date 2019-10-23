@@ -28,13 +28,13 @@ from .utils import (
     build_csv,
     confirm_project,
     confirm_tags,
+    create_watson,
     flatten_report_for_csv,
     format_timedelta,
     frames_to_csv,
     frames_to_json,
     get_frame_from_argument,
     get_start_time_for_period,
-    get_watson_instance,
     options, safe_save,
     sorted_groupby,
     style,
@@ -146,7 +146,7 @@ def cli(ctx):
 
     # This is the main command group, needed by click in order
     # to handle the subcommands
-    ctx.obj = get_watson_instance()
+    ctx.obj = create_watson()
 
 
 @cli.command()
