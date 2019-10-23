@@ -460,11 +460,11 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
-@click.option('--ignore-project', 'ignore_projects', multiple=True,
+@click.option('-I', '--ignore-project', 'ignore_projects', multiple=True,
               help="Reports activity for all projects but the given ones. You "
               "can ignore several projects by using the option multiple "
               "times. Any given project will be ignored")
-@click.option('--ignore-tag', 'ignore_tags', multiple=True,
+@click.option('-i', '--ignore-tag', 'ignore_tags', multiple=True,
               help="Reports activity for all tags but the given ones. You can "
               "ignore several tags by using the option multiple times. Any "
               "given tag will be ignored")
@@ -888,6 +888,14 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('-I', '--ignore-project', 'ignore_projects', multiple=True,
+              help="Logs activity for all projects but the given ones. You "
+              "can ignore several projects by using the option multiple "
+              "times. Any given project will be ignored")
+@click.option('-i', '--ignore-tag', 'ignore_tags', multiple=True,
+              help="Logs activity for all tags but the given ones. You can "
+              "ignore several tags by using the option multiple times. Any "
+              "given tag will be ignored")
 @click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='json', mutually_exclusive=['csv'],
               multiple=True,
@@ -905,7 +913,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 @click.pass_obj
 @catch_watson_error
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        luna, all, output_format, pager):
+        ignore_projects, ignore_tags, luna, all, output_format, pager):
     """
     Display each recorded session during the given timespan.
 
@@ -923,9 +931,10 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     If you are outputting to the terminal, you can selectively enable a pager
     through the `--pager` option.
 
-    You can limit the log to a project or a tag using the `--project` and
-    `--tag` options. They can be specified several times each to add multiple
-    projects or tags to the log.
+    You can limit the log to a project or a tag using the `--project`,
+    `--tag`, `--ignore-project` and `--ignore-tag` options. They can be
+    specified several times each to add or ignore multiple projects or
+    tags to the log.
 
     You can change the output format from *plain text* to *JSON* using the
     `--json` option or to *CSV* using the `--csv` option. Only one of these
@@ -975,6 +984,14 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
+    if not _watson.Watson.validate_ignore_options(projects, ignore_projects):
+        raise click.ClickException(
+            "given projects can't be ignored at the same time")
+
+    if not _watson.Watson.validate_ignore_options(tags, ignore_tags):
+        raise click.ClickException(
+            "given tags can't be ignored at the same time")
+
     if watson.current:
         if current or (current is None and
                        watson.config.getboolean('options', 'log_current')):
@@ -984,7 +1001,9 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
 
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
-        projects=projects or None, tags=tags or None, span=span
+        projects=projects or None, tags=tags or None, span=span,
+        ignore_projects=ignore_projects or None,
+        ignore_tags=ignore_tags or None
     )
 
     if 'json' in output_format:
