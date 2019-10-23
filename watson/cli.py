@@ -192,10 +192,10 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
     `+tag`.
 
     If there is already a running project and the configuration option
-    `options.stop_on_start` is set to a true value (`1`, `on`, `true` or
+    `options.stop_on_start` is set to a true value (`1`, `on`, `true`, or
     `yes`), it is stopped before the new project is started.
 
-    If the '--no-gap' flag is given, the start time of the new project is set
+    If the `--no-gap` flag is given, the start time of the new project is set
     to the stop time of the most recently stopped project.
 
     Example:
@@ -250,8 +250,8 @@ def stop(watson, at_):
     """
     Stop monitoring time for the current project.
 
-    If '--at' option is given, the provided stopping time is used. The
-    specified time must be after the begin of the to be ended frame and must
+    If `--at` option is given, the provided stopping time is used. The
+    specified time must be after the beginning of the to-be-ended frame and must
     not be in the future.
 
     Example:
@@ -288,9 +288,9 @@ def restart(ctx, watson, frame, stop_):
     the frame to use with an integer frame index argument or a frame ID. For
     example, to restart the second-to-last frame, pass `-2` as the frame index.
 
-    Normally, if a project is currently started, watson will print an error and
+    Normally, if a project is currently started, Watson will print an error and
     do nothing. If you set the configuration option `options.stop_on_restart`
-    to a true value (`1`, `on`, `true` or `yes`), the current project, if any,
+    to a true value (`1`, `on`, `true`, or `yes`), the current project, if any,
     will be stopped before the new frame is started. You can pass the option
     `-s` or `--stop` resp. `-S` or `--no-stop` to override the default or
     configured behaviour.
@@ -498,8 +498,8 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
     You can also use special shortcut options for easier timespan control:
-    `--day` sets the report timespan to the current day (beginning at 00:00h)
-    and `--year`, `--month` and `--week` to the current year, month or week
+    `--day` sets the report timespan to the current day (beginning at `00:00h`)
+    and `--year`, `--month` and `--week` to the current year, month, or week,
     respectively.
     The shortcut `--luna` sets the timespan to the current moon cycle with
     the last full moon marking the start of the cycle.
@@ -761,7 +761,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
     through the `--pager` option.
 
     You can change the output format from *plain text* to *JSON* using the
-    `--json` option or to *CSV* using the `--csv` option. Only one  of these
+    `--json` option or to *CSV* using the `--csv` option. Only one of these
     two options can be used at once.
 
 
@@ -914,8 +914,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
     You can also use special shortcut options for easier timespan control:
-    `--day` sets the log timespan to the current day (beginning at 00:00h)
-    and `--year`, `--month` and `--week` to the current year, month or week
+    `--day` sets the log timespan to the current day (beginning at `00:00h`)
+    and `--year`, `--month` and `--week` to the current year, month, or week,
     respectively.
     The shortcut `--luna` sets the timespan to the current moon cycle with
     the last full moon marking the start of the cycle.
@@ -928,7 +928,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     projects or tags to the log.
 
     You can change the output format from *plain text* to *JSON* using the
-    `--json` option or to *CSV* using the `--csv` option. Only one  of these
+    `--json` option or to *CSV* using the `--csv` option. Only one of these
     two options can be used at once.
 
     Example:
@@ -1137,7 +1137,7 @@ def frames(watson):
 @catch_watson_error
 def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     """
-    Add time for project with tag(s) that was not tracked live.
+    Add time to a project with tag(s) that was not tracked live.
 
     Example:
 
@@ -1195,12 +1195,12 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
     For example, to edit the second-to-last frame, pass `-2` as the frame
     index. You can get the id of a frame with the `watson log` command.
 
-    If no id or index is given, the frame defaults to the current frame or the
-    last recorded frame, if no project is currently running.
+    If no id or index is given, the frame defaults to the current frame (or the
+    last recorded frame, if no project is currently running).
 
     The editor used is determined by the `VISUAL` or `EDITOR` environment
     variables (in that order) and defaults to `notepad` on Windows systems and
-    to `vim`, `nano` or `vi` (first one found) on all other systems.
+    to `vim`, `nano`, or `vi` (first one found) on all other systems.
     """
     date_format = 'YYYY-MM-DD'
     time_format = 'HH:mm:ss'
@@ -1351,8 +1351,8 @@ def config(context, key, value, edit):
     """
     Get and set configuration options.
 
-    If value is not provided, the content of the key is displayed. Else,
-    the given value is set.
+    If `value` is not provided, the content of the `key` is displayed. Else,
+    the given `value` is set.
 
     You can edit the config file with an editor with the `--edit` option.
 
