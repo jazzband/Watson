@@ -141,7 +141,7 @@ def get_frame_from_argument(watson, arg):
             return watson.frames[index]
     except IndexError:
         raise click.ClickException(
-            style('error', u"No frame found for index {}.".format(arg))
+            style('error', "No frame found for index {}.".format(arg))
         )
     except (ValueError, TypeError):
         pass
@@ -150,8 +150,8 @@ def get_frame_from_argument(watson, arg):
     try:
         return watson.frames[arg]
     except KeyError:
-        raise click.ClickException(u"{} {}.".format(
-            style('error', u"No frame found with id"),
+        raise click.ClickException("{} {}.".format(
+            style('error', "No frame found with id"),
             style('short_id', arg))
         )
 

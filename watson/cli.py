@@ -159,7 +159,7 @@ def help(ctx, command):
     cmd = cli.get_command(ctx, command)
 
     if not cmd:
-        raise click.ClickException(u"No such command: {}".format(command))
+        raise click.ClickException("No such command: {}".format(command))
 
     click.echo(cmd.get_help(ctx))
 
@@ -170,7 +170,7 @@ def _start(watson, project, tags, restart=False, start_at=None, gap=True):
     """
     current = watson.start(project, tags, restart=restart, start_at=start_at,
                            gap=gap,)
-    click.echo(u"Starting project {}{} at {}".format(
+    click.echo("Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
         style('time', "{:HH:mm}".format(current['start']))
@@ -283,7 +283,7 @@ def stop(watson, at_):
     Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52) # noqa: E501
     """
     frame = watson.stop(stop_at=at_)
-    output_str = u"Stopping project {}{}, started {} and stopped {}. (id: {})"
+    output_str = "Stopping project {}{}, started {} and stopped {}. (id: {})"
     click.echo(output_str.format(
         style('project', frame.project),
         (" " if frame.tags else "") + style('tags', frame.tags),
@@ -345,7 +345,7 @@ def restart(ctx, watson, frame, stop_, at_):
         else:
             # Raise error here, instead of in watson.start(), otherwise
             # will give misleading error if running frame is the first one
-            raise click.ClickException(u"{} {} {}".format(
+            raise click.ClickException("{} {} {}".format(
                 style('error', "Project already started:"),
                 style('project', watson.current['project']),
                 style('tags', watson.current['tags'])))
@@ -364,7 +364,7 @@ def cancel(watson):
     not be recorded.
     """
     old = watson.cancel()
-    click.echo(u"Canceling the timer for project {}{}".format(
+    click.echo("Canceling the timer for project {}{}".format(
         style('project', old['project']),
         (" " if old['tags'] else "") + style('tags', old['tags'])
     ))
@@ -407,26 +407,26 @@ def status(watson, project, tags, elapsed):
     current = watson.current
 
     if project:
-        click.echo(u"{}".format(
+        click.echo("{}".format(
             style('project', current['project']),
         ))
         return
 
     if tags:
-        click.echo(u"{}".format(
+        click.echo("{}".format(
             style('tags', current['tags'])
         ))
         return
 
     if elapsed:
-        click.echo(u"{}".format(
+        click.echo("{}".format(
             style('time', current['start'].humanize())
         ))
         return
 
     datefmt = watson.config.get('options', 'date_format', '%Y.%m.%d')
     timefmt = watson.config.get('options', 'time_format', '%H:%M:%S%z')
-    click.echo(u"Project {}{} started {} ({} {})".format(
+    click.echo("Project {}{} started {} ({} {})".format(
         style('project', current['project']),
         (" " if current['tags'] else "") + style('tags', current['tags']),
         style('time', current['start'].humanize()),
@@ -1091,7 +1091,7 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
         )
 
         _print("\n".join(
-            u"\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
+            "\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project', '{:>{}}'.format(
                     frame.project, longest_project
@@ -1221,7 +1221,7 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     # add a new frame, call watson save to update state files
     frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to)
     click.echo(
-        u"Adding project {}{}, started {} and stopped {}. (id: {})".format(
+        "Adding project {}{}, started {} and stopped {}. (id: {})".format(
             style('project', frame.project),
             (" " if frame.tags else "") + style('tags', frame.tags),
             style('time', frame.start.humanize()),
@@ -1326,7 +1326,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
             #  the edit function normally
             break
         except (ValueError, TypeError, RuntimeError) as e:
-            click.echo(u"Error while parsing inputted values: {}".format(e),
+            click.echo("Error while parsing inputted values: {}".format(e),
                        err=True)
         except KeyError:
             click.echo(
@@ -1348,8 +1348,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
 
     watson.save()
     click.echo(
-        u"Edited frame for project {project}{tags}, from {start} to {stop} "
-        u"({delta})".format(
+        "Edited frame for project {project}{tags}, from {start} to {stop} "
+        "({delta})".format(
             delta=format_timedelta(stop - start) if stop else '-',
             project=style('project', project),
             tags=(" " if tags else "") + style('tags', tags),
@@ -1381,8 +1381,8 @@ def remove(watson, id, force):
 
     if not force:
         click.confirm(
-            u"You are about to remove frame "
-            u"{project}{tags} from {start} to {stop}, continue?".format(
+            "You are about to remove frame "
+            "{project}{tags} from {start} to {stop}, continue?".format(
                 project=style('project', frame.project),
                 tags=(" " if frame.tags else "") + style('tags', frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
@@ -1457,11 +1457,11 @@ def config(context, key, value, edit):
 
     if value is None:
         if not wconfig.has_section(section):
-            raise click.ClickException(u"No such section {}".format(section))
+            raise click.ClickException("No such section {}".format(section))
 
         if not wconfig.has_option(section, option):
             raise click.ClickException(
-                u"No such option {} in {}".format(option, section)
+                "No such option {} in {}".format(option, section)
             )
 
         click.echo(wconfig.get(section, option))
@@ -1606,7 +1606,7 @@ def merge(watson, frames_with_conflict, force):
             'tags': original_frame.tags
         }
         click.echo("frame {}:".format(style('short_id', original_frame.id)))
-        click.echo(u"{}".format('\n'.join('<' + line for line in json.dumps(
+        click.echo("{}".format('\n'.join('<' + line for line in json.dumps(
             original_frame_data, indent=4, ensure_ascii=False).splitlines())))
         click.echo("---")
 

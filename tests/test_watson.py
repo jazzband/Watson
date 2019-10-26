@@ -190,7 +190,7 @@ def test_empty_config_dir():
 
 
 def test_wrong_config(mocker, watson):
-    content = u"""
+    content = """
 toto
     """
     mocker.patch.object(ConfigParser, 'read', mock_read(content))
@@ -237,7 +237,7 @@ def test_start_two_projects(watson):
 
 
 def test_start_default_tags(mocker, watson):
-    content = u"""
+    content = """
 [default_tags]
 my project = A B
     """
@@ -248,7 +248,7 @@ my project = A B
 
 
 def test_start_default_tags_with_supplementary_input_tags(mocker, watson):
-    content = u"""
+    content = """
 [default_tags]
 my project = A B
     """

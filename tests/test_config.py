@@ -8,7 +8,7 @@ from . import mock_read
 
 
 def test_config_get(mocker, watson):
-    content = u"""
+    content = """
 [backend]
 url = foo
 token =
@@ -24,7 +24,7 @@ token =
 
 
 def test_config_getboolean(mocker, watson):
-    content = u"""
+    content = """
 [options]
 flag1 = 1
 flag2 = ON
@@ -48,7 +48,7 @@ flag6 =
 
 
 def test_config_getint(mocker, watson):
-    content = u"""
+    content = """
 [options]
 value1 = 42
 value2 = spamm
@@ -72,7 +72,7 @@ value3 =
 
 
 def test_config_getfloat(mocker, watson):
-    content = u"""
+    content = """
 [options]
 value1 = 3.14
 value2 = 42
@@ -99,7 +99,7 @@ value4 =
 
 
 def test_config_getlist(mocker, watson):
-    content = u"""
+    content = """
 # empty lines in option values (including the first one) are discarded
 [options]
 value1 =

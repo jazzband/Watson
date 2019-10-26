@@ -83,11 +83,11 @@ class Watson(object):
                 return type()
             else:
                 raise WatsonError(
-                    u"Invalid JSON file {}: {}".format(filename, e)
+                    "Invalid JSON file {}: {}".format(filename, e)
                 )
         except Exception as e:
             raise WatsonError(
-                u"Unexpected error while loading JSON file {}: {}".format(
+                "Unexpected error while loading JSON file {}: {}".format(
                     filename, e
                 )
             )
@@ -114,7 +114,7 @@ class Watson(object):
                 config.read(self.config_file)
             except CFGParserError as e:
                 raise ConfigurationError(
-                    u"Cannot parse config file: {}".format(e))
+                    "Cannot parse config file: {}".format(e))
 
             self._config = config
 
@@ -161,7 +161,7 @@ class Watson(object):
                           make_json_writer(self._format_date, self.last_sync))
         except OSError as e:
             raise WatsonError(
-                u"Impossible to write {}: {}".format(e.filename, e)
+                "Impossible to write {}: {}".format(e.filename, e)
             )
 
     @property
@@ -249,7 +249,7 @@ class Watson(object):
               gap=True):
         if self.is_started:
             raise WatsonError(
-                u"Project {} is already started.".format(
+                "Project {} is already started.".format(
                     self.current['project']
                 )
             )
@@ -332,7 +332,7 @@ class Watson(object):
         token = config.get('backend', 'token')
 
         if dest and token:
-            dest = u"{}/{}/".format(
+            dest = "{}/{}/".format(
                 dest.rstrip('/'),
                 route.strip('/')
             )
@@ -364,7 +364,7 @@ class Watson(object):
                 raise WatsonError("Unable to reach the server.")
             except AssertionError:
                 raise WatsonError(
-                    u"An error occurred with the remote "
+                    "An error occurred with the remote "
                     "server: {}".format(response.json())
                 )
 
@@ -383,7 +383,7 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                u"An error occurred with the remote "
+                "An error occurred with the remote "
                 "server: {}".format(response.json())
             )
 
@@ -423,8 +423,8 @@ class Watson(object):
             raise WatsonError("Unable to reach the server.")
         except AssertionError:
             raise WatsonError(
-                u"An error occurred with the remote server (status: {}). "
-                u"Response was:\n{}".format(
+                "An error occurred with the remote server (status: {}). "
+                "Response was:\n{}".format(
                     response.status_code,
                     response.text
                 )
