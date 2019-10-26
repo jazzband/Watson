@@ -6,11 +6,7 @@ import json
 import operator
 import os
 import uuid
-
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+from configparser import Error as CFGParserError
 import arrow
 import click
 
@@ -24,7 +20,7 @@ class WatsonError(RuntimeError):
     pass
 
 
-class ConfigurationError(configparser.Error, WatsonError):
+class ConfigurationError(CFGParserError, WatsonError):
     pass
 
 
@@ -118,7 +114,7 @@ class Watson(object):
             try:
                 config = ConfigParser()
                 config.read(self.config_file)
-            except configparser.Error as e:
+            except CFGParserError as e:
                 raise ConfigurationError(
                     u"Cannot parse config file: {}".format(e))
 

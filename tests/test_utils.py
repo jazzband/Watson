@@ -9,15 +9,8 @@ import json
 import os
 import datetime
 import operator
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from io import StringIO
+from mock import patch
 import pytest
 from click.exceptions import Abort
 from dateutil.tz import tzutc

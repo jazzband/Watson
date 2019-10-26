@@ -7,12 +7,7 @@ import operator
 import os
 import shutil
 import tempfile
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
+from io import StringIO
 import click
 import arrow
 
