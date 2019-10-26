@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Setup file for the Watson distribution."""
 
 from os.path import join

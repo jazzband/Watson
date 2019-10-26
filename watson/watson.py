@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 from functools import reduce
 import json
