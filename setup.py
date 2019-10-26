@@ -45,6 +45,7 @@ setup(
     license='MIT',
     long_description=readme,
     install_requires=parse_requirements('requirements.txt'),
+    python_requires='>=3.5',
     tests_require=parse_requirements('requirements-dev.txt'),
     entry_points={
         'console_scripts': [
