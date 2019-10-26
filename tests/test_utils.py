@@ -95,9 +95,9 @@ def test_make_json_writer_with_kwargs():
 
 def test_make_json_writer_with_unicode():
     fp = StringIO()
-    writer = make_json_writer(lambda: {u'ùñï©ôð€': u'εvεrywhεrε'})
+    writer = make_json_writer(lambda: {'ùñï©ôð€': 'εvεrywhεrε'})
     writer(fp)
-    expected = u'{\n "ùñï©ôð€": "εvεrywhεrε"\n}'
+    expected = '{\n "ùñï©ôð€": "εvεrywhεrε"\n}'
     assert fp.getvalue() == expected
 
 

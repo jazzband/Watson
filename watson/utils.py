@@ -53,7 +53,7 @@ def style(name, element):
         if not tags:
             return ''
 
-        return u'[{}]'.format(', '.join(
+        return '[{}]'.format(', '.join(
             style('tag', tag) for tag in tags
         ))
 
@@ -181,7 +181,7 @@ def get_start_time_for_period(period):
         # approximately timestamp `0`
         start_time = arrow.Arrow(1970, 1, 1)
     else:
-        raise ValueError(u'Unsupported period value: {}'.format(period))
+        raise ValueError('Unsupported period value: {}'.format(period))
 
     return start_time
 

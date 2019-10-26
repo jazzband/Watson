@@ -199,7 +199,7 @@ toto
 
 
 def test_empty_config(mocker, watson):
-    mocker.patch.object(ConfigParser, 'read', mock_read(u''))
+    mocker.patch.object(ConfigParser, 'read', mock_read(''))
     assert len(watson.config.sections()) == 0
 
 

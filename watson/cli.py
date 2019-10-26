@@ -651,7 +651,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
             lines.append(line)
 
         def _final_print(lines):
-            click.echo_via_pager(u'\n'.join(lines))
+            click.echo_via_pager('\n'.join(lines))
     elif aggregated:
 
         def _print(line):
@@ -669,7 +669,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 
     # handle special title formatting for aggregate reports
     if aggregated:
-        _print(u'{} - {}'.format(
+        _print('{} - {}'.format(
             style('date', '{:ddd DD MMMM YYYY}'.format(
                 report['timespan']['from']
             )),
@@ -679,7 +679,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
         ))
 
     else:
-        _print(u'{} -> {}\n'.format(
+        _print('{} -> {}\n'.format(
             style('date', '{:ddd DD MMMM YYYY}'.format(
                 report['timespan']['from']
             )),
@@ -691,7 +691,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     projects = report['projects']
 
     for project in projects:
-        _print(u'{tab}{project} - {time}'.format(
+        _print('{tab}{project} - {time}'.format(
             tab=tab,
             time=style('time', format_timedelta(
                 datetime.timedelta(seconds=project['time'])
@@ -704,11 +704,11 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
             longest_tag = max(len(tag) for tag in tags or [''])
 
             for tag in tags:
-                _print(u'\t[{tag} {time}]'.format(
+                _print('\t[{tag} {time}]'.format(
                     time=style('time', '{:>11}'.format(format_timedelta(
                         datetime.timedelta(seconds=tag['time'])
                     ))),
-                    tag=style('tag', u'{:<{}}'.format(
+                    tag=style('tag', '{:<{}}'.format(
                         tag['name'], longest_tag
                     )),
                 ))
@@ -859,7 +859,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
             if (len(output)) == 1:
                 output[0] += '\n'
 
-            lines.append(u'\n'.join(output))
+            lines.append('\n'.join(output))
 
     if 'json' in output_format:
         click.echo(json.dumps(lines, indent=4, sort_keys=True,
@@ -868,9 +868,9 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
         click.echo(build_csv(lines))
     elif pager or (pager is None and
                    watson.config.getboolean('options', 'pager', True)):
-        click.echo_via_pager(u'\n\n'.join(lines))
+        click.echo_via_pager('\n\n'.join(lines))
     else:
-        click.echo(u'\n\n'.join(lines))
+        click.echo('\n\n'.join(lines))
 
 
 @cli.command()
@@ -1093,7 +1093,7 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
         _print("\n".join(
             u"\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
                 delta=format_timedelta(frame.stop - frame.start),
-                project=style('project', u'{:>{}}'.format(
+                project=style('project', '{:>{}}'.format(
                     frame.project, longest_project
                 )),
                 tags=(" "*2 if frame.tags else "") + style('tags', frame.tags),
@@ -1680,19 +1680,19 @@ def rename(watson, rename_type, old_name, new_name):
     """
     if rename_type == 'tag':
         watson.rename_tag(old_name, new_name)
-        click.echo(u'Renamed tag "{}" to "{}"'.format(
+        click.echo('Renamed tag "{}" to "{}"'.format(
                         style('tag', old_name),
                         style('tag', new_name)
                    ))
     elif rename_type == 'project':
         watson.rename_project(old_name, new_name)
-        click.echo(u'Renamed project "{}" to "{}"'.format(
+        click.echo('Renamed project "{}" to "{}"'.format(
                         style('project', old_name),
                         style('project', new_name)
                    ))
     else:
         raise click.ClickException(style(
             'error',
-            u'You have to call rename with type "project" or "tag"; '
-            u'you supplied "%s"' % rename_type
+            'You have to call rename with type "project" or "tag"; '
+            'you supplied "%s"' % rename_type
         ))
