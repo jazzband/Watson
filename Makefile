@@ -53,5 +53,5 @@ docs: install-dev
 
 .PHONY: completion-scripts
 completion-scripts:
-	scripts/create-completion-script.sh bash || true
-	scripts/create-completion-script.sh zsh || true
+	scripts/create-completion-script.sh bash
+	scripts/create-completion-script.sh zsh

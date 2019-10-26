@@ -41,4 +41,4 @@ case $1 in
     exit 1
 esac
 
-_WATSON_COMPLETE=$src_command watson > "$target_file"
+_WATSON_COMPLETE=$src_command watson > "$target_file" || true
