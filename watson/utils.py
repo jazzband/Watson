@@ -17,12 +17,6 @@ from .fullmoon import get_last_full_moon
 from click.exceptions import UsageError
 
 
-try:
-    text_type = (str, unicode)
-except NameError:
-    text_type = str
-
-
 def create_watson():
     return _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
 
@@ -239,7 +233,7 @@ def safe_save(path, content, ext='.bak'):
     tmpfp = tempfile.NamedTemporaryFile(mode='w+', delete=False)
     try:
         with tmpfp:
-            if isinstance(content, text_type):
+            if isinstance(content, str):
                 tmpfp.write(content)
             else:
                 content(tmpfp)
