@@ -23,12 +23,6 @@ then
   exit 1
 fi
 
-if [[ $1 == "-h" || $1 == "--help" ]]
-then
-  print_help
-  exit 0
-fi
-
 case $1 in
   -h|--help)
     print_help
