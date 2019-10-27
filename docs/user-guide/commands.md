@@ -12,7 +12,7 @@
 Usage:  watson add [OPTIONS] [ARGS]...
 ```
 
-Add time for project with tag(s) that was not tracked live.
+Add time to a project with tag(s) that was not tracked live.
 
 Example:
 
@@ -53,7 +53,7 @@ If you are outputting to the terminal, you can selectively enable a pager
 through the `--pager` option.
 
 You can change the output format from *plain text* to *JSON* using the
-`--json` option or to *CSV* using the `--csv` option. Only one  of these
+`--json` option or to *CSV* using the `--csv` option. Only one of these
 two options can be used at once.
 
 
@@ -141,8 +141,8 @@ Usage:  watson config [OPTIONS] SECTION.OPTION [VALUE]
 
 Get and set configuration options.
 
-If value is not provided, the content of the key is displayed. Else,
-the given value is set.
+If `value` is not provided, the content of the `key` is displayed. Else,
+the given `value` is set.
 
 You can edit the config file with an editor with the `--edit` option.
 
@@ -172,12 +172,17 @@ You can specify the frame to edit by its position or by its frame id.
 For example, to edit the second-to-last frame, pass `-2` as the frame
 index. You can get the id of a frame with the `watson log` command.
 
-If no id or index is given, the frame defaults to the current frame or the
-last recorded frame, if no project is currently running.
+If no id or index is given, the frame defaults to the current frame (or the
+last recorded frame, if no project is currently running).
 
 The editor used is determined by the `VISUAL` or `EDITOR` environment
 variables (in that order) and defaults to `notepad` on Windows systems and
-to `vim`, `nano` or `vi` (first one found) on all other systems.
+to `vim`, `nano`, or `vi` (first one found) on all other systems.
+
+Alternatively, the --start and --stop parameters can be used to set the frame start and stop
+times directly from the command line (no editor will open). You have to specify the date and
+time in the format 'YYYY-MM-DD HH:mm:ss'. Trying to set the stop time for a task which is still
+in progress will raise an error.
 
 ### Options
 
@@ -185,6 +190,8 @@ Flag | Help
 -----|-----
 `-c, --confirm-new-project` | Confirm addition of new project.
 `-b, --confirm-new-tag` | Confirm creation of new tag.
+`--start DATE` | The start date and time for the project frame. Format: 'YYYY-MM-DD HH:mm:ss'
+`--stop DATE` | The stop date and time for the project frame. Format: 'YYYY-MM-DD HH:mm:ss'
 `--help` | Show this message and exit.
 
 ## `frames`
@@ -237,8 +244,8 @@ can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
 You can also use special shortcut options for easier timespan control:
-`--day` sets the log timespan to the current day (beginning at 00:00h)
-and `--year`, `--month` and `--week` to the current year, month or week
+`--day` sets the log timespan to the current day (beginning at `00:00h`)
+and `--year`, `--month` and `--week` to the current year, month, or week,
 respectively.
 The shortcut `--luna` sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.
@@ -251,7 +258,7 @@ You can limit the log to a project or a tag using the `--project` and
 projects or tags to the log.
 
 You can change the output format from *plain text* to *JSON* using the
-`--json` option or to *CSV* using the `--csv` option. Only one  of these
+`--json` option or to *CSV* using the `--csv` option. Only one of these
 two options can be used at once.
 
 Example:
@@ -456,8 +463,8 @@ can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
 You can also use special shortcut options for easier timespan control:
-`--day` sets the report timespan to the current day (beginning at 00:00h)
-and `--year`, `--month` and `--week` to the current year, month or week
+`--day` sets the report timespan to the current day (beginning at `00:00h`)
+and `--year`, `--month` and `--week` to the current year, month, or week,
 respectively.
 The shortcut `--luna` sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.
@@ -585,9 +592,9 @@ restarted, using the same tags as recorded in that frame. You can specify
 the frame to use with an integer frame index argument or a frame ID. For
 example, to restart the second-to-last frame, pass `-2` as the frame index.
 
-Normally, if a project is currently started, watson will print an error and
+Normally, if a project is currently started, Watson will print an error and
 do nothing. If you set the configuration option `options.stop_on_restart`
-to a true value (`1`, `on`, `true` or `yes`), the current project, if any,
+to a true value (`1`, `on`, `true`, or `yes`), the current project, if any,
 will be stopped before the new frame is started. You can pass the option
 `-s` or `--stop` resp. `-S` or `--no-stop` to override the default or
 configured behaviour.
@@ -623,10 +630,10 @@ You can add tags indicating more specifically what you are working on with
 `+tag`.
 
 If there is already a running project and the configuration option
-`options.stop_on_start` is set to a true value (`1`, `on`, `true` or
+`options.stop_on_start` is set to a true value (`1`, `on`, `true`, or
 `yes`), it is stopped before the new project is started.
 
-If the '--no-gap' flag is given, the start time of the new project is set
+If the `--no-gap` flag is given, the start time of the new project is set
 to the stop time of the most recently stopped project.
 
 Example:
@@ -685,8 +692,8 @@ Usage:  watson stop [OPTIONS]
 
 Stop monitoring time for the current project.
 
-If '--at' option is given, the provided stopping time is used. The
-specified time must be after the begin of the to be ended frame and must
+If `--at` option is given, the provided stopping time is used. The
+specified time must be after the beginning of the to-be-ended frame and must
 not be in the future.
 
 Example:
