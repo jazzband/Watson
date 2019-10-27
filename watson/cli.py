@@ -1205,6 +1205,11 @@ def edit(watson, confirm_new_project, confirm_new_tag, id, start=None, stop=None
     The editor used is determined by the `VISUAL` or `EDITOR` environment
     variables (in that order) and defaults to `notepad` on Windows systems and
     to `vim`, `nano`, or `vi` (first one found) on all other systems.
+
+    Alternatively, the --start and --stop parameters can be used to set the frame start and stop
+    times directly from the command line (no editor will open). You have to specify the date and
+    time in the format 'YYYY-MM-DD HH:mm:ss'. Trying to set the stop time for a task which is still
+    in progress will raise an error.
     """
     date_format = 'YYYY-MM-DD'
     time_format = 'HH:mm:ss'
