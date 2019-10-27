@@ -1184,10 +1184,14 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
+@click.option('--start', type=Date, help="The start date and time for the project frame. "
+              "Format: 'YYYY-MM-DD HH:mm:ss'")
+@click.option('--stop', type=Date, help="The stop date and time for the project frame. "
+              "Format: 'YYYY-MM-DD HH:mm:ss'")
 @click.argument('id', required=False)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, id):
+def edit(watson, confirm_new_project, confirm_new_tag, id, start=None, stop=None):
     """
     Edit a frame.
 
@@ -1221,67 +1225,89 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
             style('error', "No frames recorded yet. It's time to create your "
                            "first one!"))
 
-    data = {
-        'start': frame.start.format(datetime_format),
-        'project': frame.project,
-        'tags': frame.tags,
-    }
+    # Handle start/stop times passed through parameters
+    has_time_parameters = start or stop
 
-    if id:
-        data['stop'] = frame.stop.format(datetime_format)
+    if has_time_parameters:
+        start = start or frame.start
 
-    text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
+        if stop and watson.is_started:
+            raise click.ClickException(
+                style('error', "Cannot set stop time for task which is still running."))
 
-    start = None
-    stop = None
+        if not stop and id:
+            stop = frame.stop
 
-    # enter into while loop until succesful and validated
-    #  edit has been performed
-    while True:
-        output = click.edit(text, extension='.json')
+        project = frame.project
+        tags = frame.tags
 
-        if not output:
-            click.echo("No change made.")
-            return
+        if not watson.is_started and start > stop:
+            raise click.ClickException(
+                style('error', "Task cannot end before it starts."))
 
-        try:
-            data = json.loads(output)
-            project = data['project']
-            # Confirm creation of new project if that option is set
-            if (watson.config.getboolean('options', 'confirm_new_project') or
-                    confirm_new_project):
-                confirm_project(project, watson.projects)
-            tags = data['tags']
-            # Confirm creation of new tag(s) if that option is set
-            if (watson.config.getboolean('options', 'confirm_new_tag') or
-                    confirm_new_tag):
-                confirm_tags(tags, watson.tags)
-            start = arrow.get(data['start'], datetime_format).replace(
-                tzinfo=local_tz).to('utc')
-            stop = arrow.get(data['stop'], datetime_format).replace(
-                tzinfo=local_tz).to('utc') if id else None
-            # if start time of the project is not before end time
-            #  raise ValueException
-            if not watson.is_started and start > stop:
-                raise ValueError(
-                    "Task cannot end before it starts.")
-            # break out of while loop and continue execution of
-            #  the edit function normally
-            break
-        except (ValueError, TypeError, RuntimeError) as e:
-            click.echo(u"Error while parsing inputted values: {}".format(e),
-                       err=True)
-        except KeyError:
-            click.echo(
-                "The edited frame must contain the project, "
-                "start, and stop keys.", err=True)
-        # we reach here if exception was thrown, wait for user
-        #  to acknowledge the error before looping in while and
-        #  showing user the editor again
-        click.pause(err=True)
-        # use previous entered values to the user in editor
-        #  instead of original ones
-        text = output
+    else:
+        # Open editor to allow user to set start, end, project and tags
+        data = {
+            'start': frame.start.format(datetime_format),
+            'project': frame.project,
+            'tags': frame.tags,
+        }
+
+        if id:
+            data['stop'] = frame.stop.format(datetime_format)
+
+        text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
+
+        start = None
+        stop = None
+
+        # enter into while loop until succesful and validated
+        #  edit has been performed
+        while True:
+            output = click.edit(text, extension='.json')
+
+            if not output:
+                click.echo("No change made.")
+                return
+
+            try:
+                data = json.loads(output)
+                project = data['project']
+                # Confirm creation of new project if that option is set
+                if (watson.config.getboolean('options', 'confirm_new_project') or
+                        confirm_new_project):
+                    confirm_project(project, watson.projects)
+                tags = data['tags']
+                # Confirm creation of new tag(s) if that option is set
+                if (watson.config.getboolean('options', 'confirm_new_tag') or
+                        confirm_new_tag):
+                    confirm_tags(tags, watson.tags)
+                start = arrow.get(data['start'], datetime_format).replace(
+                    tzinfo=local_tz).to('utc')
+                stop = arrow.get(data['stop'], datetime_format).replace(
+                    tzinfo=local_tz).to('utc') if id else None
+                # if start time of the project is not before end time
+                #  raise ValueException
+                if not watson.is_started and start > stop:
+                    raise ValueError(
+                        "Task cannot end before it starts.")
+                # break out of while loop and continue execution of
+                #  the edit function normally
+                break
+            except (ValueError, TypeError, RuntimeError) as e:
+                click.echo(u"Error while parsing inputted values: {}".format(e),
+                           err=True)
+            except KeyError:
+                click.echo(
+                    "The edited frame must contain the project, "
+                    "start, and stop keys.", err=True)
+            # we reach here if exception was thrown, wait for user
+            #  to acknowledge the error before looping in while and
+            #  showing user the editor again
+            click.pause(err=True)
+            # use previous entered values to the user in editor
+            #  instead of original ones
+            text = output
 
     # we reach this when we break out of the while loop above
     if id:
