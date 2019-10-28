@@ -180,9 +180,16 @@ variables (in that order) and defaults to `notepad` on Windows systems and
 to `vim`, `nano`, or `vi` (first one found) on all other systems.
 
 Alternatively, the --start and --stop parameters can be used to set the frame start and stop
-times directly from the command line (no editor will open). You have to specify the date and
-time in the format 'YYYY-MM-DD HH:mm:ss'. Trying to set the stop time for a task which is still
-in progress will raise an error.
+times directly from the command line (no editor will open). Trying to set the stop time for a
+task which is still in progress will raise an error.
+
+Example:
+
+
+    $ watson edit --start 13:30 --stop 14:00
+    Edited frame for project misc, from 13:30:00 to 14:00:00 (30m 00s)
+    $ watson edit --start 2019-10-27T13:30 --stop 14:00
+    Edited frame for project misc, from 13:30:00 to 14:00:00 (24h 30m 00s)
 
 ### Options
 
@@ -190,8 +197,8 @@ Flag | Help
 -----|-----
 `-c, --confirm-new-project` | Confirm addition of new project.
 `-b, --confirm-new-tag` | Confirm creation of new tag.
-`--start DATE` | The start date and time for the project frame. Format: 'YYYY-MM-DD HH:mm:ss'
-`--stop DATE` | The stop date and time for the project frame. Format: 'YYYY-MM-DD HH:mm:ss'
+`--start TIME` | The start time for the project frame.
+`--stop TIME` | The stop time for the project frame.
 `--help` | Show this message and exit.
 
 ## `frames`
