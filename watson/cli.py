@@ -1184,14 +1184,12 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
-@click.option('--start', type=Date, help="The start date and time for the project frame. "
-              "Format: 'YYYY-MM-DD HH:mm:ss'")
-@click.option('--stop', type=Date, help="The stop date and time for the project frame. "
-              "Format: 'YYYY-MM-DD HH:mm:ss'")
+@click.option('--start', type=Time, default=None, help="The start time for the project frame.")
+@click.option('--stop', type=Time, default=None, help="The stop time for the project frame.")
 @click.argument('id', required=False)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, id, start=None, stop=None):
+def edit(watson, confirm_new_project, confirm_new_tag, id, start, stop):
     """
     Edit a frame.
 
@@ -1207,9 +1205,16 @@ def edit(watson, confirm_new_project, confirm_new_tag, id, start=None, stop=None
     to `vim`, `nano`, or `vi` (first one found) on all other systems.
 
     Alternatively, the --start and --stop parameters can be used to set the frame start and stop
-    times directly from the command line (no editor will open). You have to specify the date and
-    time in the format 'YYYY-MM-DD HH:mm:ss'. Trying to set the stop time for a task which is still
-    in progress will raise an error.
+    times directly from the command line (no editor will open). Trying to set the stop time for a
+    task which is still in progress will raise an error.
+
+    Example:
+
+    \b
+    $ watson edit --start 13:30 --stop 14:00
+    Edited frame for project misc, from 13:30:00 to 14:00:00 (30m 00s)
+    $ watson edit --start 2019-10-27T13:30 --stop 14:00
+    Edited frame for project misc, from 13:30:00 to 14:00:00 (24h 30m 00s)
     """
     date_format = 'YYYY-MM-DD'
     time_format = 'HH:mm:ss'
