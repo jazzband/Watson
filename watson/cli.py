@@ -1184,8 +1184,10 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
-@click.option('--start', type=Time, default=None, help="The start time for the project frame.")
-@click.option('--stop', type=Time, default=None, help="The stop time for the project frame.")
+@click.option('--start', type=Time, default=None, help='The start time for '
+              'the project frame.')
+@click.option('--stop', type=Time, default=None, help='The stop time for the '
+              'project frame.')
 @click.argument('id', required=False)
 @click.pass_obj
 @catch_watson_error
@@ -1204,9 +1206,10 @@ def edit(watson, confirm_new_project, confirm_new_tag, id, start, stop):
     variables (in that order) and defaults to `notepad` on Windows systems and
     to `vim`, `nano`, or `vi` (first one found) on all other systems.
 
-    Alternatively, the --start and --stop parameters can be used to set the frame start and stop
-    times directly from the command line (no editor will open). Trying to set the stop time for a
-    task which is still in progress will raise an error.
+    Alternatively, the --start and --stop parameters can be used to set the
+    frame start and stop times directly from the command line (no editor will
+    open). Trying to set the stop time for a task which is still in progress
+    will raise an error.
 
     Example:
 
@@ -1243,7 +1246,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id, start, stop):
 
         if stop and watson.is_started:
             raise click.ClickException(
-                style('error', "Cannot set stop time for task which is still running."))
+                style('error', "Cannot set stop time for task which is still "
+                      "running."))
 
         if not stop and id:
             stop = frame.stop
@@ -1284,13 +1288,15 @@ def edit(watson, confirm_new_project, confirm_new_tag, id, start, stop):
                 data = json.loads(output)
                 project = data['project']
                 # Confirm creation of new project if that option is set
-                if (watson.config.getboolean('options', 'confirm_new_project') or
-                        confirm_new_project):
+                opt_confirm_new_project = watson.config.getboolean('options',
+                   'confirm_new_project')
+                if (opt_confirm_new_project or confirm_new_project):
                     confirm_project(project, watson.projects)
                 tags = data['tags']
                 # Confirm creation of new tag(s) if that option is set
-                if (watson.config.getboolean('options', 'confirm_new_tag') or
-                        confirm_new_tag):
+                opt_confirm_new_tag = watson.config.getboolean('options',
+                    'confirm_new_tag')
+                if (opt_confirm_new_tag or confirm_new_tag):
                     confirm_tags(tags, watson.tags)
                 start = arrow.get(data['start'], datetime_format).replace(
                     tzinfo=local_tz).to('utc')
@@ -1305,8 +1311,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id, start, stop):
                 #  the edit function normally
                 break
             except (ValueError, TypeError, RuntimeError) as e:
-                click.echo(u"Error while parsing inputted values: {}".format(e),
-                           err=True)
+                err_msg = u"Error while parsing inputted values: {}".format(e)
+                click.echo(err_msg, err=True)
             except KeyError:
                 click.echo(
                     "The edited frame must contain the project, "
