@@ -179,9 +179,10 @@ The editor used is determined by the `VISUAL` or `EDITOR` environment
 variables (in that order) and defaults to `notepad` on Windows systems and
 to `vim`, `nano`, or `vi` (first one found) on all other systems.
 
-Alternatively, the --start and --stop parameters can be used to set the frame start and stop
-times directly from the command line (no editor will open). Trying to set the stop time for a
-task which is still in progress will raise an error.
+Alternatively, the --start and --stop parameters can be used to set the
+frame start and stop times directly from the command line (no editor will
+open). Trying to set the stop time for a task which is still in progress
+will raise an error.
 
 Example:
 
