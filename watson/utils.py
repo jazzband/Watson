@@ -68,19 +68,6 @@ def confirm_tags(tags, watson_tags):
     return True
 
 
-def format_short_id(id):
-    return style('id', id[:7])
-
-
-def format_tags(tags):
-    if not tags:
-        return ''
-
-    return '[{}]'.format(', '.join(
-        style('tag', tag) for tag in tags
-    ))
-
-
 def style(name, element):
     style = DEFAULT_STYLES.get(name, {})
     try:

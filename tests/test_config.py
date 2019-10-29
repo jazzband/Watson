@@ -79,6 +79,7 @@ value2 = 42
 value3 = spamm
 value4 =
     """
+
     mock.patch.object(ConfigParser, 'read', mock_read(content))
     config = watson.config
     assert config.getfloat('options', 'value1') == 3.14
