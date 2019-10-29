@@ -32,6 +32,7 @@ try:
 except NameError:
     text_type = str
 
+
 DEFAULT_STYLES = {
     'project': {'fg': 'magenta'},
     'tag': {'fg': 'blue'},
@@ -44,6 +45,16 @@ DEFAULT_STYLES = {
 
 def create_watson():
     return _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
+
+
+def get_styles_from_config():
+    ctx = click.get_current_context(silent=True)
+    if ctx is None:
+        return
+
+    config = ctx.obj.config
+    for name, style in DEFAULT_STYLES.items():
+        DEFAULT_STYLES[name] = config.getitems('style:%s' % name, style)
 
 
 def confirm_project(project, watson_projects):
@@ -73,29 +84,31 @@ def confirm_tags(tags, watson_tags):
     return True
 
 
-def format_short_id(id):
-    return style('id', id[:7])
-
-
-def format_tags(tags):
-    if not tags:
-        return ''
-
-    return '[{}]'.format(', '.join(
-        style('tag', tag) for tag in tags
-    ))
-
-
 def style(name, element):
-    style = DEFAULT_STYLES.get(name, {})
-    try:
-        config = click.get_current_context().obj.config
-        style = style.copy()  # take care not change the default styles
-        style.update(config.getitems('style:%s' % name))
-    except (AttributeError, RuntimeError):
-        pass
+    def _style_tags(tags):
+        if not tags:
+            return ''
 
-    return click.style(element, **style)
+        return u'[{}]'.format(', '.join(
+            style('tag', tag) for tag in tags
+        ))
+
+    def _style_short_id(id):
+        return style('id', id[:7])
+
+    formats = DEFAULT_STYLES.copy()
+    formats.update({
+        'tags': _style_tags,
+        'short_id': _style_short_id,
+    })
+
+    fmt = formats.get(name, {})
+
+    if isinstance(fmt, dict):
+        return click.style(element, **fmt)
+    else:
+        # The fmt might be a function if we need to do some computation
+        return fmt(element)
 
 
 def format_timedelta(delta):

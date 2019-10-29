@@ -4,11 +4,10 @@
 import arrow
 import collections as co
 import csv
-import datetime
 import functools
 import json
 import os
-import uuid
+import datetime
 
 try:
     from StringIO import StringIO
@@ -29,8 +28,6 @@ from watson.utils import (
     confirm_project,
     confirm_tags,
     flatten_report_for_csv,
-    format_short_id,
-    format_tags,
     frames_to_csv,
     frames_to_json,
     get_start_time_for_period,
@@ -40,6 +37,7 @@ from watson.utils import (
     parse_tags,
     PY2,
     json_arrow_encoder,
+    get_styles_from_config,
 )
 from . import mock_datetime, mock_read
 
@@ -390,15 +388,5 @@ fg = yellow
     mock_get_ctx = mock.Mock(
         return_value=mock.Mock(obj=mock.Mock(config=config)))
     mock.patch('click.get_current_context', mock_get_ctx)
+    get_styles_from_config()
     assert style(element, 'foo') == expected.format('foo')
-
-
-def test_format_short_id():
-    id_ = uuid.uuid4().hex
-    assert format_short_id(id_) == '\x1b[37m{}\x1b[0m'.format(id_[:7])
-
-
-def test_format_tags():
-    tags = ['foo', 'bar']
-    assert format_tags([]) == ''
-    assert format_tags(tags) == '[\x1b[34mfoo\x1b[0m, \x1b[34mbar\x1b[0m]'
