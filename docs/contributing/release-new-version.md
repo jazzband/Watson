@@ -16,6 +16,8 @@ Edit the following files to describe changes and bump the version number:
 * `watson/version.py`: update the version number
 * `CHANGELOG.md`: add release notes (see previous releases examples)
 * `docs/about/release-notes.md`: copy/paste release notes here
+* `watson.completion` and `watson.zsh-completion`: generate up-to-date
+  completion script by running `make completion-scripts`
 
 Then commit your work, tag the release and push everything to GitHub:
 
