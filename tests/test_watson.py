@@ -156,6 +156,54 @@ def test_frames_without_tags(mock, watson):
     assert watson.frames[0].tags == []
 
 
+def test_frames_with_message(mocker, watson):
+    """Test loading frames with messages."""
+    content = json.dumps([
+        [3601, 3610, 'foo', 'abcdefg', ['A', 'B', 'C'], 3650,
+         "My hovercraft is full of eels"]
+    ])
+
+    mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=content))
+    assert len(watson.frames) == 1
+    frame = watson.frames['abcdefg']
+    assert frame.id == 'abcdefg'
+    assert frame.project == 'foo'
+    assert frame.start == arrow.get(3601)
+    assert frame.stop == arrow.get(3610)
+    assert frame.tags == ['A', 'B', 'C']
+    assert frame.message == "My hovercraft is full of eels"
+
+
+def test_frames_without_message(mocker, watson):
+    """Test loading frames without messages."""
+    content = json.dumps([
+        [3601, 3610, 'foo', 'abcdefg'],
+        [3611, 3620, 'foo', 'hijklmn', ['A', 'B', 'C']],
+        [3621, 3630, 'foo', 'opqrstu', ['A', 'B', 'C'], 3630]
+    ])
+
+    mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=content))
+    assert len(watson.frames) == 3
+    frame = watson.frames['abcdefg']
+    assert frame.id == 'abcdefg'
+    assert frame.project == 'foo'
+    assert frame.start == arrow.get(3601)
+    assert frame.stop == arrow.get(3610)
+    assert frame.tags == []
+    assert frame.message is None
+
+    frame = watson.frames['hijklmn']
+    assert frame.id == 'hijklmn'
+    assert frame.tags == ['A', 'B', 'C']
+    assert frame.message is None
+
+    frame = watson.frames['opqrstu']
+    assert frame.id == 'opqrstu'
+    assert frame.tags == ['A', 'B', 'C']
+    assert frame.updated_at == arrow.get(3630)
+    assert frame.message is None
+
+
 def test_frames_with_empty_file(mock, watson):
     mock.patch('%s.open' % builtins, mock.mock_open(read_data=""))
     mock.patch('os.path.getsize', return_value=0)
@@ -308,6 +356,33 @@ def test_stop_started_project_without_tags(watson):
     assert watson.frames[0].tags == []
 
 
+def test_stop_started_project_without_message(watson):
+    """Test stopping watson without adding a message."""
+    watson.start('foo')
+    watson.stop()
+
+    assert watson.current == {}
+    assert watson.is_started is False
+    assert len(watson.frames) == 1
+    frame = watson.frames[0]
+    assert frame.project == 'foo'
+    assert frame.message is None
+
+
+def test_stop_started_project_with_message(watson):
+    """Test stopping watson when adding a message."""
+    watson.start('foo')
+    watson._current['message'] = "My hovercraft is full of eels"
+    watson.stop()
+
+    assert watson.current == {}
+    assert watson.is_started is False
+    assert len(watson.frames) == 1
+    frame = watson.frames[0]
+    assert frame.project == 'foo'
+    assert frame.message == "My hovercraft is full of eels"
+
+
 def test_stop_no_project(watson):
     with pytest.raises(WatsonError):
         watson.stop()
@@ -384,17 +459,18 @@ def test_save_current_without_tags(mock, watson, json_mock):
     assert dump_args['ensure_ascii'] is False
 
 
-def test_save_empty_current(config_dir, mock, json_mock):
+def test_save_empty_current(config_dir, mocker, json_mock):
     watson = Watson(current={}, config_dir=config_dir)
 
-    mock.patch('%s.open' % builtins, mock.mock_open())
+    mocker.patch('%s.open' % builtins, mocker.mock_open())
 
     watson.current = {'project': 'foo', 'start': 4000}
     watson.save()
 
     assert json_mock.call_count == 1
     result = json_mock.call_args[0][0]
-    assert result == {'project': 'foo', 'start': 4000, 'tags': []}
+    assert result == {'project': 'foo', 'start': 4000,
+                      'tags': [], 'message': None}
 
     watson.current = {}
     watson.save()

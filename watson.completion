@@ -113,6 +113,8 @@ _watson_complete () {
             COMPREPLY=($(compgen -W "$tags" -- ${cur}))
           fi
           ;;
+        stop)
+          COMPREPLY=($(compgen -W "-m --message" -- ${cur}))
         status)
           COMPREPLY=($(compgen -W "-e --elapsed -p --project -t --tags" -- ${cur}))
           ;;
