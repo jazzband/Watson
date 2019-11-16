@@ -291,9 +291,10 @@ class Watson(object):
             raise WatsonError('Task cannot end in the future.')
 
         frame = self.frames.add(
-            old['project'], old['start'], stop_at, tags=old['tags'], message=old.get('message')
+            old['project'], old['start'], stop_at, tags=old['tags'],
+            message=old.get('message')
         )
-        
+
         self.current = None
 
         return frame
