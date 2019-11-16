@@ -142,6 +142,7 @@ class Watson(object):
             if not os.path.isdir(self._dir):
                 os.makedirs(self._dir)
 
+            pprint(self._current)
             if self._current is not None and self._old_state != self._current:
                 if self.is_started:
                     current = {
@@ -150,9 +151,11 @@ class Watson(object):
                         'tags': self.current['tags'],
                         'message': self.current.get('message'),
                     }
+                    pprint(current)
                 else:
                     current = {}
-
+                    pprint(current)
+                
                 safe_save(self.state_file, make_json_writer(lambda: current))
                 self._old_state = current
 
@@ -272,7 +275,7 @@ class Watson(object):
         self.current = new_frame
         return self.current
 
-    def stop(self, stop_at=None):
+    def stop(self, stop_at=None, message=None):
         if not self.is_started:
             raise WatsonError("No project started.")
 
@@ -290,9 +293,12 @@ class Watson(object):
         if stop_at > arrow.now():
             raise WatsonError('Task cannot end in the future.')
 
+        if message is None:
+            message = old.get('message')
+
         frame = self.frames.add(
             old['project'], old['start'], stop_at, tags=old['tags'],
-            message=old.get('message')
+            message=message
         )
 
         self.current = None

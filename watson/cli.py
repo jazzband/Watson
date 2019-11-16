@@ -7,6 +7,8 @@ import operator
 import os
 import re
 
+from pprint import pprint
+
 from dateutil import tz
 from functools import reduce, wraps
 
@@ -270,10 +272,7 @@ def stop(watson, at_, message):
     $ watson stop --at 13:37
     Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52) # noqa: E501
     """
-    if watson.is_started and message is not None:
-        watson.current['message'] = message
-
-    frame = watson.stop(stop_at=at_)
+    frame = watson.stop(stop_at=at_, message=message)
 
     output_str = u"Stopping project {}{}, started {} and stopped {}. (id: {})"
     click.echo(output_str.format(
@@ -283,6 +282,7 @@ def stop(watson, at_, message):
         style('time', frame.stop.humanize()),
         style('short_id', frame.id),
     ))
+
     if frame.message is not None:
         click.echo("Log message: {}".format(style('message', frame.message)))
 
