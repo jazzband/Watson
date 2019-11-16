@@ -7,8 +7,6 @@ import operator
 import os
 import re
 
-from pprint import pprint
-
 from dateutil import tz
 from functools import reduce, wraps
 

@@ -142,7 +142,6 @@ class Watson(object):
             if not os.path.isdir(self._dir):
                 os.makedirs(self._dir)
 
-            pprint(self._current)
             if self._current is not None and self._old_state != self._current:
                 if self.is_started:
                     current = {
@@ -151,11 +150,9 @@ class Watson(object):
                         'tags': self.current['tags'],
                         'message': self.current.get('message'),
                     }
-                    pprint(current)
                 else:
                     current = {}
-                    pprint(current)
-                
+
                 safe_save(self.state_file, make_json_writer(lambda: current))
                 self._old_state = current
 
