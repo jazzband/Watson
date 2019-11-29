@@ -50,3 +50,8 @@ mostlyclean: clean distclean
 docs: install-dev
 	$(PYTHON) scripts/gen-cli-docs.py
 	mkdocs build
+
+.PHONY: completion-scripts
+completion-scripts:
+	scripts/create-completion-script.sh bash
+	scripts/create-completion-script.sh zsh

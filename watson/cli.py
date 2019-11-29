@@ -4,7 +4,6 @@ import datetime
 import itertools
 import json
 import operator
-import os
 import re
 
 from dateutil import tz
@@ -14,13 +13,22 @@ import arrow
 import click
 from click_didyoumean import DYMGroup
 
-from . import watson as _watson
+import watson as _watson
+from .autocompletion import (
+    get_frames,
+    get_project_or_task_completion,
+    get_projects,
+    get_rename_name,
+    get_rename_types,
+    get_tags,
+)
 from .frames import Frame
 from .utils import (
     apply_weekday_offset,
     build_csv,
     confirm_project,
     confirm_tags,
+    create_watson,
     flatten_report_for_csv,
     format_timedelta,
     frames_to_csv,
@@ -138,7 +146,7 @@ def cli(ctx):
 
     # This is the main command group, needed by click in order
     # to handle the subcommands
-    ctx.obj = _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
+    ctx.obj = create_watson()
 
 
 @cli.command()
@@ -177,7 +185,8 @@ def _start(watson, project, tags, restart=False, gap=True):
 @click.option('-g/-G', '--gap/--no-gap', 'gap_', is_flag=True, default=True,
               help=("(Don't) leave gap between end time of previous project "
                     "and start time of the current."))
-@click.argument('args', nargs=-1)
+@click.argument('args', nargs=-1,
+                autocompletion=get_project_or_task_completion)
 @click.option('-c', '--confirm-new-project', is_flag=True, default=False,
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
@@ -275,7 +284,7 @@ def stop(watson, at_):
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
               help="(Don't) Stop an already running project.")
-@click.argument('frame', default='-1')
+@click.argument('frame', default='-1', autocompletion=get_frames)
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
@@ -453,10 +462,11 @@ _SHORTCUT_OPTIONS_VALUES = {
               flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'luna', 'year'],
               help='Reports all activities.')
-@click.option('-p', '--project', 'projects', multiple=True,
+@click.option('-p', '--project', 'projects', autocompletion=get_projects,
+              multiple=True,
               help="Reports activity only for the given project. You can add "
               "other projects by using this option several times.")
-@click.option('-T', '--tag', 'tags', multiple=True,
+@click.option('-T', '--tag', 'tags', autocompletion=get_tags, multiple=True,
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
@@ -717,10 +727,11 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
-@click.option('-p', '--project', 'projects', multiple=True,
+@click.option('-p', '--project', 'projects', autocompletion=get_projects,
+              multiple=True,
               help="Reports activity only for the given project. You can add "
               "other projects by using this option several times.")
-@click.option('-T', '--tag', 'tags', multiple=True,
+@click.option('-T', '--tag', 'tags', autocompletion=get_tags, multiple=True,
               help="Reports activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
@@ -881,10 +892,11 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               flag_value=_SHORTCUT_OPTIONS_VALUES['all'],
               mutually_exclusive=['day', 'week', 'month', 'year'],
               help='Reports all activities.')
-@click.option('-p', '--project', 'projects', multiple=True,
+@click.option('-p', '--project', 'projects', autocompletion=get_projects,
+              multiple=True,
               help="Logs activity only for the given project. You can add "
               "other projects by using this option several times.")
-@click.option('-T', '--tag', 'tags', multiple=True,
+@click.option('-T', '--tag', 'tags', autocompletion=get_tags, multiple=True,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
@@ -1124,7 +1136,8 @@ def frames(watson):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
-@click.argument('args', nargs=-1)
+@click.argument('args', nargs=-1,
+                autocompletion=get_project_or_task_completion)
 @click.option('-f', '--from', 'from_', required=True, type=Date,
               help="Date and time of start of tracked activity")
 @click.option('-t', '--to', required=True, type=Date,
@@ -1184,7 +1197,7 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
-@click.argument('id', required=False)
+@click.argument('id', required=False, autocompletion=get_frames)
 @click.pass_obj
 @catch_watson_error
 def edit(watson, confirm_new_project, confirm_new_tag, id):
@@ -1309,7 +1322,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
-@click.argument('id')
+@click.argument('id', autocompletion=get_frames)
 @click.option('-f', '--force', is_flag=True,
               help="Don't ask for confirmation.")
 @click.pass_obj
@@ -1602,9 +1615,10 @@ def merge(watson, frames_with_conflict, force):
 
 
 @cli.command()
-@click.argument('rename_type', required=True, metavar='TYPE')
-@click.argument('old_name', required=True)
-@click.argument('new_name', required=True)
+@click.argument('rename_type', required=True, metavar='TYPE',
+                autocompletion=get_rename_types)
+@click.argument('old_name', required=True, autocompletion=get_rename_name)
+@click.argument('new_name', required=True, autocompletion=get_rename_name)
 @click.pass_obj
 @catch_watson_error
 def rename(watson, rename_type, old_name, new_name):
