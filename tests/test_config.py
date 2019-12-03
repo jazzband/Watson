@@ -145,7 +145,7 @@ value5 = one
         "Modifying default return value should not have side effect.")
 
 
-def test_config_getitems(mock, watson):
+def test_config_getitems(mocker, watson):
     content = """
 [test1]
 foo=bar
@@ -153,7 +153,7 @@ spamm=eggs
 
 [test2]
 """
-    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, 'read', mock_read(content))
     assert watson.config.getitems('test1') == dict(foo='bar', spamm='eggs')
     assert watson.config.getitems('test2') == {}
     assert watson.config.getitems('bogus') == {}

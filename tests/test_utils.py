@@ -375,18 +375,18 @@ def test_style_no_context(element, expected):
     ('project', '\x1b[32m{}\x1b[0m'),
     ('tag', '\x1b[33m{}\x1b[0m'),
 ])
-def test_style_with_context(element, expected, mock):
+def test_style_with_context(element, expected, mocker):
     content = u"""
 [style:project]
 fg = green
 [style:tag]
 fg = yellow
     """
-    mock.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, 'read', mock_read(content))
     config = ConfigParser()
     config.read('dummy')
-    mock_get_ctx = mock.Mock(
-        return_value=mock.Mock(obj=mock.Mock(config=config)))
-    mock.patch('click.get_current_context', mock_get_ctx)
+    mock_get_ctx = mocker.Mock(
+        return_value=mocker.Mock(obj=mocker.Mock(config=config)))
+    mocker.patch('click.get_current_context', mock_get_ctx)
     get_styles_from_config()
     assert style(element, 'foo') == expected.format('foo')
