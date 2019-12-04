@@ -27,6 +27,7 @@ from watson.utils import (
     build_csv,
     confirm_project,
     confirm_tags,
+    create_watson,
     flatten_report_for_csv,
     frames_to_csv,
     frames_to_json,
@@ -388,5 +389,6 @@ fg = yellow
     mock_get_ctx = mocker.Mock(
         return_value=mocker.Mock(obj=mocker.Mock(config=config)))
     mocker.patch('click.get_current_context', mock_get_ctx)
-    get_styles_from_config()
+    mock_get_ctx.obj = create_watson()
+    get_styles_from_config(ctx=mock_get_ctx)
     assert style(element, 'foo') == expected.format('foo')

@@ -141,7 +141,7 @@ def cli(ctx):
     # This is the main command group, needed by click in order
     # to handle the subcommands
     ctx.obj = create_watson()
-    get_styles_from_config()
+    get_styles_from_config(ctx=ctx)
 
 
 @cli.command()

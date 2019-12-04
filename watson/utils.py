@@ -39,7 +39,7 @@ DEFAULT_STYLES = {
     'time': {'fg': 'green'},
     'error': {'fg': 'red'},
     'date': {'fg': 'cyan'},
-    'id': {'fg': 'white'}
+    'id': {'fg': 'white'},
 }
 
 
@@ -47,8 +47,7 @@ def create_watson():
     return _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
 
 
-def get_styles_from_config():
-    ctx = click.get_current_context(silent=True)
+def get_styles_from_config(ctx=None):
     if ctx is None:
         return
 
@@ -85,30 +84,17 @@ def confirm_tags(tags, watson_tags):
 
 
 def style(name, element):
-    def _style_tags(tags):
-        if not tags:
+    if name == 'tags':
+        if not element:
             return ''
 
-        return u'[{}]'.format(', '.join(
-            style('tag', tag) for tag in tags
-        ))
+        return u'[{}]'.format(', '.join(style('tag', tag) for tag in element))
 
-    def _style_short_id(id):
-        return style('id', id[:7])
+    if name == 'short_id':
+        return style('id', element[:7])
 
-    formats = DEFAULT_STYLES.copy()
-    formats.update({
-        'tags': _style_tags,
-        'short_id': _style_short_id,
-    })
-
-    fmt = formats.get(name, {})
-
-    if isinstance(fmt, dict):
-        return click.style(element, **fmt)
-    else:
-        # The fmt might be a function if we need to do some computation
-        return fmt(element)
+    fmt = DEFAULT_STYLES.get(name, {})
+    return click.style(element, **fmt)
 
 
 def format_timedelta(delta):
