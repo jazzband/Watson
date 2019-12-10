@@ -1,3 +1,6 @@
+.. image:: https://repl.it/badge/github/TailorDev/Watson
+    :target: https://repl.it/github/TailorDev/Watson
+
 .. image:: https://tailordev.github.io/Watson/img/logo-watson-600px.png
 
 |Build Status| |PyPI Latest Version| |Requires.io|
