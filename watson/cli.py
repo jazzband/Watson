@@ -28,6 +28,7 @@ from .utils import (
     confirm_project,
     confirm_tags,
     create_watson,
+    echo_frame_message,
     flatten_report_for_csv,
     format_timedelta,
     frames_to_csv,
@@ -161,16 +162,22 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags, restart=False, gap=True):
+def _start(watson, project, tags, restart=False, gap=True,
+           message=None):
     """
     Start project with given list of tags and save status.
     """
-    current = watson.start(project, tags, restart=restart, gap=gap)
+    current = watson.start(project, tags, restart=restart, gap=gap,
+                           message=message)
+    # TODO: Update status to include message
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
         style('time', "{:HH:mm}".format(current['start']))
     ))
+
+    echo_frame_message(current)
+
     watson.save()
 
 
@@ -184,10 +191,13 @@ def _start(watson, project, tags, restart=False, gap=True):
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
+@click.option('-m', '--message', type=str, default=None,
+              help="A brief note that describe time entry being started")
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
-def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
+def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True,
+          message=None):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -227,6 +237,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
 
     if project and watson.is_started and not gap_:
         current = watson.current
+        # TODO: log in error message
         errmsg = ("Project '{}' is already started and '--no-gap' is passed. "
                   "Please stop manually.")
         raise click.ClickException(
@@ -239,7 +250,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
 
-    _start(watson, project, tags, gap=gap_)
+    _start(watson, project, tags, gap=gap_, message=message)
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
@@ -283,8 +294,11 @@ def stop(watson, at_, message):
         style('short_id', frame.id),
     ))
 
-    if frame.message is not None:
-        click.echo("Log message: {}".format(style('message', frame.message)))
+    if frame.message:
+        click.echo(u"{}{}".format(
+            style('message', '>> '),
+            style('message', frame.message)
+        ))
 
     watson.save()
 
@@ -425,6 +439,12 @@ def status(watson, project, tags, elapsed):
         style('date', current['start'].strftime(datefmt)),
         style('time', current['start'].strftime(timefmt))
     ))
+
+    if current['message']:
+        click.echo(u"{}{}".format(
+            style('message', '>> '),
+            style('message', current['message'])
+        ))
 
 
 _SHORTCUT_OPTIONS = ['all', 'year', 'month', 'luna', 'week', 'day']
@@ -1233,7 +1253,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         id = frame.id
     elif watson.is_started:
         frame = Frame(watson.current['start'], None, watson.current['project'],
-                      None, watson.current['tags'])
+                      None, watson.current['tags'], None,
+                      watson.current['message'])
     elif watson.frames:
         frame = watson.frames[-1]
         id = frame.id
@@ -1246,12 +1267,13 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         'start': frame.start.format(datetime_format),
         'project': frame.project,
         'tags': frame.tags,
+        'message': "" if frame.message is None else frame.message,
     }
 
     if id:
         data['stop'] = frame.stop.format(datetime_format)
 
-    if frame.message is not None:
+    if frame.message is not None and len(frame.message) > 0:
         data['message'] = frame.message
 
     text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
@@ -1284,12 +1306,12 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
                 tzinfo=local_tz).to('utc')
             stop = arrow.get(data['stop'], datetime_format).replace(
                 tzinfo=local_tz).to('utc') if id else None
-            message = data.get('message')
             # if start time of the project is not before end time
             #  raise ValueException
             if not watson.is_started and start > stop:
                 raise ValueError(
                     "Task cannot end before it starts.")
+            message = data.get('message')
             # break out of while loop and continue execution of
             #  the edit function normally
             break
@@ -1322,6 +1344,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         watson.current = dict(start=start, project=project, tags=tags,
                               message=message)
 
+    print("message")
+    print(message)
     watson.save()
     click.echo(
         u"Edited frame for project {project}{tags}, from {start} to {stop} "

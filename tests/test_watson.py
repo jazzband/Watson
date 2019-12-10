@@ -197,6 +197,7 @@ def test_frames_without_message(mocker, watson):
     assert frame.updated_at == arrow.get(3630)
     assert frame.message is None
 
+
 def test_frames_with_empty_file(mocker, watson):
     mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=""))
     mocker.patch('os.path.getsize', return_value=0)

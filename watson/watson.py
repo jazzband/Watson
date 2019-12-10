@@ -253,7 +253,7 @@ class Watson(object):
         frame = self.frames.add(project, from_date, to_date, tags=tags)
         return frame
 
-    def start(self, project, tags=None, restart=False, gap=True):
+    def start(self, project, tags=None, restart=False, gap=True, message=None):
         if self.is_started:
             raise WatsonError(
                 u"Project {} is already started.".format(
@@ -265,7 +265,8 @@ class Watson(object):
         if not restart:
             tags = (tags or []) + default_tags
 
-        new_frame = {'project': project, 'tags': deduplicate(tags)}
+        new_frame = {'project': project, 'tags': deduplicate(tags),
+                     'message': message}
         if not gap:
             stop_of_prev_frame = self.frames[-1].stop
             new_frame['start'] = stop_of_prev_frame
