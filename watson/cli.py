@@ -28,7 +28,7 @@ from .utils import (
     confirm_project,
     confirm_tags,
     create_watson,
-    echo_frame_message,
+    echo_dict_message,
     flatten_report_for_csv,
     format_timedelta,
     frames_to_csv,
@@ -176,7 +176,7 @@ def _start(watson, project, tags, restart=False, gap=True,
         style('time', "{:HH:mm}".format(current['start']))
     ))
 
-    echo_frame_message(current)
+    echo_dict_message(current)
 
     watson.save()
 
@@ -942,10 +942,12 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
+@click.option('-m/-M', '--messages/--no-messages', 'messages', default=True,
+              help="(Don't) output messages.")
 @click.pass_obj
 @catch_watson_error
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        luna, all, output_format, pager):
+        luna, all, output_format, pager, messages):
     """
     Display each recorded session during the given timespan.
 
@@ -970,6 +972,9 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     You can change the output format from *plain text* to *JSON* using the
     `--json` option or to *CSV* using the `--csv` option. Only one of these
     two options can be used at once.
+
+    You can control whether or not messages for each frame are displayed by
+    passing --messages or --no-messages.
 
     Example:
 
@@ -1001,12 +1006,12 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             1070ddb  13:48 to 16:17   2h 29m 11s  voyager1  [antenna, sensors]
     \b
     $ watson log --from 2014-04-16 --to 2014-04-17 --csv
-    id,start,stop,project,tags
-    a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission"
-    5e91316,2014-04-17 10:19,2014-04-17 12:59,hubble,"camera, transmission"
-    761dd51,2014-04-17 14:42,2014-04-17 15:54,voyager1,antenna
-    02cb269,2014-04-16 09:53,2014-04-16 12:43,apollo11,wheels
-    1070ddb,2014-04-16 13:48,2014-04-16 16:17,voyager1,"antenna, sensors"
+    id,start,stop,project,tags,message
+    a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission",
+    5e91316,2014-04-17 10:19,2014-04-17 12:59,hubble,"camera, transmission",
+    761dd51,2014-04-17 14:42,2014-04-17 15:54,voyager1,antenna,
+    02cb269,2014-04-16 09:53,2014-04-16 12:43,apollo11,wheels,
+    1070ddb,2014-04-16 13:48,2014-04-16 16:17,voyager1,"antenna, sensors",
     """  # noqa
     for start_time in (_ for _ in [day, week, month, luna, year, all]
                        if _ is not None):
@@ -1020,7 +1025,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
                        watson.config.getboolean('options', 'log_current')):
             cur = watson.current
             watson.frames.add(cur['project'], cur['start'], arrow.utcnow(),
-                              cur['tags'], id="current")
+                              cur['tags'], id="current",
+                              message=cur['message'])
 
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
@@ -1077,20 +1083,20 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             )
         )
 
-        _print("\n".join(
-            u"\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
-                delta=format_timedelta(frame.stop - frame.start),
-                project=style('project', u'{:>{}}'.format(
-                    frame.project, longest_project
-                )),
-                pad=longest_project,
-                tags=(" "*2 if frame.tags else "") + style('tags', frame.tags),
-                start=style('time', '{:HH:mm}'.format(frame.start)),
-                stop=style('time', '{:HH:mm}'.format(frame.stop)),
-                id=style('short_id', frame.id)
-            )
-            for frame in frames
-        ))
+        for frame in frames:
+            _print(u"\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}"
+                   .format(
+                    delta=format_timedelta(frame.stop - frame.start),
+                    project=style('project', u'{:>{}}'.format(
+                        frame.project, longest_project
+                    )),
+                    pad=longest_project,
+                    tags=(" "*2 if frame.tags else "")
+                    + style('tags', frame.tags),
+                    start=style('time', '{:HH:mm}'.format(frame.start)),
+                    stop=style('time', '{:HH:mm}'.format(frame.stop)),
+                    id=style('short_id', frame.id)
+                    ))
 
     _final_print(lines)
 

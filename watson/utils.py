@@ -426,8 +426,16 @@ def json_arrow_encoder(obj):
 
 
 def echo_frame_message(frame):
-    if frame['message']:
+    echo_message(frame.message)
+
+
+def echo_dict_message(dict):
+    echo_message(dict['message'])
+
+
+def echo_message(message):
+    if message:
         click.echo(u"{}{}".format(
             style('message', '>> '),
-            style('message', frame['message'])
+            style('message', message)
         ))
