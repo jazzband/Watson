@@ -28,8 +28,8 @@ from .utils import (
     confirm_project,
     confirm_tags,
     create_watson,
-    echo_dict_message,
     flatten_report_for_csv,
+    format_message,
     format_timedelta,
     frames_to_csv,
     frames_to_json,
@@ -169,14 +169,13 @@ def _start(watson, project, tags, restart=False, gap=True,
     """
     current = watson.start(project, tags, restart=restart, gap=gap,
                            message=message)
-    # TODO: Update status to include message
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
         style('time', "{:HH:mm}".format(current['start']))
     ))
-
-    echo_dict_message(current)
+    if message:
+        click.echo(format_message(message))
 
     watson.save()
 
@@ -278,7 +277,7 @@ def stop(watson, at_, message):
 
     $ watson stop -m "Done some thinking"
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
-    Log message: Done some thinking
+    >> Done some thinking
 
     $ watson stop --at 13:37
     Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: e9ccd52) # noqa: E501
@@ -295,10 +294,7 @@ def stop(watson, at_, message):
     ))
 
     if frame.message:
-        click.echo(u"{}{}".format(
-            style('message', '>> '),
-            style('message', frame.message)
-        ))
+        click.echo(format_message(frame.message))
 
     watson.save()
 
@@ -942,12 +938,12 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
-@click.option('-m/-M', '--messages/--no-messages', 'messages', default=True,
+@click.option('-m/-M', '--message/--no-message', 'show_messages', default=True,
               help="(Don't) output messages.")
 @click.pass_obj
 @catch_watson_error
 def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        luna, all, output_format, pager, messages):
+        luna, all, output_format, pager, show_messages):
     """
     Display each recorded session during the given timespan.
 
@@ -1097,6 +1093,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
                     stop=style('time', '{:HH:mm}'.format(frame.stop)),
                     id=style('short_id', frame.id)
                     ))
+            if frame.message is not None and show_messages:
+                _print(u"\t{}{}".format(" "*9, format_message(frame.message)))
 
     _final_print(lines)
 
@@ -1371,7 +1369,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
     )
 
     if message is not None:
-        click.echo("Log message: {}".format(style('message', message)))
+        click.echo("Message: {}".format(style('message', message)))
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})

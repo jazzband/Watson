@@ -424,18 +424,8 @@ def json_arrow_encoder(obj):
 
     raise TypeError("Object {} is not JSON serializable".format(obj))
 
-
-def echo_frame_message(frame):
-    echo_message(frame.message)
-
-
-def echo_dict_message(dict):
-    echo_message(dict['message'])
-
-
-def echo_message(message):
-    if message:
-        click.echo(u"{}{}".format(
-            style('message', '>> '),
-            style('message', message)
-        ))
+def format_message(message):
+    return u"{}{}".format(
+        style('message', '>> '),
+        style('message', message)
+    )
