@@ -526,7 +526,6 @@ class Watson(object):
 
             project_messages = []
             for frame in frames:
-                tags_match = len(set(frame.tags) & set(tags_to_print)) > 0
                 if not frame.tags and frame.message:
                     # If this frame has no tags, and the user wants to print
                     # out all frames (they didn't specify a tag filter), add
@@ -561,7 +560,8 @@ class Watson(object):
                     datetime.timedelta()
                 )
 
-                tag_messages = [frame.message for frame in frames if tag in frame.tags and frame.message]
+                tag_messages = [frame.message for frame in frames
+                                if tag in frame.tags and frame.message]
 
                 project_report['tags'].append({
                     'name': tag,

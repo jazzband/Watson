@@ -424,6 +424,7 @@ def json_arrow_encoder(obj):
 
     raise TypeError("Object {} is not JSON serializable".format(obj))
 
+
 def format_message(message):
     return u"{}{}".format(
         style('message', '>> '),
