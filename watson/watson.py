@@ -528,7 +528,7 @@ class Watson(object):
             for frame in frames:
                 # If the user is trying to print out all frames in the project
                 # (tags will be empty because no tags were passed)
-                if not tags:
+                if not tags and frame.message:
                     # And this frame has no tags...
                     if not frame.tags:
                         # Add it to the project-level messages because it

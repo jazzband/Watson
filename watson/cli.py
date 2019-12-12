@@ -516,11 +516,13 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
+@click.option('-m', '--message', 'show_messages', default=False,
+              help="Show frame messages in report.")
 @click.pass_obj
 @catch_watson_error
 def report(watson, current, from_, to, projects, tags, ignore_projects,
            ignore_tags, year, month, week, day, luna, all, output_format,
-           pager, aggregated=False):
+           pager, aggregated=False, show_messages=False):
     """
     Display a report of the time spent on each project.
 
@@ -545,6 +547,10 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 
     If you are outputting to the terminal, you can selectively enable a pager
     through the `--pager` option.
+
+    You can include frame messages in the report by passing the --messages
+    option.  Messages will always be present in *JSON* reports.  Messages are
+    never included in *CSV* reports.
 
     You can change the output format for the report from *plain text* to *JSON*
     using the `--json` option or to *CSV* using the `--csv` option. Only one
@@ -600,14 +606,16 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
                 "tags": [
                     {
                         "name": "export",
-                        "time": 530.0
+                        "time": 530.0,
+                        "messages": ["working hard"]
                     },
                     {
                         "name": "report",
                         "time": 530.0
                     }
                 ],
-                "time": 530.0
+                "time": 530.0,
+                "messages": ["fixing bug #74", "refactor tests"]
             }
         ],
         "time": 530.0,
@@ -706,6 +714,13 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
             project=style('project', project['name'])
         ))
 
+        if show_messages:
+            for message in project['messages']:
+                _print(u'{tab}{message}'.format(
+                    tab=tab,
+                    message=format_message(message),
+                ))
+
         tags = project['tags']
         if tags:
             longest_tag = max(len(tag) for tag in tags or [''])
@@ -719,6 +734,13 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
                         tag['name'], longest_tag
                     )),
                 ))
+
+                if show_messages:
+                    for message in tag['messages']:
+                        _print(u'\t{tab}{message}'.format(
+                            tab=tab,
+                            message=format_message(message),
+                        ))
         _print("")
 
     # only show total time at the bottom for a project if it is not
@@ -773,11 +795,13 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
+@click.option('-m', '--message', 'show_messages', default=False,
+              help="Show frame messages in report.")
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
 def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
-              pager):
+              pager, show_messages):
     """
     Display a report of the time spent on each project aggregated by day.
 
@@ -856,7 +880,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
         output = ctx.invoke(report, current=current, from_=from_offset,
                             to=from_offset, projects=projects, tags=tags,
                             output_format=output_format,
-                            pager=pager, aggregated=True)
+                            pager=pager, aggregated=True, show_messages=show_messages)
 
         if 'json' in output_format:
             lines.append(output)
@@ -938,7 +962,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
-@click.option('-m/-M', '--message/--no-message', 'show_messages', default=True,
+@click.option('-m/-M', '--messages/--no-messages', 'show_messages', default=True,
               help="(Don't) output messages.")
 @click.pass_obj
 @catch_watson_error
@@ -1348,8 +1372,6 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         watson.current = dict(start=start, project=project, tags=tags,
                               message=message)
 
-    print("message")
-    print(message)
     watson.save()
     click.echo(
         u"Edited frame for project {project}{tags}, from {start} to {stop} "
