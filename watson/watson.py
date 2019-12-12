@@ -484,6 +484,9 @@ class Watson(object):
 
         span = self.frames.span(from_, to)
 
+        if tags is None:
+            tags = []
+
         frames_by_project = sorted_groupby(
             self.frames.filter(
                 projects=projects or None, tags=tags or None,
@@ -516,19 +519,40 @@ class Watson(object):
             )
             total += delta
 
-            project_report = {
-                'name': project,
-                'time': delta.total_seconds(),
-                'tags': []
-            }
-
-            if tags is None:
-                tags = []
-
             tags_to_print = sorted(
                 set(tag for frame in frames for tag in frame.tags
                     if tag in tags or not tags)
             )
+
+            project_messages = []
+            for frame in frames:
+                tags_match = len(set(frame.tags) & set(tags_to_print)) > 0
+                if not frame.tags and frame.message:
+                    # If this frame has no tags, and the user wants to print
+                    # out all frames (they didn't specify a tag filter), add
+                    # this message here.
+                    project_messages.append(frame.message)
+
+                # If the user is trying to print out all frames in the project
+                # (tags will be empty because no tags were passed)
+                if not tags:
+                    # And this frame has no tags...
+                    if not frame.tags:
+                        # Add it to the project-level messages because it
+                        # won't get included in the tag-level messages
+                        # because it has no tag.
+                        project_messages.append(frame.message)
+                    # And this frame has a tag...
+                    else:
+                        # Let the tag-level filter handle this frame later on
+                        pass
+
+            project_report = {
+                'name': project,
+                'time': delta.total_seconds(),
+                'tags': [],
+                'messages': project_messages,
+            }
 
             for tag in tags_to_print:
                 delta = reduce(
@@ -537,9 +561,12 @@ class Watson(object):
                     datetime.timedelta()
                 )
 
+                tag_messages = [frame.message for frame in frames if tag in frame.tags and frame.message]
+
                 project_report['tags'].append({
                     'name': tag,
-                    'time': delta.total_seconds()
+                    'time': delta.total_seconds(),
+                    'messages': tag_messages
                 })
 
             report['projects'].append(project_report)
