@@ -823,9 +823,12 @@ def test_report(watson):
     assert 'time' in report['projects'][0]['tags'][0]
     assert report['projects'][0]['tags'][1]['name'] == 'B'
     assert 'time' in report['projects'][0]['tags'][1]
+    assert len(report['projects'][0]['messages']) == 0
+    assert len(report['projects'][0]['tags'][0]['messages']) == 0
+    assert len(report['projects'][0]['tags'][1]['messages']) == 0
 
     watson.start('bar', tags=['C'])
-    watson.stop()
+    watson.stop(message='bar message')
 
     report = watson.report(arrow.now(), arrow.now())
     assert len(report['projects']) == 2
@@ -833,6 +836,13 @@ def test_report(watson):
     assert report['projects'][1]['name'] == 'foo'
     assert len(report['projects'][0]['tags']) == 1
     assert report['projects'][0]['tags'][0]['name'] == 'C'
+
+    assert len(report['projects'][1]['messages']) == 0
+    assert len(report['projects'][1]['tags'][0]['messages']) == 0
+    assert len(report['projects'][1]['tags'][1]['messages']) == 0
+    assert len(report['projects'][0]['messages']) == 0
+    assert len(report['projects'][0]['tags'][0]['messages']) == 1
+    assert report['projects'][0]['tags'][0]['messages'][0] == 'bar message'
 
     report = watson.report(
         arrow.now(), arrow.now(), projects=['foo'], tags=['B']
@@ -843,16 +853,36 @@ def test_report(watson):
     assert report['projects'][0]['tags'][0]['name'] == 'B'
 
     watson.start('baz', tags=['D'])
-    watson.stop()
+    watson.stop(message='baz message')
+
+    watson.start('foo')
+    watson.stop(message='foo no tags')
+
+    watson.start('foo', tags=['A'])
+    watson.stop(message='foo one tag A')
 
     report = watson.report(arrow.now(), arrow.now(), projects=["foo"])
+
     assert len(report['projects']) == 1
+    assert len(report['projects'][0]['messages']) == 1
+    # A project-level message because this frame has no tags
+    assert report['projects'][0]['messages'][0] == 'foo no tags'
+    assert len(report['projects'][0]['tags']) == 2
+    assert report['projects'][0]['tags'][0]['name'] == 'A'
+    assert report['projects'][0]['tags'][1]['name'] == 'B'
+    assert len(report['projects'][0]['tags'][0]['messages']) == 1
+    assert len(report['projects'][0]['tags'][1]['messages']) == 0
+    # A tag-level message because this frame has tags
+    assert report['projects'][0]['tags'][0]['messages'][0] == 'foo one tag A'
 
     report = watson.report(arrow.now(), arrow.now(), ignore_projects=["bar"])
     assert len(report['projects']) == 2
 
     report = watson.report(arrow.now(), arrow.now(), tags=["A"])
     assert len(report['projects']) == 1
+    assert len(report['projects'][0]['messages']) == 0
+    assert len(report['projects'][0]['tags'][0]['messages']) == 1
+    assert report['projects'][0]['tags'][0]['messages'][0] == 'foo one tag A'
 
     report = watson.report(arrow.now(), arrow.now(), ignore_tags=["D"])
     assert len(report['projects']) == 2

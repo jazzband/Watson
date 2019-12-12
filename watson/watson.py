@@ -526,12 +526,6 @@ class Watson(object):
 
             project_messages = []
             for frame in frames:
-                if not frame.tags and frame.message:
-                    # If this frame has no tags, and the user wants to print
-                    # out all frames (they didn't specify a tag filter), add
-                    # this message here.
-                    project_messages.append(frame.message)
-
                 # If the user is trying to print out all frames in the project
                 # (tags will be empty because no tags were passed)
                 if not tags:
