@@ -150,8 +150,8 @@ def test_frames_without_tags(mocker, watson):
     assert watson.frames[0].tags == []
 
 
-def test_frames_with_message(mocker, watson):
-    """Test loading frames with messages."""
+def test_frames_with_note(mocker, watson):
+    """Test loading frames with notes."""
     content = json.dumps([
         [3601, 3610, 'foo', 'abcdefg', ['A', 'B', 'C'], 3650,
          "My hovercraft is full of eels"]
@@ -165,11 +165,11 @@ def test_frames_with_message(mocker, watson):
     assert frame.start == arrow.get(3601)
     assert frame.stop == arrow.get(3610)
     assert frame.tags == ['A', 'B', 'C']
-    assert frame.message == "My hovercraft is full of eels"
+    assert frame.note == "My hovercraft is full of eels"
 
 
-def test_frames_without_message(mocker, watson):
-    """Test loading frames without messages."""
+def test_frames_without_note(mocker, watson):
+    """Test loading frames without notes."""
     content = json.dumps([
         [3601, 3610, 'foo', 'abcdefg'],
         [3611, 3620, 'foo', 'hijklmn', ['A', 'B', 'C']],
@@ -184,18 +184,18 @@ def test_frames_without_message(mocker, watson):
     assert frame.start == arrow.get(3601)
     assert frame.stop == arrow.get(3610)
     assert frame.tags == []
-    assert frame.message is None
+    assert frame.note is None
 
     frame = watson.frames['hijklmn']
     assert frame.id == 'hijklmn'
     assert frame.tags == ['A', 'B', 'C']
-    assert frame.message is None
+    assert frame.note is None
 
     frame = watson.frames['opqrstu']
     assert frame.id == 'opqrstu'
     assert frame.tags == ['A', 'B', 'C']
     assert frame.updated_at == arrow.get(3630)
-    assert frame.message is None
+    assert frame.note is None
 
 
 def test_frames_with_empty_file(mocker, watson):
@@ -350,8 +350,8 @@ def test_stop_started_project_without_tags(watson):
     assert watson.frames[0].tags == []
 
 
-def test_stop_started_project_without_message(watson):
-    """Test stopping watson without adding a message."""
+def test_stop_started_project_without_note(watson):
+    """Test stopping watson without adding a note."""
     watson.start('foo')
     watson.stop()
 
@@ -360,11 +360,11 @@ def test_stop_started_project_without_message(watson):
     assert len(watson.frames) == 1
     frame = watson.frames[0]
     assert frame.project == 'foo'
-    assert frame.message is None
+    assert frame.note is None
 
 
-def test_stop_started_project_with_message(watson):
-    """Test stopping watson when adding a message."""
+def test_stop_started_project_with_note(watson):
+    """Test stopping watson when adding a note."""
     watson.start('foo')
     watson.stop(None, "My hovercraft is full of eels")
 
@@ -373,7 +373,7 @@ def test_stop_started_project_with_message(watson):
     assert len(watson.frames) == 1
     frame = watson.frames[0]
     assert frame.project == 'foo'
-    assert frame.message == "My hovercraft is full of eels"
+    assert frame.note == "My hovercraft is full of eels"
 
 
 def test_stop_no_project(watson):
@@ -463,7 +463,7 @@ def test_save_empty_current(config_dir, mocker, json_mock):
     assert json_mock.call_count == 1
     result = json_mock.call_args[0][0]
     assert result == {'project': 'foo', 'start': 4000,
-                      'tags': [], 'message': None}
+                      'tags': [], 'note': None}
 
     watson.current = {}
     watson.save()
@@ -823,12 +823,12 @@ def test_report(watson):
     assert 'time' in report['projects'][0]['tags'][0]
     assert report['projects'][0]['tags'][1]['name'] == 'B'
     assert 'time' in report['projects'][0]['tags'][1]
-    assert len(report['projects'][0]['messages']) == 0
-    assert len(report['projects'][0]['tags'][0]['messages']) == 0
-    assert len(report['projects'][0]['tags'][1]['messages']) == 0
+    assert len(report['projects'][0]['notes']) == 0
+    assert len(report['projects'][0]['tags'][0]['notes']) == 0
+    assert len(report['projects'][0]['tags'][1]['notes']) == 0
 
     watson.start('bar', tags=['C'])
-    watson.stop(message='bar message')
+    watson.stop(note='bar note')
 
     report = watson.report(arrow.now(), arrow.now())
     assert len(report['projects']) == 2
@@ -837,12 +837,12 @@ def test_report(watson):
     assert len(report['projects'][0]['tags']) == 1
     assert report['projects'][0]['tags'][0]['name'] == 'C'
 
-    assert len(report['projects'][1]['messages']) == 0
-    assert len(report['projects'][1]['tags'][0]['messages']) == 0
-    assert len(report['projects'][1]['tags'][1]['messages']) == 0
-    assert len(report['projects'][0]['messages']) == 0
-    assert len(report['projects'][0]['tags'][0]['messages']) == 1
-    assert report['projects'][0]['tags'][0]['messages'][0] == 'bar message'
+    assert len(report['projects'][1]['notes']) == 0
+    assert len(report['projects'][1]['tags'][0]['notes']) == 0
+    assert len(report['projects'][1]['tags'][1]['notes']) == 0
+    assert len(report['projects'][0]['notes']) == 0
+    assert len(report['projects'][0]['tags'][0]['notes']) == 1
+    assert report['projects'][0]['tags'][0]['notes'][0] == 'bar note'
 
     report = watson.report(
         arrow.now(), arrow.now(), projects=['foo'], tags=['B']
@@ -853,36 +853,36 @@ def test_report(watson):
     assert report['projects'][0]['tags'][0]['name'] == 'B'
 
     watson.start('baz', tags=['D'])
-    watson.stop(message='baz message')
+    watson.stop(note='baz note')
 
     watson.start('foo')
-    watson.stop(message='foo no tags')
+    watson.stop(note='foo no tags')
 
     watson.start('foo', tags=['A'])
-    watson.stop(message='foo one tag A')
+    watson.stop(note='foo one tag A')
 
     report = watson.report(arrow.now(), arrow.now(), projects=["foo"])
 
     assert len(report['projects']) == 1
-    assert len(report['projects'][0]['messages']) == 1
-    # A project-level message because this frame has no tags
-    assert report['projects'][0]['messages'][0] == 'foo no tags'
+    assert len(report['projects'][0]['notes']) == 1
+    # A project-level note because this frame has no tags
+    assert report['projects'][0]['notes'][0] == 'foo no tags'
     assert len(report['projects'][0]['tags']) == 2
     assert report['projects'][0]['tags'][0]['name'] == 'A'
     assert report['projects'][0]['tags'][1]['name'] == 'B'
-    assert len(report['projects'][0]['tags'][0]['messages']) == 1
-    assert len(report['projects'][0]['tags'][1]['messages']) == 0
-    # A tag-level message because this frame has tags
-    assert report['projects'][0]['tags'][0]['messages'][0] == 'foo one tag A'
+    assert len(report['projects'][0]['tags'][0]['notes']) == 1
+    assert len(report['projects'][0]['tags'][1]['notes']) == 0
+    # A tag-level note because this frame has tags
+    assert report['projects'][0]['tags'][0]['notes'][0] == 'foo one tag A'
 
     report = watson.report(arrow.now(), arrow.now(), ignore_projects=["bar"])
     assert len(report['projects']) == 2
 
     report = watson.report(arrow.now(), arrow.now(), tags=["A"])
     assert len(report['projects']) == 1
-    assert len(report['projects'][0]['messages']) == 0
-    assert len(report['projects'][0]['tags'][0]['messages']) == 1
-    assert report['projects'][0]['tags'][0]['messages'][0] == 'foo one tag A'
+    assert len(report['projects'][0]['notes']) == 0
+    assert len(report['projects'][0]['tags'][0]['notes']) == 1
+    assert report['projects'][0]['tags'][0]['notes'][0] == 'foo one tag A'
 
     report = watson.report(arrow.now(), arrow.now(), ignore_tags=["D"])
     assert len(report['projects']) == 2

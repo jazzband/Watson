@@ -148,7 +148,7 @@ class Watson(object):
                         'project': self.current['project'],
                         'start': self._format_date(self.current['start']),
                         'tags': self.current['tags'],
-                        'message': self.current.get('message'),
+                        'note': self.current.get('note'),
                     }
                 else:
                     current = {}
@@ -211,7 +211,7 @@ class Watson(object):
             'project': value['project'],
             'start': start,
             'tags': value.get('tags') or [],
-            'message': value.get('message'),
+            'note': value.get('note'),
         }
 
         if self._old_state is None:
@@ -253,7 +253,7 @@ class Watson(object):
         frame = self.frames.add(project, from_date, to_date, tags=tags)
         return frame
 
-    def start(self, project, tags=None, restart=False, gap=True, message=None):
+    def start(self, project, tags=None, restart=False, gap=True, note=None):
         if self.is_started:
             raise WatsonError(
                 u"Project {} is already started.".format(
@@ -266,14 +266,14 @@ class Watson(object):
             tags = (tags or []) + default_tags
 
         new_frame = {'project': project, 'tags': deduplicate(tags),
-                     'message': message}
+                     'note': note}
         if not gap:
             stop_of_prev_frame = self.frames[-1].stop
             new_frame['start'] = stop_of_prev_frame
         self.current = new_frame
         return self.current
 
-    def stop(self, stop_at=None, message=None):
+    def stop(self, stop_at=None, note=None):
         if not self.is_started:
             raise WatsonError("No project started.")
 
@@ -291,12 +291,12 @@ class Watson(object):
         if stop_at > arrow.now():
             raise WatsonError('Task cannot end in the future.')
 
-        if message is None:
-            message = old.get('message')
+        if note is None:
+            note = old.get('note')
 
         frame = self.frames.add(
             old['project'], old['start'], stop_at, tags=old['tags'],
-            message=message
+            note=note
         )
 
         self.current = None
@@ -524,17 +524,17 @@ class Watson(object):
                     if tag in tags or not tags)
             )
 
-            project_messages = []
+            project_notes = []
             for frame in frames:
                 # If the user is trying to print out all frames in the project
                 # (tags will be empty because no tags were passed)
-                if not tags and frame.message:
+                if not tags and frame.note:
                     # And this frame has no tags...
                     if not frame.tags:
-                        # Add it to the project-level messages because it
-                        # won't get included in the tag-level messages
+                        # Add it to the project-level notes because it
+                        # won't get included in the tag-level notes
                         # because it has no tag.
-                        project_messages.append(frame.message)
+                        project_notes.append(frame.note)
                     # And this frame has a tag...
                     else:
                         # Let the tag-level filter handle this frame later on
@@ -544,7 +544,7 @@ class Watson(object):
                 'name': project,
                 'time': delta.total_seconds(),
                 'tags': [],
-                'messages': project_messages,
+                'notes': project_notes,
             }
 
             for tag in tags_to_print:
@@ -554,13 +554,13 @@ class Watson(object):
                     datetime.timedelta()
                 )
 
-                tag_messages = [frame.message for frame in frames
-                                if tag in frame.tags and frame.message]
+                tag_notes = [frame.note for frame in frames
+                                if tag in frame.tags and frame.note]
 
                 project_report['tags'].append({
                     'name': tag,
                     'time': delta.total_seconds(),
-                    'messages': tag_messages
+                    'notes': tag_notes
                 })
 
             report['projects'].append(project_report)

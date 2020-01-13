@@ -283,7 +283,7 @@ def test_frames_to_csv(watson):
     result = frames_to_csv(watson.frames)
 
     read_csv = list(csv.reader(StringIO(result)))
-    header = ['id', 'start', 'stop', 'project', 'tags', 'message']
+    header = ['id', 'start', 'stop', 'project', 'tags', 'note']
     assert len(read_csv) == 2
     assert read_csv[0] == header
     assert read_csv[1][3] == 'foo'
@@ -302,7 +302,7 @@ def test_frames_to_json(watson):
 
     result = json.loads(frames_to_json(watson.frames))
 
-    keys = {'id', 'start', 'stop', 'project', 'tags', 'message'}
+    keys = {'id', 'start', 'stop', 'project', 'tags', 'note'}
     assert len(result) == 1
     assert set(result[0].keys()) == keys
     assert result[0]['project'] == 'foo'

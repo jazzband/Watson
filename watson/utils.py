@@ -85,7 +85,7 @@ def style(name, element):
         'date': {'fg': 'cyan'},
         'short_id': _style_short_id,
         'id': {'fg': 'white'},
-        'message': {'fg': 'white'},
+        'note': {'fg': 'white'},
     }
 
     fmt = formats.get(name, {})
@@ -319,7 +319,7 @@ def frames_to_json(frames):
             ('stop', frame.stop.isoformat()),
             ('project', frame.project),
             ('tags', frame.tags),
-            ('message', frame.message),
+            ('note', frame.note),
         ])
         for frame in frames
     ]
@@ -342,7 +342,7 @@ def frames_to_csv(frames):
             ('stop', frame.stop.format('YYYY-MM-DD HH:mm:ss')),
             ('project', frame.project),
             ('tags', ', '.join(frame.tags)),
-            ('message', frame.message if frame.message else "")
+            ('note', frame.note if frame.note else "")
         ])
         for frame in frames
     ]
@@ -425,8 +425,8 @@ def json_arrow_encoder(obj):
     raise TypeError("Object {} is not JSON serializable".format(obj))
 
 
-def format_message(message):
+def format_note(note):
     return u"{}{}".format(
-        style('message', '>> '),
-        style('message', message)
+        style('note', '>> '),
+        style('note', note)
     )
