@@ -47,6 +47,11 @@ setup(
     long_description=readme,
     install_requires=parse_requirements('requirements.txt'),
     tests_require=parse_requirements('requirements-dev.txt'),
+    extras_require={
+        'repl': [
+            'click-repl>=0.1.6',
+        ]
+    },
     entry_points={
         'console_scripts': [
             'watson = watson.__main__:cli',

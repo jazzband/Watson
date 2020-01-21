@@ -38,6 +38,11 @@ On OS X, the easiest way to install Watson is using [Homebrew](http://brew.sh/):
 ```bash
 $ brew update && brew install watson
 ```
+### Optional interactive shell
+
+If you install [`click-repl`](https://github.com/untitaker/click-repl), watson
+gets a new command called ``repl``, which launches an interactive shell with
+tab-completion.
 
 ### Distribution packages
 
