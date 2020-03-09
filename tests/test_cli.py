@@ -95,7 +95,7 @@ def test_show_command_help(runner, watson, cmd_name):
     result = runner.invoke(
          cli.help,
          [cmd_name],
-        obj=watson)
+         obj=watson)
     assert result.exit_code == 0
     assert result.output.startswith('Usage: ' + cmd_name)
 
