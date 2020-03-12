@@ -826,7 +826,7 @@ def test_report_current(mocker, config_dir):
         (3600 * 48, True, 3600.0),
     )
 )
-def test_report_include_partial_frames(mock, watson, date_as_unixtime,
+def test_report_include_partial_frames(mocker, watson, date_as_unixtime,
                                        include_partial, sum_):
     """Test report building with frames that cross report boundaries
 
@@ -844,7 +844,7 @@ def test_report_include_partial_frames(mock, watson, date_as_unixtime,
         ["cli"],
         1548797432
     ]])
-    mock.patch('%s.open' % builtins, mock.mock_open(read_data=content))
+    mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=content))
     date = arrow.get(date_as_unixtime)
     report = watson.report(
         from_=date, to=date, include_partial_frames=include_partial,
