@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Arrow 0.15.0 support after changes in `arrow.get()` behavior (#296)
 - Watson now suggests correct command if users make small typo (#318)
 
+### Changed
+
+- Always show total time at bottom of report (#356)
+
 ### Fixed
 
 - Stylize prompt to create new project or tag (#310).
