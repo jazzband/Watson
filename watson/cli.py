@@ -691,21 +691,18 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
                 ))
         _print("")
 
-    # only show total time at the bottom for a project if it is not
-    # an aggregate report and there is greater than 1 project
-    if len(projects) > 1 and not aggregated:
-        _print('Total: {}'.format(
-            style('time', '{}'.format(format_timedelta(
-                datetime.timedelta(seconds=report['time'])
-            )))
-        ))
-
-    # if this is a report invoked from `aggregate`
-    # return the lines
+    # if this is a report invoked from `aggregate` return the lines; do not
+    # show total time
     if aggregated:
         return lines
-    else:
-        _final_print(lines)
+
+    _print('Total: {}'.format(
+        style('time', '{}'.format(format_timedelta(
+            datetime.timedelta(seconds=report['time'])
+        )))
+    ))
+
+    _final_print(lines)
 
 
 @cli.command()
