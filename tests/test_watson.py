@@ -681,35 +681,49 @@ def test_pull(mocker, watson):
 # projects
 
 def test_projects(watson):
+    i = 0
     for name in ('foo', 'bar', 'bar', 'bar', 'foo', 'lol'):
-        watson.frames.add(name, 4000, 4000)
+        watson.frames.add(name, 4000 + i, 4000 + i)
+        i += 1
 
-    assert watson.projects == ['bar', 'foo', 'lol']
+    watson.frames.add("oldest", 2000, 2005)
+    watson.frames.add("recent", 5000, 5005)
+
+    assert watson.projects() == ['bar', 'foo', 'lol', 'oldest', 'recent']
+    assert (watson.projects(orderby='start')
+            == ['oldest', 'bar', 'foo', 'lol', 'recent'])
+    assert (watson.projects(orderby='start', descending=True)
+            == ['recent', 'lol', 'foo', 'bar', 'oldest'])
 
 
 def test_projects_no_frames(watson):
-    assert watson.projects == []
+    assert watson.projects() == []
 
 
 # tags
 
 def test_tags(watson):
-    samples = (
+    samples = [
         ('foo', ('A', 'D')),
         ('bar', ('A', 'C')),
         ('foo', ('B', 'C')),
         ('lol', ()),
         ('bar', ('C'))
-    )
+    ]
 
+    i = 0
     for name, tags in samples:
-        watson.frames.add(name, 4000, 4000, tags)
+        watson.frames.add(name, 4000 + i, 4000 + i, tags)
+        i += 1
 
-    assert watson.tags == ['A', 'B', 'C', 'D']
+    assert watson.tags() == ['A', 'B', 'C', 'D']
+    assert watson.tags(orderby='start') == ['D', 'A', 'B', 'C']
+    assert (watson.tags(orderby='start', descending=True)
+            == ['C', 'B', 'A', 'D'])
 
 
 def test_tags_no_frames(watson):
-    assert watson.tags == []
+    assert watson.tags() == []
 
 
 # merge
