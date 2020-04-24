@@ -251,7 +251,12 @@ class Watson(object):
         frame = self.frames.add(project, from_date, to_date, tags=tags)
         return frame
 
-    def start(self, project, tags=None, restart=False, gap=True):
+    def start(self, project, tags=None, restart=False, start_at=None, gap=True):
+        if start_at is not None and not gap:
+            raise WatsonError(
+                'gap=False species the start time to be the end of the '
+                'previoys block, so you cannot use it in conjunction with '
+                'start_at.')
         if self.is_started:
             raise WatsonError(
                 u"Project {} is already started.".format(
@@ -263,9 +268,18 @@ class Watson(object):
         if not restart:
             tags = (tags or []) + default_tags
 
+        if start_at is None:
+            start_at = arrow.now()
+        if start_at > arrow.now():
+            raise WatsonError('Task cannot start in the future.')
+        stop_of_prev_frame = self.frames[-1].stop
+        if start_at < stop_of_prev_frame:
+            raise WatsonError('Task cannot start before previous task ended.')
+
         new_frame = {'project': project, 'tags': deduplicate(tags)}
+        new_frame['start'] = start_at
+
         if not gap:
-            stop_of_prev_frame = self.frames[-1].stop
             new_frame['start'] = stop_of_prev_frame
         self.current = new_frame
         return self.current
