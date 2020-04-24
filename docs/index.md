@@ -79,7 +79,7 @@ The latest development version can be installed using the following commands:
 ```bash
 $ git clone https://github.com/TailorDev/Watson.git
 $ cd Watson/
-$ python setup.py install
+$ pip install -e .
 ```
 
 ### Command line completion
