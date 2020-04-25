@@ -129,6 +129,12 @@ If `true`, the output of the `report` command will include the currently
 running frame (if any) by default. The option can be overridden on the
 command line with the `-c/-C` resp. `--current/--no-current` flags.
 
+#### `options.reverse_log` (default: `true`)
+
+If `true`, the output of the `log` command will reverse the order of the days
+to display the latest day's entries on top and the oldest day's entries at the
+bottom.
+
 #### `options.stop_on_start` (default: `false`)
 
 If `true`, starting a new project will stop running projects:
@@ -230,6 +236,7 @@ week_start = monday
 log_current = false
 pager = true
 report_current = false
+reverse_log = true
 ```
 
 ## Application folder

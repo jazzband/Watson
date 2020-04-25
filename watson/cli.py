@@ -1001,7 +1001,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
 
     frames_by_day = sorted_groupby(
         filtered_frames,
-        operator.attrgetter('day'), reverse=True
+        operator.attrgetter('day'),
+        reverse=watson.config.getboolean('options', 'reverse_log', True)
     )
 
     lines = []
