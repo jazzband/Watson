@@ -399,7 +399,7 @@ class Watson(object):
             frame_id = uuid.UUID(frame['id']).hex
             self.frames[frame_id] = (
                 frame['project'],
-                frame['start_at'],
+                frame['begin_at'],
                 frame['end_at'],
                 frame['tags']
             )
@@ -416,7 +416,7 @@ class Watson(object):
             if last_pull > frame.updated_at > self.last_sync:
                 frames.append({
                     'id': uuid.UUID(frame.id).urn,
-                    'start_at': str(frame.start.to('utc')),
+                    'begin_at': str(frame.start.to('utc')),
                     'end_at': str(frame.stop.to('utc')),
                     'project': frame.project,
                     'tags': frame.tags

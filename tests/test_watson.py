@@ -635,14 +635,14 @@ def test_pull(mocker, watson):
                 {
                     'id': '1c006c6e-6cc1-4c80-ab22-b51c857c0b06',
                     'project': 'foo',
-                    'start_at': 4003,
+                    'begin_at': 4003,
                     'end_at': 4004,
                     'tags': ['A']
                 },
                 {
                     'id': 'c44aa815-4d77-4a58-bddd-1afa95562141',
                     'project': 'bar',
-                    'start_at': 4004,
+                    'begin_at': 4004,
                     'end_at': 4005,
                     'tags': []
                 }
