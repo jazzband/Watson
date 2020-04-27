@@ -255,7 +255,7 @@ class Watson(object):
         if start_at is not None and not gap:
             raise WatsonError(
                 'gap=False species the start time to be the end of the '
-                'previoys block, so you cannot use it in conjunction with '
+                'previous block, so you cannot use it in conjunction with '
                 'start_at.')
         if self.is_started:
             raise WatsonError(
