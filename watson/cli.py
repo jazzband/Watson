@@ -853,6 +853,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 @cli.command()
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in output.")
+@click.option('-r/-R', '--reverse/--no-reverse', 'reverse', default=None,
+              help="(Don't) reverse the order of the days in output.")
 @click.option('-f', '--from', 'from_', type=DateTime,
               default=arrow.now().shift(days=-7),
               help="The date from when the log should start. Defaults "
@@ -908,8 +910,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 @catch_watson_error
-def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        luna, all, output_format, pager):
+def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
+        day, luna, all, output_format, pager):
     """
     Display each recorded session during the given timespan.
 
@@ -986,6 +988,9 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
             watson.frames.add(cur['project'], cur['start'], arrow.utcnow(),
                               cur['tags'], id="current")
 
+    if reverse is None:
+        reverse = watson.config.getboolean('options', 'reverse_log', True)
+
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
         projects=projects or None, tags=tags or None, span=span
@@ -1002,7 +1007,7 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
     frames_by_day = sorted_groupby(
         filtered_frames,
         operator.attrgetter('day'),
-        reverse=watson.config.getboolean('options', 'reverse_log', True)
+        reverse=reverse
     )
 
     lines = []

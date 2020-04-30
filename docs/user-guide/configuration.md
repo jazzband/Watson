@@ -133,7 +133,8 @@ command line with the `-c/-C` resp. `--current/--no-current` flags.
 
 If `true`, the output of the `log` command will reverse the order of the days
 to display the latest day's entries on top and the oldest day's entries at the
-bottom.
+bottom. The option can be overridden on the command line with the `-r/-R` resp.
+`--reverse/--no-reverse` flags.
 
 #### `options.stop_on_start` (default: `false`)
 
