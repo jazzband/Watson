@@ -15,8 +15,8 @@ Each frame consists of the name of a project and some tags. Your tags
 can be shared across projects and can be used to generate detailed
 reports.
 
-Watson stores everything on your computer, but you can go wild and use
-[crick.io](https://crick.io/?pk_campaign=GitHubWatson) to store
+Watson stores everything on your computer, but you can go wild and
+upload to your own server via the `sync` command to store
 your sessions remotely and share it with your colleagues.
 
 ![screenshot](img/screenshot.png)
