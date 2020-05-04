@@ -252,11 +252,6 @@ class Watson(object):
         return frame
 
     def start(self, project, tags=None, restart=False, start_at=None, gap=True):
-        if start_at is not None and not gap:
-            raise WatsonError(
-                'gap=False species the start time to be the end of the '
-                'previous block, so you cannot use it in conjunction with '
-                'start_at.')
         if self.is_started:
             raise WatsonError(
                 u"Project {} is already started.".format(
