@@ -251,7 +251,8 @@ class Watson(object):
         frame = self.frames.add(project, from_date, to_date, tags=tags)
         return frame
 
-    def start(self, project, tags=None, restart=False, start_at=None, gap=True):
+    def start(self, project, tags=None, restart=False, start_at=None,
+              gap=True):
         if self.is_started:
             raise WatsonError(
                 u"Project {} is already started.".format(

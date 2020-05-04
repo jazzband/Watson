@@ -193,7 +193,8 @@ def _start(watson, project, tags, restart=False, start_at=None, gap=True):
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
-def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_, gap_=True):
+def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
+          gap_=True):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
