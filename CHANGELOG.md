@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Always show total time at bottom of report (#356)
+- Use the default system newline character for CSV output (#366).
 
 ### Fixed
 
