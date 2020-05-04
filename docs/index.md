@@ -16,7 +16,7 @@ can be shared across projects and can be used to generate detailed
 reports.
 
 Watson stores everything on your computer, but you can go wild and
-upload to your own server via the `sync` command to store
+upload to your own [crick server](https://github.com/TailorDev/crick) via the `sync` command to store
 your sessions remotely and share it with your colleagues.
 
 ![screenshot](img/screenshot.png)
