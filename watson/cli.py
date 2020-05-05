@@ -127,8 +127,11 @@ def catch_watson_error(func):
 
 @click.group(cls=DYMGroup)
 @click.version_option(version=_watson.__version__, prog_name='Watson')
+@click.option('--force-ansi', 'color', default=None, is_flag=True,
+              help=("Force ANSI color sequences to be output regardless "
+                    "whether terminal is connected or not."))
 @click.pass_context
-def cli(ctx):
+def cli(ctx, color):
     """
     Watson is a tool aimed at helping you monitoring your time.
 
@@ -140,6 +143,7 @@ def cli(ctx):
     # This is the main command group, needed by click in order
     # to handle the subcommands
     ctx.obj = create_watson()
+    ctx.color = color
 
 
 @cli.command()
