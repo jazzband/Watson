@@ -331,13 +331,15 @@ def test_stop_started_project_at(watson):
     watson.start('foo')
     now = arrow.now()
 
+    # Task can't end before it starts
     with pytest.raises(WatsonError):
         time_str = '1970-01-01T00:00'
         time_obj = arrow.get(time_str)
         watson.stop(stop_at=time_obj)
 
-    with pytest.raises(ValueError):
-        time_str = '2999-31-12T23:59'
+    # Task can't end in the future
+    with pytest.raises(WatsonError):
+        time_str = '2999-12-31T23:59'
         time_obj = arrow.get(time_str)
         watson.stop(stop_at=time_obj)
 
