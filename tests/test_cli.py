@@ -182,3 +182,11 @@ def test_stop_valid_time(runner, watson, mocker, at_dt):
     arrow.arrow.datetime.now.return_value = (start_dt + timedelta(hours=1))
     result = runner.invoke(cli.stop, ['--at', at_dt], obj=watson)
     assert result.exit_code == 0
+
+
+# watson start
+
+@pytest.mark.parametrize('at_dt', VALID_TIMES_DATA)
+def test_start_valid_time(runner, watson, mocker, at_dt):
+    result = runner.invoke(cli.start, ['a-project', '--at', at_dt], obj=watson)
+    assert result.exit_code == 0
