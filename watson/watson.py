@@ -266,8 +266,9 @@ class Watson(object):
 
         if start_at is None:
             start_at = arrow.now()
-        else:
+        elif self.frames:
             # Only perform this check if an explicit start time was given
+            # and previous frames exist
             stop_of_prev_frame = self.frames[-1].stop
             if start_at < stop_of_prev_frame:
                 raise WatsonError('Task cannot start before the previous task '
