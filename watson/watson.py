@@ -266,16 +266,19 @@ class Watson(object):
 
         if start_at is None:
             start_at = arrow.now()
+        else:
+            # Only perform this check if an explicit start time was given
+            stop_of_prev_frame = self.frames[-1].stop
+            if start_at < stop_of_prev_frame:
+                raise WatsonError('Task cannot start before the previous task '
+                                  'ends.')
         if start_at > arrow.now():
             raise WatsonError('Task cannot start in the future.')
-        stop_of_prev_frame = self.frames[-1].stop
-        if start_at < stop_of_prev_frame:
-            raise WatsonError('Task cannot start before previous task ended.')
 
         new_frame = {'project': project, 'tags': deduplicate(tags)}
         new_frame['start'] = start_at
-
         if not gap:
+            stop_of_prev_frame = self.frames[-1].stop
             new_frame['start'] = stop_of_prev_frame
         self.current = new_frame
         return self.current
