@@ -279,13 +279,13 @@ def test_start_project_at(watson):
     watson.start('foo', start_at=now)
     watson.stop()
 
-    # Can't start before the previous task ends
+    # Task can't start before the previous task ends
     with pytest.raises(WatsonError):
         time_str = '1970-01-01T00:00'
         time_obj = arrow.get(time_str)
         watson.start('foo', start_at=time_obj)
 
-    # Can't start in the future
+    # Task can't start in the future
     with pytest.raises(WatsonError):
         time_str = '2999-12-31T23:59'
         time_obj = arrow.get(time_str)
