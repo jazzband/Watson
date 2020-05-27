@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2020-05-27
+
+### Added
+
+- Improve Arrow 0.15.0 support after changes in `arrow.get()` behavior (#296)
+- Watson now suggests correct command if users make small typo (#318)
+
+### Changed
+
+- Always show total time at bottom of report (#356)
+- Use the default system newline character for CSV output (#366).
+
+### Fixed
+
+- Stylize prompt to create new project or tag (#310).
+- Aggregate calculates wrong time if used with `--current` (#293)
+- The `start` command now correctly checks if project is empty (#322)
+- Aggregate ignores frames that crosses aggreagate boundary (#248)
+- The `report` and `aggregate` commands with `--json` option now correctly
+  encode Arrow objects (#329)
+
 ## [1.8.0] - 2019-08-26
 
 ### Added
@@ -207,6 +228,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
+[1.9.0]: https://github.com/tailordev/watson/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/tailordev/watson/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/tailordev/watson/compare/1.6.0...1.7.0
 [1.6.0]: https://github.com/tailordev/watson/compare/1.5.2...1.6.0
