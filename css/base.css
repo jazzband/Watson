@@ -1,17 +1,16 @@
-body {
-    padding-top: 70px;
+html {
+    /* The nav header is 4.40625rem high, plus 20px for the margin-top of the
+       main container. */
+    scroll-padding-top: calc(4.40625rem + 20px);
 }
 
-ul.nav .main {
-    font-weight: bold;
+body > .container {
+    margin-top: 20px;
 }
 
-.col-md-3 {
-    padding-left: 0;
-}
-
-.col-md-9 {
-    padding-bottom: 100px;
+.navbar.fixed-top {
+    position: -webkit-sticky;
+    position: sticky;
 }
 
 .source-links {
@@ -22,58 +21,34 @@ ul.nav .main {
     max-width: 100%;
 }
 
-/*
- * The code below adds some padding to the top of the current anchor target so
- * that, when navigating to it, the header isn't hidden by the navbar at the
- * top. This is especially complicated because we want to *remove* the padding
- * after navigation so that hovering over the header shows the permalink icon
- * correctly. Thus, we create a CSS animation to remove the extra padding after
- * a second. We have two animations so that navigating to an anchor within the
- * page always restarts the animation.
- *
- * See <https://github.com/mkdocs/mkdocs/issues/843> for more details.
- */
-:target::before {
-    content: "";
-    display: block;
-    margin-top: -75px;
-    height: 75px;
-    pointer-events: none;
-    animation: 0s 1s forwards collapse-anchor-padding-1;
+pre, code {
+    background: #e9ecef;
+    color: #000;
+    border: 1px solid rgba(0,0,0,0.125);
+    border-radius: 0.25rem;
 }
 
-.clicky :target::before {
-    animation-name: collapse-anchor-padding-2;
-}
-
-@keyframes collapse-anchor-padding-1 {
-    to {
-        margin-top: 0;
-        height: 0;
-    }
-}
-
-@keyframes collapse-anchor-padding-2 {
-    to {
-        margin-top: 0;
-        height: 0;
-    }
+pre {
+    padding: 0.5em;
 }
 
 code {
     padding: 1px 3px;
-    background: #ecf0f1;
-    border: solid 1px #ccc;
-    color: #7b8a8b;
 }
 
 pre code {
-    background: transparent;
     border: none;
+    /* Override styles from hljs theme */
+    background: transparent !important;
+    padding: 0 !important;
 }
 
 a code {
     color: #18bc9c;
+}
+
+a:hover code {
+    color: #0f7864;
 }
 
 kbd {
@@ -100,38 +75,32 @@ footer {
 /* Style the admonitions. */
 
 .admonition {
-    margin-bottom: 21px;
-    border: 1px solid #ecf0f1;
-    border-radius: 4px;
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
 }
 
 .admonition > .admonition-title {
     margin: 0;
-    padding: 10px 15px;
-    border-top-right-radius: 3px;
-    border-top-left-radius: 3px;
-    border-bottom: 1px solid #ecf0f1;
-    color: #2c3e50;
-    background-color: #ecf0f1;
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.1;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+    font-size: 1rem;
 }
 
 .admonition > * {
-    margin-left: 15px;
-    margin-right: 15px;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 .admonition > *:not(.admonition-title):first-of-type,
 .admonition > .admonition-title + * {
-    margin-top: 15px;
+    margin-top: 1rem;
 }
 
 .admonition > *:last-child {
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
 /* Style each kind of admonition. */
@@ -170,22 +139,45 @@ footer {
  * sections of docs content.
  */
 
-/* By default it's not affixed in mobile views, so undo that */
 .bs-sidebar.affix {
-    position: static;
+    position: -webkit-sticky;
+    position: sticky;
+    /* The nav header is 4.40625rem high, plus 20px for the margin-top of the
+       main container. */
+    top: calc(4.40625rem + 20px);
 }
 
-.bs-sidebar.well {
+.bs-sidebar.card {
     padding: 0;
 }
 
+.bs-sidebar > .card {
+    background-color: #ecf0f1 !important;
+}
+
+/* Toggle (vertically flip) sidebar collapse icon */
+.bs-sidebar .navbar-toggler span {
+    -moz-transform: scale(1, -1);
+    -webkit-transform: scale(1, -1);
+    -o-transform: scale(1, -1);
+    -ms-transform: scale(1, -1);
+    transform: scale(1, -1);
+}
+
+.bs-sidebar .navbar-toggler.collapsed span {
+    -moz-transform: scale(1, 1);
+    -webkit-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    transform: scale(1, 1);
+}
+
 /* First level of nav */
-.bs-sidenav {
-    margin-top: 30px;
-    margin-bottom: 30px;
+.bs-sidebar > .navbar-collapse > .nav {
     padding-top:    10px;
     padding-bottom: 10px;
     border-radius: 5px;
+    width: 100%;
 }
 
 /* All levels of nav */
@@ -199,55 +191,24 @@ footer {
     text-decoration: none;
     border-right: 1px solid;
 }
-.bs-sidebar .nav > .active > a,
-.bs-sidebar .nav > .active:hover > a,
-.bs-sidebar .nav > .active:focus > a {
+.bs-sidebar .nav > li > a.active,
+.bs-sidebar .nav > li > a.active:hover,
+.bs-sidebar .nav > li > a.active:focus {
     font-weight: bold;
     background-color: transparent;
     border-right: 1px solid;
 }
 
-/* Nav: second level (shown on .active) */
-.bs-sidebar .nav .nav {
-    display: none; /* Hide by default, but at >768px, show it */
-    margin-bottom: 8px;
-}
-.bs-sidebar .nav .nav > li > a {
-    padding-top:    3px;
-    padding-bottom: 3px;
-    padding-left: 30px;
-    font-size: 90%;
+.bs-sidebar .nav .nav .nav {
+    margin-left: 1em;
 }
 
-/* Show and affix the side nav when space allows it */
-@media (min-width: 992px) {
-    .bs-sidebar .nav > .active > ul {
-        display: block;
-    }
-    /* Widen the fixed sidebar */
-    .bs-sidebar.affix,
-    .bs-sidebar.affix-bottom {
-        width: 213px;
-    }
-    .bs-sidebar.affix {
-        position: fixed; /* Undo the static from mobile first approach */
-        top: 80px;
-    }
-    .bs-sidebar.affix-bottom {
-        position: absolute; /* Undo the static from mobile first approach */
-    }
-    .bs-sidebar.affix-bottom .bs-sidenav,
-    .bs-sidebar.affix .bs-sidenav {
-        margin-top: 0;
-        margin-bottom: 0;
-    }
+.bs-sidebar .nav > li > a {
+    font-weight: bold;
 }
-@media (min-width: 1200px) {
-    /* Widen the fixed sidebar again */
-    .bs-sidebar.affix-bottom,
-    .bs-sidebar.affix {
-        width: 263px;
-    }
+
+.bs-sidebar .nav .nav > li > a {
+    font-weight: normal;
 }
 
 .headerlink {
@@ -259,29 +220,25 @@ h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink, h4:hover .head
     display:inline-block;
 }
 
-/* display submenu relative to parent*/
-.dropdown-submenu {
-    position: relative;
+@media (max-width: 991.98px) {
+    .navbar-collapse.show {
+        overflow-y: auto;
+        max-height: calc(100vh - 4.40625rem);
+    }
 }
 
-/* sub menu stlye */
-.dropdown-submenu>.dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: 0px;
-    margin-left: -1px;
-    -webkit-border-radius: 0 4px 4px 4px;
-    -moz-border-radius: 0 4px 4px;
-    border-radius: 0 4px 4px 4px;
+.dropdown-item.open {
+    color: #fff;
+    background-color: #2C3E50;
 }
 
-/* display sub menu on hover*/
-.dropdown-submenu:hover>.dropdown-menu {
-    display: block;
+.dropdown-submenu > .dropdown-menu {
+    margin: 0 0 0 1.5rem;
+    padding: 0;
+    border-width: 0;
 }
 
-/* little arrow */
-.dropdown-submenu>a:after {
+.dropdown-submenu > a::after {
     display: block;
     content: " ";
     float: right;
@@ -295,7 +252,25 @@ h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink, h4:hover .head
     margin-right: -10px;
 }
 
-/* little arrow of parent menu */
-.dropdown-submenu:hover>a:after {
-    border-left-color: #404040;
+.dropdown-submenu:hover > a::after {
+    border-left-color: #fff;
+}
+
+@media (min-width: 992px) {
+    .dropdown-menu {
+        overflow-y: auto;
+        max-height: calc(100vh - 4.40625rem);
+    }
+
+    .dropdown-submenu {
+        position: relative;
+    }
+
+    .dropdown-submenu > .dropdown-menu {
+        position: fixed !important;
+        margin-top: -9px;
+        margin-left: -2px;
+        border-width: 1px;
+        padding: 0.5rem 0;
+    }
 }

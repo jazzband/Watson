@@ -9,121 +9,108 @@
         
         <link rel="shortcut icon" href="img/favicon.ico">
         <title>Watson</title>
-        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/docco.min.css">
         <link href="css/watson.css" rel="stylesheet">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
 
         <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="js/bootstrap.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
     <body class="homepage">
-
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
             <div class="container">
-
-                <!-- Collapsed navigation -->
-                <div class="navbar-header">
-                    <!-- Expander button -->
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href=".">Watson</a>
-                </div>
+                <a class="navbar-brand" href=".">Watson</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
                 <!-- Expanded navigation -->
-                <div class="navbar-collapse collapse">
+                <div id="navbar-collapse" class="navbar-collapse collapse">
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
-                            <li class="active">
-                                <a href=".">Home</a>
+                            <li class="navitem active">
+                                <a href="." class="nav-link">Home</a>
                             </li>
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li >
-    <a href="user-guide/commands/">Commands</a>
+<li>
+    <a href="user-guide/commands/" class="dropdown-item">Commands</a>
 </li>
                                     
-<li >
-    <a href="user-guide/configuration/">Configuration</a>
+<li>
+    <a href="user-guide/configuration/" class="dropdown-item">Configuration</a>
 </li>
                                 </ul>
                             </li>
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li >
-    <a href="contributing/how-to/">Howto</a>
+<li>
+    <a href="contributing/how-to/" class="dropdown-item">Howto</a>
 </li>
                                     
-<li >
-    <a href="contributing/hack/">Hack</a>
+<li>
+    <a href="contributing/hack/" class="dropdown-item">Hack</a>
 </li>
                                     
-<li >
-    <a href="contributing/pr-guidelines/">Pull Request guidelines</a>
+<li>
+    <a href="contributing/pr-guidelines/" class="dropdown-item">Pull Request guidelines</a>
 </li>
                                     
-<li >
-    <a href="contributing/coc/">Code of Conduct</a>
+<li>
+    <a href="contributing/coc/" class="dropdown-item">Code of Conduct</a>
 </li>
                                     
-<li >
-    <a href="contributing/release-new-version/">Release a new version</a>
+<li>
+    <a href="contributing/release-new-version/" class="dropdown-item">Release a new version</a>
 </li>
                                 </ul>
                             </li>
-                            <li >
-                                <a href="faq/">FAQ</a>
+                            <li class="navitem">
+                                <a href="faq/" class="nav-link">FAQ</a>
                             </li>
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li >
-    <a href="about/license/">License</a>
+<li>
+    <a href="about/license/" class="dropdown-item">License</a>
 </li>
                                     
-<li >
-    <a href="about/release-notes/">Release notes</a>
+<li>
+    <a href="about/release-notes/" class="dropdown-item">Release notes</a>
 </li>
                                 </ul>
                             </li>
                         </ul>
 
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li class="disabled">
-                                <a rel="next" >
+                            <li class="nav-item">
+                                <a rel="prev" class="nav-link disabled">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
-                            <li >
-                                <a rel="prev" href="user-guide/commands/">
+                            <li class="nav-item">
+                                <a rel="next" href="user-guide/commands/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
-                            <li>
-                                <a href="https://github.com/TailorDev/Watson/edit/master/docs/index.md"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            <li class="nav-item">
+                                <a href="https://github.com/TailorDev/Watson/edit/master/docs/index.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -131,18 +118,36 @@
         </div>
 
         <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#overview">Overview</a></li>
-        <li class="main "><a href="#installation">Installation</a></li>
-            <li><a href="#distribution-packages">Distribution packages</a></li>
-            <li><a href="#single-user-installation">Single user installation</a></li>
-            <li><a href="#development-version">Development version</a></li>
-            <li><a href="#command-line-completion">Command line completion</a></li>
-        <li class="main "><a href="#getting-started">Getting started</a></li>
-    </ul>
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#overview" class="nav-link">Overview</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#installation" class="nav-link">Installation</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#getting-started" class="nav-link">Getting started</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
 </div></div>
-                <div class="col-md-9" role="main">
+                    <div class="col-md-9" role="main">
 
 <p><img alt="logo Watson" src="img/logo-watson-600px.png" /></p>
 <h2 id="overview">Overview</h2>
@@ -156,9 +161,10 @@ everything you need to know to start using Watson.</p>
 <p>Each frame consists of the name of a project and some tags. Your tags
 can be shared across projects and can be used to generate detailed
 reports.</p>
-<p>Watson stores everything on your computer, but you can go wild and use
-<a href="https://crick.io/?pk_campaign=GitHubWatson">crick.io</a> to store
-your sessions remotely and share it with your colleagues.</p>
+<p>Watson stores everything on your computer, but you can go wild and
+upload to your own <a href="https://github.com/TailorDev/crick">crick server</a>
+via the <code>sync</code> command to store your sessions remotely and share them
+with your colleagues.</p>
 <p><img alt="screenshot" src="img/screenshot.png" /></p>
 <h2 id="installation">Installation</h2>
 <p>Watson is available on any platform supported by Python (Windows, Mac,
@@ -198,7 +204,7 @@ installing AUR packages.</p>
 <p>The latest development version can be installed using the following commands:</p>
 <pre><code class="bash">$ git clone https://github.com/TailorDev/Watson.git
 $ cd Watson/
-$ python setup.py install
+$ pip install -e .
 </code></pre>
 
 <h3 id="command-line-completion">Command line completion</h3>
@@ -236,6 +242,7 @@ Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
 </code></pre>
 
 <p>We hope you will enjoy Watson!</p></div>
+            </div>
         </div>
 
         <footer class="col-md-12">
@@ -251,21 +258,21 @@ Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
         <script src="js/base.js" defer></script>
         <script src="search/main.js" defer></script>
 
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-    <div class="modal-dialog">
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
             </div>
             <div class="modal-body">
                 <p>
                     From here you can search these documents. Enter
                     your search terms below.
                 </p>
-                <form role="form">
+                <form>
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
                 <div id="mkdocs-search-results"></div>
@@ -274,12 +281,12 @@ Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
             </div>
         </div>
     </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
             </div>
             <div class="modal-body">
               <table class="table">
@@ -319,6 +326,6 @@ Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
 </html>
 
 <!--
-MkDocs version : 1.0.4
-Build Date UTC : 2019-08-27 13:22:51
+MkDocs version : 1.1.2
+Build Date UTC : 2020-05-27 21:01:43.965998+00:00
 -->
