@@ -1047,7 +1047,6 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
                 project=style('project', u'{:>{}}'.format(
                     frame.project, longest_project
                 )),
-                pad=longest_project,
                 tags=(" "*2 if frame.tags else "") + style('tags', frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
                 stop=style('time', '{:HH:mm}'.format(frame.stop)),
