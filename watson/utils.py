@@ -17,6 +17,7 @@ except ImportError:
 import click
 import arrow
 
+import watson as _watson
 from .fullmoon import get_last_full_moon
 
 from click.exceptions import UsageError
@@ -30,6 +31,10 @@ try:
     text_type = (str, unicode)
 except NameError:
     text_type = str
+
+
+def create_watson():
+    return _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
 
 
 def confirm_project(project, watson_projects):
@@ -353,7 +358,7 @@ def build_csv(entries):
     else:
         return ''
     memfile = StringIO()
-    writer = csv.DictWriter(memfile, header)
+    writer = csv.DictWriter(memfile, header, lineterminator=os.linesep)
     writer.writeheader()
     writer.writerows(entries)
     output = memfile.getvalue()

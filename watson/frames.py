@@ -64,6 +64,9 @@ class Span(object):
         self.start = start.floor(self.timeframe)
         self.stop = stop.ceil(self.timeframe)
 
+    def overlaps(self, frame):
+        return frame.start <= self.stop and frame.stop >= self.start
+
     def __contains__(self, frame):
         return frame.start >= self.start and frame.stop <= self.stop
 
@@ -150,17 +153,33 @@ class Frames(object):
         ignore_projects=None,
         ignore_tags=None,
         span=None,
+        include_partial_frames=False,
     ):
-        return (
-            frame for frame in self._rows
-            if (projects is None or frame.project in projects) and
-               (ignore_projects is None
-                   or frame.project not in ignore_projects) and
-               (tags is None or any(tag in frame.tags for tag in tags)) and
-               (ignore_tags is None
-                   or all(tag not in frame.tags for tag in ignore_tags)) and
-               (span is None or frame in span)
-        )
+
+        for frame in self._rows:
+            if projects is not None and frame.project not in projects:
+                continue
+            if ignore_projects is not None and\
+               frame.project in ignore_projects:
+                continue
+
+            if tags is not None and not any(tag in frame.tags for tag in tags):
+                continue
+            if ignore_tags is not None and\
+               any(tag in frame.tags for tag in ignore_tags):
+                continue
+
+            if span is None:
+                yield frame
+            elif frame in span:
+                yield frame
+            elif include_partial_frames and span.overlaps(frame):
+                # If requested, return the part of the frame that is within the
+                # span, for frames that are *partially* within span or reaching
+                # over span
+                start = span.start if frame.start < span.start else frame.start
+                stop = span.stop if frame.stop > span.stop else frame.stop
+                yield frame._replace(start=start, stop=stop)
 
     def span(self, start, stop):
         return Span(start, stop)

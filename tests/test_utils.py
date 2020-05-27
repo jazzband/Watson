@@ -134,7 +134,7 @@ def test_safe_save(config_dir):
     assert os.path.getmtime(save_file) >= os.path.getmtime(backup_file)
 
 
-def test_safe_save_tmpfile_on_other_filesystem(config_dir, mock):
+def test_safe_save_tmpfile_on_other_filesystem(config_dir, mocker):
     save_file = os.path.join(config_dir, 'test')
     backup_file = os.path.join(config_dir, 'test' + '.bak')
 
@@ -148,7 +148,7 @@ def test_safe_save_tmpfile_on_other_filesystem(config_dir, mock):
 
     # simulate tmpfile being on another file-system
     # OSError is caught and handled by shutil.move() used by save_safe()
-    mock.patch('os.rename', side_effect=OSError)
+    mocker.patch('os.rename', side_effect=OSError)
     safe_save(save_file, "Again")
     assert os.path.exists(backup_file)
 
@@ -245,14 +245,14 @@ def test_build_csv_empty_data():
 
 
 def test_build_csv_one_col():
-    lt = csv.get_dialect('excel').lineterminator
+    lt = os.linesep
     data = [{'col': 'value'}, {'col': 'another value'}]
     result = lt.join(['col', 'value', 'another value']) + lt
     assert build_csv(data) == result
 
 
 def test_build_csv_multiple_cols():
-    lt = csv.get_dialect('excel').lineterminator
+    lt = os.linesep
     dm = csv.get_dialect('excel').delimiter
     data = [
         co.OrderedDict([('col1', 'value'),

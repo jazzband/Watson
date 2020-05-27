@@ -1,5 +1,6 @@
 """Utility functions for the unit tests."""
 
+import os
 import datetime
 
 try:
@@ -11,6 +12,15 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
+
+import py
+
+
+TEST_FIXTURE_DIR = py.path.local(
+    os.path.dirname(
+        os.path.realpath(__file__)
+        )
+    ) / 'resources'
 
 
 def mock_datetime(dt, dt_module):
