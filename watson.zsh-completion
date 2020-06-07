@@ -1,3 +1,4 @@
+#compdef watson
 _watson_completion() {
     local -a completions
     local -a completions_with_descriptions
@@ -25,4 +26,4 @@ _watson_completion() {
     compstate[insert]="automenu"
 }
 
-compdef _watson_completion watson;
+_watson_completion
