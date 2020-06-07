@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Upgrade to major arrow release 1.0.0 (#407)
 
+### Fixed
+
+- Zsh completion (#379)
+
 ### Removed
 
 - Python 2.7 support (#305).
