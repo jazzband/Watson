@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Require latest Arrow version 0.15.6 to support ISO week dates (#380)
+
 ## [1.9.0] - 2020-05-27
 
 ### Added

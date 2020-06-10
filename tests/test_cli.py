@@ -44,6 +44,10 @@ VALID_DATES_DATA = [
         .replace(hour=14, minute=5, second=0)
         .format('YYYY-MM-DD HH:mm:ss')
     ),
+    ('2018-W08', '2018-02-19 00:00:00'),  # week dates
+    ('2018W08', '2018-02-19 00:00:00'),
+    ('2018-W08-2', '2018-02-20 00:00:00'),
+    ('2018W082', '2018-02-20 00:00:00'),
 ]
 
 INVALID_DATES_DATA = [
@@ -52,10 +56,6 @@ INVALID_DATES_DATA = [
     ('201804'),
     ('18-04-10'),
     ('180410'),  # truncated representation not allowed
-    ('2018-W08'),  # despite week dates being part of ISO-8601
-    ('2018W08'),
-    ('2018-W08-2'),
-    ('2018W082'),
     ('hello 2018'),
     ('yesterday'),
     ('tomorrow'),
