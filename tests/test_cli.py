@@ -44,6 +44,10 @@ VALID_DATES_DATA = [
         .replace(hour=14, minute=5, second=0)
         .format('YYYY-MM-DD HH:mm:ss')
     ),
+    ('2018-W08', '2018-02-19 00:00:00'),  # week dates
+    ('2018W08', '2018-02-19 00:00:00'),
+    ('2018-W08-2', '2018-02-20 00:00:00'),
+    ('2018W082', '2018-02-20 00:00:00'),
 ]
 
 INVALID_DATES_DATA = [
@@ -52,10 +56,6 @@ INVALID_DATES_DATA = [
     ('201804'),
     ('18-04-10'),
     ('180410'),  # truncated representation not allowed
-    ('2018-W08'),  # despite week dates being part of ISO-8601
-    ('2018W08'),
-    ('2018-W08-2'),
-    ('2018W082'),
     ('hello 2018'),
     ('yesterday'),
     ('tomorrow'),
@@ -181,4 +181,16 @@ def test_stop_valid_time(runner, watson, mocker, at_dt):
     # but newer than the start date.
     arrow.arrow.datetime.now.return_value = (start_dt + timedelta(hours=1))
     result = runner.invoke(cli.stop, ['--at', at_dt], obj=watson)
+    assert result.exit_code == 0
+
+
+# watson start
+
+@pytest.mark.parametrize('at_dt', VALID_TIMES_DATA)
+def test_start_valid_time(runner, watson, mocker, at_dt):
+    # Simulate a start date so that 'at_dt' is older than now().
+    mocker.patch('arrow.arrow.datetime', wraps=datetime)
+    start_dt = datetime(2019, 4, 10, 14, 0, 0, tzinfo=tzlocal())
+    arrow.arrow.datetime.now.return_value = (start_dt + timedelta(hours=1))
+    result = runner.invoke(cli.start, ['a-project', '--at', at_dt], obj=watson)
     assert result.exit_code == 0

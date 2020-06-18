@@ -361,7 +361,7 @@ def build_csv(entries):
     else:
         return ''
     memfile = StringIO()
-    writer = csv.DictWriter(memfile, header)
+    writer = csv.DictWriter(memfile, header, lineterminator=os.linesep)
     writer.writeheader()
     writer.writerows(entries)
     output = memfile.getvalue()

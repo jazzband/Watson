@@ -8,6 +8,7 @@ import functools
 import json
 import os
 import datetime
+import operator
 
 try:
     from StringIO import StringIO
@@ -32,6 +33,7 @@ from watson.utils import (
     get_start_time_for_period,
     make_json_writer,
     safe_save,
+    sorted_groupby,
     parse_tags,
     PY2,
     json_arrow_encoder,
@@ -245,14 +247,14 @@ def test_build_csv_empty_data():
 
 
 def test_build_csv_one_col():
-    lt = csv.get_dialect('excel').lineterminator
+    lt = os.linesep
     data = [{'col': 'value'}, {'col': 'another value'}]
     result = lt.join(['col', 'value', 'another value']) + lt
     assert build_csv(data) == result
 
 
 def test_build_csv_multiple_cols():
-    lt = csv.get_dialect('excel').lineterminator
+    lt = os.linesep
     dm = csv.get_dialect('excel').delimiter
     data = [
         co.OrderedDict([('col1', 'value'),
@@ -268,6 +270,32 @@ def test_build_csv_multiple_cols():
         dm.join(['one value', 'two value', 'three'])
         ]) + lt
     assert build_csv(data) == result
+
+
+# sorted_groupby
+
+def test_sorted_groupby(watson):
+    end = arrow.utcnow()
+    watson.add('foo', end.shift(hours=-25), end.shift(hours=-24), ['A'])
+    watson.add('bar', end.shift(hours=-1), end, ['A'])
+
+    result = list(sorted_groupby(
+        watson.frames,
+        operator.attrgetter('day'),
+        reverse=False))
+    assert result[0][0] < result[1][0]
+
+
+def test_sorted_groupby_reverse(watson):
+    end = arrow.utcnow()
+    watson.add('foo', end.shift(hours=-25), end.shift(hours=-24), ['A'])
+    watson.add('bar', end.shift(hours=-1), end, ['A'])
+
+    result = list(sorted_groupby(
+        watson.frames,
+        operator.attrgetter('day'),
+        reverse=True))
+    assert result[0][0] > result[1][0]
 
 
 # frames_to_csv

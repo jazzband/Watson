@@ -253,7 +253,8 @@ class Watson(object):
         frame = self.frames.add(project, from_date, to_date, tags=tags)
         return frame
 
-    def start(self, project, tags=None, restart=False, gap=True, note=None):
+    def start(self, project, tags=None, restart=False, start_at=None,
+              gap=True, note=None):
         if self.is_started:
             raise WatsonError(
                 u"Project {} is already started.".format(
@@ -265,8 +266,21 @@ class Watson(object):
         if not restart:
             tags = (tags or []) + default_tags
 
+        if start_at is None:
+            start_at = arrow.now()
+        elif self.frames:
+            # Only perform this check if an explicit start time was given
+            # and previous frames exist
+            stop_of_prev_frame = self.frames[-1].stop
+            if start_at < stop_of_prev_frame:
+                raise WatsonError('Task cannot start before the previous task '
+                                  'ends.')
+        if start_at > arrow.now():
+            raise WatsonError('Task cannot start in the future.')
+
         new_frame = {'project': project, 'tags': deduplicate(tags),
                      'note': note}
+        new_frame['start'] = start_at
         if not gap:
             stop_of_prev_frame = self.frames[-1].stop
             new_frame['start'] = stop_of_prev_frame
@@ -393,7 +407,7 @@ class Watson(object):
             frame_id = uuid.UUID(frame['id']).hex
             self.frames[frame_id] = (
                 frame['project'],
-                frame['start_at'],
+                frame['begin_at'],
                 frame['end_at'],
                 frame['tags']
             )
@@ -410,7 +424,7 @@ class Watson(object):
             if last_pull > frame.updated_at > self.last_sync:
                 frames.append({
                     'id': uuid.UUID(frame.id).urn,
-                    'start_at': str(frame.start.to('utc')),
+                    'begin_at': str(frame.start.to('utc')),
                     'end_at': str(frame.stop.to('utc')),
                     'project': frame.project,
                     'tags': frame.tags
@@ -459,7 +473,8 @@ class Watson(object):
 
     def report(self, from_, to, current=None, projects=None, tags=None,
                ignore_projects=None, ignore_tags=None, year=None,
-               month=None, week=None, day=None, luna=None, all=None):
+               month=None, week=None, day=None, luna=None, all=None,
+               include_partial_frames=False):
         for start_time in (_ for _ in [day, week, month, year, luna, all]
                            if _ is not None):
             from_ = start_time
@@ -492,7 +507,7 @@ class Watson(object):
                 projects=projects or None, tags=tags or None,
                 ignore_projects=ignore_projects or None,
                 ignore_tags=ignore_tags or None,
-                span=span
+                span=span, include_partial_frames=include_partial_frames,
             ),
             operator.attrgetter('project')
         )

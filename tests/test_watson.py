@@ -322,6 +322,26 @@ def test_start_nogap(watson):
     assert watson.frames[-1].stop == watson.current['start']
 
 
+def test_start_project_at(watson):
+    now = arrow.now()
+    watson.start('foo', start_at=now)
+    watson.stop()
+
+    # Task can't start before the previous task ends
+    with pytest.raises(WatsonError):
+        time_str = '1970-01-01T00:00'
+        time_obj = arrow.get(time_str)
+        watson.start('foo', start_at=time_obj)
+
+    # Task can't start in the future
+    with pytest.raises(WatsonError):
+        time_str = '2999-12-31T23:59'
+        time_obj = arrow.get(time_str)
+        watson.start('foo', start_at=time_obj)
+
+    assert watson.frames[-1].start == now
+
+
 # stop
 
 def test_stop_started_project(watson):
@@ -385,13 +405,15 @@ def test_stop_started_project_at(watson):
     watson.start('foo')
     now = arrow.now()
 
+    # Task can't end before it starts
     with pytest.raises(WatsonError):
         time_str = '1970-01-01T00:00'
         time_obj = arrow.get(time_str)
         watson.stop(stop_at=time_obj)
 
-    with pytest.raises(ValueError):
-        time_str = '2999-31-12T23:59'
+    # Task can't end in the future
+    with pytest.raises(WatsonError):
+        time_str = '2999-12-31T23:59'
         time_obj = arrow.get(time_str)
         watson.stop(stop_at=time_obj)
 
@@ -710,14 +732,14 @@ def test_pull(mocker, watson):
                 {
                     'id': '1c006c6e-6cc1-4c80-ab22-b51c857c0b06',
                     'project': 'foo',
-                    'start_at': 4003,
+                    'begin_at': 4003,
                     'end_at': 4004,
                     'tags': ['A']
                 },
                 {
                     'id': 'c44aa815-4d77-4a58-bddd-1afa95562141',
                     'project': 'bar',
-                    'start_at': 4004,
+                    'begin_at': 4004,
                     'end_at': 4005,
                     'tags': []
                 }
@@ -921,6 +943,40 @@ def test_report_current(mocker, config_dir):
         arrow.utcnow(), arrow.utcnow(), projects=['foo']
     )
     assert len(report['projects']) == 0
+
+
+@pytest.mark.parametrize(
+    "date_as_unixtime,include_partial,sum_", (
+        (3600 * 24, False, 0.0),
+        (3600 * 48, False, 0.0),
+        (3600 * 24, True, 7200.0),
+        (3600 * 48, True, 3600.0),
+    )
+)
+def test_report_include_partial_frames(mocker, watson, date_as_unixtime,
+                                       include_partial, sum_):
+    """Test report building with frames that cross report boundaries
+
+    1 event is added that has 2 hours in one day and 1 in the next. The
+    parametrization checks that the report for both days is empty with
+    `include_partial=False` and report the correct amount of hours with
+    `include_partial=False`
+
+    """
+    content = json.dumps([[
+        3600 * 46,
+        3600 * 49,
+        "programming",
+        "3e76c820909840f89cabaf106ab7d12a",
+        ["cli"],
+        1548797432
+    ]])
+    mocker.patch('%s.open' % builtins, mocker.mock_open(read_data=content))
+    date = arrow.get(date_as_unixtime)
+    report = watson.report(
+        from_=date, to=date, include_partial_frames=include_partial,
+    )
+    assert report["time"] == pytest.approx(sum_, abs=1e-3)
 
 
 # renaming project updates frame last_updated time

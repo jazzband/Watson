@@ -162,13 +162,13 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags, restart=False, gap=True,
+def _start(watson, project, tags, restart=False, start_at=None, gap=True,
            note=None):
     """
     Start project with given list of tags and save status.
     """
-    current = watson.start(project, tags, restart=restart, gap=gap,
-                           note=note)
+    current = watson.start(project, tags, restart=restart, start_at=start_at,
+                           gap=gap, note=note)
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
@@ -181,7 +181,12 @@ def _start(watson, project, tags, restart=False, gap=True,
 
 
 @cli.command()
+@click.option('--at', 'at_', type=DateTime, default=None,
+              cls=MutuallyExclusiveOption, mutually_exclusive=['gap_'],
+              help=('Start frame at this time. Must be in '
+                    '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.option('-g/-G', '--gap/--no-gap', 'gap_', is_flag=True, default=True,
+              cls=MutuallyExclusiveOption, mutually_exclusive=['at_'],
               help=("(Don't) leave gap between end time of previous project "
                     "and start time of the current."))
 @click.argument('args', nargs=-1,
@@ -195,8 +200,8 @@ def _start(watson, project, tags, restart=False, gap=True,
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
-def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True,
-          note=None):
+def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
+          gap_=True, note=None):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -205,6 +210,16 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True,
     If there is already a running project and the configuration option
     `options.stop_on_start` is set to a true value (`1`, `on`, `true`, or
     `yes`), it is stopped before the new project is started.
+
+    If `--at` option is given, the provided starting time is used. The
+    specified time must be after the end of the previous frame and must not be
+    in the future.
+
+    Example:
+
+    \b
+    $ watson start --at 13:37
+    Starting project apollo11 at 13:37
 
     If the `--no-gap` flag is given, the start time of the new project is set
     to the stop time of the most recently stopped project.
@@ -249,7 +264,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True,
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
 
-    _start(watson, project, tags, gap=gap_, note=note)
+    _start(watson, project, tags, start_at=at_, gap=gap_, note=note)
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
@@ -300,13 +315,16 @@ def stop(watson, at_, note):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
+@click.option('--at', 'at_', type=DateTime, default=None,
+              help=('Start frame at this time. Must be in '
+                    '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
               help="(Don't) Stop an already running project.")
 @click.argument('frame', default='-1', autocompletion=get_frames)
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
-def restart(ctx, watson, frame, stop_):
+def restart(ctx, watson, frame, stop_, at_):
     """
     Restart monitoring time for a previously stopped project.
 
@@ -354,7 +372,7 @@ def restart(ctx, watson, frame, stop_):
 
     frame = get_frame_from_argument(watson, frame)
 
-    _start(watson, frame.project, frame.tags, restart=True)
+    _start(watson, frame.project, frame.tags, restart=True, start_at=at_)
 
 
 @cli.command()
@@ -522,7 +540,8 @@ _SHORTCUT_OPTIONS_VALUES = {
 @catch_watson_error
 def report(watson, current, from_, to, projects, tags, ignore_projects,
            ignore_tags, year, month, week, day, luna, all, output_format,
-           pager, aggregated=False, show_notes=False):
+           pager, aggregated=False, include_partial_frames=True,
+           show_notes=False):
     """
     Display a report of the time spent on each project.
 
@@ -645,7 +664,8 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     report = watson.report(from_, to, current, projects, tags,
                            ignore_projects, ignore_tags,
                            year=year, month=month, week=week, day=day,
-                           luna=luna, all=all)
+                           luna=luna, all=all,
+                           include_partial_frames=include_partial_frames)
 
     if 'json' in output_format and not aggregated:
         click.echo(json.dumps(report, indent=4, sort_keys=True,
@@ -743,21 +763,18 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
                         ))
         _print("")
 
-    # only show total time at the bottom for a project if it is not
-    # an aggregate report and there is greater than 1 project
-    if len(projects) > 1 and not aggregated:
-        _print('Total: {}'.format(
-            style('time', '{}'.format(format_timedelta(
-                datetime.timedelta(seconds=report['time'])
-            )))
-        ))
-
-    # if this is a report invoked from `aggregate`
-    # return the lines
+    # if this is a report invoked from `aggregate` return the lines; do not
+    # show total time
     if aggregated:
         return lines
-    else:
-        _final_print(lines)
+
+    _print('Total: {}'.format(
+        style('time', '{}'.format(format_timedelta(
+            datetime.timedelta(seconds=report['time'])
+        )))
+    ))
+
+    _final_print(lines)
 
 
 @cli.command()
@@ -879,8 +896,9 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
         from_offset = from_ + offset
         output = ctx.invoke(report, current=current, from_=from_offset,
                             to=from_offset, projects=projects, tags=tags,
-                            output_format=output_format,
-                            pager=pager, aggregated=True, show_notes=show_notes)
+                            output_format=output_format, pager=pager,
+                            aggregated=True, include_partial_frames=True,
+                            show_notes=show_notes)
 
         if 'json' in output_format:
             lines.append(output)
@@ -909,6 +927,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 @cli.command()
 @click.option('-c/-C', '--current/--no-current', 'current', default=None,
               help="(Don't) include currently running frame in output.")
+@click.option('-r/-R', '--reverse/--no-reverse', 'reverse', default=None,
+              help="(Don't) reverse the order of the days in output.")
 @click.option('-f', '--from', 'from_', type=DateTime,
               default=arrow.now().shift(days=-7),
               help="The date from when the log should start. Defaults "
@@ -966,8 +986,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="(Don't) output notes.")
 @click.pass_obj
 @catch_watson_error
-def log(watson, current, from_, to, projects, tags, year, month, week, day,
-        luna, all, output_format, pager, show_notes):
+def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
+        day, luna, all, output_format, pager, show_notes):
     """
     Display each recorded session during the given timespan.
 
@@ -1048,6 +1068,9 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
                               cur['tags'], id="current",
                               note=cur['note'])
 
+    if reverse is None:
+        reverse = watson.config.getboolean('options', 'reverse_log', True)
+
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
         projects=projects or None, tags=tags or None, span=span
@@ -1063,7 +1086,8 @@ def log(watson, current, from_, to, projects, tags, year, month, week, day,
 
     frames_by_day = sorted_groupby(
         filtered_frames,
-        operator.attrgetter('day'), reverse=True
+        operator.attrgetter('day'),
+        reverse=reverse
     )
 
     lines = []
