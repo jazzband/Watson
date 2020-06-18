@@ -308,7 +308,7 @@ class Watson(object):
         if note is None:
             note = old.get('note')
         elif old.get('note') is not None:
-            print(f'Overwriting old note:\n>> {old.get("note")}')
+            print('Overwriting old note:\n>> {}'.format(old.get('note')))
 
         frame = self.frames.add(
             old['project'], old['start'], stop_at, tags=old['tags'],
