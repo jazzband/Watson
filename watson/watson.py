@@ -572,7 +572,7 @@ class Watson(object):
                 )
 
                 tag_notes = [frame.note for frame in frames
-                                if tag in frame.tags and frame.note]
+                             if tag in frame.tags and frame.note]
 
                 project_report['tags'].append({
                     'name': tag,
