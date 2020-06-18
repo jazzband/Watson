@@ -1390,7 +1390,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         else:
             updated_at = arrow.utcnow()
 
-        watson.frames[id] = (project, start, stop, tags, updated_at, note)
+        watson.frames[id] = (project, start, stop, tags, id, updated_at, note)
     else:
         watson.current = dict(start=start, project=project, tags=tags,
                               note=note)
