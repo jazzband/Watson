@@ -1064,8 +1064,7 @@ def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
                        watson.config.getboolean('options', 'log_current')):
             cur = watson.current
             watson.frames.add(cur['project'], cur['start'], arrow.utcnow(),
-                              cur['tags'], id="current",
-                              note=cur['note'])
+                              cur['tags'], id="current", note=cur['note'])
 
     if reverse is None:
         reverse = watson.config.getboolean('options', 'reverse_log', True)
