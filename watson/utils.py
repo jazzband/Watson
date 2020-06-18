@@ -428,5 +428,5 @@ def json_arrow_encoder(obj):
 def format_note(note):
     return u"{}{}".format(
         style('note', '>> '),
-        style('note', note)
+        style('note', note.replace('\n', '\n' + ' '*20))
     )
