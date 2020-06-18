@@ -274,6 +274,26 @@ def test_start_nogap(watson):
     assert watson.frames[-1].stop == watson.current['start']
 
 
+def test_start_project_at(watson):
+    now = arrow.now()
+    watson.start('foo', start_at=now)
+    watson.stop()
+
+    # Task can't start before the previous task ends
+    with pytest.raises(WatsonError):
+        time_str = '1970-01-01T00:00'
+        time_obj = arrow.get(time_str)
+        watson.start('foo', start_at=time_obj)
+
+    # Task can't start in the future
+    with pytest.raises(WatsonError):
+        time_str = '2999-12-31T23:59'
+        time_obj = arrow.get(time_str)
+        watson.start('foo', start_at=time_obj)
+
+    assert watson.frames[-1].start == now
+
+
 # stop
 
 def test_stop_started_project(watson):
@@ -311,13 +331,15 @@ def test_stop_started_project_at(watson):
     watson.start('foo')
     now = arrow.now()
 
+    # Task can't end before it starts
     with pytest.raises(WatsonError):
         time_str = '1970-01-01T00:00'
         time_obj = arrow.get(time_str)
         watson.stop(stop_at=time_obj)
 
-    with pytest.raises(ValueError):
-        time_str = '2999-31-12T23:59'
+    # Task can't end in the future
+    with pytest.raises(WatsonError):
+        time_str = '2999-12-31T23:59'
         time_obj = arrow.get(time_str)
         watson.stop(stop_at=time_obj)
 
@@ -635,14 +657,14 @@ def test_pull(mocker, watson):
                 {
                     'id': '1c006c6e-6cc1-4c80-ab22-b51c857c0b06',
                     'project': 'foo',
-                    'start_at': 4003,
+                    'begin_at': 4003,
                     'end_at': 4004,
                     'tags': ['A']
                 },
                 {
                     'id': 'c44aa815-4d77-4a58-bddd-1afa95562141',
                     'project': 'bar',
-                    'start_at': 4004,
+                    'begin_at': 4004,
                     'end_at': 4005,
                     'tags': []
                 }

@@ -161,11 +161,12 @@ def help(ctx, command):
     click.echo(cmd.get_help(ctx))
 
 
-def _start(watson, project, tags, restart=False, gap=True):
+def _start(watson, project, tags, restart=False, start_at=None, gap=True):
     """
     Start project with given list of tags and save status.
     """
-    current = watson.start(project, tags, restart=restart, gap=gap)
+    current = watson.start(project, tags, restart=restart, start_at=start_at,
+                           gap=gap,)
     click.echo(u"Starting project {}{} at {}".format(
         style('project', project),
         (" " if current['tags'] else "") + style('tags', current['tags']),
@@ -175,7 +176,12 @@ def _start(watson, project, tags, restart=False, gap=True):
 
 
 @cli.command()
+@click.option('--at', 'at_', type=DateTime, default=None,
+              cls=MutuallyExclusiveOption, mutually_exclusive=['gap_'],
+              help=('Start frame at this time. Must be in '
+                    '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.option('-g/-G', '--gap/--no-gap', 'gap_', is_flag=True, default=True,
+              cls=MutuallyExclusiveOption, mutually_exclusive=['at_'],
               help=("(Don't) leave gap between end time of previous project "
                     "and start time of the current."))
 @click.argument('args', nargs=-1,
@@ -187,7 +193,8 @@ def _start(watson, project, tags, restart=False, gap=True):
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
-def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
+def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
+          gap_=True):
     """
     Start monitoring time for the given project.
     You can add tags indicating more specifically what you are working on with
@@ -196,6 +203,16 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
     If there is already a running project and the configuration option
     `options.stop_on_start` is set to a true value (`1`, `on`, `true`, or
     `yes`), it is stopped before the new project is started.
+
+    If `--at` option is given, the provided starting time is used. The
+    specified time must be after the end of the previous frame and must not be
+    in the future.
+
+    Example:
+
+    \b
+    $ watson start --at 13:37
+    Starting project apollo11 at 13:37
 
     If the `--no-gap` flag is given, the start time of the new project is set
     to the stop time of the most recently stopped project.
@@ -239,7 +256,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, gap_=True):
             watson.config.getboolean('options', 'stop_on_start')):
         ctx.invoke(stop)
 
-    _start(watson, project, tags, gap=gap_)
+    _start(watson, project, tags, start_at=at_, gap=gap_)
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
@@ -275,13 +292,16 @@ def stop(watson, at_):
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
+@click.option('--at', 'at_', type=DateTime, default=None,
+              help=('Start frame at this time. Must be in '
+                    '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
 @click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
               help="(Don't) Stop an already running project.")
 @click.argument('frame', default='-1', autocompletion=get_frames)
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
-def restart(ctx, watson, frame, stop_):
+def restart(ctx, watson, frame, stop_, at_):
     """
     Restart monitoring time for a previously stopped project.
 
@@ -329,7 +349,7 @@ def restart(ctx, watson, frame, stop_):
 
     frame = get_frame_from_argument(watson, frame)
 
-    _start(watson, frame.project, frame.tags, restart=True)
+    _start(watson, frame.project, frame.tags, restart=True, start_at=at_)
 
 
 @cli.command()
