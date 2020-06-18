@@ -251,7 +251,6 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
 
     if project and watson.is_started and not gap_:
         current = watson.current
-        # TODO: log in error note
         errmsg = ("Project '{}' is already started and '--no-gap' is passed. "
                   "Please stop manually.")
         raise click.ClickException(
