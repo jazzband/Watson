@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Log output order can now be controlled via the `--reverse/--no-reverse` flag
+  and the `reverse_log` configuration option (#369)
+
 ### Changed
 
 - Require latest Arrow version 0.15.6 to support ISO week dates (#380)
@@ -17,8 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improve Arrow 0.15.0 support after changes in `arrow.get()` behavior (#296)
 - Watson now suggests correct command if users make small typo (#318)
-- Log output order can now be controlled via the `--reverse/--no-reverse` flag
-  and the `reverse_log` configuration option (#369)
 
 ### Changed
 
@@ -30,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stylize prompt to create new project or tag (#310).
 - Aggregate calculates wrong time if used with `--current` (#293)
 - The `start` command now correctly checks if project is empty (#322)
-- Aggregate ignores frames that crosses aggreagate boundary (#248)
+- Aggregate ignores frames that crosses aggregate boundary (#248)
 - The `report` and `aggregate` commands with `--json` option now correctly
   encode Arrow objects (#329)
 
