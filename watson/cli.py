@@ -1297,6 +1297,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
                     "Task cannot end before it starts.")
             if start > arrow.utcnow():
                 raise ValueError("Start time cannot be in the future")
+            if stop and stop > arrow.utcnow():
+                raise ValueError("Stop time cannot be in the future")
             # break out of while loop and continue execution of
             #  the edit function normally
             break

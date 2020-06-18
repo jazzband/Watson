@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Require latest Arrow version 0.15.6 to support ISO week dates (#380)
 
+### Fixed
+
+- Make after-edit-check ensure that edited time stamps are not in the future
+  (#381)
+
+
 ## [1.9.0] - 2020-05-27
 
 ### Added
