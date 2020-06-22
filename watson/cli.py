@@ -1139,7 +1139,7 @@ def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
                     stop=style('time', '{:HH:mm}'.format(frame.stop)),
                     id=style('short_id', frame.id)
                     ))
-            if frame.note is not None and show_notes:
+            if frame.note is not None and frame.note != '' and show_notes:
                 _print(u"\t{}{}".format(" "*9, format_note(frame.note)))
 
     _final_print(lines)
@@ -1412,7 +1412,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         )
     )
 
-    if note is not None:
+    if note is not None and note != '':
         click.echo("Message: {}".format(style('note', note)))
 
 
