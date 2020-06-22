@@ -811,7 +811,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
-@click.option('-n', '--note', 'show_notes', default=False, is_flag=True,
+@click.option('-n', '--notes', 'show_notes', default=False, is_flag=True,
               help="Show frame notes in report.")
 @click.pass_obj
 @click.pass_context
