@@ -1323,9 +1323,6 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
     if id:
         data['stop'] = frame.stop.format(datetime_format)
 
-    if frame.note is not None and len(frame.note) > 0:
-        data['note'] = frame.note
-
     text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
 
     start = None
