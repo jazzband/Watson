@@ -127,8 +127,10 @@ def catch_watson_error(func):
 
 @click.group(cls=DYMGroup)
 @click.version_option(version=_watson.__version__, prog_name='Watson')
+@click.option('--color/--no-color', 'color', default=None,
+              help="(Don't) color output.")
 @click.pass_context
-def cli(ctx):
+def cli(ctx, color):
     """
     Watson is a tool aimed at helping you monitoring your time.
 
@@ -136,6 +138,9 @@ def cli(ctx):
     project with the `start` command, and you can stop the timer
     when you're done with the `stop` command.
     """
+
+    if color is not None:
+        ctx.color = True if color else False
 
     # This is the main command group, needed by click in order
     # to handle the subcommands
