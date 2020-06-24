@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Log output order can now be controlled via the `--reverse/--no-reverse` flag
   and the `reverse_log` configuration option (#369)
 - Add `--at` flag to the `start` and `restart` commands (#364).
+- Add `--color` and `--no-color` flags to force output to be colored or not
+  respectively (#350).
 
 ### Changed
 
