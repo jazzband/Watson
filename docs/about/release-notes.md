@@ -247,6 +247,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
+[1.10.0]: https://github.com/tailordev/watson/compare/1.9.0...1.10.0
 [1.9.0]: https://github.com/tailordev/watson/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/tailordev/watson/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/tailordev/watson/compare/1.6.0...1.7.0
