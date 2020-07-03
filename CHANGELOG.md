@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.0] - 2020-07-03
+
 ### Added
 
 - Log output order can now be controlled via the `--reverse/--no-reverse` flag
@@ -23,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Make after-edit-check ensure that edited time stamps are not in the future
   (#381)
-
 
 ## [1.9.0] - 2020-05-27
 
@@ -249,7 +250,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
-[unreleased]: https://github.com/tailordev/watson/compare/1.9.0...HEAD
+[unreleased]: https://github.com/tailordev/watson/compare/1.10.0...HEAD
+[1.10.0]: https://github.com/tailordev/watson/compare/1.9.0...1.10.0
 [1.9.0]: https://github.com/tailordev/watson/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/tailordev/watson/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/tailordev/watson/compare/1.6.0...1.7.0
