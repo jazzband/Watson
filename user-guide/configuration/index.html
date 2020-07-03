@@ -256,6 +256,11 @@ in colour, but <code>log</code> or <code>report</code> do not, try disabling the
 <p>If <code>true</code>, the output of the <code>report</code> command will include the currently
 running frame (if any) by default. The option can be overridden on the
 command line with the <code>-c/-C</code> resp. <code>--current/--no-current</code> flags.</p>
+<h4 id="optionsreverse_log-default-true"><code>options.reverse_log</code> (default: <code>true</code>)</h4>
+<p>If <code>true</code>, the output of the <code>log</code> command will reverse the order of the days
+to display the latest day&rsquo;s entries on top and the oldest day&rsquo;s entries at the
+bottom. The option can be overridden on the command line with the <code>-r/-R</code> resp.
+<code>--reverse/--no-reverse</code> flags.</p>
 <h4 id="optionsstop_on_start-default-false"><code>options.stop_on_start</code> (default: <code>false</code>)</h4>
 <p>If <code>true</code>, starting a new project will stop running projects:</p>
 <pre><code>$ watson start samourai +pizza +cat
@@ -329,6 +334,7 @@ week_start = monday
 log_current = false
 pager = true
 report_current = false
+reverse_log = true
 </code></pre>
 
 <h2 id="application-folder">Application folder</h2>
