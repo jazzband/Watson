@@ -34,6 +34,8 @@ from .utils import (
     frames_to_json,
     get_frame_from_argument,
     get_start_time_for_period,
+    get_frames_for_today,
+    get_frames_for_week,
     options, safe_save,
     sorted_groupby,
     style,
@@ -1219,12 +1221,16 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Confirm addition of new project.")
 @click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
               help="Confirm creation of new tag.")
+@click.option('-d', '--day', is_flag=True, default=False,
+              help="Edit all frames for today.")
+@click.option('-w', '--week', is_flag=True, default=False,
+              help="Edit all frames for the past week.")
 @click.argument('id', required=False, autocompletion=get_frames)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, id):
+def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
     """
-    Edit a frame.
+    Edit one or more frames.
 
     You can specify the frame to edit by its position or by its frame id.
     For example, to edit the second-to-last frame, pass `-2` as the frame
@@ -1232,6 +1238,9 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
 
     If no id or index is given, the frame defaults to the current frame (or the
     last recorded frame, if no project is currently running).
+
+    If day or week is flagged, all the frames for that day or week will be 
+    available for editing. If an id is also passed it will be ignored.
 
     The editor used is determined by the `VISUAL` or `EDITOR` environment
     variables (in that order) and defaults to `notepad` on Windows systems and
@@ -1242,28 +1251,38 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
     datetime_format = '{} {}'.format(date_format, time_format)
     local_tz = tz.tzlocal()
 
-    if id:
-        frame = get_frame_from_argument(watson, id)
-        id = frame.id
+    if day:
+        # Editing all the frames of today
+        frames = get_frames_for_today(watson)
+    elif week:
+        # Editing all the frames of the week
+        frames = get_frames_for_week(watson)
+    elif id:
+        # Editing a single frame by id
+        frames = [get_frame_from_argument(watson, id)]
+        id = frames[0].id
     elif watson.is_started:
-        frame = Frame(watson.current['start'], None, watson.current['project'],
-                      None, watson.current['tags'])
+        # Frame is started and doesn't have a stop time yet
+        frames = [Frame(watson.current['start'], None, watson.current['project'],
+                      None, watson.current['tags'])]
     elif watson.frames:
-        frame = watson.frames[-1]
-        id = frame.id
+        # Id is not provided, edit the latest frame
+        frames = [watson.frames[-1]]
+        id = frames[0].id
     else:
         raise click.ClickException(
             style('error', "No frames recorded yet. It's time to create your "
                            "first one!"))
-
-    data = {
-        'start': frame.start.format(datetime_format),
-        'project': frame.project,
-        'tags': frame.tags,
-    }
-
-    if id:
-        data['stop'] = frame.stop.format(datetime_format)
+    data = [
+        {
+            'id': frame.id,
+            'start': frame.start.format(datetime_format),
+            'stop': frame.stop.format(datetime_format) if frame.stop or id else None,
+            'project': frame.project,
+            'tags': frame.tags,
+        }
+        for frame in frames
+    ]
 
     text = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
 
@@ -1280,30 +1299,43 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
             return
 
         try:
-            data = json.loads(output)
-            project = data['project']
-            # Confirm creation of new project if that option is set
-            if (watson.config.getboolean('options', 'confirm_new_project') or
-                    confirm_new_project):
-                confirm_project(project, watson.projects)
-            tags = data['tags']
-            # Confirm creation of new tag(s) if that option is set
-            if (watson.config.getboolean('options', 'confirm_new_tag') or
-                    confirm_new_tag):
-                confirm_tags(tags, watson.tags)
-            start = arrow.get(data['start'], datetime_format).replace(
-                tzinfo=local_tz).to('utc')
-            stop = arrow.get(data['stop'], datetime_format).replace(
-                tzinfo=local_tz).to('utc') if id else None
-            # if start time of the project is not before end time
-            #  raise ValueException
-            if not watson.is_started and start > stop:
-                raise ValueError(
-                    "Task cannot end before it starts.")
-            if start > arrow.utcnow():
-                raise ValueError("Start time cannot be in the future")
-            if stop and stop > arrow.utcnow():
-                raise ValueError("Stop time cannot be in the future")
+            edited_data = json.loads(output)
+            edited_frames = []
+
+            for index, frame in enumerate(edited_data):
+                project = frame['project']
+                frame_id = frame['id']
+                # Confirm creation of new project if that option is set
+                if (watson.config.getboolean('options', 'confirm_new_project') or
+                        confirm_new_project):
+                    confirm_project(project, watson.projects)
+                tags = frame['tags']
+                # Confirm creation of new tag(s) if that option is set
+                if (watson.config.getboolean('options', 'confirm_new_tag') or
+                        confirm_new_tag):
+                    confirm_tags(tags, watson.tags)
+                start = arrow.get(frame['start'], datetime_format).replace(
+                    tzinfo=local_tz).to('utc')
+                stop = arrow.get(frame['stop'], datetime_format).replace(
+                    tzinfo=local_tz).to('utc') if (id or day or week) else None
+                # if start time of the project is not before end time
+                #  raise ValueException
+                if not watson.is_started and start > stop:
+                    raise ValueError(
+                        "Task cannot end before it starts.")
+                if start > arrow.utcnow():
+                    raise ValueError("Start time cannot be in the future")
+                if stop and stop > arrow.utcnow():
+                    raise ValueError("Stop time cannot be in the future")
+                # Compare the id to the original frame's id at the same index
+                #  raise ValueError if they're not the same
+                if frame['id'] != data[index]['id']:
+                    # Reset the id to the original value
+                    edited_data[index]['id'] = data[index]['id']
+                    output = json.dumps(edited_data, indent=4, sort_keys=True, ensure_ascii=False)
+                    raise ValueError("You cannot rearrange the order of the frames or modify their ids.")
+                # Add frame to the list of edited frames
+                edited_frames.append((frame_id, project, start, stop, tags))
             # break out of while loop and continue execution of
             #  the edit function normally
             break
@@ -1312,7 +1344,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
                        err=True)
         except KeyError:
             click.echo(
-                "The edited frame must contain the project, "
+                "The edited frames must contain the project, "
                 "start, and stop keys.", err=True)
         # we reach here if exception was thrown, wait for user
         #  to acknowledge the error before looping in while and
@@ -1323,28 +1355,32 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         text = output
 
     # we reach this when we break out of the while loop above
-    if id:
-        watson.frames[id] = (project, start, stop, tags)
-    else:
-        watson.current = dict(start=start, project=project, tags=tags)
+    for frame in edited_frames:
+        (id, project, start, stop, tags) = frame
+        if id or day or week:
+            watson.frames[id] = (project, start, stop, tags)
+        else:
+            watson.current = dict(start=start, project=project, tags=tags)
 
     watson.save()
-    click.echo(
-        u"Edited frame for project {project}{tags}, from {start} to {stop} "
-        u"({delta})".format(
-            delta=format_timedelta(stop - start) if stop else '-',
-            project=style('project', project),
-            tags=(" " if tags else "") + style('tags', tags),
-            start=style(
-                'time',
-                start.to(local_tz).format(time_format)
-            ),
-            stop=style(
-                'time',
-                stop.to(local_tz).format(time_format) if stop else '-'
+    for frame in edited_frames:
+        (id, project, start, stop, tags) = frame
+        click.echo(
+            u"Edited frame for project {project}{tags}, from {start} to {stop} "
+            u"({delta})".format(
+                delta=format_timedelta(stop - start) if stop else '-',
+                project=style('project', project),
+                tags=(" " if tags else "") + style('tags', tags),
+                start=style(
+                    'time',
+                    start.to(local_tz).format(time_format)
+                ),
+                stop=style(
+                    'time',
+                    stop.to(local_tz).format(time_format) if stop else '-'
+                )
             )
         )
-    )
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})

@@ -172,6 +172,42 @@ def get_frame_from_argument(watson, arg):
         )
 
 
+def get_frames_for_today(watson):
+    """
+    Get frames for today.
+    """
+    try:
+        today = arrow.now().format('YYYY-MM-DD')
+        entries = [
+            frame
+            for frame in watson.frames
+            if frame.start.format('YYYY-MM-DD') == today
+        ]
+        return entries
+    except KeyError:
+        raise click.ClickException(u"{}.".format(
+            style('error', u"No frame found with id"))
+        )
+
+
+def get_frames_for_week(watson):
+    """
+    Get frames for current week.
+    """
+    try:
+        week_ago = arrow.now().shift(weeks=-1).format('YYYY-MM-DD')
+        entries = [
+            frame
+            for frame in watson.frames
+            if frame.start.format('YYYY-MM-DD') >= week_ago
+        ]
+        return entries
+    except KeyError:
+        raise click.ClickException(u"{}.".format(
+            style('error', u"No frame found with id"))
+        )
+
+
 def get_start_time_for_period(period):
     # Using now() from datetime instead of arrow for mocking compatibility.
     now = arrow.Arrow.fromdatetime(datetime.datetime.now())

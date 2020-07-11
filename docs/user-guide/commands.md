@@ -166,18 +166,21 @@ Flag | Help
 Usage:  watson edit [OPTIONS] [ID]
 ```
 
-Edit a frame.
+Edit one or more frames.
 
 You can specify the frame to edit by its position or by its frame id.
 For example, to edit the second-to-last frame, pass `-2` as the frame
 index. You can get the id of a frame with the `watson log` command.
 
-If no id or index is given, the frame defaults to the current frame or the
-last recorded frame, if no project is currently running.
+If no id or index is given, the frame defaults to the current frame (or the
+last recorded frame, if no project is currently running).
+
+If day or week is flagged, all the frames for that day or week will be 
+available for editing. If an id is also passed it will be ignored.
 
 The editor used is determined by the `VISUAL` or `EDITOR` environment
 variables (in that order) and defaults to `notepad` on Windows systems and
-to `vim`, `nano` or `vi` (first one found) on all other systems.
+to `vim`, `nano`, or `vi` (first one found) on all other systems.
 
 ### Options
 
@@ -185,6 +188,8 @@ Flag | Help
 -----|-----
 `-c, --confirm-new-project` | Confirm addition of new project.
 `-b, --confirm-new-tag` | Confirm creation of new tag.
+`-d, --day` | Edit all frames for today.
+`-w, --week` | Edit all frames for the past week.
 `--help` | Show this message and exit.
 
 ## `frames`
