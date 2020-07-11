@@ -1239,7 +1239,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
     If no id or index is given, the frame defaults to the current frame (or the
     last recorded frame, if no project is currently running).
 
-    If day or week is flagged, all the frames for that day or week will be 
+    If day or week is flagged, all the frames for that day or week will be
     available for editing. If an id is also passed it will be ignored.
 
     The editor used is determined by the `VISUAL` or `EDITOR` environment
@@ -1263,8 +1263,9 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
         id = frames[0].id
     elif watson.is_started:
         # Frame is started and doesn't have a stop time yet
-        frames = [Frame(watson.current['start'], None, watson.current['project'],
-                      None, watson.current['tags'])]
+        frames = [Frame(watson.current['start'], None,
+                        watson.current['project'], None,
+                        watson.current['tags'])]
     elif watson.frames:
         # Id is not provided, edit the latest frame
         frames = [watson.frames[-1]]
@@ -1277,7 +1278,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
         {
             'id': frame.id,
             'start': frame.start.format(datetime_format),
-            'stop': frame.stop.format(datetime_format) if frame.stop or id else None,
+            'stop': frame.stop.format(datetime_format)
+            if frame.stop or id else None,
             'project': frame.project,
             'tags': frame.tags,
         }
@@ -1306,8 +1308,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
                 project = frame['project']
                 frame_id = frame['id']
                 # Confirm creation of new project if that option is set
-                if (watson.config.getboolean('options', 'confirm_new_project') or
-                        confirm_new_project):
+                if (watson.config.getboolean('options', 'confirm_new_project')
+                        or confirm_new_project):
                     confirm_project(project, watson.projects)
                 tags = frame['tags']
                 # Confirm creation of new tag(s) if that option is set
@@ -1332,8 +1334,10 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
                 if frame['id'] != data[index]['id']:
                     # Reset the id to the original value
                     edited_data[index]['id'] = data[index]['id']
-                    output = json.dumps(edited_data, indent=4, sort_keys=True, ensure_ascii=False)
-                    raise ValueError("You cannot rearrange the order of the frames or modify their ids.")
+                    output = json.dumps(edited_data, indent=4, sort_keys=True,
+                                        ensure_ascii=False)
+                    raise ValueError("You cannot rearrange the order of the \
+                                      frames or modify their ids.")
                 # Add frame to the list of edited frames
                 edited_frames.append((frame_id, project, start, stop, tags))
             # break out of while loop and continue execution of
@@ -1366,7 +1370,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
     for frame in edited_frames:
         (id, project, start, stop, tags) = frame
         click.echo(
-            u"Edited frame for project {project}{tags}, from {start} to {stop} "
+            u"Edited frame for project {project}{tags}, from {start} to {stop}"
             u"({delta})".format(
                 delta=format_timedelta(stop - start) if stop else '-',
                 project=style('project', project),

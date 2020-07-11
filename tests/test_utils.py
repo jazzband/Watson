@@ -390,15 +390,13 @@ def test_json_arrow_encoder():
 
 def test_get_frames_for_today(watson):
     now = arrow.now()
-    watson.add('foo', now.shift(hours=-1), now, ['1A', '1B', '1C'])
-    watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A', '5B', '5C'])
-    watson.add('foo', now.shift(hours=-8), now.shift(hours=-5), ['8A', '8B', '8C'])
-    watson.add('foo', now.shift(days=-1), now.shift(hours=-20), ['24F', '24G', '24H'])
-    watson.add('foo', now.shift(days=-2), now.shift(hours=-42), ['48I', '48J', '48K'])
+    watson.add('foo', now.shift(hours=-1), now, ['1A'])
+    watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
+    watson.add('foo', now.shift(hours=-8), now.shift(hours=-5), ['8A'])
+    watson.add('foo', now.shift(days=-1), now.shift(hours=-20), ['24F'])
+    watson.add('foo', now.shift(days=-2), now.shift(hours=-42), ['48I'])
     watson.add('foo', now.shift(days=-3), now.shift(hours=-70), ['72L'])
 
-    start = now.shift(hours=-now.hour)
-    stop = now
     result = get_frames_for_today(watson)
 
     assert len(result) == 3
@@ -406,36 +404,34 @@ def test_get_frames_for_today(watson):
     assert result[0].start == now.shift(hours=-1)
     assert result[0].stop == now
     assert result[0].project == 'foo'
-    assert result[0].tags == ['1A', '1B', '1C']
+    assert result[0].tags == ['1A']
 
     assert result[1].start == now.shift(hours=-5)
     assert result[1].stop == now.shift(hours=-3)
     assert result[1].project == 'foo'
-    assert result[1].tags == ['5A', '5B', '5C']
+    assert result[1].tags == ['5A']
 
     assert result[2].start == now.shift(hours=-8)
     assert result[2].stop == now.shift(hours=-5)
     assert result[2].project == 'foo'
-    assert result[2].tags == ['8A', '8B', '8C']
+    assert result[2].tags == ['8A']
 
 
 # get_frames_for_week
 
 def test_get_frames_for_week(watson):
     now = arrow.now()
-    watson.add('foo', now.shift(hours=-1), now, ['1A', '1B', '1C'])
-    watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A', '5B', '5C'])
-    watson.add('foo', now.shift(hours=-8), now.shift(hours=-5), ['8A', '8B', '8C'])
-    watson.add('foo', now.shift(days=-1), now.shift(hours=-20), ['24F', '24G', '24H'])
-    watson.add('foo', now.shift(days=-2), now.shift(hours=-42), ['48I', '48J', '48K'])
+    watson.add('foo', now.shift(hours=-1), now, ['1A'])
+    watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
+    watson.add('foo', now.shift(hours=-8), now.shift(hours=-5), ['8A'])
+    watson.add('foo', now.shift(days=-1), now.shift(hours=-20), ['24F'])
+    watson.add('foo', now.shift(days=-2), now.shift(hours=-42), ['48I'])
     watson.add('foo', now.shift(days=-3), now.shift(hours=-70), ['72L'])
     watson.add('foo', now.shift(days=-5), now.shift(hours=-110), ['120L'])
     watson.add('foo', now.shift(days=-7), now.shift(hours=-150), ['168L'])
     watson.add('foo', now.shift(days=-10), now.shift(hours=-210), ['240L'])
     watson.add('foo', now.shift(days=-13), now.shift(hours=-300), ['312L'])
 
-    start = now.shift(weeks=-1)
-    stop = now
     result = get_frames_for_week(watson)
 
     assert len(result) == 8
@@ -443,17 +439,17 @@ def test_get_frames_for_week(watson):
     assert result[0].start == now.shift(hours=-1)
     assert result[0].stop == now
     assert result[0].project == 'foo'
-    assert result[0].tags == ['1A', '1B', '1C']
+    assert result[0].tags == ['1A']
 
     assert result[1].start == now.shift(hours=-5)
     assert result[1].stop == now.shift(hours=-3)
     assert result[1].project == 'foo'
-    assert result[1].tags == ['5A', '5B', '5C']
+    assert result[1].tags == ['5A']
 
     assert result[2].start == now.shift(hours=-8)
     assert result[2].stop == now.shift(hours=-5)
     assert result[2].project == 'foo'
-    assert result[2].tags == ['8A', '8B', '8C']
+    assert result[2].tags == ['8A']
 
     assert result[7].start == now.shift(days=-7)
     assert result[7].stop == now.shift(hours=-150)
