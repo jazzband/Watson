@@ -33,6 +33,7 @@ from watson.utils import (
     get_start_time_for_period,
     get_frames_for_today,
     get_frames_for_week,
+    get_frames_for_month,
     make_json_writer,
     safe_save,
     sorted_groupby,
@@ -389,7 +390,12 @@ def test_json_arrow_encoder():
 # get_frames_for_today
 
 def test_get_frames_for_today(watson):
-    now = arrow.now()
+    """
+    This test will take the current time and create entries with
+    a starting point shifted by a designated number of hours. The test passes
+    if all the frames belonging to the specifid time frame are returned.
+    """
+    now = arrow.utcnow()
     watson.add('foo', now.shift(hours=-1), now, ['1A'])
     watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
     watson.add('foo', now.shift(hours=-8), now.shift(hours=-5), ['8A'])
@@ -420,7 +426,12 @@ def test_get_frames_for_today(watson):
 # get_frames_for_week
 
 def test_get_frames_for_week(watson):
-    now = arrow.now()
+    """
+    This test will take the current time and create entries with
+    a starting point shifted by a designated number of hours. The test passes
+    if all the frames belonging to the specifid time frame are returned.
+    """
+    now = arrow.utcnow()
     watson.add('foo', now.shift(hours=-1), now, ['1A'])
     watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
     watson.add('foo', now.shift(hours=-8), now.shift(hours=-5), ['8A'])
@@ -455,3 +466,60 @@ def test_get_frames_for_week(watson):
     assert result[7].stop == now.shift(hours=-150)
     assert result[7].project == 'foo'
     assert result[7].tags == ['168L']
+
+
+# get_frames_for_month
+
+def test_get_frames_for_month(watson):
+    """
+    This test will take the current time and create entries with
+    a starting point shifted by a designated number of hours. The test passes
+    if all the frames belonging to the specifid time frame are returned.
+    """
+    now = arrow.utcnow()
+    watson.add('foo', now.shift(hours=-1), now, ['1A'])
+    watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
+    watson.add('foo', now.shift(hours=-8), now.shift(hours=-5), ['8A'])
+    watson.add('foo', now.shift(days=-1), now.shift(hours=-20), ['24F'])
+    watson.add('foo', now.shift(days=-2), now.shift(hours=-42), ['48I'])
+    watson.add('foo', now.shift(days=-3), now.shift(hours=-70), ['72L'])
+    watson.add('foo', now.shift(days=-5), now.shift(hours=-110), ['120L'])
+    watson.add('foo', now.shift(days=-7), now.shift(hours=-150), ['168L'])
+    watson.add('foo', now.shift(days=-10), now.shift(hours=-210), ['240L'])
+    watson.add('foo', now.shift(days=-13), now.shift(hours=-300), ['312L'])
+    watson.add('foo', now.shift(days=-30), now.shift(hours=-718), ['720L'])
+    watson.add('foo', now.shift(days=-35), now.shift(hours=-835), ['840L'])
+
+    result = get_frames_for_month(watson)
+
+    assert len(result) == 11
+
+    assert result[0].start == now.shift(hours=-1)
+    assert result[0].stop == now
+    assert result[0].project == 'foo'
+    assert result[0].tags == ['1A']
+
+    assert result[1].start == now.shift(hours=-5)
+    assert result[1].stop == now.shift(hours=-3)
+    assert result[1].project == 'foo'
+    assert result[1].tags == ['5A']
+
+    assert result[2].start == now.shift(hours=-8)
+    assert result[2].stop == now.shift(hours=-5)
+    assert result[2].project == 'foo'
+    assert result[2].tags == ['8A']
+
+    assert result[7].start == now.shift(days=-7)
+    assert result[7].stop == now.shift(hours=-150)
+    assert result[7].project == 'foo'
+    assert result[7].tags == ['168L']
+
+    assert result[9].start == now.shift(days=-13)
+    assert result[9].stop == now.shift(hours=-300)
+    assert result[9].project == 'foo'
+    assert result[9].tags == ['312L']
+
+    assert result[10].start == now.shift(days=-30)
+    assert result[10].stop == now.shift(hours=-718)
+    assert result[10].project == 'foo'
+    assert result[10].tags == ['720L']

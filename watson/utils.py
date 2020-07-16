@@ -176,36 +176,39 @@ def get_frames_for_today(watson):
     """
     Get frames for today.
     """
-    try:
-        today = arrow.now().format('YYYY-MM-DD')
-        entries = [
-            frame
-            for frame in watson.frames
-            if frame.start.format('YYYY-MM-DD') == today
-        ]
-        return entries
-    except KeyError:
-        raise click.ClickException(u"{}.".format(
-            style('error', u"No frame found with id"))
-        )
+    today = arrow.now().format('YYYY-MM-DD')
+    entries = [
+        frame
+        for frame in watson.frames
+        if frame.start.format('YYYY-MM-DD') == today
+    ]
+    return entries
 
 
 def get_frames_for_week(watson):
     """
     Get frames for current week.
     """
-    try:
-        week_ago = arrow.now().shift(weeks=-1).format('YYYY-MM-DD')
-        entries = [
-            frame
-            for frame in watson.frames
-            if frame.start.format('YYYY-MM-DD') >= week_ago
-        ]
-        return entries
-    except KeyError:
-        raise click.ClickException(u"{}.".format(
-            style('error', u"No frame found with id"))
-        )
+    week_ago = arrow.now().shift(weeks=-1).format('YYYY-MM-DD')
+    entries = [
+        frame
+        for frame in watson.frames
+        if frame.start.format('YYYY-MM-DD') >= week_ago
+    ]
+    return entries
+
+
+def get_frames_for_month(watson):
+    """
+    Get frames for current month.
+    """
+    month_ago = arrow.now().shift(months=-1).format('YYYY-MM-DD')
+    entries = [
+        frame
+        for frame in watson.frames
+        if frame.start.format('YYYY-MM-DD') >= month_ago
+    ]
+    return entries
 
 
 def get_start_time_for_period(period):
