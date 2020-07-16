@@ -36,6 +36,7 @@ from .utils import (
     get_start_time_for_period,
     get_frames_for_today,
     get_frames_for_week,
+    get_frames_for_month,
     options, safe_save,
     sorted_groupby,
     style,
@@ -1225,10 +1226,12 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Edit all frames for today.")
 @click.option('-w', '--week', is_flag=True, default=False,
               help="Edit all frames for the past week.")
+@click.option('-m', '--month', is_flag=True, default=False,
+              help="Edit all frames for the past month.")
 @click.argument('id', required=False, autocompletion=get_frames)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
+def edit(watson, confirm_new_project, confirm_new_tag, day, week, month, id):
     """
     Edit one or more frames.
 
@@ -1239,8 +1242,9 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
     If no id or index is given, the frame defaults to the current frame (or the
     last recorded frame, if no project is currently running).
 
-    If day or week is flagged, all the frames for that day or week will be
-    available for editing. If an id is also passed it will be ignored.
+    If day, week or month is flagged, all the frames for that day, week or
+    month will be available for editing. If an id is also passed it
+    will be ignored.
 
     The editor used is determined by the `VISUAL` or `EDITOR` environment
     variables (in that order) and defaults to `notepad` on Windows systems and
@@ -1257,6 +1261,9 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
     elif week:
         # Editing all the frames of the week
         frames = get_frames_for_week(watson)
+    elif month:
+        # Editing all the frame of the month
+        frames = get_frames_for_month(watson)
     elif id:
         # Editing a single frame by id
         frames = [get_frame_from_argument(watson, id)]
@@ -1276,7 +1283,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
                            "first one!"))
     data = [
         {
-            'id': frame.id,
+            'id': frame.id
+            if frame.id else None,
             'start': frame.start.format(datetime_format),
             'stop': frame.stop.format(datetime_format)
             if frame.stop or id else None,
@@ -1319,7 +1327,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
                 start = arrow.get(frame['start'], datetime_format).replace(
                     tzinfo=local_tz).to('utc')
                 stop = arrow.get(frame['stop'], datetime_format).replace(
-                    tzinfo=local_tz).to('utc') if (id or day or week) else None
+                    tzinfo=local_tz).to('utc') \
+                    if (id or day or week or month) else None
                 # if start time of the project is not before end time
                 #  raise ValueException
                 if not watson.is_started and start > stop:
@@ -1361,7 +1370,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, id):
     # we reach this when we break out of the while loop above
     for frame in edited_frames:
         (id, project, start, stop, tags) = frame
-        if id or day or week:
+        if id or day or week or month:
             watson.frames[id] = (project, start, stop, tags)
         else:
             watson.current = dict(start=start, project=project, tags=tags)
