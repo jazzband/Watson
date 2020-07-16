@@ -191,7 +191,7 @@ Flag | Help
 `-b, --confirm-new-tag` | Confirm creation of new tag.
 `-d, --day` | Edit all frames for today.
 `-w, --week` | Edit all frames for the past week.
- `-m, --month` | Edit all frames for the past month.
+`-m, --month` | Edit all frames for the past month.
 `--help` | Show this message and exit.
 
 ## `frames`
