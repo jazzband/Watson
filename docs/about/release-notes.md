@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2020-07-03
+
+### Added
+
+- Log output order can now be controlled via the `--reverse/--no-reverse` flag
+  and the `reverse_log` configuration option (#369)
+- Add `--at` flag to the `start` and `restart` commands (#364).
+- Add `--color` and `--no-color` flags to force output to be colored or not
+  respectively (#350).
+
+### Changed
+
+- Require latest Arrow version 0.15.6 to support ISO week dates (#380)
+
+### Fixed
+
+- Make after-edit-check ensure that edited time stamps are not in the future
+  (#381)
+
 ## [1.9.0] - 2020-05-27
 
 ### Added
@@ -228,6 +247,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
+[1.10.0]: https://github.com/tailordev/watson/compare/1.9.0...1.10.0
 [1.9.0]: https://github.com/tailordev/watson/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/tailordev/watson/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/tailordev/watson/compare/1.6.0...1.7.0
