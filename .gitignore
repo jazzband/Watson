@@ -15,6 +15,7 @@ site/
 .vagrant/
 .venv/
 .pytest_cache/
+data/
 
 # files
 
