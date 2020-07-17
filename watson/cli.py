@@ -1347,8 +1347,10 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, month, id):
                                         ensure_ascii=False)
                     raise ValueError("You cannot rearrange the order of the \
                                       frames or modify their ids.")
-                # Add frame to the list of edited frames
-                edited_frames.append((frame_id, project, start, stop, tags))
+                # Add frame to the list of edited frames only if it's been
+                #  edited
+                if frame != data[index]:
+                    edited_frames.append((frame_id, project, start, stop, tags))
             # break out of while loop and continue execution of
             #  the edit function normally
             break
