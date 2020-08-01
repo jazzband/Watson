@@ -176,11 +176,11 @@ def get_frames_for_today(watson):
     """
     Get frames for today.
     """
-    today = arrow.now().format('YYYY-MM-DD')
+    today = arrow.now()
+    span = watson.frames.span(today, today)
     entries = [
         frame
-        for frame in watson.frames
-        if frame.start.format('YYYY-MM-DD') == today
+        for frame in watson.frames.filter(span=span)
     ]
     return entries
 
@@ -189,11 +189,11 @@ def get_frames_for_week(watson):
     """
     Get frames for current week.
     """
-    week_ago = arrow.now().shift(weeks=-1).format('YYYY-MM-DD')
+    week_ago = arrow.now().shift(weeks=-1)
+    span = watson.frames.span(week_ago, arrow.now())
     entries = [
         frame
-        for frame in watson.frames
-        if frame.start.format('YYYY-MM-DD') >= week_ago
+        for frame in watson.frames.filter(span=span)
     ]
     return entries
 
@@ -202,11 +202,11 @@ def get_frames_for_month(watson):
     """
     Get frames for current month.
     """
-    month_ago = arrow.now().shift(months=-1).format('YYYY-MM-DD')
+    month_ago = arrow.now().shift(months=-1)
+    span = watson.frames.span(month_ago, arrow.now())
     entries = [
         frame
-        for frame in watson.frames
-        if frame.start.format('YYYY-MM-DD') >= month_ago
+        for frame in watson.frames.filter(span=span)
     ]
     return entries
 
