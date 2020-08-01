@@ -215,13 +215,6 @@ def get_frames_between(watson, from_, to):
     """
     Get frames between range.
     """
-    # from_ = arrow.get(from_)
-    # to = arrow.get(to)
-    # entries = [
-    #     frame
-    #     for frame in watson.frames
-    #     if frame.start >= from_ and frame.stop <= to
-    # ]
     span = watson.frames.span(from_, to)
     entries = [
         frame
