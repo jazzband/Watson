@@ -179,6 +179,9 @@ If day, week or month is flagged, all the frames for that day, week or
 month will be available for editing. If an id is also passed it
 will be ignored.
 
+If from and/or to are specified the frames within this range will be
+available for editing.
+
 The editor used is determined by the `VISUAL` or `EDITOR` environment
 variables (in that order) and defaults to `notepad` on Windows systems and
 to `vim`, `nano`, or `vi` (first one found) on all other systems.
@@ -192,6 +195,8 @@ Flag | Help
 `-d, --day` | Edit all frames for today.
 `-w, --week` | Edit all frames for the past week.
 `-m, --month` | Edit all frames for the past month.
+`-f, --from` | The date from when the log should start.
+`-t, --to` | The date at which the log should stop (inclusive).
 `--help` | Show this message and exit.
 
 ## `frames`
