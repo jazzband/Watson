@@ -195,8 +195,8 @@ Flag | Help
 `-d, --day` | Edit all frames for today.
 `-w, --week` | Edit all frames for the past week.
 `-m, --month` | Edit all frames for the past month.
-`-f, --from` | The date from when the log should start.
-`-t, --to` | The date at which the log should stop (inclusive).
+`-f, --from` | The date from when the log should start. Defaults to seven days ago.
+`-t, --to` | The date at which the log should stop (inclusive). Defaults to tomorrow.
 `--help` | Show this message and exit.
 
 ## `frames`
