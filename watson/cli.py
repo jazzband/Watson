@@ -1232,11 +1232,11 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
 @click.option('-f', '--from', 'from_', type=DateTime,
               help="The date from when the log should start.")
 @click.option('-t', '--to', type=DateTime, default=arrow.now(),
-              help="The date at which the log should stop (inclusive). ")
+              help="The date at which the log should stop (inclusive).")
 @click.argument('id', required=False, autocompletion=get_frames)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, day, week, 
+def edit(watson, confirm_new_project, confirm_new_tag, day, week,
          month, from_, to, id):
     """
     Edit one or more frames.
@@ -1364,7 +1364,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week,
                 # Add frame to the list of edited frames only if it's been
                 #  edited
                 if frame != data[index]:
-                    edited_frames.append((frame_id, project, start, stop, tags))
+                    edited_frames.append((frame_id, project, start,
+                                          stop, tags))
             # break out of while loop and continue execution of
             #  the edit function normally
             break

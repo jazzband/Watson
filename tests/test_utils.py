@@ -395,10 +395,6 @@ def test_get_frames_for_today(watson):
     This test will take the current time and create entries with
     a starting point shifted by a designated number of hours. The test passes
     if all the frames belonging to the specifid time frame are returned.
-
-    This test hardcodes the value of now (which should be dependent on the
-    user and the machine's current time) to avoid tests failing around 
-    midnight
     """
     now = arrow.now()
     watson.add('foo', now.shift(hours=-1), now, ['1A'])
@@ -534,6 +530,9 @@ def test_get_frames_for_month(watson):
 
 def test_get_frames_between(watson):
     """
+    This test will take the current time and create entries with
+    a starting point shifted by a designated number of hours. The test passes
+    if all the frames belonging to the specifid time frame are returned.
     """
     from_ = arrow.now().shift(days=-6)
     to = arrow.now().shift(days=-2)
