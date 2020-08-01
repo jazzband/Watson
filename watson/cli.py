@@ -37,6 +37,7 @@ from .utils import (
     get_frames_for_today,
     get_frames_for_week,
     get_frames_for_month,
+    get_frames_between,
     options, safe_save,
     sorted_groupby,
     style,
@@ -1228,10 +1229,15 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Edit all frames for the past week.")
 @click.option('-m', '--month', is_flag=True, default=False,
               help="Edit all frames for the past month.")
+@click.option('-f', '--from', 'from_', type=DateTime,
+              help="The date from when the log should start.")
+@click.option('-t', '--to', type=DateTime, default=arrow.now(),
+              help="The date at which the log should stop (inclusive). ")
 @click.argument('id', required=False, autocompletion=get_frames)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, day, week, month, id):
+def edit(watson, confirm_new_project, confirm_new_tag, day, week, 
+         month, from_, to, id):
     """
     Edit one or more frames.
 
@@ -1245,6 +1251,9 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, month, id):
     If day, week or month is flagged, all the frames for that day, week or
     month will be available for editing. If an id is also passed it
     will be ignored.
+
+    If from and/or to are specified the frames within this range will be
+    available for editing.
 
     The editor used is determined by the `VISUAL` or `EDITOR` environment
     variables (in that order) and defaults to `notepad` on Windows systems and
@@ -1264,6 +1273,11 @@ def edit(watson, confirm_new_project, confirm_new_tag, day, week, month, id):
     elif month:
         # Editing all the frame of the month
         frames = get_frames_for_month(watson)
+    elif from_ or to:
+        if from_ > to:
+            raise click.ClickException("'from' must be anterior to 'to'")
+        # Editing frames within a date/time range
+        frames = get_frames_between(watson, from_, to)
     elif id:
         # Editing a single frame by id
         frames = [get_frame_from_argument(watson, id)]

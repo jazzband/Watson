@@ -211,6 +211,25 @@ def get_frames_for_month(watson):
     return entries
 
 
+def get_frames_between(watson, from_, to):
+    """
+    Get frames between range.
+    """
+    # from_ = arrow.get(from_)
+    # to = arrow.get(to)
+    # entries = [
+    #     frame
+    #     for frame in watson.frames
+    #     if frame.start >= from_ and frame.stop <= to
+    # ]
+    span = watson.frames.span(from_, to)
+    entries = [
+        frame
+        for frame in watson.frames.filter(span=span)
+    ]
+    return entries
+
+
 def get_start_time_for_period(period):
     # Using now() from datetime instead of arrow for mocking compatibility.
     now = arrow.Arrow.fromdatetime(datetime.datetime.now())
