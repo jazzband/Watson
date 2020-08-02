@@ -115,6 +115,11 @@ complete -f -c watson -n '__fish_watson_using_command config' -s e -l edit -d "E
 # edit
 complete -f -c watson -n '__fish_watson_needs_sub' -a edit -d "Edit a frame"
 complete -f -c watson -n '__fish_watson_using_command edit' -a "(__fish_watson_get_frames)"
+complete -f -c watson -n '__fish_watson_using_command edit' -s d -l day -d "all frames for today"
+complete -f -c watson -n '__fish_watson_using_command edit' -s w -l week -d "all frames for the past week"
+complete -f -c watson -n '__fish_watson_using_command edit' -s m -l month -d "all frames for the past month"
+complete -f -c watson -n '__fish_watson_using_command edit' -s f -l from -d "start date of the frames"
+complete -f -c watson -n '__fish_watson_using_command edit' -s t -l to -d "end date of the frames (inclusive)"
 
 # log
 complete -f -c watson -n '__fish_watson_needs_sub' -a log -d "Display sessions during the given timespan"
