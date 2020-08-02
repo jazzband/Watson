@@ -1231,11 +1231,11 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
               help="Edit all frames for the past month.")
 @click.option('-f', '--from', 'from_', type=DateTime,
               default=arrow.now().shift(days=-7),
-              help="The date from when the log should start. Defaults "
-              "to seven days ago.")
+              help="The date from when the frames to edit should start. "
+              "Defaults to seven days ago.")
 @click.option('-t', '--to', type=DateTime, default=arrow.now(),
-              help="The date at which the log should stop (inclusive). "
-              "Defaults to tomorrow.")
+              help="The date at which the frames to edit should stop "
+              "(inclusive). Defaults to tomorrow.")
 @click.argument('id', required=False, autocompletion=get_frames)
 @click.pass_obj
 @catch_watson_error
