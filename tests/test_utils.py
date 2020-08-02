@@ -17,7 +17,7 @@ except ImportError:
 try:
     from unittest.mock import patch, Mock
 except ImportError:
-    from mock import patch
+    from mock import patch, Mock
 import pytest
 from click.exceptions import Abort
 from dateutil.tz import tzutc
