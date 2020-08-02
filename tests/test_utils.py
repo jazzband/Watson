@@ -390,14 +390,14 @@ def test_json_arrow_encoder():
 
 # get_frames_for_today
 
-# @patch('arrow.now', Mock(return_value=arrow.get('2020-07-29T23:00:00+00:00')))
 def test_get_frames_for_today(watson):
     """
     This test will take the current time and create entries with
     a starting point shifted by a designated number of hours. The test passes
     if all the frames belonging to the specifid time frame are returned.
     """
-    with patch('arrow.now', Mock(return_value=arrow.get('2020-07-29T23:00:00+00:00'))):
+    mock_date = arrow.get('2020-07-29T23:00:00+00:00')
+    with patch('arrow.now', Mock(return_value=mock_date)):
         now = arrow.now()
         watson.add('foo', now.shift(hours=-1), now, ['1A'])
         watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
@@ -434,7 +434,8 @@ def test_get_frames_for_week(watson):
     a starting point shifted by a designated number of hours. The test passes
     if all the frames belonging to the specifid time frame are returned.
     """
-    with patch('arrow.now', Mock(return_value=arrow.get('2020-07-29T23:00:00+00:00'))):
+    mock_date = arrow.get('2020-07-29T23:00:00+00:00')
+    with patch('arrow.now', Mock(return_value=mock_date)):
         now = arrow.now()
         watson.add('foo', now.shift(hours=-1), now, ['1A'])
         watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
@@ -480,7 +481,8 @@ def test_get_frames_for_month(watson):
     a starting point shifted by a designated number of hours. The test passes
     if all the frames belonging to the specifid time frame are returned.
     """
-    with patch('arrow.now', Mock(return_value=arrow.get('2020-07-29T23:00:00+00:00'))):
+    mock_date = arrow.get('2020-07-29T23:00:00+00:00')
+    with patch('arrow.now', Mock(return_value=mock_date)):
         now = arrow.now()
         watson.add('foo', now.shift(hours=-1), now, ['1A'])
         watson.add('foo', now.shift(hours=-5), now.shift(hours=-3), ['5A'])
@@ -538,7 +540,8 @@ def test_get_frames_between(watson):
     a starting point shifted by a designated number of hours. The test passes
     if all the frames belonging to the specifid time frame are returned.
     """
-    with patch('arrow.now', Mock(return_value=arrow.get('2020-07-29T23:00:00+00:00'))):
+    mock_date = arrow.get('2020-07-29T23:00:00+00:00')
+    with patch('arrow.now', Mock(return_value=mock_date)):
         from_ = arrow.now().shift(days=-6)
         to = arrow.now().shift(days=-2)
         now = arrow.now()
