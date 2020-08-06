@@ -24,17 +24,17 @@ On OS X, the easiest way to install **watson** is using `Homebrew <http://brew.s
 
   $ brew update && brew install watson
 
-On other platforms, install **watson** using pip or pip3:
+On other platforms, install **watson** using pip or pip3, depending on which one is available:
 
 .. code:: bash
 
   $ pip install td-watson
 
+or:
+
 .. code:: bash
 
-or
-
-  $ pip install td-watson
+  $ pip3 install td-watson
 
 If you need more details about installing watson, please refer to the `documentation <https://tailordev.github.io/Watson>`_.
 
