@@ -919,6 +919,14 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="Logs activity only for frames containing the given "
               "tag. You can add several tags by using this option multiple "
               "times")
+@click.option('--ignore-project', 'ignore_projects', multiple=True,
+              help="Reports activity for all projects but the given ones. You "
+              "can ignore several projects by using the option multiple "
+              "times. Any given project will be ignored")
+@click.option('--ignore-tag', 'ignore_tags', multiple=True,
+              help="Reports activity for all tags but the given ones. You can "
+              "ignore several tags by using the option multiple times. Any "
+              "given tag will be ignored")
 @click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='json', mutually_exclusive=['csv'],
               multiple=True,
@@ -935,8 +943,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="(Don't) view output through a pager.")
 @click.pass_obj
 @catch_watson_error
-def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
-        day, luna, all, output_format, pager):
+def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
+        ignore_tags, year, month, week, day, luna, all, output_format, pager):
     """
     Display each recorded session during the given timespan.
 
@@ -954,9 +962,10 @@ def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
     If you are outputting to the terminal, you can selectively enable a pager
     through the `--pager` option.
 
-    You can limit the log to a project or a tag using the `--project` and
-    `--tag` options. They can be specified several times each to add multiple
-    projects or tags to the log.
+    You can limit the log to a project or a tag using the `--project`,
+    `--tag`, `--ignore-project` and `--ignore-tag` options. They can be
+    specified several times each to add or ignore multiple projects or
+    tags to the report.
 
     You can change the output format from *plain text* to *JSON* using the
     `--json` option or to *CSV* using the `--csv` option. Only one of these
@@ -1006,6 +1015,13 @@ def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
+    if bool(projects and ignore_projects and set(projects).intersection(set(ignore_projects))):
+        raise click.ClickException(
+            "given projects can't be ignored at the same time")
+
+    if bool(tags and ignore_tags and set(tags).intersection(set(ignore_tags))):
+        raise click.ClickException("given tags can't be ignored at the same time")
+
     if watson.current:
         if current or (current is None and
                        watson.config.getboolean('options', 'log_current')):
@@ -1018,7 +1034,9 @@ def log(watson, current, reverse, from_, to, projects, tags, year, month, week,
 
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
-        projects=projects or None, tags=tags or None, span=span
+        projects=projects or None, tags=tags or None,
+        ignore_projects=ignore_projects or None,
+        ignore_tags=ignore_tags or None, span=span
     )
 
     if 'json' in output_format:
@@ -1345,6 +1363,69 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
             )
         )
     )
+
+
+@cli.command(context_settings={'ignore_unknown_options': True})
+@click.argument('id', required=True, autocompletion=get_frames)
+@click.option('-T', '--tag', 'tag_to_add', default="billed", type=str,
+              help="Add the given tag to the frame by id, default tag is 'billed'")
+@click.pass_obj
+@catch_watson_error
+def addtag(watson, id, tag_to_add):
+    """Add a tag to frame specified by id."""
+
+    frame = get_frame_from_argument(watson, id)
+    id = frame.id
+
+    if id:
+        if bool(frame.tags and tag_to_add and (tag_to_add in frame.tags)):
+            raise click.ClickException(
+                u"given tag '{tag}' already added to the frame".format(
+                    tag=tag_to_add
+                )
+            )
+        updated_at = arrow.utcnow()
+        new_tags = list(frame.tags) + [tag_to_add]
+        watson.frames[id] = frame._replace(
+                            tags=new_tags,
+                            updated_at=updated_at
+                        )
+        watson.save()
+    else:
+        raise click.ClickException(
+            style('error', "No frame found by the id you specified"))
+
+
+@cli.command(context_settings={'ignore_unknown_options': True})
+@click.argument('id', required=True, autocompletion=get_frames)
+@click.option('-T', '--tag', 'tag_to_remove', default="billed", type=str,
+              help="Remove the given tag from the frame by id, default tag is 'billed'")
+@click.pass_obj
+@catch_watson_error
+def removetag(watson, id, tag_to_remove):
+    """Remove a tag from frame specified by id."""
+
+    frame = get_frame_from_argument(watson, id)
+    id = frame.id
+
+    if id:
+        if not bool(frame.tags and tag_to_remove and (tag_to_remove in frame.tags)):
+            raise click.ClickException(
+                u"given tag '{tag}' missing from the frame".format(
+                    tag=tag_to_remove
+                )
+            )
+        updated_at = arrow.utcnow()
+        new_tags = list(frame.tags)
+        new_tags.remove(tag_to_remove)
+        watson.frames[id] = frame._replace(
+                            tags=new_tags,
+                            updated_at=updated_at
+                        )
+        watson.save()
+    else:
+        raise click.ClickException(
+            style('error', "No frame found by the id you specified"))
 
 
 @cli.command(context_settings={'ignore_unknown_options': True})
