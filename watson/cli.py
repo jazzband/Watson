@@ -1016,9 +1016,9 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
         raise click.ClickException("'from' must be anterior to 'to'")
 
     if bool(projects and ignore_projects and
-        set(projects).intersection(set(ignore_projects))):
-            raise click.ClickException(
-                "given projects can't be ignored at the same time")
+            set(projects).intersection(set(ignore_projects))):
+        raise click.ClickException(
+            "given projects can't be ignored at the same time")
 
     if bool(tags and ignore_tags and set(tags).intersection(set(ignore_tags))):
         raise click.ClickException(
@@ -1390,9 +1390,8 @@ def addtag(watson, id, tag_to_add):
         updated_at = arrow.utcnow()
         new_tags = list(frame.tags) + [tag_to_add]
         watson.frames[id] = frame._replace(
-                            tags=new_tags,
-                            updated_at=updated_at
-                        )
+            tags=new_tags,
+            updated_at=updated_at)
         watson.save()
     else:
         raise click.ClickException(
@@ -1414,19 +1413,18 @@ def removetag(watson, id, tag_to_remove):
 
     if id:
         if not bool(frame.tags and tag_to_remove and
-            (tag_to_remove in frame.tags)):
-                raise click.ClickException(
-                    u"given tag '{tag}' missing from the frame".format(
-                        tag=tag_to_remove
-                    )
+                    (tag_to_remove in frame.tags)):
+            raise click.ClickException(
+                u"given tag '{tag}' missing from the frame".format(
+                    tag=tag_to_remove
                 )
+            )
         updated_at = arrow.utcnow()
         new_tags = list(frame.tags)
         new_tags.remove(tag_to_remove)
         watson.frames[id] = frame._replace(
-                            tags=new_tags,
-                            updated_at=updated_at
-                        )
+            tags=new_tags,
+            updated_at=updated_at)
         watson.save()
     else:
         raise click.ClickException(
