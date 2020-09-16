@@ -1015,12 +1015,14 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
-    if bool(projects and ignore_projects and set(projects).intersection(set(ignore_projects))):
+    if bool(projects and ignore_projects and
+            set(projects).intersection(set(ignore_projects))):
         raise click.ClickException(
             "given projects can't be ignored at the same time")
 
     if bool(tags and ignore_tags and set(tags).intersection(set(ignore_tags))):
-        raise click.ClickException("given tags can't be ignored at the same time")
+        raise click.ClickException(
+            "given tags can't be ignored at the same time")
 
     if watson.current:
         if current or (current is None and
@@ -1368,7 +1370,8 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id', required=True, autocompletion=get_frames)
 @click.option('-T', '--tag', 'tag_to_add', default="billed", type=str,
-              help="Add the given tag to the frame by id, default tag is 'billed'")
+              help="Add the given tag to the frame by id, "
+              "default tag is 'billed'")
 @click.pass_obj
 @catch_watson_error
 def addtag(watson, id, tag_to_add):
@@ -1387,9 +1390,8 @@ def addtag(watson, id, tag_to_add):
         updated_at = arrow.utcnow()
         new_tags = list(frame.tags) + [tag_to_add]
         watson.frames[id] = frame._replace(
-                            tags=new_tags,
-                            updated_at=updated_at
-                        )
+            tags=new_tags,
+            updated_at=updated_at)
         watson.save()
     else:
         raise click.ClickException(
@@ -1399,7 +1401,8 @@ def addtag(watson, id, tag_to_add):
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.argument('id', required=True, autocompletion=get_frames)
 @click.option('-T', '--tag', 'tag_to_remove', default="billed", type=str,
-              help="Remove the given tag from the frame by id, default tag is 'billed'")
+              help="Remove the given tag from the frame by id, "
+              "default tag is 'billed'")
 @click.pass_obj
 @catch_watson_error
 def removetag(watson, id, tag_to_remove):
@@ -1409,7 +1412,8 @@ def removetag(watson, id, tag_to_remove):
     id = frame.id
 
     if id:
-        if not bool(frame.tags and tag_to_remove and (tag_to_remove in frame.tags)):
+        if not bool(frame.tags and tag_to_remove and
+                    (tag_to_remove in frame.tags)):
             raise click.ClickException(
                 u"given tag '{tag}' missing from the frame".format(
                     tag=tag_to_remove
@@ -1419,9 +1423,8 @@ def removetag(watson, id, tag_to_remove):
         new_tags = list(frame.tags)
         new_tags.remove(tag_to_remove)
         watson.frames[id] = frame._replace(
-                            tags=new_tags,
-                            updated_at=updated_at
-                        )
+            tags=new_tags,
+            updated_at=updated_at)
         watson.save()
     else:
         raise click.ClickException(
