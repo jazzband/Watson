@@ -1036,7 +1036,9 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
 
     span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
-        projects=projects or None, tags=tags or None, span=span
+        projects=projects or None, tags=tags or None,
+        ignore_projects=ignore_projects or None,
+        ignore_tags=ignore_tags or None, span=span
     )
 
     if 'json' in output_format:
