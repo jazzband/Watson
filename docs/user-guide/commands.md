@@ -12,7 +12,7 @@
 Usage:  watson add [OPTIONS] [ARGS]...
 ```
 
-Add time for project with tag(s) that was not tracked live.
+Add time to a project with tag(s) that was not tracked live.
 
 Example:
 
@@ -24,8 +24,8 @@ Example:
 
 Flag | Help
 -----|-----
-`-f, --from DATE` | Date and time of start of tracked activity  [required]
-`-t, --to DATE` | Date and time of end of tracked activity  [required]
+`-f, --from DATETIME` | Date and time of start of tracked activity  [required]
+`-t, --to DATETIME` | Date and time of end of tracked activity  [required]
 `-c, --confirm-new-project` | Confirm addition of new project.
 `-b, --confirm-new-tag` | Confirm creation of new tag.
 `--help` | Show this message and exit.
@@ -53,7 +53,7 @@ If you are outputting to the terminal, you can selectively enable a pager
 through the `--pager` option.
 
 You can change the output format from *plain text* to *JSON* using the
-`--json` option or to *CSV* using the `--csv` option. Only one  of these
+`--json` option or to *CSV* using the `--csv` option. Only one of these
 two options can be used at once.
 
 
@@ -109,8 +109,8 @@ Example:
 Flag | Help
 -----|-----
 `-c, --current / -C, --no-current` | (Don't) include currently running frame in report.
-`-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
-`-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
+`-f, --from DATETIME` | The date from when the report should start. Defaults to seven days ago.
+`-t, --to DATETIME` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-p, --project TEXT` | Reports activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times
 `-j, --json` | Format output in JSON instead of plain text
@@ -141,8 +141,8 @@ Usage:  watson config [OPTIONS] SECTION.OPTION [VALUE]
 
 Get and set configuration options.
 
-If value is not provided, the content of the key is displayed. Else,
-the given value is set.
+If `value` is not provided, the content of the `key` is displayed. Else,
+the given `value` is set.
 
 You can edit the config file with an editor with the `--edit` option.
 
@@ -172,12 +172,12 @@ You can specify the frame to edit by its position or by its frame id.
 For example, to edit the second-to-last frame, pass `-2` as the frame
 index. You can get the id of a frame with the `watson log` command.
 
-If no id or index is given, the frame defaults to the current frame or the
-last recorded frame, if no project is currently running.
+If no id or index is given, the frame defaults to the current frame (or the
+last recorded frame, if no project is currently running).
 
 The editor used is determined by the `VISUAL` or `EDITOR` environment
 variables (in that order) and defaults to `notepad` on Windows systems and
-to `vim`, `nano` or `vi` (first one found) on all other systems.
+to `vim`, `nano`, or `vi` (first one found) on all other systems.
 
 ### Options
 
@@ -237,8 +237,8 @@ can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
 You can also use special shortcut options for easier timespan control:
-`--day` sets the log timespan to the current day (beginning at 00:00h)
-and `--year`, `--month` and `--week` to the current year, month or week
+`--day` sets the log timespan to the current day (beginning at `00:00h`)
+and `--year`, `--month` and `--week` to the current year, month, or week,
 respectively.
 The shortcut `--luna` sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.
@@ -246,12 +246,13 @@ the last full moon marking the start of the cycle.
 If you are outputting to the terminal, you can selectively enable a pager
 through the `--pager` option.
 
-You can limit the log to a project or a tag using the `--project` and
-`--tag` options. They can be specified several times each to add multiple
-projects or tags to the log.
+You can limit the log to a project or a tag using the `--project`,
+`--tag`, `--ignore-project` and `--ignore-tag` options. They can be
+specified several times each to add or ignore multiple projects or
+tags in the log.
 
 You can change the output format from *plain text* to *JSON* using the
-`--json` option or to *CSV* using the `--csv` option. Only one  of these
+`--json` option or to *CSV* using the `--csv` option. Only one of these
 two options can be used at once.
 
 Example:
@@ -296,8 +297,9 @@ Example:
 Flag | Help
 -----|-----
 `-c, --current / -C, --no-current` | (Don't) include currently running frame in output.
-`-f, --from DATE` | The date from when the log should start. Defaults to seven days ago.
-`-t, --to DATE` | The date at which the log should stop (inclusive). Defaults to tomorrow.
+`-r, --reverse / -R, --no-reverse` | (Don't) reverse the order of the days in output.
+`-f, --from DATETIME` | The date from when the log should start. Defaults to seven days ago.
+`-t, --to DATETIME` | The date at which the log should stop (inclusive). Defaults to tomorrow.
 `-y, --year` | Reports activity for the current year.
 `-m, --month` | Reports activity for the current month.
 `-l, --luna` | Reports activity for the current moon cycle.
@@ -306,6 +308,8 @@ Flag | Help
 `-a, --all` | Reports all activities.
 `-p, --project TEXT` | Logs activity only for the given project. You can add other projects by using this option several times.
 `-T, --tag TEXT` | Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times
+`--ignore-project TEXT` | Logs activity for all projects but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored
+`--ignore-tag TEXT` | Logs activity for all tags but the given ones. You can ignore several tags by using the option multiple times. Any given tag will be ignored
 `-j, --json` | Format output in JSON instead of plain text
 `-s, --csv` | Format output in CSV instead of plain text
 `-g, --pager / -G, --no-pager` | (Don't) view output through a pager.
@@ -456,8 +460,8 @@ can be controlled with the `--from` and `--to` arguments. The dates
 must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
 
 You can also use special shortcut options for easier timespan control:
-`--day` sets the report timespan to the current day (beginning at 00:00h)
-and `--year`, `--month` and `--week` to the current year, month or week
+`--day` sets the report timespan to the current day (beginning at `00:00h`)
+and `--year`, `--month` and `--week` to the current year, month, or week,
 respectively.
 The shortcut `--luna` sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.
@@ -555,8 +559,8 @@ Example:
 Flag | Help
 -----|-----
 `-c, --current / -C, --no-current` | (Don't) include currently running frame in report.
-`-f, --from DATE` | The date from when the report should start. Defaults to seven days ago.
-`-t, --to DATE` | The date at which the report should stop (inclusive). Defaults to tomorrow.
+`-f, --from DATETIME` | The date from when the report should start. Defaults to seven days ago.
+`-t, --to DATETIME` | The date at which the report should stop (inclusive). Defaults to tomorrow.
 `-y, --year` | Reports activity for the current year.
 `-m, --month` | Reports activity for the current month.
 `-l, --luna` | Reports activity for the current moon cycle.
@@ -585,9 +589,9 @@ restarted, using the same tags as recorded in that frame. You can specify
 the frame to use with an integer frame index argument or a frame ID. For
 example, to restart the second-to-last frame, pass `-2` as the frame index.
 
-Normally, if a project is currently started, watson will print an error and
+Normally, if a project is currently started, Watson will print an error and
 do nothing. If you set the configuration option `options.stop_on_restart`
-to a true value (`1`, `on`, `true` or `yes`), the current project, if any,
+to a true value (`1`, `on`, `true`, or `yes`), the current project, if any,
 will be stopped before the new frame is started. You can pass the option
 `-s` or `--stop` resp. `-S` or `--no-stop` to override the default or
 configured behaviour.
@@ -609,6 +613,7 @@ Example:
 
 Flag | Help
 -----|-----
+`--at DATETIME` | Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.
 `-s, --stop / -S, --no-stop` | (Don't) Stop an already running project.
 `--help` | Show this message and exit.
 
@@ -623,10 +628,20 @@ You can add tags indicating more specifically what you are working on with
 `+tag`.
 
 If there is already a running project and the configuration option
-`options.stop_on_start` is set to a true value (`1`, `on`, `true` or
+`options.stop_on_start` is set to a true value (`1`, `on`, `true`, or
 `yes`), it is stopped before the new project is started.
 
-If the '--no-gap' flag is given, the start time of the new project is set
+If `--at` option is given, the provided starting time is used. The
+specified time must be after the end of the previous frame and must not be
+in the future.
+
+Example:
+
+
+    $ watson start --at 13:37
+    Starting project apollo11 at 13:37
+    
+If the `--no-gap` flag is given, the start time of the new project is set
 to the stop time of the most recently stopped project.
 
 Example:
@@ -639,6 +654,7 @@ Example:
 
 Flag | Help
 -----|-----
+`--at DATETIME` | Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.
 `-g, --gap / -G, --no-gap` | (Don't) leave gap between end time of previous project and start time of the current.
 `-c, --confirm-new-project` | Confirm addition of new project.
 `-b, --confirm-new-tag` | Confirm creation of new tag.
@@ -685,8 +701,8 @@ Usage:  watson stop [OPTIONS]
 
 Stop monitoring time for the current project.
 
-If '--at' option is given, the provided stopping time is used. The
-specified time must be after the begin of the to be ended frame and must
+If `--at` option is given, the provided stopping time is used. The
+specified time must be after the beginning of the to-be-ended frame and must
 not be in the future.
 
 Example:
@@ -699,7 +715,7 @@ Example:
 
 Flag | Help
 -----|-----
-`--at TIME` | Stop frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.
+`--at DATETIME` | Stop frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.
 `--help` | Show this message and exit.
 
 ## `sync`

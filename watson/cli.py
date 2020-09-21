@@ -920,11 +920,11 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               "tag. You can add several tags by using this option multiple "
               "times")
 @click.option('--ignore-project', 'ignore_projects', multiple=True,
-              help="Reports activity for all projects but the given ones. You "
+              help="Logs activity for all projects but the given ones. You "
               "can ignore several projects by using the option multiple "
               "times. Any given project will be ignored")
 @click.option('--ignore-tag', 'ignore_tags', multiple=True,
-              help="Reports activity for all tags but the given ones. You can "
+              help="Logs activity for all tags but the given ones. You can "
               "ignore several tags by using the option multiple times. Any "
               "given tag will be ignored")
 @click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
@@ -965,7 +965,7 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
     You can limit the log to a project or a tag using the `--project`,
     `--tag`, `--ignore-project` and `--ignore-tag` options. They can be
     specified several times each to add or ignore multiple projects or
-    tags to the report.
+    tags in the log.
 
     You can change the output format from *plain text* to *JSON* using the
     `--json` option or to *CSV* using the `--csv` option. Only one of these
