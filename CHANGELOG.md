@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added - 2020-09-21
+### Added
 
-- Log output can now be filtered to exclude projects and tags via `--ignore-project` and `--ignore-tag` (#395)
+- The `log` command output can now be filtered to exclude projects and tags via `--ignore-project` and `--ignore-tag` (#395)
 
 ## [1.10.0] - 2020-07-03
 
