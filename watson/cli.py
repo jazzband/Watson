@@ -1290,7 +1290,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
     start = None
     stop = None
 
-    # enter into while loop until succesful and validated
+    # enter into while loop until successful and validated
     #  edit has been performed
     while True:
         output = click.edit(text, extension='.json')
