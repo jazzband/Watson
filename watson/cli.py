@@ -237,7 +237,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
     # Confirm creation of new project if that option is set
     if (watson.config.getboolean('options', 'confirm_new_project') or
             confirm_new_project):
-        confirm_project(project, watson.projects)
+        confirm_project(project, watson.projects())
 
     # Parse all the tags
     tags = parse_tags(args)
@@ -245,7 +245,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
     # Confirm creation of new tag(s) if that option is set
     if (watson.config.getboolean('options', 'confirm_new_tag') or
             confirm_new_tag):
-        confirm_tags(tags, watson.tags)
+        confirm_tags(tags, watson.tags())
 
     if project and watson.is_started and not gap_:
         current = watson.current
@@ -1110,9 +1110,13 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
 
 
 @cli.command()
+@click.option('-b', '--by', 'orderby', default='name',
+              help="Sort the ouput by either 'name' or 'time'")
+@click.option('-r', '--reverse', 'descending', default=False, is_flag=True,
+              help="Reverse the output (sort by descending order)")
 @click.pass_obj
 @catch_watson_error
-def projects(watson):
+def projects(watson, orderby, descending):
     """
     Display the list of all the existing projects.
 
@@ -1125,14 +1129,30 @@ def projects(watson):
     voyager1
     voyager2
     """
-    for project in watson.projects:
+    if orderby == 'name':
+        orderby = 'project'
+    elif orderby == 'time':
+        orderby = 'start'
+    else:
+        raise click.ClickException(style(
+            'error',
+            u'--by option can be either "name" or "time". '
+            u'You supplied "%s"' % orderby
+        ))
+
+    projects = watson.projects(orderby=orderby, descending=descending)
+    for project in projects:
         click.echo(style('project', project))
 
 
 @cli.command()
+@click.option('-b', '--by', 'orderby', default='name',
+              help="Sort the ouput by either 'name' or 'time'")
+@click.option('-r', '--reverse', 'descending', default=False, is_flag=True,
+              help="Reverse the output (sort by descending order)")
 @click.pass_obj
 @catch_watson_error
-def tags(watson):
+def tags(watson, orderby, descending):
     """
     Display the list of all the tags.
 
@@ -1153,7 +1173,19 @@ def tags(watson):
     transmission
     wheels
     """
-    for tag in watson.tags:
+    if orderby == 'name':
+        orderby = 'project'
+    elif orderby == 'time':
+        orderby = 'start'
+    else:
+        raise click.ClickException(style(
+            'error',
+            u'--by option can be either "name" or "time". '
+            u'You supplied "%s"' % orderby
+        ))
+
+    tags = watson.tags(orderby=orderby, descending=descending)
+    for tag in tags:
         click.echo(style('tag', tag))
 
 
@@ -1210,7 +1242,7 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     # Confirm creation of new project if that option is set
     if (watson.config.getboolean('options', 'confirm_new_project') or
             confirm_new_project):
-        confirm_project(project, watson.projects)
+        confirm_project(project, watson.projects())
 
     # Parse all the tags
     tags = parse_tags(args)
@@ -1218,7 +1250,7 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     # Confirm creation of new tag(s) if that option is set
     if (watson.config.getboolean('options', 'confirm_new_tag') or
             confirm_new_tag):
-        confirm_tags(tags, watson.tags)
+        confirm_tags(tags, watson.tags())
 
     # add a new frame, call watson save to update state files
     frame = watson.add(project=project, tags=tags, from_date=from_, to_date=to)
@@ -1310,7 +1342,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
             # Confirm creation of new tag(s) if that option is set
             if (watson.config.getboolean('options', 'confirm_new_tag') or
                     confirm_new_tag):
-                confirm_tags(tags, watson.tags)
+                confirm_tags(tags, watson.tags())
             start = arrow.get(data['start'], datetime_format).replace(
                 tzinfo=local_tz).to('utc')
             stop = arrow.get(data['stop'], datetime_format).replace(

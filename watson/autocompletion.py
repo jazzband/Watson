@@ -62,7 +62,7 @@ def get_project_or_task_completion(ctx, args, incomplete):
 def get_projects(ctx, args, incomplete):
     """Function to return all projects matching the prefix."""
     watson = _bypass_click_bug_to_ensure_watson(ctx)
-    for cur_project in watson.projects:
+    for cur_project in watson.projects():
         if cur_project.startswith(incomplete):
             yield cur_project
 
@@ -98,7 +98,7 @@ def get_rename_types(ctx, args, incomplete):
 def get_tags(ctx, args, incomplete):
     """Function to return all tags matching the prefix."""
     watson = _bypass_click_bug_to_ensure_watson(ctx)
-    for cur_tag in watson.tags:
+    for cur_tag in watson.tags():
         if cur_tag.startswith(incomplete):
             yield cur_tag
 

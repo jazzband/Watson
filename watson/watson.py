@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
 import datetime
 from functools import reduce
 import json
@@ -317,19 +318,51 @@ class Watson(object):
         self.current = None
         return old_current
 
-    @property
-    def projects(self):
+    def projects(self, orderby="project", descending=False):
         """
-        Return the list of all the existing projects, sorted by name.
+        Return the list of all the existing projects.
         """
-        return sorted(set(self.frames['project']))
 
-    @property
-    def tags(self):
+        ordered_frames = sorted(self.frames, key=operator.attrgetter(orderby))
+        ordered_projects = list(map(operator.attrgetter("project"),
+                                    ordered_frames))
+
+        # Keep latest occurence only, so we feed a reversed list
+        # to the ordered set.
+        ordered_projects.reverse()
+
+        # Use OrderedDict as a set to remove duplicates by keep order.
+        result = list(OrderedDict.fromkeys(ordered_projects))
+
+        if not descending:
+            result.reverse()
+
+        return result
+
+    def tags(self, orderby="tag", descending=False):
         """
-        Return the list of the tags, sorted by name.
+        Return the list of the tags.
         """
-        return sorted(set(tag for tags in self.frames['tags'] for tag in tags))
+        if orderby == "tag":
+            tags = [tag for tags in self.frames['tags'] for tag in tags]
+            return sorted(set(tags))
+        else:
+            ordered_frames = sorted(self.frames,
+                                    key=operator.attrgetter(orderby))
+            ordered_tags = map(operator.attrgetter("tags"), ordered_frames)
+            flat_tags = [tag for tags in ordered_tags for tag in tags]
+
+            # Keep latest occurence only, so we feed a reversed list
+            # to the ordered set.
+            flat_tags.reverse()
+
+            result = list(OrderedDict.fromkeys(flat_tags))
+
+            if not descending:
+                result.reverse()
+
+            # Use OrderedDict as a set to remove duplicates keep order.
+            return result
 
     def _get_request_info(self, route):
         config = self.config
@@ -556,7 +589,7 @@ class Watson(object):
 
     def rename_project(self, old_project, new_project):
         """Rename a project in all affected frames."""
-        if old_project not in self.projects:
+        if old_project not in self.projects():
             raise WatsonError(u'Project "%s" does not exist' % old_project)
 
         updated_at = arrow.utcnow()
@@ -573,7 +606,7 @@ class Watson(object):
 
     def rename_tag(self, old_tag, new_tag):
         """Rename a tag in all affected frames."""
-        if old_tag not in self.tags:
+        if old_tag not in self.tags():
             raise WatsonError(u'Tag "%s" does not exist' % old_tag)
 
         updated_at = arrow.utcnow()
