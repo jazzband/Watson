@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The `log` command output can now be filtered to exclude projects and tags via `--ignore-project` and `--ignore-tag` (#395)
 
+### Removed
+
+- Python 2.7 support (#305).
+
 ## [1.10.0] - 2020-07-03
 
 ### Added
