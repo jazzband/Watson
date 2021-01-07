@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Unit tests for the 'utils' module."""
 
 import arrow
@@ -9,15 +8,8 @@ import json
 import os
 import datetime
 import operator
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from io import StringIO
+from mock import patch
 import pytest
 from click.exceptions import Abort
 from dateutil.tz import tzutc
@@ -35,7 +27,6 @@ from watson.utils import (
     safe_save,
     sorted_groupby,
     parse_tags,
-    PY2,
     json_arrow_encoder,
 )
 from . import mock_datetime
@@ -104,11 +95,9 @@ def test_make_json_writer_with_kwargs():
 
 def test_make_json_writer_with_unicode():
     fp = StringIO()
-    writer = make_json_writer(lambda: {u'ùñï©ôð€': u'εvεrywhεrε'})
+    writer = make_json_writer(lambda: {'ùñï©ôð€': 'εvεrywhεrε'})
     writer(fp)
-    expected = u'{\n "ùñï©ôð€": "εvεrywhεrε"\n}'
-    if PY2:
-        expected = expected.encode('utf-8')
+    expected = '{\n "ùñï©ôð€": "εvεrywhεrε"\n}'
     assert fp.getvalue() == expected
 
 

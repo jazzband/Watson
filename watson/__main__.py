@@ -1,6 +1,3 @@
-try:
-    from watson import cli
-except ImportError:
-    from . import cli
+from watson import cli
 
 cli.cli()

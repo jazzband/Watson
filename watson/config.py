@@ -1,12 +1,7 @@
-# -*- coding: utf-8 -*-
 """A convenience and compatibility wrapper for RawConfigParser."""
 
 import shlex
-
-try:
-    from configparser import RawConfigParser
-except ImportError:
-    from ConfigParser import RawConfigParser
+from configparser import RawConfigParser
 
 __all__ = ('ConfigParser',)
 

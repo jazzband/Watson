@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Setup file for the Watson distribution."""
 
 from os.path import join
@@ -46,6 +45,7 @@ setup(
     license='MIT',
     long_description=readme,
     install_requires=parse_requirements('requirements.txt'),
+    python_requires='>=3.5',
     tests_require=parse_requirements('requirements-dev.txt'),
     entry_points={
         'console_scripts': [
@@ -64,8 +64,6 @@ setup(
         "Operating System :: MacOS",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",

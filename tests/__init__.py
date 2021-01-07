@@ -2,16 +2,8 @@
 
 import os
 import datetime
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+import mock
+from io import StringIO
 
 import py
 
