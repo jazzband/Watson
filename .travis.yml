@@ -18,6 +18,14 @@ matrix:
           os: linux
           dist: xenial
           env: TOXENV=py37
+        - python: 3.8
+          os: linux
+          dist: xenial
+          env: TOXENV=py38
+        - python: 3.9
+          os: linux
+          dist: xenial
+          env: TOXENV=py39
 
 install:
   - pip install tox
