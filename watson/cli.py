@@ -2,7 +2,7 @@ import datetime
 import itertools
 import json
 import operator
-
+import os
 from dateutil import tz
 from functools import reduce, wraps
 
@@ -67,10 +67,25 @@ class MutuallyExclusiveOption(click.Option):
                     ['`--{}`'.format(_) for _ in self.mutually_exclusive]))))
 
 
+def local_tz_info() -> datetime.tzinfo:
+    """Get the local time zone object, respects the TZ env variable."""
+    timezone = os.environ.get("TZ", None)
+    # If timezone is None or an empty string, gettz returns the local time
+    tzinfo = tz.gettz(timezone)
+    # gettz returns None if the timezone passed to gettz is invalid
+    if tzinfo is None:
+        raise click.ClickException(
+            f"Invalid timezone {timezone} specified, "
+            "please set the TZ environment variable with"
+            " a valid timezone."
+        )
+    return tzinfo
+
+
 class DateTimeParamType(click.ParamType):
     name = 'datetime'
 
-    def convert(self, value, param, ctx):
+    def convert(self, value, param, ctx) -> arrow:
         if value:
             date = self._parse_multiformat(value)
             if date is None:
@@ -80,8 +95,9 @@ class DateTimeParamType(click.ParamType):
                 )
             # When we parse a date, we want to parse it in the timezone
             # expected by the user, so that midnight is midnight in the local
-            # timezone, not in UTC. Cf issue #16.
-            date = date.replace(tzinfo=tz.tzlocal())
+            # timezone, or respect the TZ environment variable not in UTC.
+            # Cf issue #16.
+            date = date.replace(tzinfo=local_tz_info())
             # Add an offset to match the week beginning specified in the
             # configuration
             if param.name == "week":
@@ -91,7 +107,7 @@ class DateTimeParamType(click.ParamType):
                     start_time=date, week_start=week_start)
             return date
 
-    def _parse_multiformat(self, value):
+    def _parse_multiformat(self, value) -> arrow:
         date = None
         for fmt in (None, 'HH:mm:ss', 'HH:mm'):
             try:
@@ -1258,7 +1274,7 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
     date_format = 'YYYY-MM-DD'
     time_format = 'HH:mm:ss'
     datetime_format = '{} {}'.format(date_format, time_format)
-    local_tz = tz.tzlocal()
+    local_tz = local_tz_info()
 
     if id:
         frame = get_frame_from_argument(watson, id)
