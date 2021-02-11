@@ -1148,8 +1148,14 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
             )
         )
 
+        def get_note_string(frame):
+            if frame.note is not None and frame.note != '' and show_notes:
+                return u"\t{}{}".format(" "*9, format_note(frame.note))
+            return ''
+
         _print("\n".join(
-            "\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}".format(
+            "\t{id}  {start} to {stop}  {delta:>11}  {project}{tags}{notes}"
+            .format(
                 delta=format_timedelta(frame.stop - frame.start),
                 project=style('project', '{:>{}}'.format(
                     frame.project, longest_project
@@ -1157,7 +1163,8 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
                 tags=(" "*2 if frame.tags else "") + style('tags', frame.tags),
                 start=style('time', '{:HH:mm}'.format(frame.start)),
                 stop=style('time', '{:HH:mm}'.format(frame.stop)),
-                id=style('short_id', frame.id)
+                id=style('short_id', frame.id),
+                notes=get_note_string(frame)
             )
             for frame in frames
         ))
