@@ -101,7 +101,7 @@ class Watson(object):
         if not isinstance(date, arrow.Arrow):
             date = arrow.get(date)
 
-        return date.timestamp
+        return date.int_timestamp
 
     @property
     def config(self):
