@@ -222,7 +222,7 @@ def get_last_full_moon(d):
     Raises ValueError if the d value is not between 2000 - 2099
     """
 
-    now = d.timestamp
+    now = d.int_timestamp
     idx = bisect.bisect_right(fullmoons, now)
     if idx in [0, len(fullmoons)]:
         raise ValueError(
