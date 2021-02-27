@@ -81,7 +81,7 @@ class DateTimeParamType(click.ParamType):
             # When we parse a date, we want to parse it in the timezone
             # expected by the user, so that midnight is midnight in the local
             # timezone, not in UTC. Cf issue #16.
-            date.tzinfo = tz.tzlocal()
+            date.replace(tzinfo=tz.tzlocal())
             # Add an offset to match the week beginning specified in the
             # configuration
             if param.name == "week":
