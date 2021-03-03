@@ -76,7 +76,7 @@ def test_current_with_empty_given_state(config_dir, mocker):
 
 def test_last_sync(mocker, watson):
     now = arrow.get(4123)
-    content = json.dumps(now.timestamp)
+    content = json.dumps(now.int_timestamp)
 
     mocker.patch('builtins.open', mocker.mock_open(read_data=content))
     assert watson.last_sync == now
@@ -482,7 +482,7 @@ def test_save_last_sync(mocker, watson, json_mock):
     watson.save()
 
     assert json_mock.call_count == 1
-    assert json_mock.call_args[0][0] == now.timestamp
+    assert json_mock.call_args[0][0] == now.int_timestamp
 
 
 def test_save_empty_last_sync(config_dir, mocker, json_mock):
@@ -682,14 +682,14 @@ def test_pull(mocker, watson):
 
     assert watson.frames[0].id == '1c006c6e6cc14c80ab22b51c857c0b06'
     assert watson.frames[0].project == 'foo'
-    assert watson.frames[0].start.timestamp == 4003
-    assert watson.frames[0].stop.timestamp == 4004
+    assert watson.frames[0].start.int_timestamp == 4003
+    assert watson.frames[0].stop.int_timestamp == 4004
     assert watson.frames[0].tags == ['A']
 
     assert watson.frames[1].id == 'c44aa8154d774a58bddd1afa95562141'
     assert watson.frames[1].project == 'bar'
-    assert watson.frames[1].start.timestamp == 4004
-    assert watson.frames[1].stop.timestamp == 4005
+    assert watson.frames[1].start.int_timestamp == 4004
+    assert watson.frames[1].stop.int_timestamp == 4005
     assert watson.frames[1].tags == []
 
 
@@ -888,18 +888,18 @@ def test_rename_project_with_time(watson):
 
     assert watson.frames[0].id == 'c76d1ad0282c429595cc566d7098c165'
     assert watson.frames[0].project == 'baz'
-    assert watson.frames[0].start.timestamp == 4001
-    assert watson.frames[0].stop.timestamp == 4002
+    assert watson.frames[0].start.int_timestamp == 4001
+    assert watson.frames[0].stop.int_timestamp == 4002
     assert watson.frames[0].tags == ['some_tag']
-    # assert watson.frames[0].updated_at.timestamp == 9000
-    assert watson.frames[0].updated_at.timestamp > 4005
+    # assert watson.frames[0].updated_at.int_timestamp == 9000
+    assert watson.frames[0].updated_at.int_timestamp > 4005
 
     assert watson.frames[1].id == 'eed598ff363d42658a095ae6c3ae1088'
     assert watson.frames[1].project == 'bar'
-    assert watson.frames[1].start.timestamp == 4010
-    assert watson.frames[1].stop.timestamp == 4015
+    assert watson.frames[1].start.int_timestamp == 4010
+    assert watson.frames[1].stop.int_timestamp == 4015
     assert watson.frames[1].tags == ['other_tag']
-    assert watson.frames[1].updated_at.timestamp == 4035
+    assert watson.frames[1].updated_at.int_timestamp == 4035
 
 
 def test_rename_tag_with_time(watson):
@@ -922,18 +922,18 @@ def test_rename_tag_with_time(watson):
 
     assert watson.frames[0].id == 'c76d1ad0282c429595cc566d7098c165'
     assert watson.frames[0].project == 'foo'
-    assert watson.frames[0].start.timestamp == 4001
-    assert watson.frames[0].stop.timestamp == 4002
+    assert watson.frames[0].start.int_timestamp == 4001
+    assert watson.frames[0].stop.int_timestamp == 4002
     assert watson.frames[0].tags == ['some_tag']
-    assert watson.frames[0].updated_at.timestamp == 4005
+    assert watson.frames[0].updated_at.int_timestamp == 4005
 
     assert watson.frames[1].id == 'eed598ff363d42658a095ae6c3ae1088'
     assert watson.frames[1].project == 'bar'
-    assert watson.frames[1].start.timestamp == 4010
-    assert watson.frames[1].stop.timestamp == 4015
+    assert watson.frames[1].start.int_timestamp == 4010
+    assert watson.frames[1].stop.int_timestamp == 4015
     assert watson.frames[1].tags == ['baz']
-    # assert watson.frames[1].updated_at.timestamp == 9000
-    assert watson.frames[1].updated_at.timestamp > 4035
+    # assert watson.frames[1].updated_at.int_timestamp == 9000
+    assert watson.frames[1].updated_at.int_timestamp > 4035
 
 # add
 
