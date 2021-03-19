@@ -167,8 +167,8 @@
 <li><strong>Windows</strong>: <code>%appdata%\watson\config</code>, which usually expands to <code>C:\Users\&lt;user&gt;\AppData\Roaming\watson\config</code></li>
 <li><strong>Linux</strong>: <code>~/.config/watson/config</code></li>
 </ul>
-<p>The configuration file is a typical <a href="https://docs.python.org/3.7/library/configparser.html#supported-ini-file-structure">python configuration (INI) file</a>, that looks like:</p>
-<pre><code class="ini">[Simple Values]
+<p>The configuration file is a typical <a href="https://docs.python.org/3.9/library/configparser.html#supported-ini-file-structure">python configuration (INI) file</a>, that looks like:</p>
+<pre><code class="language-ini">[Simple Values]
 key=value
 spaces in keys=allowed
 spaces in values=allowed as well
@@ -211,24 +211,20 @@ empty string value here =
             of a value
         # Did I mention we can indent comments, too?
 </code></pre>
-
-<p><em>This example configuration file has been taken from the <a href="https://docs.python.org/3.7/library/configparser.html#supported-ini-file-structure">official python documentation</a>.</em></p>
+<p><em>This example configuration file has been taken from the <a href="https://docs.python.org/3.9/library/configparser.html#supported-ini-file-structure">official python documentation</a>.</em></p>
 <h2 id="editing">Editing</h2>
 <p>If you want to edit your configuration, the best is to use the <a href="./commands/#config"><code>config</code></a> command.</p>
 <p>You can edit your configuration on the fly with:</p>
-<pre><code class="bash">$ watson config SECTION.KEY VALUE
+<pre><code class="language-bash">$ watson config SECTION.KEY VALUE
 </code></pre>
-
 <p>Example:</p>
-<pre><code class="bash">$ watson config backend.token 7e329263e329  # set configuration
+<pre><code class="language-bash">$ watson config backend.token 7e329263e329  # set configuration
 $ watson config backend.token  # display configuration
 7e329263e329
 </code></pre>
-
 <p>Or open an editor with:</p>
-<pre><code class="bash">$ watson config -e
+<pre><code class="language-bash">$ watson config -e
 </code></pre>
-
 <h2 id="available-settings">Available settings</h2>
 <h3 id="backend">Backend</h3>
 <p>At this time there is no official backend for Watson. We are working on it. But in a near future, you will be able to synchronize Watson with a public (or your private) repository via the <a href="../commands/#sync"><code>sync</code></a> command. To configure your repository please set up the <code>[backend]</code> section.</p>
@@ -269,13 +265,11 @@ $ watson start jayce +wheeled +warriors
 Stopping project samourai [pizza, cat], started 2 minutes ago. (id: d08cdd0)
 Starting project jayce [wheeled, warriors] at 11:16
 </code></pre>
-
 <p>Please, note that it also works with serious stuffs like:</p>
 <pre><code>$ watson start voyager2 +reactor +module
 Stopping project jayce [wheeled, warriors], started 2 minutes ago. (id: 967965f)
 Starting project voyager2 [reactor, module] at 11:18
 </code></pre>
-
 <h4 id="optionsstop_on_restart-default-false"><code>options.stop_on_restart</code> (default: <code>false</code>)</h4>
 <p>Similar to the <code>options.stop_on_start</code> option, but for the <a href="../commands/#restart"><code>restart</code></a> command.</p>
 <h4 id="optionstime_format-default-hmsz"><code>options.time_format</code> (default: <code>%H:%M:%S%z</code>)</h4>
@@ -293,12 +287,10 @@ tags should be attached. The entries should follow the pattern: <code>project = 
 <p>You can set default tags for a project from the command line:</p>
 <pre><code>$ watson config default_tags.python101 'teaching python'
 </code></pre>
-
 <p>This corresponds to the following configuration file snippets:</p>
-<pre><code class="ini">[default_tags]
+<pre><code class="language-ini">[default_tags]
 python101 = teaching python
 </code></pre>
-
 <p>With these default tags set, the tags &ldquo;teaching&rdquo; and &ldquo;python&rdquo; will
 automatically be attached to the project &ldquo;python101&rdquo;:</p>
 <pre><code>$ watson start python101
@@ -307,19 +299,16 @@ Starting project python101 [teaching, python] at 19:27
 $ watson start python101 +lecture
 Starting project python101 [lecture, teaching, python] at 19:28
 </code></pre>
-
 <p>Default tags can contain space characters when written in between quotes:</p>
 <pre><code>$ watson config default_tags.voyager2 'nasa &quot;space mission&quot;'
 </code></pre>
-
 <p>Or in the configuration file:</p>
-<pre><code class="ini">[default_tags]
+<pre><code class="language-ini">[default_tags]
 voyager2 = nasa 'space mission'
 </code></pre>
-
 <h2 id="sample-configuration-file">Sample configuration file</h2>
 <p>A basic configuration file looks like the following:</p>
-<pre><code class="ini"># Watson configuration
+<pre><code class="language-ini"># Watson configuration
 
 [backend]
 url = https://api.crick.fr
@@ -336,18 +325,15 @@ pager = true
 report_current = false
 reverse_log = true
 </code></pre>
-
 <h2 id="application-folder">Application folder</h2>
 <p>To override Watson&rsquo;s default application folder (see first section), you can set the <code>$WATSON_DIR</code> environment variable to the desired path.</p>
 <p>It may be defined globally in your shell profile:</p>
-<pre><code class="bash"># .bashrc or .profile
+<pre><code class="language-bash"># .bashrc or .profile
 export WATSON_DIR=/path/to/watson/folder
 </code></pre>
-
 <p>or when calling Watson:</p>
-<pre><code class="bash">$ WATSON_DIR=/path/to/watson/folder watson status
+<pre><code class="language-bash">$ WATSON_DIR=/path/to/watson/folder watson status
 </code></pre>
-
 <p>This can be useful to preserve your real data when hacking with Watson :)</p></div>
             </div>
         </div>

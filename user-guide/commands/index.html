@@ -224,10 +224,9 @@
 
 <h1 id="commands">Commands</h1>
 <h2 id="add"><code>add</code></h2>
-<pre><code class="bash">Usage:  watson add [OPTIONS] [ARGS]...
+<pre><code class="language-bash">Usage:  watson add [OPTIONS] [ARGS]...
 </code></pre>
-
-<p>Add time for project with tag(s) that was not tracked live.</p>
+<p>Add time to a project with tag(s) that was not tracked live.</p>
 <p>Example:</p>
 <pre><code>$ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \
  programming +addfeature
@@ -242,11 +241,11 @@
 </thead>
 <tbody>
 <tr>
-<td><code>-f, --from DATE</code></td>
+<td><code>-f, --from DATETIME</code></td>
 <td>Date and time of start of tracked activity  [required]</td>
 </tr>
 <tr>
-<td><code>-t, --to DATE</code></td>
+<td><code>-t, --to DATETIME</code></td>
 <td>Date and time of end of tracked activity  [required]</td>
 </tr>
 <tr>
@@ -264,9 +263,8 @@
 </tbody>
 </table>
 <h2 id="aggregate"><code>aggregate</code></h2>
-<pre><code class="bash">Usage:  watson aggregate [OPTIONS]
+<pre><code class="language-bash">Usage:  watson aggregate [OPTIONS]
 </code></pre>
-
 <p>Display a report of the time spent on each project aggregated by day.</p>
 <p>If a project is given, the time spent on this project is printed.
 Else, print the total for each root project.</p>
@@ -279,7 +277,7 @@ projects or tags to the report.</p>
 <p>If you are outputting to the terminal, you can selectively enable a pager
 through the <code>--pager</code> option.</p>
 <p>You can change the output format from <em>plain text</em> to <em>JSON</em> using the
-<code>--json</code> option or to <em>CSV</em> using the <code>--csv</code> option. Only one  of these
+<code>--json</code> option or to <em>CSV</em> using the <code>--csv</code> option. Only one of these
 two options can be used at once.</p>
 <p>Example:</p>
 <pre><code>$ watson aggregate
@@ -340,11 +338,11 @@ from,to,project,tag,time
 <td>(Don&rsquo;t) include currently running frame in report.</td>
 </tr>
 <tr>
-<td><code>-f, --from DATE</code></td>
+<td><code>-f, --from DATETIME</code></td>
 <td>The date from when the report should start. Defaults to seven days ago.</td>
 </tr>
 <tr>
-<td><code>-t, --to DATE</code></td>
+<td><code>-t, --to DATETIME</code></td>
 <td>The date at which the report should stop (inclusive). Defaults to tomorrow.</td>
 </tr>
 <tr>
@@ -374,9 +372,8 @@ from,to,project,tag,time
 </tbody>
 </table>
 <h2 id="cancel"><code>cancel</code></h2>
-<pre><code class="bash">Usage:  watson cancel [OPTIONS]
+<pre><code class="language-bash">Usage:  watson cancel [OPTIONS]
 </code></pre>
-
 <p>Cancel the last call to the start command. The time will
 not be recorded.</p>
 <h3 id="options_2">Options</h3>
@@ -395,12 +392,11 @@ not be recorded.</p>
 </tbody>
 </table>
 <h2 id="config"><code>config</code></h2>
-<pre><code class="bash">Usage:  watson config [OPTIONS] SECTION.OPTION [VALUE]
+<pre><code class="language-bash">Usage:  watson config [OPTIONS] SECTION.OPTION [VALUE]
 </code></pre>
-
 <p>Get and set configuration options.</p>
-<p>If value is not provided, the content of the key is displayed. Else,
-the given value is set.</p>
+<p>If <code>value</code> is not provided, the content of the <code>key</code> is displayed. Else,
+the given <code>value</code> is set.</p>
 <p>You can edit the config file with an editor with the <code>--edit</code> option.</p>
 <p>Example:</p>
 <pre><code>$ watson config backend.token 7e329263e329
@@ -427,18 +423,17 @@ $ watson config backend.token
 </tbody>
 </table>
 <h2 id="edit"><code>edit</code></h2>
-<pre><code class="bash">Usage:  watson edit [OPTIONS] [ID]
+<pre><code class="language-bash">Usage:  watson edit [OPTIONS] [ID]
 </code></pre>
-
 <p>Edit a frame.</p>
 <p>You can specify the frame to edit by its position or by its frame id.
 For example, to edit the second-to-last frame, pass <code>-2</code> as the frame
 index. You can get the id of a frame with the <code>watson log</code> command.</p>
-<p>If no id or index is given, the frame defaults to the current frame or the
-last recorded frame, if no project is currently running.</p>
+<p>If no id or index is given, the frame defaults to the current frame (or the
+last recorded frame, if no project is currently running).</p>
 <p>The editor used is determined by the <code>VISUAL</code> or <code>EDITOR</code> environment
 variables (in that order) and defaults to <code>notepad</code> on Windows systems and
-to <code>vim</code>, <code>nano</code> or <code>vi</code> (first one found) on all other systems.</p>
+to <code>vim</code>, <code>nano</code>, or <code>vi</code> (first one found) on all other systems.</p>
 <h3 id="options_4">Options</h3>
 <table>
 <thead>
@@ -463,9 +458,8 @@ to <code>vim</code>, <code>nano</code> or <code>vi</code> (first one found) on a
 </tbody>
 </table>
 <h2 id="frames"><code>frames</code></h2>
-<pre><code class="bash">Usage:  watson frames [OPTIONS]
+<pre><code class="language-bash">Usage:  watson frames [OPTIONS]
 </code></pre>
-
 <p>Display the list of all frame IDs.</p>
 <p>Example:</p>
 <pre><code>$ watson frames
@@ -490,9 +484,8 @@ f1c4815
 </tbody>
 </table>
 <h2 id="help"><code>help</code></h2>
-<pre><code class="bash">Usage:  watson help [OPTIONS] [COMMAND]
+<pre><code class="language-bash">Usage:  watson help [OPTIONS] [COMMAND]
 </code></pre>
-
 <p>Display help information</p>
 <h3 id="options_6">Options</h3>
 <table>
@@ -510,26 +503,26 @@ f1c4815
 </tbody>
 </table>
 <h2 id="log"><code>log</code></h2>
-<pre><code class="bash">Usage:  watson log [OPTIONS]
+<pre><code class="language-bash">Usage:  watson log [OPTIONS]
 </code></pre>
-
 <p>Display each recorded session during the given timespan.</p>
 <p>By default, the sessions from the last 7 days are printed. This timespan
 can be controlled with the <code>--from</code> and <code>--to</code> arguments. The dates
 must have the format <code>YEAR-MONTH-DAY</code>, like: <code>2014-05-19</code>.</p>
 <p>You can also use special shortcut options for easier timespan control:
-<code>--day</code> sets the log timespan to the current day (beginning at 00:00h)
-and <code>--year</code>, <code>--month</code> and <code>--week</code> to the current year, month or week
+<code>--day</code> sets the log timespan to the current day (beginning at <code>00:00h</code>)
+and <code>--year</code>, <code>--month</code> and <code>--week</code> to the current year, month, or week,
 respectively.
 The shortcut <code>--luna</code> sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.</p>
 <p>If you are outputting to the terminal, you can selectively enable a pager
 through the <code>--pager</code> option.</p>
-<p>You can limit the log to a project or a tag using the <code>--project</code> and
-<code>--tag</code> options. They can be specified several times each to add multiple
-projects or tags to the log.</p>
+<p>You can limit the log to a project or a tag using the <code>--project</code>,
+<code>--tag</code>, <code>--ignore-project</code> and <code>--ignore-tag</code> options. They can be
+specified several times each to add or ignore multiple projects or
+tags in the log.</p>
 <p>You can change the output format from <em>plain text</em> to <em>JSON</em> using the
-<code>--json</code> option or to <em>CSV</em> using the <code>--csv</code> option. Only one  of these
+<code>--json</code> option or to <em>CSV</em> using the <code>--csv</code> option. Only one of these
 two options can be used at once.</p>
 <p>Example:</p>
 <pre><code>$ watson log --project voyager2 --project apollo11
@@ -580,11 +573,15 @@ a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission"
 <td>(Don&rsquo;t) include currently running frame in output.</td>
 </tr>
 <tr>
-<td><code>-f, --from DATE</code></td>
+<td><code>-r, --reverse / -R, --no-reverse</code></td>
+<td>(Don&rsquo;t) reverse the order of the days in output.</td>
+</tr>
+<tr>
+<td><code>-f, --from DATETIME</code></td>
 <td>The date from when the log should start. Defaults to seven days ago.</td>
 </tr>
 <tr>
-<td><code>-t, --to DATE</code></td>
+<td><code>-t, --to DATETIME</code></td>
 <td>The date at which the log should stop (inclusive). Defaults to tomorrow.</td>
 </tr>
 <tr>
@@ -620,6 +617,14 @@ a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission"
 <td>Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times</td>
 </tr>
 <tr>
+<td><code>--ignore-project TEXT</code></td>
+<td>Logs activity for all projects but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored</td>
+</tr>
+<tr>
+<td><code>--ignore-tag TEXT</code></td>
+<td>Logs activity for all tags but the given ones. You can ignore several tags by using the option multiple times. Any given tag will be ignored</td>
+</tr>
+<tr>
 <td><code>-j, --json</code></td>
 <td>Format output in JSON instead of plain text</td>
 </tr>
@@ -638,9 +643,8 @@ a96fcde,2014-04-17 09:15,2014-04-17 09:43,hubble,"lens, camera, transmission"
 </tbody>
 </table>
 <h2 id="merge"><code>merge</code></h2>
-<pre><code class="bash">Usage:  watson merge [OPTIONS] FRAMES_WITH_CONFLICT
+<pre><code class="language-bash">Usage:  watson merge [OPTIONS] FRAMES_WITH_CONFLICT
 </code></pre>
-
 <p>Perform a merge of the existing frames with a conflicting frames file.</p>
 <p>When storing the frames on a file hosting service, there is the
 possibility that the frame file goes out-of-sync due to one or
@@ -706,9 +710,8 @@ Select the frame you want to keep: left or right? (L/r)
 </tbody>
 </table>
 <h2 id="projects"><code>projects</code></h2>
-<pre><code class="bash">Usage:  watson projects [OPTIONS]
+<pre><code class="language-bash">Usage:  watson projects [OPTIONS]
 </code></pre>
-
 <p>Display the list of all the existing projects.</p>
 <p>Example:</p>
 <pre><code>$ watson projects
@@ -733,9 +736,8 @@ voyager2
 </tbody>
 </table>
 <h2 id="remove"><code>remove</code></h2>
-<pre><code class="bash">Usage:  watson remove [OPTIONS] ID
+<pre><code class="language-bash">Usage:  watson remove [OPTIONS] ID
 </code></pre>
-
 <p>Remove a frame. You can specify the frame either by id or by position
 (ex: <code>-1</code> for the last frame).</p>
 <h3 id="options_10">Options</h3>
@@ -758,9 +760,8 @@ voyager2
 </tbody>
 </table>
 <h2 id="rename"><code>rename</code></h2>
-<pre><code class="bash">Usage:  watson rename [OPTIONS] TYPE OLD_NAME NEW_NAME
+<pre><code class="language-bash">Usage:  watson rename [OPTIONS] TYPE OLD_NAME NEW_NAME
 </code></pre>
-
 <p>Rename a project or tag.</p>
 <p>Example:</p>
 <pre><code>$ watson rename project read-python-intro learn-python
@@ -784,9 +785,8 @@ Renamed tag "company-meeting" to "meeting"
 </tbody>
 </table>
 <h2 id="report"><code>report</code></h2>
-<pre><code class="bash">Usage:  watson report [OPTIONS]
+<pre><code class="language-bash">Usage:  watson report [OPTIONS]
 </code></pre>
-
 <p>Display a report of the time spent on each project.</p>
 <p>If a project is given, the time spent on this project is printed.
 Else, print the total for each root project.</p>
@@ -794,8 +794,8 @@ Else, print the total for each root project.</p>
 can be controlled with the <code>--from</code> and <code>--to</code> arguments. The dates
 must have the format <code>YEAR-MONTH-DAY</code>, like: <code>2014-05-19</code>.</p>
 <p>You can also use special shortcut options for easier timespan control:
-<code>--day</code> sets the report timespan to the current day (beginning at 00:00h)
-and <code>--year</code>, <code>--month</code> and <code>--week</code> to the current year, month or week
+<code>--day</code> sets the report timespan to the current day (beginning at <code>00:00h</code>)
+and <code>--year</code>, <code>--month</code> and <code>--week</code> to the current year, month, or week,
 respectively.
 The shortcut <code>--luna</code> sets the timespan to the current moon cycle with
 the last full moon marking the start of the cycle.</p>
@@ -896,11 +896,11 @@ from,to,project,tag,time
 <td>(Don&rsquo;t) include currently running frame in report.</td>
 </tr>
 <tr>
-<td><code>-f, --from DATE</code></td>
+<td><code>-f, --from DATETIME</code></td>
 <td>The date from when the report should start. Defaults to seven days ago.</td>
 </tr>
 <tr>
-<td><code>-t, --to DATE</code></td>
+<td><code>-t, --to DATETIME</code></td>
 <td>The date at which the report should stop (inclusive). Defaults to tomorrow.</td>
 </tr>
 <tr>
@@ -962,17 +962,16 @@ from,to,project,tag,time
 </tbody>
 </table>
 <h2 id="restart"><code>restart</code></h2>
-<pre><code class="bash">Usage:  watson restart [OPTIONS] [FRAME]
+<pre><code class="language-bash">Usage:  watson restart [OPTIONS] [FRAME]
 </code></pre>
-
 <p>Restart monitoring time for a previously stopped project.</p>
 <p>By default, the project from the last frame, which was recorded, is
 restarted, using the same tags as recorded in that frame. You can specify
 the frame to use with an integer frame index argument or a frame ID. For
 example, to restart the second-to-last frame, pass <code>-2</code> as the frame index.</p>
-<p>Normally, if a project is currently started, watson will print an error and
+<p>Normally, if a project is currently started, Watson will print an error and
 do nothing. If you set the configuration option <code>options.stop_on_restart</code>
-to a true value (<code>1</code>, <code>on</code>, <code>true</code> or <code>yes</code>), the current project, if any,
+to a true value (<code>1</code>, <code>on</code>, <code>true</code>, or <code>yes</code>), the current project, if any,
 will be stopped before the new frame is started. You can pass the option
 <code>-s</code> or <code>--stop</code> resp. <code>-S</code> or <code>--no-stop</code> to override the default or
 configured behaviour.</p>
@@ -996,6 +995,10 @@ Starting project apollo11 [module, brakes] at 16:36
 </thead>
 <tbody>
 <tr>
+<td><code>--at DATETIME</code></td>
+<td>Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.</td>
+</tr>
+<tr>
 <td><code>-s, --stop / -S, --no-stop</code></td>
 <td>(Don&rsquo;t) Stop an already running project.</td>
 </tr>
@@ -1006,16 +1009,22 @@ Starting project apollo11 [module, brakes] at 16:36
 </tbody>
 </table>
 <h2 id="start"><code>start</code></h2>
-<pre><code class="bash">Usage:  watson start [OPTIONS] [ARGS]...
+<pre><code class="language-bash">Usage:  watson start [OPTIONS] [ARGS]...
 </code></pre>
-
 <p>Start monitoring time for the given project.
 You can add tags indicating more specifically what you are working on with
 <code>+tag</code>.</p>
 <p>If there is already a running project and the configuration option
-<code>options.stop_on_start</code> is set to a true value (<code>1</code>, <code>on</code>, <code>true</code> or
+<code>options.stop_on_start</code> is set to a true value (<code>1</code>, <code>on</code>, <code>true</code>, or
 <code>yes</code>), it is stopped before the new project is started.</p>
-<p>If the &lsquo;&ndash;no-gap&rsquo; flag is given, the start time of the new project is set
+<p>If <code>--at</code> option is given, the provided starting time is used. The
+specified time must be after the end of the previous frame and must not be
+in the future.</p>
+<p>Example:</p>
+<pre><code>$ watson start --at 13:37
+Starting project apollo11 at 13:37
+</code></pre>
+<p>If the <code>--no-gap</code> flag is given, the start time of the new project is set
 to the stop time of the most recently stopped project.</p>
 <p>Example:</p>
 <pre><code>$ watson start apollo11 +module +brakes --no-gap
@@ -1030,6 +1039,10 @@ Starting project apollo11 [module, brakes] at 16:34
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>--at DATETIME</code></td>
+<td>Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.</td>
+</tr>
 <tr>
 <td><code>-g, --gap / -G, --no-gap</code></td>
 <td>(Don&rsquo;t) leave gap between end time of previous project and start time of the current.</td>
@@ -1049,9 +1062,8 @@ Starting project apollo11 [module, brakes] at 16:34
 </tbody>
 </table>
 <h2 id="status"><code>status</code></h2>
-<pre><code class="bash">Usage:  watson status [OPTIONS]
+<pre><code class="language-bash">Usage:  watson status [OPTIONS]
 </code></pre>
-
 <p>Display when the current project was started and the time spent since.</p>
 <p>You can configure how the date and time of when the project was started are
 displayed by setting <code>options.date_format</code> and <code>options.time_format</code> in the
@@ -1094,12 +1106,11 @@ Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
 </tbody>
 </table>
 <h2 id="stop"><code>stop</code></h2>
-<pre><code class="bash">Usage:  watson stop [OPTIONS]
+<pre><code class="language-bash">Usage:  watson stop [OPTIONS]
 </code></pre>
-
 <p>Stop monitoring time for the current project.</p>
-<p>If &lsquo;&ndash;at&rsquo; option is given, the provided stopping time is used. The
-specified time must be after the begin of the to be ended frame and must
+<p>If <code>--at</code> option is given, the provided stopping time is used. The
+specified time must be after the beginning of the to-be-ended frame and must
 not be in the future.</p>
 <p>Example:</p>
 <pre><code>$ watson stop --at 13:37
@@ -1115,7 +1126,7 @@ Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: 
 </thead>
 <tbody>
 <tr>
-<td><code>--at TIME</code></td>
+<td><code>--at DATETIME</code></td>
 <td>Stop frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.</td>
 </tr>
 <tr>
@@ -1125,9 +1136,8 @@ Stopping project apollo11, started an hour ago and stopped 30 minutes ago. (id: 
 </tbody>
 </table>
 <h2 id="sync"><code>sync</code></h2>
-<pre><code class="bash">Usage:  watson sync [OPTIONS]
+<pre><code class="language-bash">Usage:  watson sync [OPTIONS]
 </code></pre>
-
 <p>Get the frames from the server and push the new ones.</p>
 <p>The URL of the server and the User Token must be defined via the
 <code>watson config</code> command.</p>
@@ -1154,9 +1164,8 @@ Pushed 23 frames to the server
 </tbody>
 </table>
 <h2 id="tags"><code>tags</code></h2>
-<pre><code class="bash">Usage:  watson tags [OPTIONS]
+<pre><code class="language-bash">Usage:  watson tags [OPTIONS]
 </code></pre>
-
 <p>Display the list of all the tags.</p>
 <p>Example:</p>
 <pre><code>$ watson tags

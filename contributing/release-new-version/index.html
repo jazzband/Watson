@@ -160,9 +160,8 @@
 useful information in this page.</p>
 <h2 id="bump-a-new-xyz-release">Bump a new <code>x.y.z</code> release</h2>
 <p>Create a new branch:</p>
-<pre><code class="bash">$ git checkout -b prepare-x.y.z
+<pre><code class="language-bash">$ git checkout -b prepare-x.y.z
 </code></pre>
-
 <p>Edit the following files to describe changes and bump the version number:</p>
 <ul>
 <li><code>watson/version.py</code>: update the version number</li>
@@ -172,13 +171,12 @@ useful information in this page.</p>
   completion script by running <code>make completion-scripts</code></li>
 </ul>
 <p>Then commit your work, tag the release and push everything to GitHub:</p>
-<pre><code class="bash">$ git add watson/version.py CHANGELOG.md docs/about/release-notes.md
+<pre><code class="language-bash">$ git add watson/version.py CHANGELOG.md docs/about/release-notes.md
 $ git commit -m 'Bump release to x.y.z'
 $ git tag x.y.z
 $ git push origin prepare-x.y.z
 $ git push origin --tags
 </code></pre>
-
 <p>Create a new pull request (PR) with the <code>prepare-x.y.z</code> branch. You can safely
 merge this PR if all tests are green.</p>
 <p>Draft a new <a href="https://github.com/TailorDev/Watson/releases">Watson Release on
@@ -186,23 +184,20 @@ GitHub</a> with the same release
 notes.</p>
 <h2 id="push-the-xyz-release-to-pypi">Push the <code>x.y.z</code> release to PyPI</h2>
 <p>Checkout the up-to-date <code>master</code> branch:</p>
-<pre><code class="bash">$ git checkout master
+<pre><code class="language-bash">$ git checkout master
 $ git pull --rebase origin master
 </code></pre>
-
 <p>Now, build the release and submit it to PyPI using
 <a href="https://github.com/pypa/twine">twine</a> (you&rsquo;ll need to be registered as a
 maintainer of the package):</p>
-<pre><code class="bash">$ python setup.py sdist bdist_wheel
+<pre><code class="language-bash">$ python setup.py sdist bdist_wheel
 $ twine upload dist/*
 </code></pre>
-
 <h2 id="update-online-documentation">Update online documentation</h2>
 <p>We use <a href="http://www.mkdocs.org"><code>mkdocs</code></a> to generate the online documentation.
 It must be updated via:</p>
-<pre><code class="bash">$ mkdocs gh-deploy --clean
+<pre><code class="language-bash">$ mkdocs gh-deploy --clean
 </code></pre>
-
 <h2 id="publish-the-xyz-release-to-homebrew">Publish the <code>x.y.z</code> release to Homebrew</h2>
 <ul>
 <li>Fork the <a href="https://github.com/Homebrew/homebrew-core">Homebrew/homebrew-core</a>
@@ -211,12 +206,11 @@ It must be updated via:</p>
   Warehouse</a> page (the new PyPI)</li>
 <li>Update brew formula with the automation command <code>bump-formula-pr</code>:</li>
 </ul>
-<pre><code class="bash">$ brew bump-formula-pr \
+<pre><code class="language-bash">$ brew bump-formula-pr \
   --url='https://files.pythonhosted.org/packages/[...]/td-watson-x.y.z.tar.gz' \
   --sha256='PASTE THE SHA256 CHECKSUM HERE' \
   watson
 </code></pre>
-
 <p>Note: you may also need to update versions of Watson&rsquo;s dependencies (and related
 checksum). See <a href="https://docs.brew.sh/How-To-Open-a-Homebrew-Pull-Request.html">Homebrew&rsquo;s
 documentation</a>

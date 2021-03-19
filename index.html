@@ -170,14 +170,12 @@ with your colleagues.</p>
 <p>Watson is available on any platform supported by Python (Windows, Mac,
 Linux, *BSD…). The easiest way to install it is to use
 <a href="https://pip.pypa.io/en/stable/installing/">pip</a>:</p>
-<pre><code class="bash">$ pip install td-watson
+<pre><code class="language-bash">$ pip install td-watson
 </code></pre>
-
 <p>Depending on your system, you might need to run this command with root privileges in order to install Watson globally.</p>
 <p>On OS X, the easiest way to install Watson is using <a href="http://brew.sh/">Homebrew</a>:</p>
-<pre><code class="bash">$ brew update &amp;&amp; brew install watson
+<pre><code class="language-bash">$ brew update &amp;&amp; brew install watson
 </code></pre>
-
 <h3 id="distribution-packages">Distribution packages</h3>
 <p>You can install Watson using available distribution packages.</p>
 <p><strong>Arch Linux</strong></p>
@@ -189,24 +187,20 @@ Please refer to the official documentation for more information on
 installing AUR packages.</p>
 <h3 id="single-user-installation">Single user installation</h3>
 <p>You can choose to install Watson for your user only by running:</p>
-<pre><code class="bash">$ pip install --user td-watson
+<pre><code class="language-bash">$ pip install --user td-watson
 </code></pre>
-
 <p>If after this the <code>watson</code> command is not available, you need to add <code>~/.local/bin/</code> to your <code>PATH</code>. If your terminal is Bash, you can do this by running:</p>
-<pre><code class="bash">$ echo 'export PATH=&quot;$HOME/.local/bin:$PATH&quot;' &gt;&gt; ~/.bashrc  # Add ~/.local/bin/ to your .bashrc PATH
+<pre><code class="language-bash">$ echo 'export PATH=&quot;$HOME/.local/bin:$PATH&quot;' &gt;&gt; ~/.bashrc  # Add ~/.local/bin/ to your .bashrc PATH
 </code></pre>
-
 <p>and restarting your terminal session or sourcing the <code>.bashrc</code>:</p>
-<pre><code class="bash">$ source ~/.bashrc  # Reload your .bashrc
+<pre><code class="language-bash">$ source ~/.bashrc  # Reload your .bashrc
 </code></pre>
-
 <h3 id="development-version">Development version</h3>
 <p>The latest development version can be installed using the following commands:</p>
-<pre><code class="bash">$ git clone https://github.com/TailorDev/Watson.git
+<pre><code class="language-bash">$ git clone https://github.com/TailorDev/Watson.git
 $ cd Watson/
 $ pip install -e .
 </code></pre>
-
 <h3 id="command-line-completion">Command line completion</h3>
 <h4 id="bash">Bash</h4>
 <p>If you use a Bash-compatible shell, you can install the <code>watson.completion</code> file from the source distribution as <code>/etc/bash.completion.d/watson</code> - or wherever your distribution keeps the Bash completion configuration files. After you restart your shell, you can then just type <code>watson</code> on your command line and then hit <code>TAB</code> to see all available commands. Depending on your input, it completes <code>watson</code> commands, command options, projects, tags and frame IDs.</p>
@@ -227,20 +221,17 @@ You may need to make the completions directory as it is not created by default.<
 <p>You will now have command completion for fish, including the completion of known projects, tags, and frames.</p>
 <h2 id="getting-started">Getting started</h2>
 <p>Now that <code>watson</code> is installed on your system, let&rsquo;s start tracking your activity:</p>
-<pre><code class="bash">$ watson start world-domination +cats
+<pre><code class="language-bash">$ watson start world-domination +cats
 </code></pre>
-
 <p>With this command, you have started a new <strong>frame</strong> for the <em>world-domination</em> project with the <em>cat</em> tag. Time is running. Now, you need to work on your project. Let&rsquo;s do this. Now.</p>
 <p><img alt="Working cat" src="img/working-cat.gif" width="400px" /></p>
 <p>Welcome back! Now that your world domination plan has been set up, let&rsquo;s stop time tracking via:</p>
-<pre><code class="bash">$ watson stop
+<pre><code class="language-bash">$ watson stop
 Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
 </code></pre>
-
 <p>To list all available commands, either <a href="user-guide/commands/">explore the commands documentation</a> or use:</p>
-<pre><code class="bash">$ watson help
+<pre><code class="language-bash">$ watson help
 </code></pre>
-
 <p>We hope you will enjoy Watson!</p></div>
             </div>
         </div>
@@ -327,5 +318,5 @@ Project world-domination [cat] started 34 minutes ago (id: 166d1fb)
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-07-03 10:24:31.022001+00:00
+Build Date UTC : 2021-03-19 09:57:01.632819+00:00
 -->

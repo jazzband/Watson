@@ -132,6 +132,10 @@
             
             <li class="nav-item" data-level="1"><a href="#release-notes" class="nav-link">Release notes</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#200-2020-03-19" class="nav-link">2.0.0 - 2020-03-19</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#1100-2020-07-03" class="nav-link">1.10.0 - 2020-07-03</a>
               <ul class="nav flex-column">
               </ul>
@@ -211,8 +215,30 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="1100-2020-07-03"><a href="https://github.com/tailordev/watson/compare/1.9.0...1.10.0">1.10.0</a> - 2020-07-03</h2>
+<h2 id="200-2020-03-19"><a href="https://github.com/tailordev/watson/compare/1.10.0...2.0.0">2.0.0</a> - 2020-03-19</h2>
 <h3 id="added">Added</h3>
+<ul>
+<li>The <code>log</code> command output can now be filtered to exclude projects and tags via
+  <code>--ignore-project</code> and <code>--ignore-tag</code> (#395)</li>
+<li>Python 3.8 support (#402)</li>
+<li>Python 3.9 support (#402)</li>
+<li>Support for the TZ environment variable to specify the local time zone (#391)</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Upgrade to major arrow release 1.0.0 (#407)</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Zsh completion (#379)</li>
+</ul>
+<h3 id="removed">Removed</h3>
+<ul>
+<li>Python 2.7 support (#305).</li>
+<li>Python 3.5 support (#407).</li>
+</ul>
+<h2 id="1100-2020-07-03"><a href="https://github.com/tailordev/watson/compare/1.9.0...1.10.0">1.10.0</a> - 2020-07-03</h2>
+<h3 id="added_1">Added</h3>
 <ul>
 <li>Log output order can now be controlled via the <code>--reverse/--no-reverse</code> flag
   and the <code>reverse_log</code> configuration option (#369)</li>
@@ -220,27 +246,27 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Add <code>--color</code> and <code>--no-color</code> flags to force output to be colored or not
   respectively (#350).</li>
 </ul>
-<h3 id="changed">Changed</h3>
+<h3 id="changed_1">Changed</h3>
 <ul>
 <li>Require latest Arrow version 0.15.6 to support ISO week dates (#380)</li>
 </ul>
-<h3 id="fixed">Fixed</h3>
+<h3 id="fixed_1">Fixed</h3>
 <ul>
 <li>Make after-edit-check ensure that edited time stamps are not in the future
   (#381)</li>
 </ul>
 <h2 id="190-2020-05-27"><a href="https://github.com/tailordev/watson/compare/1.8.0...1.9.0">1.9.0</a> - 2020-05-27</h2>
-<h3 id="added_1">Added</h3>
+<h3 id="added_2">Added</h3>
 <ul>
 <li>Improve Arrow 0.15.0 support after changes in <code>arrow.get()</code> behavior (#296)</li>
 <li>Watson now suggests correct command if users make small typo (#318)</li>
 </ul>
-<h3 id="changed_1">Changed</h3>
+<h3 id="changed_2">Changed</h3>
 <ul>
 <li>Always show total time at bottom of report (#356)</li>
 <li>Use the default system newline character for CSV output (#366).</li>
 </ul>
-<h3 id="fixed_1">Fixed</h3>
+<h3 id="fixed_2">Fixed</h3>
 <ul>
 <li>Stylize prompt to create new project or tag (#310).</li>
 <li>Aggregate calculates wrong time if used with <code>--current</code> (#293)</li>
@@ -250,24 +276,24 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   encode Arrow objects (#329)</li>
 </ul>
 <h2 id="180-2019-08-26"><a href="https://github.com/tailordev/watson/compare/1.7.0...1.8.0">1.8.0</a> - 2019-08-26</h2>
-<h3 id="added_2">Added</h3>
+<h3 id="added_3">Added</h3>
 <ul>
 <li>Add CSV output format support for <code>report</code>, <code>log</code> and <code>aggregate</code> commands
   using the <code>--csv/-s</code> command line option flag (#281).</li>
 <li>Add <code>start --confirm-new-project</code> and <code>start --confirm-new-tag</code> options and
   corresponding options to configuration (#275).</li>
 </ul>
-<h3 id="fixed_2">Fixed</h3>
+<h3 id="fixed_3">Fixed</h3>
 <ul>
 <li>Update zsh shell completion (#264).</li>
 <li>Fix fatal AttributeError using Arrow 0.14.5 (#300)</li>
 </ul>
-<h3 id="removed">Removed</h3>
+<h3 id="removed_1">Removed</h3>
 <ul>
 <li>Python 3.4 support (#286).</li>
 </ul>
 <h2 id="170-2019-03-25"><a href="https://github.com/tailordev/watson/compare/1.6.0...1.7.0">1.7.0</a> - 2019-03-25</h2>
-<h3 id="added_3">Added</h3>
+<h3 id="added_4">Added</h3>
 <ul>
 <li>New <code>add</code> command (#202)</li>
 <li>Add lunar start time options to the <code>report</code> and <code>log</code> commands (#215)</li>
@@ -277,32 +303,32 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Python 3.7 support (#241)</li>
 <li>Add <code>start --no-gap</code> and <code>stop --at</code> options (#254)</li>
 </ul>
-<h3 id="changed_2">Changed</h3>
+<h3 id="changed_3">Changed</h3>
 <ul>
 <li>The <code>edit</code> command now checks data consistency (#203)</li>
 <li>Current state saving is now improve when using Watson as a library (#214)</li>
 <li>Prevent calling <code>get_start_time_for_period</code> multiple times (#219)</li>
 </ul>
-<h3 id="fixed_3">Fixed</h3>
+<h3 id="fixed_4">Fixed</h3>
 <ul>
 <li>Improved support for UTF-8 with Python 2 (#211)</li>
 <li>Zsh completion for tags and projects with spaces in their names (#227)</li>
 <li>Typos in commands output (#230, #235)</li>
 <li>Project URL of the project in PyPI (#260)</li>
 </ul>
-<h3 id="removed_1">Removed</h3>
+<h3 id="removed_2">Removed</h3>
 <ul>
 <li>Python 3.3 support (#210).</li>
 </ul>
 <h2 id="160-2018-04-23"><a href="https://github.com/tailordev/watson/compare/1.5.2...1.6.0">1.6.0</a> - 2018-04-23</h2>
-<h3 id="added_4">Added</h3>
+<h3 id="added_5">Added</h3>
 <ul>
 <li>For <code>report</code> and <code>log</code>, allow specifying a timeperiod of &ldquo;all&rdquo;</li>
 <li>Option for log and report command to (not) output via pager</li>
 <li><code>--json</code> option to log command</li>
 <li>Optional flags to filter status call</li>
 </ul>
-<h3 id="fixed_4">Fixed</h3>
+<h3 id="fixed_5">Fixed</h3>
 <ul>
 <li>Change message when frame is removed</li>
 <li>CLI output when on tags on <code>stop</code> and <code>remove</code></li>
@@ -315,31 +341,31 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   3.3</li>
 </ul>
 <h2 id="152-2017-08-02"><a href="https://github.com/tailordev/watson/compare/1.5.1...1.5.2">1.5.2</a> - 2017-08-02</h2>
-<h3 id="fixed_5">Fixed</h3>
+<h3 id="fixed_6">Fixed</h3>
 <ul>
 <li>Follow up on the <code>config</code> command fix (#161)</li>
 </ul>
 <h2 id="151-2017-08-01"><a href="https://github.com/tailordev/watson/compare/1.5.0...1.5.1">1.5.1</a> - 2017-08-01</h2>
-<h3 id="fixed_6">Fixed</h3>
+<h3 id="fixed_7">Fixed</h3>
 <ul>
 <li>Fix the <code>config</code> command (#158)</li>
 </ul>
 <h2 id="150-2017-07-31"><a href="https://github.com/tailordev/watson/compare/1.4.0...1.5.0">1.5.0</a> - 2017-07-31</h2>
-<h3 id="added_5">Added</h3>
+<h3 id="added_6">Added</h3>
 <ul>
 <li>The <code>report</code> command now supports JSON output (#102)</li>
 </ul>
-<h3 id="changed_3">Changed</h3>
+<h3 id="changed_4">Changed</h3>
 <ul>
 <li>The <code>sync</code> command is now compatible with the new crick.io backend API (#152)</li>
 <li>Python 3.6 is now officially supported (#150)</li>
 </ul>
-<h3 id="fixed_7">Fixed</h3>
+<h3 id="fixed_8">Fixed</h3>
 <ul>
 <li>Catch error when user wants to edit config but file does not exist yet (#154)</li>
 </ul>
 <h2 id="140-2016-11-01"><a href="https://github.com/tailordev/watson/compare/1.3.2...1.4.0">1.4.0</a> - 2016-11-01</h2>
-<h3 id="added_6">Added</h3>
+<h3 id="added_7">Added</h3>
 <ul>
 <li>Watson now has a <code>rename</code> command (#74).</li>
 <li>The <code>report</code> and <code>log</code> commands now have new command line and config file
@@ -350,43 +376,43 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Zsh completion support (#96)</li>
 <li>Document installation via homebrew on OS X (#121)</li>
 </ul>
-<h3 id="changed_4">Changed</h3>
+<h3 id="changed_5">Changed</h3>
 <ul>
 <li>When saving the Watson frames, state or config file, the most recent previous
   version of the file is kept as a back up (#120).</li>
 </ul>
-<h3 id="fixed_8">Fixed</h3>
+<h3 id="fixed_9">Fixed</h3>
 <ul>
 <li>Bash completion of projects and tags with spaces in them (#122).</li>
 <li>If saving the Watson frames, state or config file fails for any reason, the
   original is kept (and not wiped as before) (#120).</li>
 </ul>
 <h2 id="132-2016-03-01"><a href="https://github.com/tailordev/watson/compare/1.3.1...1.3.2">1.3.2</a> - 2016-03-01</h2>
-<h3 id="added_7">Added</h3>
+<h3 id="added_8">Added</h3>
 <ul>
 <li>Document installation for Arch Linux</li>
 <li>Improve frame selection by position</li>
 </ul>
-<h3 id="fixed_9">Fixed</h3>
+<h3 id="fixed_10">Fixed</h3>
 <ul>
 <li>Improve error handling</li>
 <li>Remove unnecessary dependencies for a stand alone installation</li>
 <li>Specify correct source directory for flake8 and pytest (tox test suite)</li>
 </ul>
 <h2 id="131-2016-02-11"><a href="https://github.com/tailordev/watson/compare/1.3.0...1.3.1">1.3.1</a> - 2016-02-11</h2>
-<h3 id="fixed_10">Fixed</h3>
+<h3 id="fixed_11">Fixed</h3>
 <ul>
 <li>Packaging issue with PyPI</li>
 </ul>
 <h2 id="130-2016-02-11"><a href="https://github.com/tailordev/watson/compare/1.2.0...1.3.0">1.3.0</a> - 2016-02-11</h2>
-<h3 id="added_8">Added</h3>
+<h3 id="added_9">Added</h3>
 <ul>
 <li>A complete browsable documentation</li>
 <li>Watson&rsquo;s brand new logo!</li>
 <li>Support for Watson&rsquo;s directory override via the WATSON_DIR environment variable</li>
 </ul>
 <h2 id="120-2016-01-22"><a href="https://github.com/tailordev/watson/compare/1.1.0...1.2.0">1.2.0</a> - 2016-01-22</h2>
-<h3 id="added_9">Added</h3>
+<h3 id="added_10">Added</h3>
 <ul>
 <li>Watson now has a <code>restart</code> command</li>
 <li>Watson now has a <code>merge</code> command</li>
@@ -399,37 +425,37 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   the last one)</li>
 <li>The <code>log</code> command now has a daily total time summary</li>
 </ul>
-<h3 id="fixed_11">Fixed</h3>
+<h3 id="fixed_12">Fixed</h3>
 <ul>
 <li>Unicode issues with cjk characters</li>
 <li>Edition summary is now converted to local time</li>
 </ul>
 <h2 id="110-2015-10-21"><a href="https://github.com/tailordev/watson/compare/1.0.2...1.1.0">1.1.0</a> - 2015-10-21</h2>
-<h3 id="added_10">Added</h3>
+<h3 id="added_11">Added</h3>
 <ul>
 <li>Configurable date and time to output of <code>status</code> command (#33)</li>
 <li>Support for Bash-completion (#1)</li>
 <li>New <code>frames</code> command that displays all frame IDs</li>
 </ul>
-<h3 id="fixed_12">Fixed</h3>
+<h3 id="fixed_13">Fixed</h3>
 <ul>
 <li>Set id if not provided (#30)</li>
 </ul>
 <h2 id="102-2015-10-09"><a href="https://github.com/tailordev/watson/compare/1.0.1...1.0.2">1.0.2</a> - 2015-10-09</h2>
-<h3 id="added_11">Added</h3>
+<h3 id="added_12">Added</h3>
 <ul>
 <li>Add documentation to remove all the frames</li>
 </ul>
-<h3 id="changed_5">Changed</h3>
+<h3 id="changed_6">Changed</h3>
 <ul>
 <li>Improve installation instructions</li>
 </ul>
-<h3 id="fixed_13">Fixed</h3>
+<h3 id="fixed_14">Fixed</h3>
 <ul>
 <li>The last frame could not be deleted</li>
 </ul>
 <h2 id="101-2015-09-17"><a href="https://github.com/tailordev/watson/compare/1.0.0...1.0.1">1.0.1</a> - 2015-09-17</h2>
-<h3 id="fixed_14">Fixed</h3>
+<h3 id="fixed_15">Fixed</h3>
 <ul>
 <li>Packaging erissueror with PyPI</li>
 </ul>
