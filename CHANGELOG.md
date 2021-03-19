@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2020-03-19
+
 ### Added
 
-- The `log` command output can now be filtered to exclude projects and tags via `--ignore-project` and `--ignore-tag` (#395)
+- The `log` command output can now be filtered to exclude projects and tags via
+  `--ignore-project` and `--ignore-tag` (#395)
 - Python 3.8 support (#402)
 - Python 3.9 support (#402)
 - Support for the TZ environment variable to specify the local time zone (#391)
@@ -270,7 +273,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
-[unreleased]: https://github.com/tailordev/watson/compare/1.10.0...HEAD
+[unreleased]: https://github.com/tailordev/watson/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/tailordev/watson/compare/1.10.0...2.0.0
 [1.10.0]: https://github.com/tailordev/watson/compare/1.9.0...1.10.0
 [1.9.0]: https://github.com/tailordev/watson/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/tailordev/watson/compare/1.7.0...1.8.0
