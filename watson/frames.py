@@ -13,7 +13,7 @@ class Frame(namedtuple('Frame', HEADERS)):
             if not isinstance(start, arrow.Arrow):
                 start = arrow.get(start)
 
-            if not isinstance(stop, arrow.Arrow):
+            if stop and not isinstance(stop, arrow.Arrow):
                 stop = arrow.get(stop)
 
             if updated_at is None:
@@ -25,7 +25,9 @@ class Frame(namedtuple('Frame', HEADERS)):
             raise WatsonError("Error converting date: {}".format(e))
 
         start = start.to('local')
-        stop = stop.to('local')
+
+        if stop:
+            stop = stop.to('local')
 
         if tags is None:
             tags = []
@@ -36,7 +38,7 @@ class Frame(namedtuple('Frame', HEADERS)):
 
     def dump(self):
         start = self.start.to('utc').int_timestamp
-        stop = self.stop.to('utc').int_timestamp
+        stop = self.stop.to('utc').int_timestamp if self.stop else None
         updated_at = self.updated_at.int_timestamp
 
         return (start, stop, self.project, self.id, self.tags, updated_at)
