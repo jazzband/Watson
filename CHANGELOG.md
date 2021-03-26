@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.1] - 2021-03-24
-
 ### Fixed
 
-- Ability to `edit` a started frame (#418)
+- Ability to `edit` the current frame (#418)
 
 ## [2.0.0] - 2021-03-19
 
