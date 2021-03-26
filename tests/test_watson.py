@@ -9,6 +9,7 @@ import pytest
 import requests
 
 from watson import Watson, WatsonError
+from watson.frames import Frame
 from watson.watson import ConfigParser, ConfigurationError
 
 from . import mock_read, TEST_FIXTURE_DIR
@@ -70,6 +71,21 @@ def test_current_with_empty_given_state(config_dir, mocker):
 
     mocker.patch('builtins.open', mocker.mock_open(read_data=content))
     assert watson.current == {}
+
+
+def test_current_as_running_frame(watson):
+    """
+    Ensures frame can be created without a stop date.
+    Catches #417: editing task in progress throws an exception
+    """
+    watson.start('foo', tags=['A', 'B'])
+
+    cur = watson.current
+    frame = Frame(cur['start'], None, cur['project'], None, cur['tags'])
+
+    assert frame.stop is None
+    assert frame.project == 'foo'
+    assert frame.tags == ['A', 'B']
 
 
 # last_sync

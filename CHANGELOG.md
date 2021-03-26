@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Ability to `edit` the current frame (#418)
+
 ## [2.0.0] - 2021-03-19
 
 ### Added
