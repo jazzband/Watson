@@ -512,15 +512,13 @@ _SHORTCUT_OPTIONS_VALUES = {
               "given tag will be ignored")
 @click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='json', mutually_exclusive=['csv'],
-              multiple=True,
               help="Format output in JSON instead of plain text")
 @click.option('-s', '--csv', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='csv', mutually_exclusive=['json'],
-              multiple=True,
               help="Format output in CSV instead of plain text")
 @click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='plain', mutually_exclusive=['json', 'csv'],
-              multiple=True, default=True, hidden=True,
+              default=True, hidden=True,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
@@ -767,15 +765,13 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               "times")
 @click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='json', mutually_exclusive=['csv'],
-              multiple=True,
               help="Format output in JSON instead of plain text")
 @click.option('-s', '--csv', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='csv', mutually_exclusive=['json'],
-              multiple=True,
               help="Format output in CSV instead of plain text")
 @click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='plain', mutually_exclusive=['json', 'csv'],
-              multiple=True, default=True, hidden=True,
+              default=True, hidden=True,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
@@ -943,15 +939,13 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               "given tag will be ignored")
 @click.option('-j', '--json', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='json', mutually_exclusive=['csv'],
-              multiple=True,
               help="Format output in JSON instead of plain text")
 @click.option('-s', '--csv', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='csv', mutually_exclusive=['json'],
-              multiple=True,
               help="Format output in CSV instead of plain text")
 @click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='plain', mutually_exclusive=['json', 'csv'],
-              multiple=True, default=True, hidden=True,
+              default=True, hidden=True,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
