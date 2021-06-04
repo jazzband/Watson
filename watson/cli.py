@@ -1256,7 +1256,9 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
 @click.argument('id', required=False, autocompletion=get_frames)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, id):
+def edit(
+    watson, confirm_new_project: bool, confirm_new_tag: bool, id: Optional[str]
+):
     """
     Edit a frame.
 

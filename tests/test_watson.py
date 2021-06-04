@@ -73,7 +73,7 @@ def test_current_with_empty_given_state(config_dir, mocker):
     assert watson.current == {}
 
 
-def test_current_as_running_frame(watson):
+def test_current_as_running_frame(watson) -> None:
     """
     Ensures frame can be created without a stop date.
     Catches #417: editing task in progress throws an exception
