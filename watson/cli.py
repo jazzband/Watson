@@ -86,27 +86,26 @@ def local_tz_info() -> datetime.tzinfo:
 class DateTimeParamType(click.ParamType):
     name = 'datetime'
 
-    def convert(self, value, param, ctx) -> Optional[arrow.Arrow]:
-        if value:
-            date = self._parse_multiformat(value)
-            if date is None:
-                raise click.UsageError(
-                    "Could not match value '{}' to any supported date format"
-                    .format(value)
-                )
-            # When we parse a date, we want to parse it in the timezone
-            # expected by the user, so that midnight is midnight in the local
-            # timezone, or respect the TZ environment variable not in UTC.
-            # Cf issue #16.
-            date = date.replace(tzinfo=local_tz_info())
-            # Add an offset to match the week beginning specified in the
-            # configuration
-            if param.name == "week":
-                week_start = ctx.obj.config.get(
-                    "options", "week_start", "monday")
-                date = apply_weekday_offset(
-                    start_time=date, week_start=week_start)
-            return date
+    def convert(self, value, param, ctx) -> arrow.Arrow:
+        date = self._parse_multiformat(value)
+        if date is None:
+            raise click.UsageError(
+                "Could not match value '{}' to any supported date format"
+                .format(value)
+            )
+        # When we parse a date, we want to parse it in the timezone
+        # expected by the user, so that midnight is midnight in the local
+        # timezone, or respect the TZ environment variable not in UTC.
+        # Cf issue #16.
+        date = date.replace(tzinfo=local_tz_info())
+        # Add an offset to match the week beginning specified in the
+        # configuration
+        if param.name == "week":
+            week_start = ctx.obj.config.get(
+                "options", "week_start", "monday")
+            date = apply_weekday_offset(
+                start_time=date, week_start=week_start)
+        return date
 
     def _parse_multiformat(self, value) -> Optional[arrow.Arrow]:
         date = None
