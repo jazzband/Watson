@@ -1,50 +1,19 @@
 import uuid
-from typing import List, Optional, Union
+from typing import List, NamedTuple, Optional, Union
 
 import arrow
-
-from collections import namedtuple
 
 TimeType = Union[str, arrow.Arrow]
 HEADERS = ('start', 'stop', 'project', 'id', 'tags', 'updated_at')
 
 
-class Frame(namedtuple('Frame', HEADERS)):
-    def __new__(
-        cls,
-        start: TimeType,
-        stop: Optional[TimeType],
-        project: str,
-        id: Optional[str],
-        tags: Optional[List[str]] = None,
-        updated_at: Optional[TimeType] = None,
-    ) -> "Frame":
-        try:
-            if not isinstance(start, arrow.Arrow):
-                start = arrow.get(start)
-
-            if stop is not None and not isinstance(stop, arrow.Arrow):
-                stop = arrow.get(stop)
-
-            if updated_at is None:
-                updated_at = arrow.utcnow()
-            elif not isinstance(updated_at, arrow.Arrow):
-                updated_at = arrow.get(updated_at)
-        except (ValueError, TypeError) as e:
-            from .watson import WatsonError
-            raise WatsonError("Error converting date: {}".format(e))
-
-        start = start.to('local')
-
-        if stop:
-            stop = stop.to('local')
-
-        if tags is None:
-            tags = []
-
-        return super(Frame, cls).__new__(
-            cls, start, stop, project, id, tags, updated_at
-        )
+class Frame(NamedTuple):
+    start: arrow.Arrow
+    stop: Optional[arrow.Arrow]
+    project: str
+    id: Optional[str]
+    tags: List[str]
+    updated_at: arrow.Arrow
 
     @classmethod
     def make_new(
