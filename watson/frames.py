@@ -1,19 +1,29 @@
 import uuid
+from typing import List, Optional, Union
 
 import arrow
 
 from collections import namedtuple
 
+TimeType = Union[str, arrow.Arrow]
 HEADERS = ('start', 'stop', 'project', 'id', 'tags', 'updated_at')
 
 
 class Frame(namedtuple('Frame', HEADERS)):
-    def __new__(cls, start, stop, project, id, tags=None, updated_at=None,):
+    def __new__(
+        cls,
+        start: TimeType,
+        stop: Optional[TimeType],
+        project: str,
+        id: Optional[str],
+        tags: Optional[List[str]] = None,
+        updated_at: Optional[TimeType] = None,
+    ) -> "Frame":
         try:
             if not isinstance(start, arrow.Arrow):
                 start = arrow.get(start)
 
-            if stop and not isinstance(stop, arrow.Arrow):
+            if stop is not None and not isinstance(stop, arrow.Arrow):
                 stop = arrow.get(stop)
 
             if updated_at is None:
@@ -138,8 +148,15 @@ class Frames(object):
         self._rows.append(frame)
         return frame
 
-    def new_frame(self, project, start, stop, tags=None, id=None,
-                  updated_at=None):
+    def new_frame(
+        self,
+        project: str,
+        start: TimeType,
+        stop: Optional[TimeType],
+        tags: Optional[List[str]] = None,
+        id: Optional[str] = None,
+        updated_at: Optional[TimeType] = None,
+    ) -> Frame:
         if not id:
             id = uuid.uuid4().hex
         return Frame(start, stop, project, id, tags=tags,
