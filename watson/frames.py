@@ -1,9 +1,12 @@
 import uuid
-from typing import List, NamedTuple, Optional, Union
+from typing import Iterable, List, NamedTuple, Optional, Union
 
 import arrow
 
 TimeType = Union[str, arrow.Arrow]
+FrameColumnTypes = Union[
+    arrow.Arrow, Optional[arrow.Arrow], str, Optional[str], List[str]
+]
 
 
 class Frame(NamedTuple):
@@ -64,7 +67,7 @@ class Frame(NamedTuple):
         return (start, stop, self.project, self.id, self.tags, updated_at)
 
     @property
-    def day(self):
+    def day(self) -> arrow.Arrow:
         return self.start.floor('day')
 
     def __lt__(self, other):
@@ -81,20 +84,20 @@ class Frame(NamedTuple):
 
 
 class Span:
-    def __init__(self, start, stop, timeframe='day'):
+    def __init__(self, start: arrow.Arrow, stop: arrow.Arrow, timeframe='day'):
         self.timeframe = timeframe
         self.start = start.floor(self.timeframe)
         self.stop = stop.ceil(self.timeframe)
 
-    def overlaps(self, frame):
+    def overlaps(self, frame: Frame) -> bool:
         return frame.start <= self.stop and frame.stop >= self.start
 
-    def __contains__(self, frame):
+    def __contains__(self, frame: Frame) -> bool:
         return frame.start >= self.start and frame.stop <= self.stop
 
 
 class Frames:
-    def __init__(self, frames=None):
+    def __init__(self, frames: Optional[List[Frame]] = None):
         if not frames:
             frames = []
 
@@ -103,7 +106,7 @@ class Frames:
 
         self.changed = False
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._rows)
 
     def __getitem__(self, key):
@@ -140,7 +143,7 @@ class Frames:
         else:
             del self._rows[self._get_index_by_id(key)]
 
-    def _get_index_by_id(self, id):
+    def _get_index_by_id(self, id: str) -> int:
         try:
             return next(
                 i for i, v in enumerate(self['id']) if v.startswith(id)
@@ -148,7 +151,7 @@ class Frames:
         except StopIteration:
             raise KeyError("Frame with id {} not found.".format(id))
 
-    def _get_col(self, col):
+    def _get_col(self, col: str) -> Iterable[FrameColumnTypes]:
         for row in self._rows:
             yield getattr(row, col)
 
@@ -216,5 +219,5 @@ class Frames:
                 stop = span.stop if frame.stop > span.stop else frame.stop
                 yield frame._replace(start=start, stop=stop)
 
-    def span(self, start, stop):
+    def span(self, start: arrow.Arrow, stop: arrow.Arrow) -> Span:
         return Span(start, stop)
