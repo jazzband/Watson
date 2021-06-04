@@ -1282,8 +1282,13 @@ def edit(
         frame = get_frame_from_argument(watson, id)
         id = frame.id
     elif watson.is_started:
-        frame = Frame(watson.current['start'], None, watson.current['project'],
-                      None, watson.current['tags'])
+        frame = Frame.make_new(
+            start=watson.current['start'],
+            stop=None,
+            project=watson.current['project'],
+            id=None,
+            tags=watson.current['tags']
+        )
     elif watson.frames:
         frame = watson.frames[-1]
         id = frame.id

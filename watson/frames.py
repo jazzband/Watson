@@ -46,6 +46,48 @@ class Frame(namedtuple('Frame', HEADERS)):
             cls, start, stop, project, id, tags, updated_at
         )
 
+    @classmethod
+    def make_new(
+        cls,
+        start: TimeType,
+        stop: Optional[TimeType],
+        project: str,
+        id: Optional[str],
+        tags: Optional[List[str]] = None,
+        updated_at: Optional[TimeType] = None,
+    ) -> "Frame":
+        try:
+            if not isinstance(start, arrow.Arrow):
+                start = arrow.get(start)
+
+            if stop is not None and not isinstance(stop, arrow.Arrow):
+                stop = arrow.get(stop)
+
+            if updated_at is None:
+                updated_at = arrow.utcnow()
+            elif not isinstance(updated_at, arrow.Arrow):
+                updated_at = arrow.get(updated_at)
+        except (ValueError, TypeError) as e:
+            from .watson import WatsonError
+            raise WatsonError("Error converting date: {}".format(e))
+
+        start = start.to('local')
+
+        if stop:
+            stop = stop.to('local')
+
+        if tags is None:
+            tags = []
+
+        return cls(
+            start=start,
+            stop=stop,
+            project=project,
+            id=id,
+            tags=tags,
+            updated_at=updated_at,
+        )
+
     def dump(self):
         start = self.start.to('utc').int_timestamp
         stop = self.stop.to('utc').int_timestamp if self.stop else None
@@ -88,7 +130,7 @@ class Frames(object):
         if not frames:
             frames = []
 
-        rows = [Frame(*frame) for frame in frames]
+        rows = [Frame.make_new(*frame) for frame in frames]
         self._rows = rows
 
         self.changed = False
@@ -159,8 +201,14 @@ class Frames(object):
     ) -> Frame:
         if not id:
             id = uuid.uuid4().hex
-        return Frame(start, stop, project, id, tags=tags,
-                     updated_at=updated_at)
+        return Frame.make_new(
+            start=start,
+            stop=stop,
+            project=project,
+            id=id,
+            tags=tags,
+            updated_at=updated_at,
+        )
 
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)

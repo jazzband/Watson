@@ -81,7 +81,13 @@ def test_current_as_running_frame(watson) -> None:
     watson.start('foo', tags=['A', 'B'])
 
     cur = watson.current
-    frame = Frame(cur['start'], None, cur['project'], None, cur['tags'])
+    frame = Frame.make_new(
+        start=cur['start'],
+        stop=None,
+        project=cur['project'],
+        id=None,
+        tags=cur['tags'],
+    )
 
     assert frame.stop is None
     assert frame.project == 'foo'
