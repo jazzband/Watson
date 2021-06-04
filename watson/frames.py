@@ -4,7 +4,6 @@ from typing import List, NamedTuple, Optional, Union
 import arrow
 
 TimeType = Union[str, arrow.Arrow]
-HEADERS = ('start', 'stop', 'project', 'id', 'tags', 'updated_at')
 
 
 class Frame(NamedTuple):
@@ -108,7 +107,8 @@ class Frames:
         return len(self._rows)
 
     def __getitem__(self, key):
-        if key in HEADERS:
+        attributes = Frame.__annotations__.keys()
+        if key in attributes:
             return tuple(self._get_col(key))
         elif isinstance(key, int):
             return self._rows[key]
@@ -149,9 +149,8 @@ class Frames:
             raise KeyError("Frame with id {} not found.".format(id))
 
     def _get_col(self, col):
-        index = HEADERS.index(col)
         for row in self._rows:
-            yield row[index]
+            yield getattr(row, col)
 
     def add(self, *args, **kwargs):
         self.changed = True
