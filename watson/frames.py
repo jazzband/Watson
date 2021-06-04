@@ -81,7 +81,7 @@ class Frame(NamedTuple):
         return self.start >= other.start
 
 
-class Span(object):
+class Span:
     def __init__(self, start, stop, timeframe='day'):
         self.timeframe = timeframe
         self.start = start.floor(self.timeframe)
@@ -94,7 +94,7 @@ class Span(object):
         return frame.start >= self.start and frame.stop <= self.stop
 
 
-class Frames(object):
+class Frames:
     def __init__(self, frames=None):
         if not frames:
             frames = []
