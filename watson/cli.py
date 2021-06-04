@@ -5,6 +5,7 @@ import operator
 import os
 from dateutil import tz
 from functools import reduce, wraps
+from typing import Optional
 
 import arrow
 import click
@@ -85,7 +86,7 @@ def local_tz_info() -> datetime.tzinfo:
 class DateTimeParamType(click.ParamType):
     name = 'datetime'
 
-    def convert(self, value, param, ctx) -> arrow:
+    def convert(self, value, param, ctx) -> Optional[arrow.Arrow]:
         if value:
             date = self._parse_multiformat(value)
             if date is None:
@@ -107,7 +108,7 @@ class DateTimeParamType(click.ParamType):
                     start_time=date, week_start=week_start)
             return date
 
-    def _parse_multiformat(self, value) -> arrow:
+    def _parse_multiformat(self, value) -> Optional[arrow.Arrow]:
         date = None
         for fmt in (None, 'HH:mm:ss', 'HH:mm'):
             try:
