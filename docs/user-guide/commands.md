@@ -638,7 +638,7 @@ in the future.
 Example:
 
 
-    $ watson start --at 13:37
+    $ watson start appollo11 --at 13:37
     Starting project apollo11 at 13:37
     
 If the `--no-gap` flag is given, the start time of the new project is set
