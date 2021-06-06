@@ -608,12 +608,16 @@ Example:
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
     $ watson restart
     Starting project apollo11 [module, brakes] at 16:36
+    
+If the `--no-gap` flag is given, the start time of the new project is set
+to the stop time of the most recently stopped project.
 
 ### Options
 
 Flag | Help
 -----|-----
 `--at DATETIME` | Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.
+`-g, --gap / -G, --no-gap` | (Don't) leave gap between end time of previous project and start time of the current.
 `-s, --stop / -S, --no-stop` | (Don't) Stop an already running project.
 `--help` | Show this message and exit.
 

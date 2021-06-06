@@ -312,15 +312,20 @@ def stop(watson, at_):
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('--at', 'at_', type=DateTime, default=None,
+              cls=MutuallyExclusiveOption, mutually_exclusive=['gap_'],
               help=('Start frame at this time. Must be in '
                     '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
+@click.option('-g/-G', '--gap/--no-gap', 'gap_', is_flag=True, default=True,
+              cls=MutuallyExclusiveOption, mutually_exclusive=['at_'],
+              help=("(Don't) leave gap between end time of previous project "
+                    "and start time of the current."))
 @click.option('-s/-S', '--stop/--no-stop', 'stop_', default=None,
               help="(Don't) Stop an already running project.")
 @click.argument('frame', default='-1', autocompletion=get_frames)
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
-def restart(ctx, watson, frame, stop_, at_):
+def restart(ctx, watson, frame, stop_, at_, gap_=True):
     """
     Restart monitoring time for a previously stopped project.
 
@@ -348,11 +353,24 @@ def restart(ctx, watson, frame, stop_, at_):
     Stopping project apollo11, started a minute ago. (id: e7ccd52)
     $ watson restart
     Starting project apollo11 [module, brakes] at 16:36
+
+    If the `--no-gap` flag is given, the start time of the new project is set
+    to the stop time of the most recently stopped project.
     """
     if not watson.frames and not watson.is_started:
         raise click.ClickException(
             style('error', "No frames recorded yet. It's time to create your "
                            "first one!"))
+
+    if watson.is_started and not gap_:
+        current = watson.current
+        errmsg = ("Project '{}' is already started and '--no-gap' is passed. "
+                  "Please stop manually.")
+        raise click.ClickException(
+            style(
+                'error', errmsg.format(current['project'])
+            )
+        )
 
     if watson.is_started:
         if stop_ or (stop_ is None and
@@ -368,7 +386,8 @@ def restart(ctx, watson, frame, stop_, at_):
 
     frame = get_frame_from_argument(watson, frame)
 
-    _start(watson, frame.project, frame.tags, restart=True, start_at=at_)
+    _start(watson, frame.project, frame.tags, restart=True, start_at=at_,
+           gap=gap_)
 
 
 @cli.command()
