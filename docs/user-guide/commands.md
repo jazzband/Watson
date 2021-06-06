@@ -579,7 +579,7 @@ Flag | Help
 ## `restart`
 
 ```bash
-Usage:  watson restart [OPTIONS] [FRAME]
+Usage:  watson restart [OPTIONS] [ID]
 ```
 
 Restart monitoring time for a previously stopped project.
