@@ -150,6 +150,33 @@ def test_log_invalid_date(runner, watson, test_dt):
     assert result.exit_code != 0
 
 
+def test_log_length_config(runner, watson, mocker):
+    # Add three days worth of data
+    start_dt = arrow.now()
+    end_dt = start_dt + timedelta(hours=1)
+    runner.invoke(
+        cli.add,
+        ['-f', start_dt, '-t', end_dt, 'project-name'],
+        obj=watson)
+    runner.invoke(
+        cli.add,
+        ['-f', start_dt - timedelta(days=1), '-t', end_dt - timedelta(days=1), 'project-name'],
+        obj=watson)
+    runner.invoke(
+        cli.add,
+        ['-f', start_dt - timedelta(days=2), '-t', end_dt - timedelta(days=2), 'project-name'],
+        obj=watson)
+
+    # Use newlines to test how many days are displayed in the log output
+    watson.config.set('options', 'log_length', 1)
+    result = runner.invoke(cli.log, obj=watson)
+    assert result.output.count('\n') == 5
+
+    watson.config.set('options', 'log_length', 2)
+    result = runner.invoke(cli.log, obj=watson)
+    assert result.output.count('\n') == 8
+
+
 # watson report
 
 @pytest.mark.parametrize('test_dt,expected', VALID_DATES_DATA)
