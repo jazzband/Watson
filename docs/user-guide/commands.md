@@ -692,6 +692,7 @@ Example:
 
 Flag | Help
 -----|-----
+`-c, --compact` | only output project and time elapsed in a compact format
 `-p, --project` | only output project
 `-t, --tags` | only show tags
 `-e, --elapsed` | only show time elapsed
