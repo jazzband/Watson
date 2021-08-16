@@ -2,7 +2,7 @@
 
 import os
 import datetime
-import mock
+from unittest import mock
 from io import StringIO
 
 import py
