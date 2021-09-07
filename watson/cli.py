@@ -1105,7 +1105,7 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
 
         def _final_print(lines):
             pass
-
+    timefmt = watson.config.get('options', 'time_format', '%H:%M')
     for i, (day, frames) in enumerate(frames_by_day):
         if i != 0:
             _print('')
@@ -1132,8 +1132,8 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
                     frame.project, longest_project
                 )),
                 tags=(" "*2 if frame.tags else "") + style('tags', frame.tags),
-                start=style('time', '{:HH:mm}'.format(frame.start)),
-                stop=style('time', '{:HH:mm}'.format(frame.stop)),
+                start=style('time', frame.start.strftime(timefmt)),
+                stop=style('time', frame.stop.strftime(timefmt)),
                 id=style('short_id', frame.id)
             )
             for frame in frames
