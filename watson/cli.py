@@ -543,11 +543,13 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
+@click.option('--percentage/--no-percentage', 'percentage', default=False,
+              help="Show percentage")
 @click.pass_obj
 @catch_watson_error
 def report(watson, current, from_, to, projects, tags, ignore_projects,
            ignore_tags, year, month, week, day, luna, all, output_format,
-           pager, aggregated=False, include_partial_frames=True):
+           pager, aggregated=False, include_partial_frames=True, percentage=False):
     """
     Display a report of the time spent on each project.
 
@@ -618,6 +620,11 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
             [reactor   8h 35m 50s]
             [steering 10h 33m 37s]
             [wheels   10h 11m 35s]
+    \b
+    $ watson report --percentage
+    spacestation - 4h 0m 0s
+            [brakes    2h 0m 0s] (50%)
+            [module    2h 0m 0s] (50%)
     \b
     $ watson report --json
     {
@@ -725,28 +732,53 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 
     projects = report['projects']
 
+    total_time = 0
     for project in projects:
-        _print('{tab}{project} - {time}'.format(
-            tab=tab,
-            time=style('time', format_timedelta(
-                datetime.timedelta(seconds=project['time'])
-            )),
-            project=style('project', project['name'])
-        ))
+        total_time += int(project['time'])
+
+    for project in projects:
+        if percentage:
+            _print('{tab}{project} - {time} ({percentage})'.format(
+                tab=tab,
+                time=style('time', format_timedelta(
+                    datetime.timedelta(seconds=project['time'])
+                )),
+                project=style('project', project['name']),
+                percentage=style('percentage', "{:.2f}%".format(project['time']/total_time * 100)),
+            ))
+        else:
+            _print('{tab}{project} - {time}'.format(
+                tab=tab,
+                time=style('time', format_timedelta(
+                    datetime.timedelta(seconds=project['time'])
+                )),
+                project=style('project', project['name'])
+            ))
 
         tags = project['tags']
         if tags:
             longest_tag = max(len(tag) for tag in tags or [''])
 
             for tag in tags:
-                _print('\t[{tag} {time}]'.format(
-                    time=style('time', '{:>11}'.format(format_timedelta(
-                        datetime.timedelta(seconds=tag['time'])
-                    ))),
-                    tag=style('tag', '{:<{}}'.format(
-                        tag['name'], longest_tag
-                    )),
-                ))
+                if percentage:
+                    _print('\t[{tag} {time} | {percentage}]'.format(
+                        time=style('time', '{:>11}'.format(format_timedelta(
+                            datetime.timedelta(seconds=tag['time'])
+                        ))),
+                        tag=style('tag', '{:<{}}'.format(
+                            tag['name'], longest_tag
+                        )),
+                        percentage=style('percentage', '{:.2f}%'.format(tag['time'] / project['time'] * 100))
+                    ))
+                else:
+                    _print('\t[{tag} {time}]'.format(
+                        time=style('time', '{:>11}'.format(format_timedelta(
+                            datetime.timedelta(seconds=tag['time'])
+                        ))),
+                        tag=style('tag', '{:<{}}'.format(
+                            tag['name'], longest_tag
+                        )),
+                    ))
         _print("")
 
     # if this is a report invoked from `aggregate` return the lines; do not

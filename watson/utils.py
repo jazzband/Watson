@@ -68,7 +68,8 @@ def style(name, element):
         'error': {'fg': 'red'},
         'date': {'fg': 'cyan'},
         'short_id': _style_short_id,
-        'id': {'fg': 'white'}
+        'id': {'fg': 'white'},
+        'percentage': {'fg': 'magenta'}
     }
 
     fmt = formats.get(name, {})
