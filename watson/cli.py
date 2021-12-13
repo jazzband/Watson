@@ -105,6 +105,10 @@ class DateTimeParamType(click.ParamType):
                     "options", "week_start", "monday")
                 date = apply_weekday_offset(
                     start_time=date, week_start=week_start)
+            if param.name in ["day", "week", "month", "luna", "year"]:
+                day_start_hour = ctx.obj.config.get(
+                    "options", "day_start_hour", 0)
+                date = date.shift(hours=-int(day_start_hour))
             return date
 
     def _parse_multiformat(self, value) -> arrow:
