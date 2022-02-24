@@ -160,11 +160,15 @@ def test_log_length_config(runner, watson, mocker):
         obj=watson)
     runner.invoke(
         cli.add,
-        ['-f', start_dt - timedelta(days=1), '-t', end_dt - timedelta(days=1), 'project-name'],
+        ['-f', start_dt - timedelta(days=1),
+         '-t', end_dt - timedelta(days=1),
+         'project-name'],
         obj=watson)
     runner.invoke(
         cli.add,
-        ['-f', start_dt - timedelta(days=2), '-t', end_dt - timedelta(days=2), 'project-name'],
+        ['-f', start_dt - timedelta(days=2),
+         '-t', end_dt - timedelta(days=2),
+         'project-name'],
         obj=watson)
 
     # Use newlines to test how many days are displayed in the log output
