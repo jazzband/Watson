@@ -543,11 +543,14 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
+@click.option('-i','--ignore-current', 'ignore_current',default=False,
+              flag_value=True,
+              help="ignore current started Project in Projecttime")
 @click.pass_obj
 @catch_watson_error
 def report(watson, current, from_, to, projects, tags, ignore_projects,
            ignore_tags, year, month, week, day, luna, all, output_format,
-           pager, aggregated=False, include_partial_frames=True):
+           pager, ignore_current, aggregated=False, include_partial_frames=True):
     """
     Display a report of the time spent on each project.
 
@@ -661,10 +664,15 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     else:
         tab = ''
 
+    if not watson.is_started and not aggregated:
+        click.echo("No project started.")
+    else: 
+        current = watson.current
+
     report = watson.report(from_, to, current, projects, tags,
                            ignore_projects, ignore_tags,
                            year=year, month=month, week=week, day=day,
-                           luna=luna, all=all,
+                           luna=luna, all=all, ignore_current=ignore_current, 
                            include_partial_frames=include_partial_frames)
 
     if 'json' in output_format and not aggregated:
@@ -760,6 +768,19 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
         )))
     ))
 
+    ##### show status of current if current is set
+    if watson.is_started and not ignore_current:
+    
+        datefmt = watson.config.get('options', 'date_format', '%Y.%m.%d')
+        timefmt = watson.config.get('options', 'time_format', '%H:%M:%S%z')
+        _print("\nProject {}{} started {} ({} {})".format(
+            style('project', current['project']),
+            (" " if current['tags'] else "") + style('tags', current['tags']),
+            style('time', current['start'].humanize()),
+            style('date', current['start'].strftime(datefmt)),
+            style('time', current['start'].strftime(timefmt))
+        ))
+
     _final_print(lines)
 
 
@@ -798,11 +819,14 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
+@click.option('-i','--ignore-current', 'ignore_current',default=False,
+              flag_value=True,
+              help="ignore current started Project in Projecttime")
 @click.pass_obj
 @click.pass_context
 @catch_watson_error
 def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
-              pager):
+              pager, ignore_current):
     """
     Display a report of the time spent on each project aggregated by day.
 
@@ -881,6 +905,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
         output = ctx.invoke(report, current=current, from_=from_offset,
                             to=from_offset, projects=projects, tags=tags,
                             output_format=output_format,
+                            ignore_current=ignore_current,
                             pager=pager, aggregated=True,
                             include_partial_frames=True)
 

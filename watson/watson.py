@@ -459,7 +459,7 @@ class Watson(object):
 
     def report(self, from_, to, current=None, projects=None, tags=None,
                ignore_projects=None, ignore_tags=None, year=None,
-               month=None, week=None, day=None, luna=None, all=None,
+               month=None, week=None, day=None, luna=None, all=None, ignore_current=False,
                include_partial_frames=False):
         for start_time in (_ for _ in [day, week, month, year, luna, all]
                            if _ is not None):
@@ -478,7 +478,7 @@ class Watson(object):
         if current is None:
             current = self.config.getboolean('options', 'report_current')
 
-        if self.current and current:
+        if (self.current or current) and not ignore_current:
             cur = self.current
             self.frames.add(cur['project'], cur['start'], arrow.utcnow(),
                             cur['tags'], id="current")
@@ -495,7 +495,7 @@ class Watson(object):
             operator.attrgetter('project')
         )
 
-        if self.current and current:
+        if (self.current and current) and not ignore_current:
             del self.frames['current']
 
         total = datetime.timedelta()
