@@ -828,7 +828,7 @@ def test_add_current_Project_Time_report_ignore_current_False(watson):
     report = watson.report(arrow.now().shift(hours=-2), arrow.now(), ignore_current=False)
     assert report['time'] == pytest.approx(1000)
 
-# report time sum with current project time
+# report time sum without current project time
 def test_add_current_Project_Time_report_ignore_current_False(watson):
     # test add currently startet project time to report and aggregate
     watson.start('dummyproject', start_at=arrow.now().shift(seconds=-1000))
