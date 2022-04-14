@@ -821,6 +821,20 @@ def test_report(watson):
     with pytest.raises(WatsonError):
         watson.report(arrow.now(), arrow.now(), tags=["A"], ignore_tags=["A"])
 
+# report time sum with current project time
+def test_add_current_Project_Time_report_ignore_current_False(watson):
+    # test add currently startet project time to report and aggregate
+    watson.start('dummyproject', start_at=arrow.now().shift(seconds=-1000))
+    report = watson.report(arrow.now().shift(hours=-2), arrow.now(), ignore_current=False)
+    assert report['time'] == pytest.approx(1000)
+
+# report time sum with current project time
+def test_add_current_Project_Time_report_ignore_current_False(watson):
+    # test add currently startet project time to report and aggregate
+    watson.start('dummyproject', start_at=arrow.now().shift(seconds=-1000))
+    report = watson.report(arrow.now().shift(hours=-2), arrow.now(), ignore_current=True)
+    assert report['time'] == 0
+
 
 def test_report_current(mocker, config_dir):
     mocker.patch('arrow.utcnow', return_value=arrow.get(5000))
@@ -839,14 +853,24 @@ def test_report_current(mocker, config_dir):
     assert report['projects'][0]['time'] == pytest.approx(1000)
 
     report = watson.report(
-        arrow.utcnow(), arrow.utcnow(), current=False, projects=['foo']
+        arrow.utcnow(), arrow.utcnow(), current=False, projects=['foo'], ignore_current=True
     )
     assert len(report['projects']) == 0
 
     report = watson.report(
-        arrow.utcnow(), arrow.utcnow(), projects=['foo']
+        arrow.utcnow(), arrow.utcnow(), projects=['foo'], ignore_current=True
     )
     assert len(report['projects']) == 0
+
+    report = watson.report(
+        arrow.utcnow(), arrow.utcnow(), current=False, projects=['foo']
+    )
+    assert len(report['projects']) == 1
+
+    report = watson.report(
+        arrow.utcnow(), arrow.utcnow(), projects=['foo']
+    )
+    assert len(report['projects']) == 1
 
 
 @pytest.mark.parametrize(
