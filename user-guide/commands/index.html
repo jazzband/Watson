@@ -12,12 +12,12 @@
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/docco.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/docco.min.css">
         <link href="../../css/watson.css" rel="stylesheet">
 
         <script src="../../js/jquery-1.10.2.min.js" defer></script>
         <script src="../../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
@@ -962,7 +962,7 @@ from,to,project,tag,time
 </tbody>
 </table>
 <h2 id="restart"><code>restart</code></h2>
-<pre><code class="language-bash">Usage:  watson restart [OPTIONS] [FRAME]
+<pre><code class="language-bash">Usage:  watson restart [OPTIONS] [ID]
 </code></pre>
 <p>Restart monitoring time for a previously stopped project.</p>
 <p>By default, the project from the last frame, which was recorded, is
@@ -985,6 +985,8 @@ Stopping project apollo11, started a minute ago. (id: e7ccd52)
 $ watson restart
 Starting project apollo11 [module, brakes] at 16:36
 </code></pre>
+<p>If the <code>--no-gap</code> flag is given, the start time of the new project is set
+to the stop time of the most recently stopped project.</p>
 <h3 id="options_13">Options</h3>
 <table>
 <thead>
@@ -997,6 +999,10 @@ Starting project apollo11 [module, brakes] at 16:36
 <tr>
 <td><code>--at DATETIME</code></td>
 <td>Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format.</td>
+</tr>
+<tr>
+<td><code>-g, --gap / -G, --no-gap</code></td>
+<td>(Don&rsquo;t) leave gap between end time of previous project and start time of the current.</td>
 </tr>
 <tr>
 <td><code>-s, --stop / -S, --no-stop</code></td>
@@ -1221,16 +1227,13 @@ wheels
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>
