@@ -29,11 +29,11 @@ case $1 in
     exit 0
     ;;
   bash)
-    src_command="source"
+    src_command="bash_source"
     target_file="watson.completion"
     ;;
   zsh)
-    src_command="source_zsh"
+    src_command="zsh_source"
     target_file="watson.zsh-completion"
     ;;
   *)
