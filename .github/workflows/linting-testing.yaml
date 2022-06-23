@@ -1,0 +1,38 @@
+name: Linting and Testing
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  linting-testing:
+    name: Linting and Testing
+    strategy:
+      matrix:
+        version: ["3.5", "3.6", "3.7", "3.8", "3.9"]
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+        
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      
+      - name: Run black
+        run: black --check .
+
+      - name: Run flake8
+        run:  flake8 --show-source watson/ tests/ scripts/
+
+      - name: Run pytest
+        run: pytest tests

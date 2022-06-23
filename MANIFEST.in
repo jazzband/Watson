@@ -6,7 +6,6 @@ include mkdocs.yml
 include README.md
 include requirements-dev.txt
 include requirements.txt
-include tox.ini
 include watson.completion
 include watson.zsh-completion
 
