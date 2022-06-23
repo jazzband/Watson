@@ -10,7 +10,7 @@ def _bypass_click_bug_to_ensure_watson(ctx):
 
 def get_project_or_task_completion(ctx, args, incomplete):
     """Function to autocomplete either organisations or tasks, depending on the
-       shape of the current argument."""
+    shape of the current argument."""
 
     assert isinstance(incomplete, str)
 
@@ -47,9 +47,7 @@ def get_project_or_task_completion(ctx, args, incomplete):
 
     _bypass_click_bug_to_ensure_watson(ctx)
 
-    project_is_completed = any(
-        tok.startswith("+") for tok in args + [incomplete]
-    )
+    project_is_completed = any(tok.startswith("+") for tok in args + [incomplete])
     if project_is_completed:
         incomplete_tag = get_incomplete_tag(args, incomplete)
         fixed_incomplete_tag = fix_broken_tag_parsing(incomplete_tag)

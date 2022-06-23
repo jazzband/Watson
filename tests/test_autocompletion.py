@@ -42,9 +42,7 @@ ClickContext = Namespace
         (get_tags, None, []),
     ],
 )
-def test_if_returned_values_are_distinct(
-    watson_df, func_to_test, rename_type, args
-):
+def test_if_returned_values_are_distinct(watson_df, func_to_test, rename_type, args):
     ctx = ClickContext(obj=watson_df, params={"rename_type": rename_type})
     prefix = ""
     ret_list = list(func_to_test(ctx, args, prefix))
@@ -89,9 +87,7 @@ def test_if_empty_prefix_returns_everything(
         (get_tags, None, []),
     ],
 )
-def test_completion_of_nonexisting_prefix(
-    watson_df, func_to_test, rename_type, args
-):
+def test_completion_of_nonexisting_prefix(watson_df, func_to_test, rename_type, args):
     ctx = ClickContext(obj=watson_df, params={"rename_type": rename_type})
     prefix = "NOT-EXISTING-PREFIX"
     ret_list = list(func_to_test(ctx, args, prefix))

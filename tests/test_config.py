@@ -13,14 +13,14 @@ def test_config_get(mocker, watson):
 url = foo
 token =
     """
-    mocker.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, "read", mock_read(content))
     config = watson.config
-    assert config.get('backend', 'url') == 'foo'
-    assert config.get('backend', 'token') == ''
-    assert config.get('backend', 'foo') is None
-    assert config.get('backend', 'foo', 'bar') == 'bar'
-    assert config.get('option', 'spamm') is None
-    assert config.get('option', 'spamm', 'eggs') == 'eggs'
+    assert config.get("backend", "url") == "foo"
+    assert config.get("backend", "token") == ""
+    assert config.get("backend", "foo") is None
+    assert config.get("backend", "foo", "bar") == "bar"
+    assert config.get("option", "spamm") is None
+    assert config.get("option", "spamm", "eggs") == "eggs"
 
 
 def test_config_getboolean(mocker, watson):
@@ -33,18 +33,18 @@ flag4 = yes
 flag5 = false
 flag6 =
     """
-    mocker.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, "read", mock_read(content))
     config = watson.config
-    assert config.getboolean('options', 'flag1') is True
-    assert config.getboolean('options', 'flag1', False) is True
-    assert config.getboolean('options', 'flag2') is True
-    assert config.getboolean('options', 'flag3') is True
-    assert config.getboolean('options', 'flag4') is True
-    assert config.getboolean('options', 'flag5') is False
-    assert config.getboolean('options', 'flag6') is False
-    assert config.getboolean('options', 'flag6', True) is True
-    assert config.getboolean('options', 'missing') is False
-    assert config.getboolean('options', 'missing', True) is True
+    assert config.getboolean("options", "flag1") is True
+    assert config.getboolean("options", "flag1", False) is True
+    assert config.getboolean("options", "flag2") is True
+    assert config.getboolean("options", "flag3") is True
+    assert config.getboolean("options", "flag4") is True
+    assert config.getboolean("options", "flag5") is False
+    assert config.getboolean("options", "flag6") is False
+    assert config.getboolean("options", "flag6", True) is True
+    assert config.getboolean("options", "missing") is False
+    assert config.getboolean("options", "missing", True) is True
 
 
 def test_config_getint(mocker, watson):
@@ -54,21 +54,21 @@ value1 = 42
 value2 = spamm
 value3 =
     """
-    mocker.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, "read", mock_read(content))
     config = watson.config
-    assert config.getint('options', 'value1') == 42
-    assert config.getint('options', 'value1', 666) == 42
-    assert config.getint('options', 'missing') is None
-    assert config.getint('options', 'missing', 23) == 23
+    assert config.getint("options", "value1") == 42
+    assert config.getint("options", "value1", 666) == 42
+    assert config.getint("options", "missing") is None
+    assert config.getint("options", "missing", 23) == 23
     # default is not converted!
-    assert config.getint('options', 'missing', '42') == '42'
-    assert config.getint('options', 'missing', 6.66) == 6.66
+    assert config.getint("options", "missing", "42") == "42"
+    assert config.getint("options", "missing", 6.66) == 6.66
 
     with pytest.raises(ValueError):
-        config.getint('options', 'value2')
+        config.getint("options", "value2")
 
     with pytest.raises(ValueError):
-        config.getint('options', 'value3')
+        config.getint("options", "value3")
 
 
 def test_config_getfloat(mocker, watson):
@@ -80,22 +80,22 @@ value3 = spamm
 value4 =
     """
 
-    mocker.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, "read", mock_read(content))
     config = watson.config
-    assert config.getfloat('options', 'value1') == 3.14
-    assert config.getfloat('options', 'value1', 6.66) == 3.14
-    assert config.getfloat('options', 'value2') == 42.0
-    assert isinstance(config.getfloat('options', 'value2'), float)
-    assert config.getfloat('options', 'missing') is None
-    assert config.getfloat('options', 'missing', 3.14) == 3.14
+    assert config.getfloat("options", "value1") == 3.14
+    assert config.getfloat("options", "value1", 6.66) == 3.14
+    assert config.getfloat("options", "value2") == 42.0
+    assert isinstance(config.getfloat("options", "value2"), float)
+    assert config.getfloat("options", "missing") is None
+    assert config.getfloat("options", "missing", 3.14) == 3.14
     # default is not converted!
-    assert config.getfloat('options', 'missing', '3.14') == '3.14'
+    assert config.getfloat("options", "missing", "3.14") == "3.14"
 
     with pytest.raises(ValueError):
-        config.getfloat('options', 'value3')
+        config.getfloat("options", "value3")
 
     with pytest.raises(ValueError):
-        config.getfloat('options', 'value4')
+        config.getfloat("options", "value4")
 
 
 def test_config_getlist(mocker, watson):
@@ -121,33 +121,32 @@ value5 = one
    two #three
    four # five
 """
-    mocker.patch.object(ConfigParser, 'read', mock_read(content))
+    mocker.patch.object(ConfigParser, "read", mock_read(content))
     gl = watson.config.getlist
-    assert gl('options', 'value1') == ['one', 'two three', 'four',
-                                       'five six']
-    assert gl('options', 'value2') == ['one', 'two three', 'four',
-                                       'five  six']
-    assert gl('options', 'value3') == ['one', 'two  three']
-    assert gl('options', 'value4') == ['one', 'two three', 'four']
-    assert gl('options', 'value5') == ['one', 'two #three', 'four # five']
+    assert gl("options", "value1") == ["one", "two three", "four", "five six"]
+    assert gl("options", "value2") == ["one", "two three", "four", "five  six"]
+    assert gl("options", "value3") == ["one", "two  three"]
+    assert gl("options", "value4") == ["one", "two three", "four"]
+    assert gl("options", "value5") == ["one", "two #three", "four # five"]
 
     # default values
-    assert gl('options', 'novalue') == []
-    assert gl('options', 'novalue', None) == []
-    assert gl('options', 'novalue', 42) == 42
-    assert gl('nosection', 'dummy') == []
-    assert gl('nosection', 'dummy', None) == []
-    assert gl('nosection', 'dummy', 42) == 42
+    assert gl("options", "novalue") == []
+    assert gl("options", "novalue", None) == []
+    assert gl("options", "novalue", 42) == 42
+    assert gl("nosection", "dummy") == []
+    assert gl("nosection", "dummy", None) == []
+    assert gl("nosection", "dummy", 42) == 42
 
-    default = gl('nosection', 'dummy')
+    default = gl("nosection", "dummy")
     default.append(42)
-    assert gl('nosection', 'dummy') != [42], (
-        "Modifying default return value should not have side effect.")
+    assert gl("nosection", "dummy") != [
+        42
+    ], "Modifying default return value should not have side effect."
 
 
 def test_set_config(watson):
     config = ConfigParser()
-    config.set('foo', 'bar', 'lol')
+    config.set("foo", "bar", "lol")
     watson.config = config
 
-    assert watson.config.get('foo', 'bar') == 'lol'
+    assert watson.config.get("foo", "bar") == "lol"

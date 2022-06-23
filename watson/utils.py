@@ -18,7 +18,7 @@ from click.exceptions import UsageError
 
 
 def create_watson():
-    return _watson.Watson(config_dir=os.environ.get('WATSON_DIR'))
+    return _watson.Watson(config_dir=os.environ.get("WATSON_DIR"))
 
 
 def confirm_project(project, watson_projects):
@@ -29,8 +29,7 @@ def confirm_project(project, watson_projects):
     Returns True on accept and raises click.exceptions.Abort on reject
     """
     if project not in watson_projects:
-        msg = ("Project '%s' does not exist yet. Create it?"
-               % style('project', project))
+        msg = "Project '%s' does not exist yet. Create it?" % style("project", project)
         click.confirm(msg, abort=True)
     return True
 
@@ -43,7 +42,7 @@ def confirm_tags(tags, watson_tags):
     """
     for tag in tags:
         if tag not in watson_tags:
-            msg = "Tag '%s' does not exist yet. Create it?" % style('tag', tag)
+            msg = "Tag '%s' does not exist yet. Create it?" % style("tag", tag)
             click.confirm(msg, abort=True)
     return True
 
@@ -51,24 +50,22 @@ def confirm_tags(tags, watson_tags):
 def style(name, element):
     def _style_tags(tags):
         if not tags:
-            return ''
+            return ""
 
-        return '[{}]'.format(', '.join(
-            style('tag', tag) for tag in tags
-        ))
+        return "[{}]".format(", ".join(style("tag", tag) for tag in tags))
 
     def _style_short_id(id):
-        return style('id', id[:7])
+        return style("id", id[:7])
 
     formats = {
-        'project': {'fg': 'magenta'},
-        'tags': _style_tags,
-        'tag': {'fg': 'blue'},
-        'time': {'fg': 'green'},
-        'error': {'fg': 'red'},
-        'date': {'fg': 'cyan'},
-        'short_id': _style_short_id,
-        'id': {'fg': 'white'}
+        "project": {"fg": "magenta"},
+        "tags": _style_tags,
+        "tag": {"fg": "blue"},
+        "time": {"fg": "green"},
+        "error": {"fg": "red"},
+        "date": {"fg": "cyan"},
+        "short_id": _style_short_id,
+        "id": {"fg": "white"},
     }
 
     fmt = formats.get(name, {})
@@ -92,17 +89,17 @@ def format_timedelta(delta):
 
     if total >= 3600:
         hours = seconds // 3600
-        stems.append('{}h'.format(hours))
+        stems.append("{}h".format(hours))
         seconds -= hours * 3600
 
     if total >= 60:
         mins = seconds // 60
-        stems.append('{:02}m'.format(mins))
+        stems.append("{:02}m".format(mins))
         seconds -= mins * 60
 
-    stems.append('{:02}s'.format(seconds))
+    stems.append("{:02}s".format(seconds))
 
-    return ('-' if neg else '') + ' '.join(stems)
+    return ("-" if neg else "") + " ".join(stems)
 
 
 def sorted_groupby(iterator, key, reverse=False):
@@ -118,12 +115,17 @@ def options(opt_list):
     Wrapper for the `value_proc` field in `click.prompt`, which validates
     that the user response is part of the list of accepted responses.
     """
+
     def value_proc(user_input):
         if user_input in opt_list:
             return user_input
         else:
-            raise UsageError("Response should be one of [{}]".format(
-                ','.join(str(x) for x in opt_list)))
+            raise UsageError(
+                "Response should be one of [{}]".format(
+                    ",".join(str(x) for x in opt_list)
+                )
+            )
+
     return value_proc
 
 
@@ -141,7 +143,7 @@ def get_frame_from_argument(watson, arg):
             return watson.frames[index]
     except IndexError:
         raise click.ClickException(
-            style('error', "No frame found for index {}.".format(arg))
+            style("error", "No frame found for index {}.".format(arg))
         )
     except (ValueError, TypeError):
         pass
@@ -150,9 +152,10 @@ def get_frame_from_argument(watson, arg):
     try:
         return watson.frames[arg]
     except KeyError:
-        raise click.ClickException("{} {}.".format(
-            style('error', "No frame found with id"),
-            style('short_id', arg))
+        raise click.ClickException(
+            "{} {}.".format(
+                style("error", "No frame found with id"), style("short_id", arg)
+            )
         )
 
 
@@ -167,21 +170,21 @@ def get_start_time_for_period(period):
 
     weekday = now.weekday()
 
-    if period == 'day':
+    if period == "day":
         start_time = arrow.Arrow(year, month, day)
-    elif period == 'week':
+    elif period == "week":
         start_time = arrow.Arrow.fromdate(now.shift(days=-weekday).date())
-    elif period == 'month':
+    elif period == "month":
         start_time = arrow.Arrow(year, month, 1)
-    elif period == 'luna':
+    elif period == "luna":
         start_time = get_last_full_moon(now)
-    elif period == 'year':
+    elif period == "year":
         start_time = arrow.Arrow(year, 1, 1)
-    elif period == 'all':
+    elif period == "all":
         # approximately timestamp `0`
         start_time = arrow.Arrow(1970, 1, 1)
     else:
-        raise ValueError('Unsupported period value: {}'.format(period))
+        raise ValueError("Unsupported period value: {}".format(period))
 
     return start_time
 
@@ -191,9 +194,20 @@ def apply_weekday_offset(start_time, week_start):
     Apply the offset required to move the start date `start_time` of a week
     starting on Monday to that of a week starting on `week_start`.
     """
-    weekdays = dict(zip(
-        ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday",
-         "sunday"], range(0, 7)))
+    weekdays = dict(
+        zip(
+            [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday",
+            ],
+            range(0, 7),
+        )
+    )
 
     new_start = week_start.lower()
     if new_start not in weekdays:
@@ -208,13 +222,15 @@ def make_json_writer(func, *args, **kwargs):
     Return a function that receives a file-like object and writes the return
     value of func(*args, **kwargs) as JSON to it.
     """
+
     def writer(f):
         dump = json.dumps(func(*args, **kwargs), indent=1, ensure_ascii=False)
         f.write(dump)
+
     return writer
 
 
-def safe_save(path, content, ext='.bak'):
+def safe_save(path, content, ext=".bak"):
     """
     Save given content to file at given path safely.
 
@@ -230,7 +246,7 @@ def safe_save(path, content, ext='.bak'):
     the temporary file moved into its place.
 
     """
-    tmpfp = tempfile.NamedTemporaryFile(mode='w+', delete=False)
+    tmpfp = tempfile.NamedTemporaryFile(mode="w+", delete=False)
     try:
         with tmpfp:
             if isinstance(content, str):
@@ -260,9 +276,11 @@ def deduplicate(sequence):
 
     Leaves the input sequence unaltered.
     """
-    return [element
-            for index, element in enumerate(sequence)
-            if element not in sequence[:index]]
+    return [
+        element
+        for index, element in enumerate(sequence)
+        if element not in sequence[:index]
+    ]
 
 
 def parse_tags(values_list):
@@ -272,14 +290,27 @@ def parse_tags(values_list):
     Find all the tags starting by a '+', even if there are spaces in them,
     then strip each tag and filter out the empty ones
     """
-    return list(filter(None, map(operator.methodcaller('strip'), (
-        # We concatenate the word with the '+' to the following words
-        # not starting with a '+'
-        w[1:] + ' ' + ' '.join(itertools.takewhile(
-            lambda s: not s.startswith('+'), values_list[i + 1:]
-        ))
-        for i, w in enumerate(values_list) if w.startswith('+')
-    ))))  # pile of pancakes !
+    return list(
+        filter(
+            None,
+            map(
+                operator.methodcaller("strip"),
+                (
+                    # We concatenate the word with the '+' to the following words
+                    # not starting with a '+'
+                    w[1:]
+                    + " "
+                    + " ".join(
+                        itertools.takewhile(
+                            lambda s: not s.startswith("+"), values_list[(i + 1) :]
+                        )
+                    )
+                    for i, w in enumerate(values_list)
+                    if w.startswith("+")
+                ),
+            ),
+        )
+    )  # pile of pancakes !
 
 
 def frames_to_json(frames):
@@ -292,13 +323,15 @@ def frames_to_json(frames):
     .. seealso:: :class:`Frame`
     """
     log = [
-        co.OrderedDict([
-            ('id', frame.id),
-            ('start', frame.start.isoformat()),
-            ('stop', frame.stop.isoformat()),
-            ('project', frame.project),
-            ('tags', frame.tags),
-        ])
+        co.OrderedDict(
+            [
+                ("id", frame.id),
+                ("start", frame.start.isoformat()),
+                ("stop", frame.stop.isoformat()),
+                ("project", frame.project),
+                ("tags", frame.tags),
+            ]
+        )
         for frame in frames
     ]
     return json.dumps(log, indent=4, sort_keys=True)
@@ -314,13 +347,15 @@ def frames_to_csv(frames):
     .. seealso:: :class:`Frame`
     """
     entries = [
-        co.OrderedDict([
-            ('id', frame.id[:7]),
-            ('start', frame.start.format('YYYY-MM-DD HH:mm:ss')),
-            ('stop', frame.stop.format('YYYY-MM-DD HH:mm:ss')),
-            ('project', frame.project),
-            ('tags', ', '.join(frame.tags)),
-        ])
+        co.OrderedDict(
+            [
+                ("id", frame.id[:7]),
+                ("start", frame.start.format("YYYY-MM-DD HH:mm:ss")),
+                ("stop", frame.stop.format("YYYY-MM-DD HH:mm:ss")),
+                ("project", frame.project),
+                ("tags", ", ".join(frame.tags)),
+            ]
+        )
         for frame in frames
     ]
     return build_csv(entries)
@@ -336,7 +371,7 @@ def build_csv(entries):
     if entries:
         header = entries[0].keys()
     else:
-        return ''
+        return ""
     memfile = StringIO()
     writer = csv.DictWriter(memfile, header, lineterminator=os.linesep)
     writer.writeheader()
@@ -366,24 +401,28 @@ def flatten_report_for_csv(report):
     of the report.
     """
     result = []
-    datetime_from = report['timespan']['from'].format('YYYY-MM-DD HH:mm:ss')
-    datetime_to = report['timespan']['to'].format('YYYY-MM-DD HH:mm:ss')
-    for project in report['projects']:
-        result.append({
-            'from': datetime_from,
-            'to': datetime_to,
-            'project': project['name'],
-            'tag': '',
-            'time': project['time']
-        })
-        for tag in project['tags']:
-            result.append({
-                'from': datetime_from,
-                'to': datetime_to,
-                'project': project['name'],
-                'tag': tag['name'],
-                'time': tag['time']
-            })
+    datetime_from = report["timespan"]["from"].format("YYYY-MM-DD HH:mm:ss")
+    datetime_to = report["timespan"]["to"].format("YYYY-MM-DD HH:mm:ss")
+    for project in report["projects"]:
+        result.append(
+            {
+                "from": datetime_from,
+                "to": datetime_to,
+                "project": project["name"],
+                "tag": "",
+                "time": project["time"],
+            }
+        )
+        for tag in project["tags"]:
+            result.append(
+                {
+                    "from": datetime_from,
+                    "to": datetime_to,
+                    "project": project["name"],
+                    "tag": tag["name"],
+                    "time": tag["time"],
+                }
+            )
     return result
 
 
