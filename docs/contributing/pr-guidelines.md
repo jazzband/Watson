@@ -3,9 +3,8 @@
 > *nota bene*
 >
 > Open a pull-request even if your contribution is not ready yet! It can
-> be discussed and improved collaboratively! You may prefix the title of
-> your pull-request with "WIP: " to make it clear that it is not yet ready
-> for merging.
+> be discussed and improved collaboratively! You can create a draft PR to
+> indicate that it is not finished yet.
 
 Before we merge a pull request, we check that it meets these guidelines:
 
@@ -24,7 +23,7 @@ Before we merge a pull request, we check that it meets these guidelines:
 4.  The pull request **should** include tests.
 5.  If the pull request adds functionality, the docs **should** be
     updated.
-6.  *TravisCI* integration tests should be **green** :) It will make
+6.  GitHub linting and testing workflows should be **green** :) They will make
     sure the tests pass with every supported version of Python.
 
 Thank you!
