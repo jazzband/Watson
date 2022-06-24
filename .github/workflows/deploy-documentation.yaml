@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  release: 
+    types: [released]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+        
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      
+      - name: Build documentation
+        run: python scripts/gen-cli-docs.py
+
+      - name: Deploy docs
+        run: mkdocs gh-deploy --clean
+      
+      - name: Deploy to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

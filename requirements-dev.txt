@@ -10,9 +10,9 @@ twine
 
 # Tests
 flake8
+black
 py
 pytest
 pytest-datafiles
 pytest-mock
 pytest-runner
-tox

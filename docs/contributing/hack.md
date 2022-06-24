@@ -52,10 +52,9 @@ Ready to contribute? Here's how to set up *Watson* for local development.
       inside the virtual environment. You can run `watson projects` to check
       that your real projects are not shown.
 
-6. When you're done making changes, check that your changes pass the tests
-    (see [Run the tests](#run-the-tests)):
+6. When you're done making changes, check that your changes pass the tests:
 
-        (.venv) $ tox
+        (.venv) $ pytest tests
 
 7. If you have added a new command or updated/fixed docstrings, please update
     the documentation:
@@ -70,19 +69,3 @@ Ready to contribute? Here's how to set up *Watson* for local development.
 
 9. After [reading this](./pr-guidelines.md), submit a pull request through the
     GitHub website.
-
-<a href="#run-the-tests"></a>
-## Run the tests
-
-The tests use [pytest](http://pytest.org/). To run them with the default Python
-interpreter:
-
-    $ py.test -v tests/
-
-To run the tests via [tox](http://tox.testrun.org/) with all Python versions
-which are available on your system and are defined in the `tox.ini` file,
-simply run:
-
-    $ tox
-
-This will also check the source code with [flake8](http://flake8.pycqa.org).

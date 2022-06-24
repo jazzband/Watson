@@ -7,15 +7,13 @@ import sys
 
 from watson import Watson
 
-if not os.environ.get('WATSON_DIR'):
+if not os.environ.get("WATSON_DIR"):
     sys.exit(
         "This script will corrupt Watson's data, please set the WATSON_DIR "
         "environment variable to safely use it for development purpose."
     )
 
-watson = Watson(config_dir=os.environ.get('WATSON_DIR'),
-                frames=None,
-                current=None)
+watson = Watson(config_dir=os.environ.get("WATSON_DIR"), frames=None, current=None)
 
 projects = [
     ("apollo11", ["reactor", "module", "wheels", "steering", "brakes"]),
@@ -26,13 +24,14 @@ projects = [
 
 now = arrow.now()
 
-for date in arrow.Arrow.range('day', now.shift(months=-1), now):
+for date in arrow.Arrow.range("day", now.shift(months=-1), now):
     if date.weekday() in (5, 6):
         # Weekend \o/
         continue
 
-    start = date.replace(hour=9, minute=random.randint(0, 59)) \
-                .shift(seconds=random.randint(0, 59))
+    start = date.replace(hour=9, minute=random.randint(0, 59)).shift(
+        seconds=random.randint(0, 59)
+    )
 
     while start.hour < random.randint(16, 19):
         project, tags = random.choice(projects)
@@ -40,7 +39,7 @@ for date in arrow.Arrow.range('day', now.shift(months=-1), now):
             project,
             start,
             start.shift(seconds=random.randint(60, 4 * 60 * 60)),
-            tags=random.sample(tags, random.randint(0, len(tags)))
+            tags=random.sample(tags, random.randint(0, len(tags))),
         )
         start = frame.stop.shift(seconds=random.randint(0, 1 * 60 * 60))
 

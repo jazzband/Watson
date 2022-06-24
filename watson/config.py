@@ -3,7 +3,7 @@
 import shlex
 from configparser import RawConfigParser
 
-__all__ = ('ConfigParser',)
+__all__ = ("ConfigParser",)
 
 
 class ConfigParser(RawConfigParser):
@@ -16,8 +16,11 @@ class ConfigParser(RawConfigParser):
         If option is not set, return default instead (defaults to None).
 
         """
-        return (RawConfigParser.get(self, section, option, **kwargs)
-                if self.has_option(section, option) else default)
+        return (
+            RawConfigParser.get(self, section, option, **kwargs)
+            if self.has_option(section, option)
+            else default
+        )
 
     def getint(self, section, option, default=None):
         """
@@ -55,7 +58,7 @@ class ConfigParser(RawConfigParser):
 
         """
         val = self.get(section, option)
-        return val.lower() in ('1', 'on', 'true', 'yes') if val else default
+        return val.lower() in ("1", "on", "true", "yes") if val else default
 
     def getlist(self, section, option, default=None):
         """
@@ -88,9 +91,8 @@ class ConfigParser(RawConfigParser):
 
         value = self.get(section, option)
 
-        if '\n' in value:
-            return [item.strip()
-                    for item in value.splitlines() if item.strip()]
+        if "\n" in value:
+            return [item.strip() for item in value.splitlines() if item.strip()]
         else:
             return shlex.split(value)
 
