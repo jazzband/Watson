@@ -32,36 +32,12 @@ $ git push origin --tags
 Create a new pull request (PR) with the `prepare-x.y.z` branch. You can safely
 merge this PR if all tests are green.
 
-Draft a new [Watson Release on
+Create and publish a new [Watson Release on
 GitHub](https://github.com/TailorDev/Watson/releases) with the same release
 notes.
 
-## Push the `x.y.z` release to PyPI
-
-Checkout the up-to-date `master` branch:
-
-```bash
-$ git checkout master
-$ git pull --rebase origin master
-```
-
-Now, build the release and submit it to PyPI using
-[twine](https://github.com/pypa/twine) (you'll need to be registered as a
-maintainer of the package):
-
-```bash
-$ python setup.py sdist bdist_wheel
-$ twine upload dist/*
-```
-
-## Update online documentation
-
-We use [`mkdocs`](http://www.mkdocs.org) to generate the online documentation.
-It must be updated via:
-
-```bash
-$ mkdocs gh-deploy --clean
-```
+A GitHub workflow will now automatically update the online documentation, and publish 
+the release to PyPI.
 
 ## Publish the `x.y.z` release to Homebrew
 
