@@ -273,7 +273,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
 
     if (project and watson.is_started and
             watson.config.getboolean('options', 'stop_on_start')):
-        ctx.invoke(stop)
+        ctx.invoke(stop, at_=at_)
 
     _start(watson, project, tags, start_at=at_, gap=gap_)
 
