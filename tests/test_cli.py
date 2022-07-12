@@ -198,8 +198,7 @@ def test_start_valid_time(runner, watson, mocker, at_dt):
 
 # watson start new task in past, with existing task
 
-@pytest.mark.parametrize('at_dt', VALID_TIMES_DATA)
-def test_start_existing_frame_stopped(runner, watson, mocker, at_dt):
+def test_start_existing_frame_stopped(runner, watson, mocker):
     # Simulate a start date so that 'at_dt' is older than now().
     watson.config.set('options', 'stop_on_start', "true")
     mocker.patch('arrow.arrow.dt_datetime', wraps=datetime)
