@@ -204,7 +204,11 @@ def test_start_existing_frame_stopped(runner, watson, mocker):
     mocker.patch('arrow.arrow.dt_datetime', wraps=datetime)
     start_dt = datetime(2019, 4, 10, 15, 0, 0, tzinfo=local_tz_info())
     arrow.arrow.dt_datetime.now.return_value = start_dt
-    runner.invoke(cli.start, ['a-project', '--at', "14:10"], obj=watson)
+    runner.invoke(
+        cli.start,
+        ['a-project', '--at', "14:10"],
+        obj=watson,
+    )
 
     result = runner.invoke(
         cli.start,
@@ -212,6 +216,10 @@ def test_start_existing_frame_stopped(runner, watson, mocker):
         obj=watson,
     )
     assert result.exit_code == 0, result.stdout
+
+    frame_id = OutputParser.get_frame_id(result.output)
+    assert watson.frames[frame_id].project == "a-project"
+    assert watson.current["project"] == "b-project"
 
 
 # watson restart
