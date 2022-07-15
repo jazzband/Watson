@@ -222,6 +222,42 @@ def test_start_existing_frame_stopped(runner, watson, mocker):
     assert watson.current["project"] == "b-project"
 
 
+# watson interrupt existing task with new task, restart existing
+
+def test_interrupt_new_frame_added(runner, watson, mocker):
+    # Simulate a start date so that 'at_dt' is older than now().
+    watson.config.set('options', 'stop_on_start', "true")
+    mocker.patch('arrow.arrow.dt_datetime', wraps=datetime)
+    start_dt = datetime(2019, 4, 10, 15, 0, 0, tzinfo=local_tz_info())
+    arrow.arrow.dt_datetime.now.return_value = start_dt
+    result = runner.invoke(
+        cli.start,
+        ['a-project', '--at', "14:10"],
+        obj=watson,
+    )
+
+    result = runner.invoke(
+        cli.interrupt,
+        ['b-project', '--at', "14:15"],
+        obj=watson,
+    )
+    assert result.exit_code == 0, result.stdout
+
+    assert watson._frames._rows[0].project == "a-project"
+    assert watson._frames._rows[0].stop == arrow.get(
+        "2019-04-10T14:15:00+01:00")
+
+    assert watson._frames._rows[1].project == "b-project"
+    assert watson._frames._rows[1].start == arrow.get(
+        "2019-04-10T14:15:00+01:00")
+    assert watson._frames._rows[1].stop == arrow.get(
+        "2019-04-10T15:00:00+01:00")
+
+    assert watson.current["project"] == "a-project"
+    assert watson.current["start"] == arrow.get(
+        "2019-04-10T15:00:00+01:00")
+
+
 # watson restart
 
 @pytest.mark.parametrize('at_dt', VALID_TIMES_DATA)

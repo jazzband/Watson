@@ -279,6 +279,80 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
     _start(watson, project, tags, start_at=at_, gap=gap_)
 
 
+@cli.command()
+@click.option('--at', 'at_', required=True, type=DateTime,
+              help=('Start frame at this time. Must be in '
+                    '(YYYY-MM-DDT)?HH:MM(:SS)? format.'))
+@click.argument('args', nargs=-1,
+                shell_complete=get_project_or_task_completion)
+@click.option('-c', '--confirm-new-project', is_flag=True, default=False,
+              help="Confirm addition of new project.")
+@click.option('-b', '--confirm-new-tag', is_flag=True, default=False,
+              help="Confirm creation of new tag.")
+@click.pass_obj
+@click.pass_context
+@catch_watson_error
+def interrupt(ctx, watson, confirm_new_project, confirm_new_tag, args, at_):
+    """
+    Insert a project starting at `--at` time and ending `now`.  You can add
+    tags indicating more specifically what you are working on with `+tag`. The
+    currently running task will be started again.
+
+    If there is already a running project and the configuration option
+    `options.stop_on_start` is not set to a true value (`1`, `on`, `true`, or
+    `yes`), this command will abort.
+
+    Example:
+
+    \b
+    $ watson start apollo11 --at 13:37
+    Starting project apollo11 at 13:37
+    $ watson interrupt apollo13 --at 13:39
+    Starting project apollo13 at 13:39
+    Stopping project apollo11, started an hour ago and stopped just now. (id: e9ccd52) # noqa: E501
+    Starting project apollo11 just now.
+    """
+    if not watson.is_started:
+        raise click.ClickException(
+            'No project running, please use watson start'
+        )
+
+    project = ' '.join(
+        itertools.takewhile(lambda s: not s.startswith('+'), args)
+    )
+    if not project:
+        raise click.ClickException("No project given.")
+
+    # Confirm creation of new project if that option is set
+    if (watson.config.getboolean('options', 'confirm_new_project') or
+            confirm_new_project):
+        confirm_project(project, watson.projects)
+
+    # Parse all the tags
+    tags = parse_tags(args)
+
+    # Confirm creation of new tag(s) if that option is set
+    if (watson.config.getboolean('options', 'confirm_new_tag') or
+            confirm_new_tag):
+        confirm_tags(tags, watson.tags)
+
+    if not watson.config.getboolean('options', 'stop_on_start'):
+        raise click.ClickException(
+            style('error', 'config.stop_on_start is set to false,'
+                           ' can not interrupt running project.'),
+        )
+
+    current = watson.current
+    ctx.invoke(stop, at_=at_)
+    watson.frames.add(project, at_, arrow.utcnow(), tags)
+    _start(
+        watson,
+        current["project"],
+        current["tags"],
+        start_at=arrow.utcnow(),
+    )
+
+
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.option('--at', 'at_', type=DateTime, default=None,
               help=('Stop frame at this time. Must be in '
