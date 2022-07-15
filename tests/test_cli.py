@@ -3,6 +3,7 @@ import arrow
 from itertools import combinations
 from datetime import datetime, timedelta
 
+import freezegun
 import pytest
 
 from watson import cli
@@ -95,6 +96,46 @@ def test_add_valid_date(runner, watson, test_dt, expected):
     result = runner.invoke(
         cli.add,
         ['-f', test_dt, '-t', test_dt, 'project-name'],
+        obj=watson)
+    assert result.exit_code == 0
+    assert OutputParser.get_start_date(watson, result.output) == expected
+
+
+@pytest.mark.parametrize('test_dt,expected', VALID_DATES_DATA)
+def test_add_now(runner, watson, test_dt, expected):
+    result = runner.invoke(
+        cli.add,
+        ['-f', test_dt, '-t', 'now', 'project-name'],
+        obj=watson)
+    assert result.exit_code == 0
+    assert "and stopped just now." in result.output
+
+
+@freezegun.freeze_time()
+@pytest.mark.parametrize('from_, expected', [
+    (
+        "30 min ago",
+        arrow.now().shift(minutes=-30).format('YYYY-MM-DD HH:mm:00'),
+    ),
+    (
+        "30min ago",
+        arrow.now().shift(minutes=-30).format('YYYY-MM-DD HH:mm:00'),
+    ),
+    (
+        "01:30 ago",
+        arrow.now().shift(hours=-1, minutes=-30).format('YYYY-MM-DD HH:mm:00'),
+    ),
+    (
+        "01:30:22 ago",
+        arrow.now()
+        .shift(hours=-1, minutes=-30, seconds=-22)
+        .format('YYYY-MM-DD HH:mm:ss'),
+    ),
+])
+def test_add_from_offset(runner, watson, from_, expected):
+    result = runner.invoke(
+        cli.add,
+        ['-f', from_, '-t', 'now', 'project-name'],
         obj=watson)
     assert result.exit_code == 0
     assert OutputParser.get_start_date(watson, result.output) == expected

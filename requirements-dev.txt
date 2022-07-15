@@ -11,6 +11,7 @@ twine
 # Tests
 flake8
 py
+freezegun
 pytest
 pytest-datafiles
 pytest-mock
