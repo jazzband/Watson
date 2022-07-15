@@ -1250,6 +1250,10 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     \b
     $ watson add --from "30 min ago" --to "now" \\
      programming +addfeature
+
+    \b
+    $ watson add --from "09:30" --to "now" \\
+     programming +addfeature
     """
     # parse project name from args
     project = ' '.join(
