@@ -3,6 +3,7 @@ import arrow
 from itertools import combinations
 from datetime import datetime, timedelta
 
+import freezegun
 import pytest
 
 from watson import cli
@@ -110,6 +111,7 @@ def test_add_now(runner, watson, test_dt, expected):
     assert "and stopped just now." in result.output
 
 
+@freezegun.freeze_time()
 @pytest.mark.parametrize('from_, expected', [
     (
         "30 min ago",
