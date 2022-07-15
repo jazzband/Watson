@@ -225,7 +225,8 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
 
     If `--at` option is given, the provided starting time is used. The
     specified time must be after the end of the previous frame and must not be
-    in the future.
+    in the future. If there is a current frame running, it will be stopped at
+    the provided time.
 
     Example:
 
@@ -273,7 +274,7 @@ def start(ctx, watson, confirm_new_project, confirm_new_tag, args, at_,
 
     if (project and watson.is_started and
             watson.config.getboolean('options', 'stop_on_start')):
-        ctx.invoke(stop)
+        ctx.invoke(stop, at_=at_)
 
     _start(watson, project, tags, start_at=at_, gap=gap_)
 
