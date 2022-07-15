@@ -109,10 +109,24 @@ class DateTimeParamType(click.ParamType):
 
     def _parse_multiformat(self, value) -> arrow:
         date = None
-        for fmt in (None, 'HH:mm:ss', 'HH:mm'):
+        if value == "now":
+            return arrow.now()
+
+        for fmt in (None, 'HH:mm:ss', 'HH:mm', 'mm'):
             try:
                 if fmt is None:
                     date = arrow.get(value)
+                elif "ago" in value:
+                    v = value[:len(fmt)]
+                    offset = arrow.get(v, fmt)
+                    date = arrow.now().shift(
+                        hours=offset.hour * -1,
+                        minutes=offset.minute * -1,
+                        seconds=offset.second * -1,
+                    )
+                    if fmt != 'HH:mm:ss':
+                        date = date.replace(second=0)
+                    break
                 else:
                     date = arrow.get(value, fmt)
                     date = arrow.now().replace(
@@ -1222,10 +1236,19 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
     """
     Add time to a project with tag(s) that was not tracked live.
 
+    The `--from` and `--to` options support providing an offset, supported
+    formats [`HH:mm:ss ago`, `HH:mm ago`, `mm min ago`].
+
+    The `--to` option also supports providing `now` as the offset.
+
     Example:
 
     \b
     $ watson add --from "2018-03-20 12:00:00" --to "2018-03-20 13:00:00" \\
+     programming +addfeature
+
+    \b
+    $ watson add --from "30 min ago" --to "now" \\
      programming +addfeature
     """
     # parse project name from args
