@@ -138,5 +138,55 @@ To list all available commands, either [explore the commands documentation](user
 ```bash
 $ watson help
 ```
+`
+If I want to restart something further back, you can also type the first few characters of the SHA and it will tab autocomplete (you might have to set this up manually on zsh by copying a file).
+
+### Getting groovy
+
+There are many ways to use watson
+and it is important to find what works for you.
+Below are some tips
+that we hope can make your time with watson even more efficient.
+
+Although watson supports tab completion,
+it can help to setup shell aliases to your most commonly used commands,
+for example:
+
+```shell
+alias ws='watson start'
+alias wp='watson stop'
+alias wr='watson restart'
+alias wl='watson log'
+alias we='watson edit'
+```
+
+Your workflow could be that when you start working for the day,
+you type `wl` to see if you want to restart a task
+you were working on the previous day with `wr`
+or start a new one with `ws proj +tag`.
+
+You might find yourself repeatedly switching between just a few tasks;
+in these scenario the `wr` alias is key.
+If you type it without any arguments restarts the latest entry
+(great when you continue on the same task after a break)
+and if you type `wr -2`, `wr -3`,
+it restarts older entries.
+If you mess up you can type `we` to edit the last frame,
+or `watson cancel` to abort the currently active one.
+
+Sometimes you might forget to start or stop a task,
+but don't worry,
+watson got you covered.
+The `--at` option lets you put in the time your started, restarted, or stopped a task,
+so that you can easily log past tasks,
+e.g. `wr -2 --at 10:30`, or `wp --at 12:00`.
+If you want to start a task right when the previous one ended,
+you can use `ws proj +tag -G`.
+
+There are [many useful configuration options](user-guide/configuration.md),
+including showing the currently active frame in the log output,
+setting up default tags for projects,
+printing the log to stdout instead of using a pager
+and controlling how it is formatted.
 
 We hope you will enjoy Watson!
