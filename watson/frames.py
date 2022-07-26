@@ -1,19 +1,37 @@
 import uuid
+from typing import Iterable, List, NamedTuple, Optional, Union
 
 import arrow
 
-from collections import namedtuple
+TimeType = Union[str, arrow.Arrow]
+FrameColumnTypes = Union[
+    arrow.Arrow, Optional[arrow.Arrow], str, Optional[str], List[str]
+]
 
-HEADERS = ('start', 'stop', 'project', 'id', 'tags', 'updated_at')
 
+class Frame(NamedTuple):
+    start: arrow.Arrow
+    stop: Optional[arrow.Arrow]
+    project: str
+    id: Optional[str]
+    tags: List[str]
+    updated_at: arrow.Arrow
 
-class Frame(namedtuple('Frame', HEADERS)):
-    def __new__(cls, start, stop, project, id, tags=None, updated_at=None,):
+    @classmethod
+    def make_new(
+        cls,
+        start: TimeType,
+        stop: Optional[TimeType],
+        project: str,
+        id: Optional[str],
+        tags: Optional[List[str]] = None,
+        updated_at: Optional[TimeType] = None,
+    ) -> "Frame":
         try:
             if not isinstance(start, arrow.Arrow):
                 start = arrow.get(start)
 
-            if stop and not isinstance(stop, arrow.Arrow):
+            if stop is not None and not isinstance(stop, arrow.Arrow):
                 stop = arrow.get(stop)
 
             if updated_at is None:
@@ -32,8 +50,13 @@ class Frame(namedtuple('Frame', HEADERS)):
         if tags is None:
             tags = []
 
-        return super(Frame, cls).__new__(
-            cls, start, stop, project, id, tags, updated_at
+        return cls(
+            start=start,
+            stop=stop,
+            project=project,
+            id=id,
+            tags=tags,
+            updated_at=updated_at,
         )
 
     def dump(self):
@@ -44,7 +67,7 @@ class Frame(namedtuple('Frame', HEADERS)):
         return (start, stop, self.project, self.id, self.tags, updated_at)
 
     @property
-    def day(self):
+    def day(self) -> arrow.Arrow:
         return self.start.floor('day')
 
     def __lt__(self, other):
@@ -60,34 +83,35 @@ class Frame(namedtuple('Frame', HEADERS)):
         return self.start >= other.start
 
 
-class Span(object):
-    def __init__(self, start, stop, timeframe='day'):
+class Span:
+    def __init__(self, start: arrow.Arrow, stop: arrow.Arrow, timeframe='day'):
         self.timeframe = timeframe
         self.start = start.floor(self.timeframe)
         self.stop = stop.ceil(self.timeframe)
 
-    def overlaps(self, frame):
+    def overlaps(self, frame: Frame) -> bool:
         return frame.start <= self.stop and frame.stop >= self.start
 
-    def __contains__(self, frame):
+    def __contains__(self, frame: Frame) -> bool:
         return frame.start >= self.start and frame.stop <= self.stop
 
 
-class Frames(object):
-    def __init__(self, frames=None):
+class Frames:
+    def __init__(self, frames: Optional[List[Frame]] = None):
         if not frames:
             frames = []
 
-        rows = [Frame(*frame) for frame in frames]
+        rows = [Frame.make_new(*frame) for frame in frames]
         self._rows = rows
 
         self.changed = False
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._rows)
 
     def __getitem__(self, key):
-        if key in HEADERS:
+        attributes = Frame.__annotations__.keys()
+        if key in attributes:
             return tuple(self._get_col(key))
         elif isinstance(key, int):
             return self._rows[key]
@@ -119,7 +143,7 @@ class Frames(object):
         else:
             del self._rows[self._get_index_by_id(key)]
 
-    def _get_index_by_id(self, id):
+    def _get_index_by_id(self, id: str) -> int:
         try:
             return next(
                 i for i, v in enumerate(self['id']) if v.startswith(id)
@@ -127,10 +151,9 @@ class Frames(object):
         except StopIteration:
             raise KeyError("Frame with id {} not found.".format(id))
 
-    def _get_col(self, col):
-        index = HEADERS.index(col)
+    def _get_col(self, col: str) -> Iterable[FrameColumnTypes]:
         for row in self._rows:
-            yield row[index]
+            yield getattr(row, col)
 
     def add(self, *args, **kwargs):
         self.changed = True
@@ -138,12 +161,25 @@ class Frames(object):
         self._rows.append(frame)
         return frame
 
-    def new_frame(self, project, start, stop, tags=None, id=None,
-                  updated_at=None):
+    def new_frame(
+        self,
+        project: str,
+        start: TimeType,
+        stop: Optional[TimeType],
+        tags: Optional[List[str]] = None,
+        id: Optional[str] = None,
+        updated_at: Optional[TimeType] = None,
+    ) -> Frame:
         if not id:
             id = uuid.uuid4().hex
-        return Frame(start, stop, project, id, tags=tags,
-                     updated_at=updated_at)
+        return Frame.make_new(
+            start=start,
+            stop=stop,
+            project=project,
+            id=id,
+            tags=tags,
+            updated_at=updated_at,
+        )
 
     def dump(self):
         return tuple(frame.dump() for frame in self._rows)
@@ -183,5 +219,5 @@ class Frames(object):
                 stop = span.stop if frame.stop > span.stop else frame.stop
                 yield frame._replace(start=start, stop=stop)
 
-    def span(self, start, stop):
+    def span(self, start: arrow.Arrow, stop: arrow.Arrow) -> Span:
         return Span(start, stop)

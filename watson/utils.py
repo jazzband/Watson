@@ -186,7 +186,7 @@ def get_start_time_for_period(period):
     return start_time
 
 
-def apply_weekday_offset(start_time, week_start):
+def apply_weekday_offset(start_time: arrow.Arrow, week_start) -> arrow.Arrow:
     """
     Apply the offset required to move the start date `start_time` of a week
     starting on Monday to that of a week starting on `week_start`.

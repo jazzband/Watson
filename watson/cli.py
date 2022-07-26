@@ -5,6 +5,7 @@ import operator
 import os
 from dateutil import tz
 from functools import reduce, wraps
+from typing import Optional
 
 import arrow
 import click
@@ -85,29 +86,28 @@ def local_tz_info() -> datetime.tzinfo:
 class DateTimeParamType(click.ParamType):
     name = 'datetime'
 
-    def convert(self, value, param, ctx) -> arrow:
-        if value:
-            date = self._parse_multiformat(value)
-            if date is None:
-                raise click.UsageError(
-                    "Could not match value '{}' to any supported date format"
-                    .format(value)
-                )
-            # When we parse a date, we want to parse it in the timezone
-            # expected by the user, so that midnight is midnight in the local
-            # timezone, or respect the TZ environment variable not in UTC.
-            # Cf issue #16.
-            date = date.replace(tzinfo=local_tz_info())
-            # Add an offset to match the week beginning specified in the
-            # configuration
-            if param.name == "week":
-                week_start = ctx.obj.config.get(
-                    "options", "week_start", "monday")
-                date = apply_weekday_offset(
-                    start_time=date, week_start=week_start)
-            return date
+    def convert(self, value, param, ctx) -> arrow.Arrow:
+        date = self._parse_multiformat(value)
+        if date is None:
+            raise click.UsageError(
+                "Could not match value '{}' to any supported date format"
+                .format(value)
+            )
+        # When we parse a date, we want to parse it in the timezone
+        # expected by the user, so that midnight is midnight in the local
+        # timezone, or respect the TZ environment variable not in UTC.
+        # Cf issue #16.
+        date = date.replace(tzinfo=local_tz_info())
+        # Add an offset to match the week beginning specified in the
+        # configuration
+        if param.name == "week":
+            week_start = ctx.obj.config.get(
+                "options", "week_start", "monday")
+            date = apply_weekday_offset(
+                start_time=date, week_start=week_start)
+        return date
 
-    def _parse_multiformat(self, value) -> arrow:
+    def _parse_multiformat(self, value) -> Optional[arrow.Arrow]:
         date = None
         for fmt in (None, 'HH:mm:ss', 'HH:mm'):
             try:
@@ -1270,7 +1270,9 @@ def add(watson, args, from_, to, confirm_new_project, confirm_new_tag):
 @click.argument('id', required=False, shell_complete=get_frames)
 @click.pass_obj
 @catch_watson_error
-def edit(watson, confirm_new_project, confirm_new_tag, id):
+def edit(
+    watson, confirm_new_project: bool, confirm_new_tag: bool, id: Optional[str]
+):
     """
     Edit a frame.
 
@@ -1294,8 +1296,13 @@ def edit(watson, confirm_new_project, confirm_new_tag, id):
         frame = get_frame_from_argument(watson, id)
         id = frame.id
     elif watson.is_started:
-        frame = Frame(watson.current['start'], None, watson.current['project'],
-                      None, watson.current['tags'])
+        frame = Frame.make_new(
+            start=watson.current['start'],
+            stop=None,
+            project=watson.current['project'],
+            id=None,
+            tags=watson.current['tags']
+        )
     elif watson.frames:
         frame = watson.frames[-1]
         id = frame.id
