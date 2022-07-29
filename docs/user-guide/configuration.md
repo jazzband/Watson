@@ -116,6 +116,10 @@ If `true`, the output of the `log` command will include the currently running
 frame (if any) by default. The option can be overridden on the command line
 with the `-c/-C` resp. `--current/--no-current` flags.
 
+#### `options.log_length` (default: `7`)
+
+The number of previous days to show when running `watson log`.
+
 #### `options.pager` (default: `true`)
 
 If `true`, the output of the `log` and `report` command will be
@@ -238,6 +242,7 @@ log_current = false
 pager = true
 report_current = false
 reverse_log = true
+log_length = 3
 ```
 
 ## Application folder

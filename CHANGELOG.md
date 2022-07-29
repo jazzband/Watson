@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The restart command now accepts the `--gap/--no-gap` options.
+- The restart command now accepts the `--gap/--no-gap` options. (#437)
+- The default log length can now be controlled via the configuration option
+  `log_length`. (#436)
 
 ### Fixed
 

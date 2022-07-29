@@ -911,7 +911,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 @click.option('-r/-R', '--reverse/--no-reverse', 'reverse', default=None,
               help="(Don't) reverse the order of the days in output.")
 @click.option('-f', '--from', 'from_', type=DateTime,
-              default=arrow.now().shift(days=-7),
+              default=None,
               help="The date from when the log should start. Defaults "
               "to seven days ago.")
 @click.option('-t', '--to', type=DateTime, default=arrow.now(),
@@ -1036,6 +1036,9 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
     02cb269,2014-04-16 09:53,2014-04-16 12:43,apollo11,wheels
     1070ddb,2014-04-16 13:48,2014-04-16 16:17,voyager1,"antenna, sensors"
     """  # noqa
+    if from_ is None:
+        log_length = watson.config.getint('options', 'log_length', 7)
+        from_ = arrow.now().shift(days=-log_length)
     for start_time in (_ for _ in [day, week, month, luna, year, all]
                        if _ is not None):
         from_ = start_time
