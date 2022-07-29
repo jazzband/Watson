@@ -2,7 +2,7 @@
 .vscode/
 
 # directories
-
+sandbox/
 build/
 .cache/
 dist/
