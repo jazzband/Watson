@@ -88,6 +88,18 @@ class OutputParser:
         return watson.frames[frame_id].start.format('YYYY-MM-DD HH:mm:ss')
 
 
+# watson help
+
+@pytest.mark.parametrize('cmd_name', ['add', 'start', 'stop'])
+def test_show_command_help(runner, watson, cmd_name):
+    result = runner.invoke(
+         cli.help,
+         [cmd_name],
+         obj=watson)
+    assert result.exit_code == 0
+    assert result.output.startswith('Usage: ' + cmd_name)
+
+
 # watson add
 
 @pytest.mark.parametrize('test_dt,expected', VALID_DATES_DATA)
