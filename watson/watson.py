@@ -565,6 +565,17 @@ class Watson(object):
         self.frames.changed = True
         self.save()
 
+    def delete_project(self, project):
+        """Delete the project and all related frames."""
+        if project not in self.projects:
+            raise ValueError('Project "%s" does not exist' % project)
+
+        for frame in self.frames:
+            if frame.project == project:
+                del self.frames[frame.id]
+
+        self.save()
+
     def rename_tag(self, old_tag, new_tag):
         """Rename a tag in all affected frames."""
         if old_tag not in self.tags:
