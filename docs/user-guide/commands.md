@@ -43,7 +43,8 @@ Else, print the total for each root project.
 
 By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
-must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+should have the format `YEAR-MONTH-DAY`, like: `2014-05-19`, but relative
+formats like `two weeks ago` are also supported.
 
 You can limit the report to a project or a tag using the `--project` and
 `--tag` options. They can be specified several times each to add multiple
@@ -234,7 +235,8 @@ Display each recorded session during the given timespan.
 
 By default, the sessions from the last 7 days are printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
-must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+should have the format `YEAR-MONTH-DAY`, like: `2014-05-19`, but relative
+formats like `two weeks ago` are also supported.
 
 You can also use special shortcut options for easier timespan control:
 `--day` sets the log timespan to the current day (beginning at `00:00h`)
@@ -457,7 +459,8 @@ Else, print the total for each root project.
 
 By default, the time spent the last 7 days is printed. This timespan
 can be controlled with the `--from` and `--to` arguments. The dates
-must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+should have the format `YEAR-MONTH-DAY`, like: `2014-05-19`, but relative
+formats like `two weeks ago` are also supported.
 
 You can also use special shortcut options for easier timespan control:
 `--day` sets the report timespan to the current day (beginning at `00:00h`)

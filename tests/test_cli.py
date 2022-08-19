@@ -12,6 +12,8 @@ from watson.cli import local_tz_info
 # Not all ISO-8601 compliant strings are recognized by arrow.get(str)
 VALID_DATES_DATA = [
     ('2018', '2018-01-01 00:00:00'),  # years
+    (' 2018', '2018-01-01 00:00:00'),
+    ('2018 ', '2018-01-01 00:00:00'),
     ('2018-04', '2018-04-01 00:00:00'),  # calendar dates
     ('2018-04-10', '2018-04-10 00:00:00'),
     ('2018/04/10', '2018-04-10 00:00:00'),
@@ -20,9 +22,12 @@ VALID_DATES_DATA = [
     ('2018/4/10', '2018-04-10 00:00:00'),
     ('2018.4.10', '2018-04-10 00:00:00'),
     ('20180410', '2018-04-10 00:00:00'),
+    ('18-04-10', '2018-04-10 00:00:00'),
+    ('2018-04-10T', '2018-04-10 00:00:00'),
     ('2018-123', '2018-05-03 00:00:00'),  # ordinal dates
     ('2018-04-10 12:30:43', '2018-04-10 12:30:43'),
     ('2018-04-10T12:30:43', '2018-04-10 12:30:43'),
+    ('2018-04-10T12:30:43.', '2018-04-10 12:30:43'),
     ('2018-04-10 12:30:43Z', '2018-04-10 12:30:43'),
     ('2018-04-10 12:30:43.1233', '2018-04-10 12:30:43'),
     ('2018-04-10 12:30:43+03:00', '2018-04-10 12:30:43'),
@@ -44,27 +49,50 @@ VALID_DATES_DATA = [
         .replace(hour=14, minute=5, second=0)
         .format('YYYY-MM-DD HH:mm:ss')
     ),
+    (
+        '14:05:12.000',
+        arrow.now()
+        .replace(hour=14, minute=5, second=12, microsecond=0)
+        .format('YYYY-MM-DD HH:mm:ss')
+    ),
+    (
+        '14.05',
+        arrow.now()
+        .replace(hour=14, minute=5, second=0)
+        .format('YYYY-MM-DD HH:mm:ss')
+    ),
+
     ('2018-W08', '2018-02-19 00:00:00'),  # week dates
     ('2018W08', '2018-02-19 00:00:00'),
     ('2018-W08-2', '2018-02-20 00:00:00'),
     ('2018W082', '2018-02-20 00:00:00'),
+    ('yesterday 9am',
+        arrow.now()
+        .shift(days=-1)
+        .replace(hour=9, minute=0, second=0)
+        .format('YYYY-MM-DD HH:mm:ss')
+    ),
+    (
+        'tomorrow 9am',
+        arrow.now()
+        .shift(days=1)
+        .replace(hour=9, minute=0, second=0)
+        .format('YYYY-MM-DD HH:mm:ss')
+    ),
+    (
+        '1.5 hours ago',
+        arrow.now()
+        .shift(hours=-1.5)
+        .format('YYYY-MM-DD HH:mm:ss')
+    ),
 ]
 
 INVALID_DATES_DATA = [
-    (' 2018'),
-    ('2018 '),
     ('201804'),
-    ('18-04-10'),
     ('180410'),  # truncated representation not allowed
     ('hello 2018'),
-    ('yesterday'),
-    ('tomorrow'),
-    ('14:05:12.000'),  # Times alone are not allowed
     ('140512.000'),
     ('140512'),
-    ('14.05'),
-    ('2018-04-10T'),
-    ('2018-04-10T12:30:43.'),
 ]
 
 VALID_TIMES_DATA = [

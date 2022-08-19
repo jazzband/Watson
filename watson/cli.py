@@ -9,6 +9,7 @@ from functools import reduce, wraps
 import arrow
 import click
 from click_didyoumean import DYMGroup
+import dateparser
 
 import watson as _watson
 from .autocompletion import (
@@ -109,6 +110,8 @@ class DateTimeParamType(click.ParamType):
 
     def _parse_multiformat(self, value) -> arrow:
         date = None
+        if isinstance(value, str):
+            value = value.strip()
         for fmt in (None, 'HH:mm:ss', 'HH:mm'):
             try:
                 if fmt is None:
@@ -123,6 +126,10 @@ class DateTimeParamType(click.ParamType):
                 break
             except (ValueError, TypeError):
                 pass
+        if date is None:
+            date = dateparser.parse(value, settings={'DATE_ORDER': 'YMD'})
+            if date:
+                date = arrow.get(date)
         return date
 
 
@@ -555,7 +562,8 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 
     By default, the time spent the last 7 days is printed. This timespan
     can be controlled with the `--from` and `--to` arguments. The dates
-    must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+    should have the format `YEAR-MONTH-DAY`, like: `2014-05-19`, but relative
+    formats like `two weeks ago` are also supported.
 
     You can also use special shortcut options for easier timespan control:
     `--day` sets the report timespan to the current day (beginning at `00:00h`)
@@ -808,7 +816,8 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
 
     By default, the time spent the last 7 days is printed. This timespan
     can be controlled with the `--from` and `--to` arguments. The dates
-    must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+    should have the format `YEAR-MONTH-DAY`, like: `2014-05-19`, but relative
+    formats like `two weeks ago` are also supported.
 
     You can limit the report to a project or a tag using the `--project` and
     `--tag` options. They can be specified several times each to add multiple
@@ -978,7 +987,8 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
 
     By default, the sessions from the last 7 days are printed. This timespan
     can be controlled with the `--from` and `--to` arguments. The dates
-    must have the format `YEAR-MONTH-DAY`, like: `2014-05-19`.
+    should have the format `YEAR-MONTH-DAY`, like: `2014-05-19`, but relative
+    formats like `two weeks ago` are also supported.
 
     You can also use special shortcut options for easier timespan control:
     `--day` sets the log timespan to the current day (beginning at `00:00h`)
