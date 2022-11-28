@@ -1,4 +1,4 @@
-from .utils import create_watson, parse_tags
+from .utils import create_watson
 
 
 def _bypass_click_bug_to_ensure_watson(ctx):
@@ -8,102 +8,37 @@ def _bypass_click_bug_to_ensure_watson(ctx):
     return ctx.obj
 
 
-def get_project_or_task_completion(ctx, args, incomplete):
+def get_project_tag_combined(ctx, param, incomplete):
     """Function to autocomplete either organisations or tasks, depending on the
-       shape of the current argument."""
+    shape of the current argument."""
 
-    assert isinstance(incomplete, str)
+    watson = _bypass_click_bug_to_ensure_watson(ctx)
 
-    def get_incomplete_tag(args, incomplete):
-        """Get incomplete tag from command line string."""
-        cmd_line = " ".join(args + [incomplete])
-        found_tags = parse_tags(cmd_line)
-        return found_tags[-1] if found_tags else ""
+    if ctx.params["args"]:
+        # This isn't the first word, so we assume you're completing tags
+        given_tags = set(ctx.params["args"][1:])
+        return [
+            tag
+            for tag in [f"+{t}" for t in watson.tags]
+            if tag.startswith(incomplete) and tag not in given_tags
+        ]
 
-    def fix_broken_tag_parsing(incomplete_tag):
-        """
-        Remove spaces from parsed tag
-
-        The function `parse_tags` inserts a space after each character. In
-        order to obtain the actual command line part, the space needs to be
-        removed.
-        """
-        return "".join(char for char in incomplete_tag.split(" "))
-
-    def prepend_plus(tag_suggestions):
-        """
-        Prepend '+' to each tag suggestion.
-
-        For the `watson` targeted with the function
-        get_project_or_task_completion, a leading plus in front of a tag is
-        expected. The get_tags() suggestion generation does not include those
-        as it targets other subcommands.
-
-        In order to not destroy the current tag stub, the plus must be
-        pretended.
-        """
-        for cur_suggestion in tag_suggestions:
-            yield "+{cur_suggestion}".format(cur_suggestion=cur_suggestion)
-
-    _bypass_click_bug_to_ensure_watson(ctx)
-
-    project_is_completed = any(
-        tok.startswith("+") for tok in args + [incomplete]
-    )
-    if project_is_completed:
-        incomplete_tag = get_incomplete_tag(args, incomplete)
-        fixed_incomplete_tag = fix_broken_tag_parsing(incomplete_tag)
-        tag_suggestions = get_tags(ctx, args, fixed_incomplete_tag)
-        return prepend_plus(tag_suggestions)
     else:
-        return get_projects(ctx, args, incomplete)
+        return get_projects(ctx, param, incomplete)
 
 
-def get_projects(ctx, args, incomplete):
+def get_projects(ctx, param, incomplete):
     """Function to return all projects matching the prefix."""
     watson = _bypass_click_bug_to_ensure_watson(ctx)
-    for cur_project in watson.projects:
-        if cur_project.startswith(incomplete):
-            yield cur_project
+    # breakpoint()
+    return [
+        project
+        for project in watson.projects
+        if project.startswith(incomplete) and project not in ctx.params.get("args", [])
+    ]
 
 
-def get_rename_name(ctx, args, incomplete):
-    """
-    Function to return all projects or tasks matching the prefix
-
-    Depending on the specified rename_type, either a list of projects or a list
-    of tasks must be returned. This function takes care of this distinction and
-    returns the appropriate names.
-
-    If the passed in type is unknown, e.g. due to a typo, an empty completion
-    is generated.
-    """
-
-    in_type = ctx.params["rename_type"]
-    if in_type == "project":
-        return get_projects(ctx, args, incomplete)
-    elif in_type == "tag":
-        return get_tags(ctx, args, incomplete)
-
-    return []
-
-
-def get_rename_types(ctx, args, incomplete):
-    """Function to return all rename types matching the prefix."""
-    for cur_type in "project", "tag":
-        if cur_type.startswith(incomplete):
-            yield cur_type
-
-
-def get_tags(ctx, args, incomplete):
-    """Function to return all tags matching the prefix."""
-    watson = _bypass_click_bug_to_ensure_watson(ctx)
-    for cur_tag in watson.tags:
-        if cur_tag.startswith(incomplete):
-            yield cur_tag
-
-
-def get_frames(ctx, args, incomplete):
+def get_frames(ctx, param, incomplete):
     """
     Return all matching frame IDs
 
@@ -112,7 +47,64 @@ def get_frames(ctx, args, incomplete):
     """
     watson = _bypass_click_bug_to_ensure_watson(ctx)
 
-    for cur_frame in watson.frames:
-        yield_candidate = cur_frame.id
-        if yield_candidate.startswith(incomplete):
-            yield yield_candidate
+    return [frame.id for frame in watson.frames if frame.id.startswith(incomplete)]
+
+
+######
+## tags and projects with -T/-p
+
+
+def get_option_tags(ctx, param, incomplete):
+    watson = _bypass_click_bug_to_ensure_watson(ctx)
+    # breakpoint()
+    return [
+        tag
+        for tag in watson.tags
+        if tag.startswith(incomplete) and tag not in ctx.params["tags"]
+    ]
+
+
+def get_option_projects(ctx, param, incomplete):
+    watson = _bypass_click_bug_to_ensure_watson(ctx)
+    # breakpoint()
+    return [
+        project
+        for project in watson.projects
+        if project.startswith(incomplete) and project not in ctx.params["projects"]
+    ]
+
+
+#########
+## Rename
+
+
+def get_rename_types(ctx, param, incomplete):
+    """Function to return all rename types matching the prefix."""
+    # breakpoint()
+    return [
+        rename_type
+        for rename_type in ["project", "tag"]
+        if rename_type.startswith(incomplete)
+    ]
+
+
+def get_rename_old_name(ctx, param, incomplete):
+    watson = _bypass_click_bug_to_ensure_watson(ctx)
+    items = {
+        "project": watson.projects,
+        "tag": watson.tags,
+    }[ctx.params["rename_type"]]
+    return [item for item in items if item.startswith(incomplete)]
+
+
+def get_rename_new_name(ctx, param, incomplete):
+    watson = _bypass_click_bug_to_ensure_watson(ctx)
+    items = {
+        "project": watson.projects,
+        "tag": watson.tags,
+    }[ctx.params["rename_type"]]
+    return [
+        item
+        for item in items
+        if item.startswith(incomplete) and item != ctx.params["old_name"]
+    ]
