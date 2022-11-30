@@ -48,17 +48,17 @@ def confirm_tags(tags, watson_tags):
     return True
 
 
-def style(name, element):
+def style(name, element, config = None):
     def _style_tags(tags):
         if not tags:
             return ''
 
         return '[{}]'.format(', '.join(
-            style('tag', tag) for tag in tags
+            style('tag', tag, config) for tag in tags
         ))
 
     def _style_short_id(id):
-        return style('id', id[:7])
+        return style('id', id[:7], config)
 
     formats = {
         'project': {'fg': 'magenta'},
@@ -70,8 +70,12 @@ def style(name, element):
         'short_id': _style_short_id,
         'id': {'fg': 'white'}
     }
-
+    
     fmt = formats.get(name, {})
+    
+    if config: # if a configuration is available, we try to get there the format
+      lst = config.getlist('formats', name)
+      if lst and len(lst) % 2 == 0: fmt = dict(zip(lst[::2], lst[1::2]))
 
     if isinstance(fmt, dict):
         return click.style(element, **fmt)

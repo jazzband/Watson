@@ -10,7 +10,7 @@ import click
 
 from .config import ConfigParser
 from .frames import Frames
-from .utils import deduplicate, make_json_writer, safe_save, sorted_groupby
+from .utils import deduplicate, make_json_writer, safe_save, sorted_groupby, style
 from .version import version as __version__  # noqa
 
 
@@ -581,3 +581,9 @@ class Watson(object):
 
         self.frames.changed = True
         self.save()
+    
+    def style(self = None, name = 'error', element = None):
+      if isinstance(self, Watson):
+        return style(name, element, self.config)
+      else:
+        return style(self, name)
