@@ -217,6 +217,23 @@ Or in the configuration file:
 voyager2 = nasa 'space mission'
 ```
 
+### Formats
+
+The formats for the
+[`click.style`](https://click.palletsprojects.com/en/latest/api/#click.style)
+function that is used by Watson to report various kind of information can be
+configured in this section.
+
+Available names for formats are: `project`, `tag`, `time`, `error`, `date`, and
+`id` (used for frames ids). An example of configuration is
+
+```ini
+[formats]
+project = fg magenta reverse true
+time = fg bright_green
+id = fg red blink true reverse true
+```
+
 ## Sample configuration file
 
 A basic configuration file looks like the following:
