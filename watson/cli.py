@@ -1519,16 +1519,19 @@ def sync(watson):
     \b
     $ watson config backend.url http://localhost:4242
     $ watson config backend.token 7e329263e329
+    or
+    $ watson config backend.repo git@github.com:user/repo.git
+    \b
     $ watson sync
     Received 42 frames from the server
     Pushed 23 frames to the server
     """
     last_pull = arrow.utcnow()
     pulled = watson.pull()
-    click.echo("Received {} frames from the server".format(len(pulled)))
+    click.echo("Received {} frames from the server".format(pulled))
 
     pushed = watson.push(last_pull)
-    click.echo("Pushed {} frames to the server".format(len(pushed)))
+    click.echo("Pushed {} frames to the server".format(pushed))
 
     watson.last_sync = arrow.utcnow()
     watson.save()

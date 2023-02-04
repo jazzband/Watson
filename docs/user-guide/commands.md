@@ -739,6 +739,9 @@ Example:
 
     $ watson config backend.url http://localhost:4242
     $ watson config backend.token 7e329263e329
+    or
+    $ watson config backend.repo git@github.com:user/repo.git
+    
     $ watson sync
     Received 42 frames from the server
     Pushed 23 frames to the server
