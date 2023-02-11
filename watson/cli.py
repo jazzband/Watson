@@ -702,7 +702,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
             pass
 
     # handle special title formatting for aggregate reports
-    if aggregated:
+    if report['timespan']['from'] == report['timespan']['to']:
         _print('{} - {}'.format(
             style('date', '{:ddd DD MMMM YYYY}'.format(
                 report['timespan']['from']
@@ -775,6 +775,15 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               mutually_exclusive=_SHORTCUT_OPTIONS,
               help="The date at which the report should stop (inclusive). "
               "Defaults to tomorrow.")
+@click.option('-d', '--daily', 'aggregation', cls=MutuallyExclusiveOption,
+              flag_value='daily', mutually_exclusive=['weekly', 'monthly'],
+              help="Aggregate time frames by day (default)")
+@click.option('-w', '--weekly', 'aggregation', cls=MutuallyExclusiveOption,
+              flag_value='weekly', mutually_exclusive=['daily', 'monthly'],
+              help="Aggregate time frames by week")
+@click.option('-m', '--monthly', 'aggregation', cls=MutuallyExclusiveOption,
+              flag_value='monthly', mutually_exclusive=['daily', 'weekly'],
+              help="Aggregate time frames by month")
 @click.option('-p', '--project', 'projects', shell_complete=get_projects,
               multiple=True,
               help="Reports activity only for the given project. You can add "
@@ -799,7 +808,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 @click.pass_context
 @catch_watson_error
 def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
-              pager):
+              pager, aggregation):
     """
     Display a report of the time spent on each project aggregated by day.
 
@@ -869,14 +878,31 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
     2018-11-21 00:00:00,2018-11-21 23:59:59,watson,,77.0
     2018-11-21 00:00:00,2018-11-21 23:59:59,watson,docs,77.0
     """
-    delta = (to - from_).days
     lines = []
+    aggregation_ranges = []
 
-    for i in range(delta + 1):
-        offset = datetime.timedelta(days=i)
-        from_offset = from_ + offset
-        output = ctx.invoke(report, current=current, from_=from_offset,
-                            to=from_offset, projects=projects, tags=tags,
+    if aggregation == 'monthly':
+        start = from_.replace(day=1)
+        while start.month <= to.month:
+            next_month = (start + datetime.timedelta(days=32)).replace(day=1)
+            end = next_month - datetime.timedelta(days=1)
+            aggregation_ranges.append((start, end))
+            start = next_month
+    elif aggregation == 'weekly':
+        start = from_ - datetime.timedelta(days=from_.weekday())
+        while start <= to:
+            end = start + datetime.timedelta(days=6)
+            aggregation_ranges.append((start, end))
+            start += datetime.timedelta(days=7)
+    else: # daily
+        delta = (to - from_).days
+        for i in range(delta + 1):
+            offset = datetime.timedelta(days=i)
+            aggregation_ranges.append((from_ + offset, from_ + offset))
+
+    for start, end in aggregation_ranges:
+        output = ctx.invoke(report, current=current, from_=start,
+                            to=end, projects=projects, tags=tags,
                             output_format=output_format,
                             pager=pager, aggregated=True,
                             include_partial_frames=True)
