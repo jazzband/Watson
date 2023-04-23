@@ -1528,10 +1528,10 @@ def sync(watson):
     """
     last_pull = arrow.utcnow()
     pulled = watson.pull()
-    click.echo("Received {} frames from the server".format(pulled))
+    click.secho(f'Received {pulled} frames from the server.', fg='green')
 
     pushed = watson.push(last_pull)
-    click.echo("Pushed {} frames to the server".format(pushed))
+    click.secho(f'Pushed {pushed} frames to the server.', fg='green')
 
     watson.last_sync = arrow.utcnow()
     watson.save()
