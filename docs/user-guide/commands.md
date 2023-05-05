@@ -637,7 +637,8 @@ If there is already a running project and the configuration option
 
 If `--at` option is given, the provided starting time is used. The
 specified time must be after the end of the previous frame and must not be
-in the future.
+in the future. If there is a current frame running, it will be stopped at
+the provided time.
 
 Example:
 
