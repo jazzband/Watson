@@ -437,6 +437,7 @@ class Watson(object):
                     'project': frame.project,
                     'tags': frame.tags
                 })
+            frames.sort(key=lambda frame: frame['begin_at'])
 
             # Get number of synced frames
             sync_file = os.path.join(self.sync_dir, 'frames')
