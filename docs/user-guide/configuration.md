@@ -86,7 +86,21 @@ $ watson config -e
 
 ### Backend
 
-At this time there is no official backend for Watson. We are working on it. But in a near future, you will be able to synchronize Watson with a public (or your private) repository via the [`sync`](./commands.md#sync) command. To configure your repository please set up the `[backend]` section.
+You will be able to synchronize Watson with a public (or your private) repository via the [`sync`](./commands.md#sync) command.
+To configure your repository please set up the `[backend]` section.
+You have two options for synchronization:
+
+- The [crick](https://github.com/TailorDev/crick) server
+- A git repository
+
+If using crick, set `backend.url` and `backend.token`.
+If using a git repository, set `backend.repo`.
+
+
+#### `backend.repo` (default: empty)
+
+The remote URL of a git repository to clone.
+Something like `git@github.com:user/repo.git`.
 
 #### `backend.url` (default: empty)
 
@@ -225,8 +239,7 @@ A basic configuration file looks like the following:
 # Watson configuration
 
 [backend]
-url = https://api.crick.fr
-token = yourapitoken
+repo = git@github.com:user/repo.git
 
 [options]
 stop_on_start = true
