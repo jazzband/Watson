@@ -168,6 +168,24 @@ def test_report_invalid_date(runner, watson, test_dt):
     assert result.exit_code != 0
 
 
+@pytest.mark.parametrize('cmd', [cli.report, cli.aggregate])
+def test_tag_alignment(runner, watson, cmd):
+    data = [
+        ('foo', 4000, 4020, ['A']),
+        ('foo', 5000, 49000, ['B' * 10]),
+        ('foo', 50000, 54000, ['C' * 20]),
+        ('foo', 55000, 56000, ['D' * 30]),
+    ]
+    for name, start, end, tags in data:
+        watson.frames.add(name, start, end, tags)
+    result = runner.invoke(cmd,
+                           ['-f', '1970-01-01', '-t', '1970-01-01'],
+                           obj=watson)
+    lines = result.output.split('\n')
+    tag_line_lengths = [len(line) for line in lines if line.startswith('\t[')]
+    assert min(tag_line_lengths) == max(tag_line_lengths)
+
+
 # watson stop
 
 @pytest.mark.parametrize('at_dt', VALID_TIMES_DATA)

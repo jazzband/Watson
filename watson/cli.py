@@ -735,7 +735,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
 
         tags = project['tags']
         if tags:
-            longest_tag = max(len(tag) for tag in tags or [''])
+            longest_tag = max(len(tag['name']) for tag in tags)
 
             for tag in tags:
                 _print('\t[{tag} {time}]'.format(
