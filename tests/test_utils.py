@@ -9,7 +9,7 @@ import os
 import datetime
 import operator
 from io import StringIO
-from mock import patch
+from unittest.mock import patch
 import pytest
 from click.exceptions import Abort
 from dateutil.tz import tzutc
