@@ -465,7 +465,11 @@ class Watson(object):
                include_partial_frames=False):
         for start_time in (_ for _ in [day, week, month, year, luna, all]
                            if _ is not None):
-            from_ = start_time.shift(hours=self.config.getint('options', 'day_start_hour', 0))
+            from_ = start_time
+
+        if from_ == from_.floor('day'):
+            hour_shift = self.config.getint('options', 'day_start_hour', 0)
+            from_ = from_.shift(hours=hour_shift)
 
         if not self._validate_report_options(projects, ignore_projects):
             raise WatsonError(

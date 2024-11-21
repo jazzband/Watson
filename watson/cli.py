@@ -1040,6 +1040,10 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
                        if _ is not None):
         from_ = start_time
 
+        if from_ == from_.floor('day'):
+            hour_shift = watson.config.getint('options', 'day_start_hour', 0)
+            from_ = from_.shift(hours=hour_shift)
+
     if from_ > to:
         raise click.ClickException("'from' must be anterior to 'to'")
 
