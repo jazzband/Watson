@@ -1062,8 +1062,7 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
     if reverse is None:
         reverse = watson.config.getboolean('options', 'reverse_log', True)
 
-    day_start_hour = watson.config.getint('options', 'day_start_hour', 0)
-    span = watson.frames.span(from_, to, day_start_hour)
+    span = watson.frames.span(from_, to)
     filtered_frames = watson.frames.filter(
         projects=projects or None, tags=tags or None,
         ignore_projects=ignore_projects or None,
