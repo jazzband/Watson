@@ -7,6 +7,20 @@ from collections import namedtuple
 HEADERS = ('start', 'stop', 'project', 'id', 'tags', 'updated_at')
 
 
+hour_shift = 0
+def set_hour_shift(hour):
+    global hour_shift
+    hour_shift = hour
+
+
+def shifted_floor(time, timeframe):
+    return time.shift(hours=-hour_shift).floor(timeframe).shift(hours=hour_shift)
+
+
+def shifted_ceil(time, timeframe):
+    return time.shift(hours=-hour_shift).ceil(timeframe).shift(hours=hour_shift)
+
+
 class Frame(namedtuple('Frame', HEADERS)):
     def __new__(cls, start, stop, project, id, tags=None, updated_at=None,):
         try:
@@ -45,7 +59,7 @@ class Frame(namedtuple('Frame', HEADERS)):
 
     @property
     def day(self):
-        return self.start.floor('day')
+        return shifted_floor(self.start, 'day')
 
     def __lt__(self, other):
         return self.start < other.start
@@ -61,10 +75,10 @@ class Frame(namedtuple('Frame', HEADERS)):
 
 
 class Span(object):
-    def __init__(self, start, stop, timeframe='day'):
+    def __init__(self, start, stop, timeframe = 'day'):
         self.timeframe = timeframe
-        self.start = start.floor(self.timeframe)
-        self.stop = stop.ceil(self.timeframe)
+        self.start = shifted_floor(start, self.timeframe)
+        self.stop = shifted_ceil(stop, self.timeframe)
 
     def overlaps(self, frame):
         return frame.start <= self.stop and frame.stop >= self.start

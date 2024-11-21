@@ -234,6 +234,7 @@ stop_on_restart = false
 date_format = %Y.%m.%d
 time_format = %H:%M:%S%z
 week_start = monday
+day_start_hour = 0
 log_current = false
 pager = true
 report_current = false
