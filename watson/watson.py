@@ -316,7 +316,10 @@ class Watson(object):
         """
         Return the list of all the existing projects, sorted by name.
         """
-        return sorted(set(self.frames['project']))
+        projects = set(self.frames['project'])
+        if 'default_tags' in self.config.sections():
+            projects |= set(p[0] for p in self.config.items('default_tags'))
+        return sorted(projects)
 
     @property
     def tags(self):
