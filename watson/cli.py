@@ -666,6 +666,10 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
                            luna=luna, all=all,
                            include_partial_frames=include_partial_frames)
 
+    # Handle None output_format (Python 3.13+ compatibility)
+    if output_format is None:
+        output_format = 'plain'
+
     if 'json' in output_format and not aggregated:
         click.echo(json.dumps(report, indent=4, sort_keys=True,
                               default=json_arrow_encoder))
@@ -872,11 +876,18 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
     delta = (to - from_).days
     lines = []
 
+    # Handle None output_format (Python 3.13+ compatibility)
+    if output_format is None:
+        output_format = 'plain'
+
     for i in range(delta + 1):
         offset = datetime.timedelta(days=i)
         from_offset = from_ + offset
         output = ctx.invoke(report, current=current, from_=from_offset,
                             to=from_offset, projects=projects, tags=tags,
+                            ignore_projects=(), ignore_tags=(),
+                            year=None, month=None, week=None, day=None,
+                            luna=None, all=None,
                             output_format=output_format,
                             pager=pager, aggregated=True,
                             include_partial_frames=True)
@@ -1068,6 +1079,10 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
         ignore_projects=ignore_projects or None,
         ignore_tags=ignore_tags or None, span=span
     )
+
+    # Handle None output_format (Python 3.13+ compatibility)
+    if output_format is None:
+        output_format = 'plain'
 
     if 'json' in output_format:
         click.echo(frames_to_json(filtered_frames))
