@@ -1,57 +1,39 @@
-# Watson
+# -- General
+SHELL := /bin/bash
 
-PYTHON ?= python
-PIP ?= pip
+# ==============================================================================
+# RULES
 
-VENV = virtualenv
-VENV_ARGS = -p $(PYTHON)
-VENV_DIR = $(CURDIR)/.venv
-VENV_WATSON_DIR = $(CURDIR)/data
+default: help
 
-all: install
+# -- Build
+bootstrap: ## bootstrap the project for development
+bootstrap: \
+  build
+.PHONY: bootstrap
 
-$(VENV_DIR): requirements-dev.txt
-	$(VENV) $(VENV_ARGS) "$(VENV_DIR)"
-	echo "export WATSON_DIR=\"$(VENV_WATSON_DIR)\"" >> "$(VENV_DIR)"/bin/activate
-	echo "set -x WATSON_DIR \"$(VENV_WATSON_DIR)\"" >> "$(VENV_DIR)"/bin/activate.fish
-	"$(VENV_DIR)"/bin/pip install -U setuptools wheel pip
-	"$(VENV_DIR)"/bin/pip install -Ur $<
+build: ## install project
+	uv sync --locked --all-extras --dev
+.PHONY: build
 
-.PHONY: env
-env: $(VENV_DIR)
+docs-serve: ## run documentation server 
+	uv run mkdocs serve -w docs
+.PHONY: docs-serve
 
-.PHONY: install
-install:
-	$(PYTHON) setup.py install
+docs-publish: ## publish documentation
+	uv run mkdocs gh-deploy --force
+.PHONY: docs-publish
 
-.PHONY: install-dev
-install-dev:
-	$(PIP) install -r requirements-dev.txt
-	$(PYTHON) setup.py develop
+test: ## run tests
+	uv run pytest
+.PHONY: test
 
-.PHONY: check
-check: clean
-	$(PYTHON) setup.py test
-
-.PHONY: clean
-clean:
-	find . -name '*.pyc' -delete
-	find . -name '__pycache__' -type d | xargs rm -fr
-
-.PHONY: distclean
-distclean: clean
-	rm -fr *.egg *.egg-info/ .eggs/
-
-.PHONY:
-mostlyclean: clean distclean
-	rm -rf "$(VENV_DIR)"
-
-.PHONY: docs
-docs: install-dev
-	$(PYTHON) scripts/gen-cli-docs.py
-	mkdocs build
-
-.PHONY: completion-scripts
 completion-scripts:
 	scripts/create-completion-script.sh bash
 	scripts/create-completion-script.sh zsh
+.PHONY: completion-scripts
+
+# -- Misc
+help:
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+.PHONY: help

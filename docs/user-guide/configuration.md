@@ -60,7 +60,7 @@ _This example configuration file has been taken from the [official python docume
 
 ## Editing
 
-If you want to edit your configuration, the best is to use the [`config`](./commands/#config) command.
+If you want to edit your configuration, the best is to use the [`config`](./commands.md/#config) command.
 
 You can edit your configuration on the fly with:
 
