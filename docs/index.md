@@ -78,7 +78,7 @@ $ source ~/.bashrc  # Reload your .bashrc
 The latest development version can be installed using the following commands:
 
 ```bash
-$ git clone https://github.com/TailorDev/Watson.git
+$ git clone https://github.com/jazzband/Watson.git
 $ cd Watson/
 $ pip install -e .
 ```

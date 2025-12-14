@@ -33,7 +33,7 @@ Create a new pull request (PR) with the `prepare-x.y.z` branch. You can safely
 merge this PR if all tests are green.
 
 Draft a new [Watson Release on
-GitHub](https://github.com/TailorDev/Watson/releases) with the same release
+GitHub](https://github.com/jazzband/Watson/releases) with the same release
 notes.
 
 ## Push the `x.y.z` release to PyPI
