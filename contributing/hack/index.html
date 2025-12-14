@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,15 +10,16 @@
         <link rel="shortcut icon" href="../../img/favicon.ico">
         <title>Hack - Watson</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
-        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/docco.min.css">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/docco.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
         <link href="../../css/watson.css" rel="stylesheet">
-
-        <script src="../../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
     </head>
 
     <body>
@@ -26,7 +27,7 @@
             <div class="container">
                 <a class="navbar-brand" href="../..">Watson</a>
                 <!-- Expander button -->
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -34,11 +35,11 @@
                 <div id="navbar-collapse" class="navbar-collapse collapse">
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
-                            <li class="navitem">
+                            <li class="nav-item">
                                 <a href="../.." class="nav-link">Home</a>
                             </li>
-                            <li class="dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">User Guide</a>
                                 <ul class="dropdown-menu">
                                     
 <li>
@@ -50,8 +51,8 @@
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown active">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Contributing</a>
                                 <ul class="dropdown-menu">
                                     
 <li>
@@ -59,7 +60,7 @@
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active">Hack</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Hack</a>
 </li>
                                     
 <li>
@@ -75,11 +76,11 @@
 </li>
                                 </ul>
                             </li>
-                            <li class="navitem">
+                            <li class="nav-item">
                                 <a href="../../faq/" class="nav-link">FAQ</a>
                             </li>
-                            <li class="dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">About</a>
                                 <ul class="dropdown-menu">
                                     
 <li>
@@ -93,9 +94,9 @@
                             </li>
                         </ul>
 
-                    <ul class="nav navbar-nav ml-auto">
+                    <ul class="nav navbar-nav ms-md-auto">
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
@@ -110,7 +111,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="https://github.com/TailorDev/Watson/edit/master/docs/contributing/hack.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/TailorDev/Watson/edit/master/docs/contributing/hack.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -119,28 +120,28 @@
 
         <div class="container">
             <div class="row">
-                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
     <div class="navbar-header">
-        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
             <span class="fa fa-angle-down"></span>
         </button>
     </div>
 
     
-    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#hack" class="nav-link">Hack</a>
+            <li class="nav-item" data-bs-level="1"><a href="#hack" class="nav-link">Hack</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#python-requirements" class="nav-link">Python requirements</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#get-started" class="nav-link">Get started!</a>
+            <li class="nav-item" data-bs-level="2"><a href="#python-requirements" class="nav-link">Python requirements</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#run-the-tests" class="nav-link">Run the tests</a>
+            <li class="nav-item" data-bs-level="2"><a href="#get-started" class="nav-link">Get started!</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#run-the-tests" class="nav-link">Run the tests</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -155,14 +156,13 @@
 <p>Ready to contribute? Here&rsquo;s how to set up <em>Watson</em> for local development.</p>
 <h2 id="python-requirements">Python requirements</h2>
 <ul>
-<li>Python (2/3) interpreter installed</li>
-<li><code>pip</code> tool to install package dependencies</li>
-<li><code>virtualenv</code> tool to create virtual environments</li>
+<li>Python 3.10+</li>
+<li><a href="https://docs.astral.sh/uv/">UV</a> package manager</li>
 </ul>
 <h2 id="get-started">Get started!</h2>
 <ol>
 <li>
-<p>Fork the <a href="https://github.com/TailorDev/Watson/">Watson repository</a> on GitHub.</p>
+<p>Fork the <a href="https://github.com/jazzband/Watson/">Watson repository</a> on GitHub.</p>
 </li>
 <li>
 <p>Clone your fork locally:</p>
@@ -170,27 +170,14 @@
 </code></pre>
 </li>
 <li>
-<p>Create a virtual environment:</p>
+<p>Create a virtual environment and install project dependencies:</p>
 <pre><code>$ cd Watson
-$ make env
+$ make bootstrap
 </code></pre>
-<p>The Python version used will be the one accessible using the <code>python</code>
-command in your shell.</p>
-<p>To use a different Python version, define the <code>PYTHON</code> shell variable.
-For example:</p>
-<pre><code>$ PYTHON=python3.5 make env
-</code></pre>
-</li>
-<li>
-<p>Install dependencies and deploy Watson inside the virtual environment:</p>
-<pre><code>$ source .venv/bin/activate
-(.venv) $ make install-dev
-</code></pre>
-<p>If you are using fish shell, source <code>.venv/bin/activate.fish</code> instead.</p>
 </li>
 <li>
 <p>Create a branch for local development:</p>
-<pre><code>(.venv) $ git checkout -b name-of-your-bugfix-or-feature
+<pre><code>$ git checkout -b name-of-your-bugfix-or-feature
 </code></pre>
 <p>Now you can make your changes locally.</p>
 <p><em>Notes:</em></p>
@@ -200,7 +187,7 @@ For example:</p>
 <li>Every time you run <code>watson</code> inside the virtual environment, the source
   code inside the <code>watson/</code> subfolder will be used.</li>
 <li>To avoid messing with your real Watson data, watson will use <code>data/</code> as
-  the <a href="../user-guide/configuration/#application-folder">application folder</a>
+  the <a href="../../user-guide/configuration/#application-folder">application folder</a>
   inside the virtual environment. You can run <code>watson projects</code> to check
   that your real projects are not shown.</li>
 </ul>
@@ -213,8 +200,8 @@ For example:</p>
 </li>
 <li>
 <p>If you have added a new command or updated/fixed docstrings, please update
-    the documentation:</p>
-<pre><code>(.venv) $ make docs
+    the documentation. You can check changes live using:</p>
+<pre><code>$ make docs-serve
 </code></pre>
 </li>
 <li>
@@ -232,15 +219,12 @@ $ git push -u origin name-of-your-bugfix-or-feature
 <p><a href="#run-the-tests"></a></p>
 <h2 id="run-the-tests">Run the tests</h2>
 <p>The tests use <a href="http://pytest.org/">pytest</a>. To run them with the default Python
-interpreter:</p>
-<pre><code>$ py.test -v tests/
+interpreter run:</p>
+<pre><code>$ make test
 </code></pre>
-<p>To run the tests via <a href="http://tox.testrun.org/">tox</a> with all Python versions
-which are available on your system and are defined in the <code>tox.ini</code> file,
-simply run:</p>
-<pre><code>$ tox
-</code></pre>
-<p>This will also check the source code with <a href="http://flake8.pycqa.org">flake8</a>.</p></div>
+<p>If you want to run pytest with custom options, use:</p>
+<pre><code>$ uv run pytest -x -k test_cli
+</code></pre></div>
             </div>
         </div>
 
@@ -250,19 +234,20 @@ simply run:</p>
 </p>
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
         <script>
             var base_url = "../..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="../../js/base.js" defer></script>
-        <script src="../../search/main.js" defer></script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="searchModalLabel">Search</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>From here you can search these documents. Enter your search terms below.</p>
@@ -282,7 +267,7 @@ simply run:</p>
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <table class="table">
