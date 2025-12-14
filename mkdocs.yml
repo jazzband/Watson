@@ -1,13 +1,11 @@
 site_name: Watson
 theme: flatly
-repo_url: https://github.com/TailorDev/Watson
+repo_url: https://github.com/jazzband/Watson
 repo_name: GitHub
 site_description: A wonderful CLI to track your time!
-site_author: TailorDev
+site_author: Jazzband 
 copyright: >
-  Watson, by <a
-  href="http://tailordev.fr?pk_campaign=watson&amp;pk_kwd=docs">TailorDev</a>
-  &amp; al. is released under the MIT License.
+  Watson is released under the MIT License.
 nav:
 - Home: 'index.md'
 - User Guide:

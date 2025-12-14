@@ -286,23 +286,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First stable public release 🎉
 
-[2.1.0]: https://github.com/tailordev/watson/compare/2.0.1...2.1.0
-[2.0.1]: https://github.com/tailordev/watson/compare/2.0.0...2.0.1
-[2.0.0]: https://github.com/tailordev/watson/compare/1.10.0...2.0.0
-[1.10.0]: https://github.com/tailordev/watson/compare/1.9.0...1.10.0
-[1.9.0]: https://github.com/tailordev/watson/compare/1.8.0...1.9.0
-[1.8.0]: https://github.com/tailordev/watson/compare/1.7.0...1.8.0
-[1.7.0]: https://github.com/tailordev/watson/compare/1.6.0...1.7.0
-[1.6.0]: https://github.com/tailordev/watson/compare/1.5.2...1.6.0
-[1.5.2]: https://github.com/tailordev/watson/compare/1.5.1...1.5.2
-[1.5.1]: https://github.com/tailordev/watson/compare/1.5.0...1.5.1
-[1.5.0]: https://github.com/tailordev/watson/compare/1.4.0...1.5.0
-[1.4.0]: https://github.com/tailordev/watson/compare/1.3.2...1.4.0
-[1.3.2]: https://github.com/tailordev/watson/compare/1.3.1...1.3.2
-[1.3.1]: https://github.com/tailordev/watson/compare/1.3.0...1.3.1
-[1.3.0]: https://github.com/tailordev/watson/compare/1.2.0...1.3.0
-[1.2.0]: https://github.com/tailordev/watson/compare/1.1.0...1.2.0
-[1.1.0]: https://github.com/tailordev/watson/compare/1.0.2...1.1.0
-[1.0.2]: https://github.com/tailordev/watson/compare/1.0.1...1.0.2
-[1.0.1]: https://github.com/tailordev/watson/compare/1.0.0...1.0.1
-[1.0.0]: https://github.com/tailordev/watson/releases/tag/1.0.0
+[2.1.0]: https://github.com/jazzband/watson/compare/2.0.1...2.1.0
+[2.0.1]: https://github.com/jazzband/watson/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/jazzband/watson/compare/1.10.0...2.0.0
+[1.10.0]: https://github.com/jazzband/watson/compare/1.9.0...1.10.0
+[1.9.0]: https://github.com/jazzband/watson/compare/1.8.0...1.9.0
+[1.8.0]: https://github.com/jazzband/watson/compare/1.7.0...1.8.0
+[1.7.0]: https://github.com/jazzband/watson/compare/1.6.0...1.7.0
+[1.6.0]: https://github.com/jazzband/watson/compare/1.5.2...1.6.0
+[1.5.2]: https://github.com/jazzband/watson/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/jazzband/watson/compare/1.5.0...1.5.1
+[1.5.0]: https://github.com/jazzband/watson/compare/1.4.0...1.5.0
+[1.4.0]: https://github.com/jazzband/watson/compare/1.3.2...1.4.0
+[1.3.2]: https://github.com/jazzband/watson/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/jazzband/watson/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/jazzband/watson/compare/1.2.0...1.3.0
+[1.2.0]: https://github.com/jazzband/watson/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/jazzband/watson/compare/1.0.2...1.1.0
+[1.0.2]: https://github.com/jazzband/watson/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/jazzband/watson/compare/1.0.0...1.0.1
+[1.0.0]: https://github.com/jazzband/watson/releases/tag/1.0.0

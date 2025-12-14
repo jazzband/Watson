@@ -11,7 +11,7 @@ contribute to the Watson project! You are awesome.
 
 ## Report bugs
 
-Report bugs at <https://github.com/TailorDev/Watson/issues/new>
+Report bugs at <https://github.com/jazzband/Watson/issues/new>
 
 If you are reporting a bug, please include:
 
@@ -21,7 +21,7 @@ If you are reporting a bug, please include:
 
 ## Fix bugs
 
-Check out the [open bugs](https://github.com/TailorDev/Watson/issues) -
+Check out the [open bugs](https://github.com/jazzband/Watson/issues) -
 anything tagged with the **[easy-pick]** label could be a good choice
 for newcomers.
 
@@ -42,7 +42,7 @@ Any issue with the **[question]** label is open for feedback, so feel
 free to share your thoughts with us!
 
 The best way to send feedback is to [fill a new
-issue](https://github.com/TailorDev/Watson/issues/new) on GitHub.
+issue](https://github.com/jazzband/Watson/issues/new) on GitHub.
 
 If you are proposing a feature:
 
