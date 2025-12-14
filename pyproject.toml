@@ -1,0 +1,70 @@
+[project]
+name = "td-watson"
+version = "2.1.0"
+description = "A wonderful CLI to track your time!"
+authors = [
+  { name = "Yannick Péroux", email = "yannick.peroux@gmail.com" },
+  { name = "Julien Maupetit", email = "julien@maupetit.net" },
+  { name = "William Durand" },
+  { name = "Christopher Arndt", email = "chris@chrisarndt.de" },
+]
+maintainers = [
+  { name = "Julien Maupetit", email = "julien@maupetit.net" },
+]
+readme = "README.md"
+requires-python = ">=3.10,<4.0.0"
+license = "MIT"
+keywords=[
+  "watson",
+  "time-tracking",
+  "time tracking",
+  "monitoring", 
+  "report",
+  "CLI"
+]
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Customer Service",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Other Audience",
+  "Environment :: Console",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Topic :: Office/Business",
+  "Topic :: Utilities",
+]
+
+dependencies = [
+    "arrow>=1.4.0",
+    "click>=8.3.1",
+    "click-didyoumean>=0.3.1",
+    "colorama>=0.4.6",
+    "requests>=2.32.5",
+]
+
+[project.urls]
+Repository = "https://github.com/jazzband/Watson"
+
+[project.scripts]
+watson = "watson.__main__:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["watson"]
+
+[dependency-groups]
+dev = [
+    "mkdocs>=1.6.1",
+    "mkdocs-bootswatch>=1.1",
+    "pytest>=9.0.2",
+    "pytest-datafiles>=3.0.0",
+    "pytest-mock>=3.15.1",
+    "pytest-runner>=6.0.1",
+]
