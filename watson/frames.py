@@ -22,12 +22,8 @@ class Frame(namedtuple('Frame', HEADERS)):
                 updated_at = arrow.get(updated_at)
         except (ValueError, TypeError) as e:
             from .watson import WatsonError
+
             raise WatsonError("Error converting date: {}".format(e))
-
-        start = start.to('local')
-
-        if stop:
-            stop = stop.to('local')
 
         if tags is None:
             tags = []
