@@ -414,9 +414,11 @@ def cancel(watson):
               help="only show tags")
 @click.option('-e', '--elapsed', is_flag=True,
               help="only show time elapsed")
+@click.option('-j', '--json', 'output_json', is_flag=True, default=False,
+              help="Format output as JSON.")
 @click.pass_obj
 @catch_watson_error
-def status(watson, project, tags, elapsed):
+def status(watson, project, tags, elapsed, output_json):
     """
     Display when the current project was started and the time spent since.
 
@@ -435,12 +437,28 @@ def status(watson, project, tags, elapsed):
     $ watson config options.time_format "at %I:%M %p"
     $ watson status
     Project apollo11 [brakes] started a minute ago (19.05.2014 at 02:32 PM)
+    \b
+    $ watson status --json
+    {"project": "apollo11", "tags": ["brakes"], "start": "...", "elapsed": "..."}
     """
     if not watson.is_started:
-        click.echo("No project started.")
+        if output_json:
+            click.echo(json.dumps({"running": False}))
+        else:
+            click.echo("No project started.")
         return
 
     current = watson.current
+
+    if output_json:
+        click.echo(json.dumps({
+            "running": True,
+            "project": current['project'],
+            "tags": current['tags'],
+            "start": current['start'].isoformat(),
+            "elapsed": current['start'].humanize(),
+        }, default=json_arrow_encoder))
+        return
 
     if project:
         click.echo("{}".format(
