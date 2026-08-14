@@ -168,6 +168,14 @@ def test_report_invalid_date(runner, watson, test_dt):
     assert result.exit_code != 0
 
 
+@pytest.mark.parametrize('cmd', [cli.report, cli.log])
+def test_default_output_format_is_plain(runner, watson, cmd):
+    """Unspecified format must default to plain text (issue #512)."""
+    result = runner.invoke(cmd, [], obj=watson)
+    assert result.exception is None
+    assert result.exit_code == 0
+
+
 # watson stop
 
 @pytest.mark.parametrize('at_dt', VALID_TIMES_DATA)
