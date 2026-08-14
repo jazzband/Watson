@@ -67,6 +67,16 @@ class MutuallyExclusiveOption(click.Option):
                     ['`--{}`'.format(_) for _ in self.mutually_exclusive]))))
 
 
+def normalize_output_format(output_format):
+    """Return a concrete format string.
+
+    Click 8.3.0 left shared ``flag_value`` options as ``None`` when the
+    default was written as ``True`` instead of the flag value itself.
+    Treat a missing value as plain text, matching the documented default.
+    """
+    return output_format or 'plain'
+
+
 def local_tz_info() -> datetime.tzinfo:
     """Get the local time zone object, respects the TZ env variable."""
     timezone = os.environ.get("TZ", None)
@@ -538,7 +548,7 @@ _SHORTCUT_OPTIONS_VALUES = {
               help="Format output in CSV instead of plain text")
 @click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='plain', mutually_exclusive=['json', 'csv'],
-              default=True, hidden=True,
+              default='plain', hidden=True,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
@@ -652,6 +662,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
     2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,steering,38017.0
     2014-04-01 00:00:00,2014-04-30 23:59:59,apollo11,wheels,36695.0
     """
+    output_format = normalize_output_format(output_format)
 
     # if the report is an aggregate report, add whitespace using this
     # aggregate tab which will be prepended to the project name
@@ -791,7 +802,7 @@ def report(watson, current, from_, to, projects, tags, ignore_projects,
               help="Format output in CSV instead of plain text")
 @click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='plain', mutually_exclusive=['json', 'csv'],
-              default=True, hidden=True,
+              default='plain', hidden=True,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
@@ -869,6 +880,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
     2018-11-21 00:00:00,2018-11-21 23:59:59,watson,,77.0
     2018-11-21 00:00:00,2018-11-21 23:59:59,watson,docs,77.0
     """
+    output_format = normalize_output_format(output_format)
     delta = (to - from_).days
     lines = []
 
@@ -965,7 +977,7 @@ def aggregate(ctx, watson, current, from_, to, projects, tags, output_format,
               help="Format output in CSV instead of plain text")
 @click.option('--plain', 'output_format', cls=MutuallyExclusiveOption,
               flag_value='plain', mutually_exclusive=['json', 'csv'],
-              default=True, hidden=True,
+              default='plain', hidden=True,
               help="Format output in plain text (default)")
 @click.option('-g/-G', '--pager/--no-pager', 'pager', default=None,
               help="(Don't) view output through a pager.")
@@ -1036,6 +1048,7 @@ def log(watson, current, reverse, from_, to, projects, tags, ignore_projects,
     02cb269,2014-04-16 09:53,2014-04-16 12:43,apollo11,wheels
     1070ddb,2014-04-16 13:48,2014-04-16 16:17,voyager1,"antenna, sensors"
     """  # noqa
+    output_format = normalize_output_format(output_format)
     for start_time in (_ for _ in [day, week, month, luna, year, all]
                        if _ is not None):
         from_ = start_time
