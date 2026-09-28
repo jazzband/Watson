@@ -146,3 +146,21 @@ def test_completion_of_existing_prefix(
 def test_for_known_completion_values(func_to_test, prefix, expected_vals):
     ret_list = list(func_to_test(None, [], prefix))
     assert ret_list == expected_vals
+
+
+@pytest.mark.datafiles(AUTOCOMPLETION_FRAMES_PATH)
+def test_click8_parameter_does_not_crash(watson_df):
+    """Click 8+ passes the Parameter object, not a token list (#517)."""
+    param = Namespace(name="args")
+    ctx = ClickContext(
+        obj=watson_df,
+        params={"args": ["project1"], "rename_type": None},
+        args=[],
+    )
+    projects = get_project_or_task_completion(ctx, param, "proj")
+    assert projects
+    assert all(item.startswith("proj") for item in projects)
+
+    tags = get_project_or_task_completion(ctx, param, "+tag")
+    assert tags
+    assert all(item.startswith("+tag") for item in tags)
